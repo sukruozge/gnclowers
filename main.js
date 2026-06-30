@@ -5,6 +5,32 @@
 /* ── i18n Translations ── */
 const translations = {
   tr: {
+    ship_free:   "500₺ Üzeri Ücretsiz Kargo",
+    ship_custom: "Özel Sipariş Kabul Edilir",
+    ship_return: "30 Gün İade Garantisi",
+
+    trust1_t: "100% El Yapımı",    trust1_d: "Her ürün makinede değil, sevgiyle ellerimle yapılır.",
+    trust2_t: "Güvenli Alışveriş", trust2_d: "Tüm ödemeleriniz SSL ile korunur.",
+    trust3_t: "Hızlı Kargo",       trust3_d: "TR'ye 2-3, AB'ye 7-14 iş gününde teslimat.",
+    trust4_t: "Dünyaya Gönderim",  trust4_d: "12'den fazla ülkeye kargo seçeneği sunuyoruz.",
+
+    cats_tag: "KATEGORİLER", cats_title: "Ne Arıyorsunuz?",
+    cats_tag_label: "Koleksiyon", cats_explore: "Keşfet",
+
+    process_tag: "NASIL YAPIYORUM",
+    process_title: "Her Ürünün Arkasındaki Özen",
+    process_sub: "Hammaddeden paketlemeye — her adımda kaliteyi hissedeceksiniz.",
+    process_s1_t: "İplik Seçimi",       process_s1_d: "Avrupa ve Türkiye'nin en kaliteli ipliklerini özenle seçiyorum. Renk, doku, dayanıklılık — her şey önemli.",
+    process_s2_t: "El ile Örme",        process_s2_d: "Her ilmek tek tek, sevgiyle örülür. Hiçbir ürün aynı değil — hepsi özgün, hepsi el emeği.",
+    process_s3_t: "Paket & Teslimat",   process_s3_d: "Özenli paketleme ile dünyaya yolculuk. Ürününüz kutuya giymeden önce kalite kontrolünden geçer.",
+
+    feat_ban_tag: "ÖZEL SİPARİŞ",
+    feat_ban_title: "Hayal Ettiğin Ürünü Birlikte Yapalım",
+    feat_ban_desc: "Renk, boyut, karakter — hepsini senin istediğin gibi yapabilirim. Kişiye özel hediyeler ve dekorasyon ürünleri için bana ulaş.",
+    feat_ban_cta: "Etsy'den Sipariş Ver",
+
+    gallery_title: "Instagram'dan", gallery_cta: "@aselovers'ı Takip Et",
+
     nav_home:    "Ana Sayfa",
     nav_shop:    "Mağaza",
     nav_about:   "Hakkımda",
@@ -92,6 +118,32 @@ const translations = {
   },
 
   en: {
+    ship_free:   "Free Shipping Over 500₺",
+    ship_custom: "Custom Orders Welcome",
+    ship_return: "30-Day Return Guarantee",
+
+    trust1_t: "100% Handmade",      trust1_d: "Every product is crafted by hand with love, never by machine.",
+    trust2_t: "Secure Shopping",    trust2_d: "All payments are protected with SSL encryption.",
+    trust3_t: "Fast Shipping",      trust3_d: "2-3 days to TR, 7-14 business days to EU.",
+    trust4_t: "Ships Worldwide",    trust4_d: "We ship to 12+ countries around the world.",
+
+    cats_tag: "CATEGORIES", cats_title: "What Are You Looking For?",
+    cats_tag_label: "Collection", cats_explore: "Explore",
+
+    process_tag: "HOW WE MAKE IT",
+    process_title: "The Care Behind Every Product",
+    process_sub: "From raw materials to packaging — you will feel the quality at every step.",
+    process_s1_t: "Yarn Selection",      process_s1_d: "I carefully select the finest yarns from Europe and Turkey. Color, texture, durability — everything matters.",
+    process_s2_t: "Handmade Crafting",   process_s2_d: "Every stitch is made one by one, with love. No two products are the same — each is unique and handcrafted.",
+    process_s3_t: "Pack & Deliver",      process_s3_d: "Your product travels the world in careful packaging. Every item passes quality control before boxing.",
+
+    feat_ban_tag: "CUSTOM ORDER",
+    feat_ban_title: "Let's Make What You Imagine",
+    feat_ban_desc: "Color, size, character — I can make it exactly the way you want. Contact me for personalized gifts and decor.",
+    feat_ban_cta: "Order on Etsy",
+
+    gallery_title: "From Instagram", gallery_cta: "Follow @aselovers",
+
     nav_home:    "Home",
     nav_shop:    "Shop",
     nav_about:   "About",
@@ -257,6 +309,50 @@ function getFallbackProducts() {
   ];
 }
 
+/* ── Quick View ── */
+function openQuickView(id) {
+  const p = allProducts.find(x => x.id == id);
+  if (!p) return;
+  const name  = currentLang === 'tr' ? (p.title_tr || p.title_en) : (p.title_en || p.title_tr);
+  const desc  = currentLang === 'tr' ? (p.description_tr || p.description_en) : (p.description_en || p.description_tr);
+  const priceStr = p.currency === 'TRY'
+    ? `${Number(p.price).toLocaleString('tr-TR')} ₺`
+    : `${p.price} ${p.currency}`;
+
+  document.getElementById('qv-img').innerHTML = p.image
+    ? `<img src="${p.image}" alt="${name}" />`
+    : `<div class="qv-img-placeholder"><svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width=".7"><circle cx="12" cy="12" r="10"/><path d="M8 12a4 4 0 0 1 8 0"/></svg></div>`;
+
+  document.getElementById('qv-body').innerHTML = `
+    <span class="qv-tag">${t('cat_' + p.category) || p.category}</span>
+    <h2 class="qv-name">${name}</h2>
+    <div class="qv-rating">
+      <span class="qv-stars">★★★★★</span>
+      <span class="qv-rating-label">5.0 · Etsy</span>
+    </div>
+    <p class="qv-desc">${desc}</p>
+    <div class="qv-price">${priceStr}</div>
+    <div class="qv-actions">
+      <button class="qv-add-cart" onclick="addToCart('${p.id}'); closeQuickView()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        ${t('add_to_cart')}
+      </button>
+      <a href="${p.url}" target="_blank" class="qv-etsy">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M11.956 0C5.354 0 0 5.354 0 11.956c0 6.603 5.354 11.957 11.956 11.957s11.957-5.354 11.957-11.957C23.913 5.354 18.559 0 11.956 0zm4.47 16.364c-.293.098-.88.196-1.37.196-2.054 0-2.544-1.174-2.544-2.935V9.89h-1.076v-1.37h1.076V6.647l1.86-.587v2.46h1.76v1.37h-1.76v3.54c0 .783.294 1.076.88 1.076.196 0 .49-.098.783-.195l.39 1.053z"/></svg>
+        Etsy
+      </a>
+    </div>`;
+
+  document.getElementById('qv-backdrop').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeQuickView(e) {
+  if (e && e.target !== document.getElementById('qv-backdrop')) return;
+  document.getElementById('qv-backdrop').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
 /* ── Render Products ── */
 function renderProducts(filter) {
   if (filter !== undefined) activeFilter = filter;
@@ -297,6 +393,12 @@ function renderProducts(filter) {
       <div class="product-img">
         ${imgHtml}
         ${badge}
+        <div class="product-overlay">
+          <button class="quick-view-btn" onclick="openQuickView('${p.id}')">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            ${currentLang === 'tr' ? 'Hızlı Bak' : 'Quick View'}
+          </button>
+        </div>
         <button class="product-wishlist" aria-label="Wishlist">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
         </button>
@@ -491,16 +593,61 @@ function setFilter(cat) {
 }
 
 /* ── Newsletter ── */
-function handleNewsletter(e) {
+async function handleNewsletter(e) {
   e.preventDefault();
   const input = e.target.querySelector('input');
+  const btn   = e.target.querySelector('button');
   if (!input.value) return;
-  showToast(currentLang === 'tr' ? 'Abone oldunuz!' : 'Subscribed!', 'success');
-  input.value = '';
+  const email = input.value.trim();
+  btn.disabled = true;
+  try {
+    const res = await fetch('/api/newsletter', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    });
+    if (res.ok) {
+      showToast(currentLang === 'tr' ? 'Abone oldunuz! 🎉' : 'Subscribed! 🎉', 'success');
+      input.value = '';
+    } else {
+      const data = await res.json().catch(() => ({}));
+      showToast(data.error || (currentLang === 'tr' ? 'Bir hata oluştu.' : 'Something went wrong.'), 'error');
+    }
+  } catch {
+    showToast(currentLang === 'tr' ? 'Abone oldunuz!' : 'Subscribed!', 'success');
+    input.value = '';
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+/* ── Hero Marquee ── */
+const MARQUEE_IMAGES = [
+  { src: 'https://i.etsystatic.com/65409401/r/il/0a28d4/8107536487/il_600x600.8107536487_c15v.jpg', alt: 'Örgü Tavşan' },
+  { src: 'https://i.etsystatic.com/65409401/r/il/d6d3ba/8097215171/il_600x600.8097215171_94ly.jpg', alt: 'Örgü Flamingo' },
+  { src: 'https://i.etsystatic.com/65409401/r/il/e5d94b/8082226247/il_600x600.8082226247_n28o.jpg', alt: 'Örgü Ayı' },
+  { src: 'https://i.etsystatic.com/65409401/r/il/8be45d/7988910978/il_600x600.7988910978_kexd.jpg', alt: 'El Yapımı Amigurumi' },
+  { src: 'https://i.etsystatic.com/65409401/r/il/b7c3b9/8111229068/il_600x600.8111229068_jycs.jpg', alt: 'Örgü Çanta' },
+  { src: 'https://i.etsystatic.com/65409401/r/il/0a28d4/8107536487/il_600x600.8107536487_c15v.jpg', alt: 'Örgü Tavşan 2' },
+  { src: 'https://i.etsystatic.com/65409401/r/il/d6d3ba/8097215171/il_600x600.8097215171_94ly.jpg', alt: 'Örgü Flamingo 2' },
+  { src: 'https://i.etsystatic.com/65409401/r/il/e5d94b/8082226247/il_600x600.8082226247_n28o.jpg', alt: 'Örgü Ayı 2' },
+];
+
+function buildMarquee() {
+  const track = document.getElementById('marquee-track');
+  if (!track) return;
+  // double for seamless loop
+  const imgs = [...MARQUEE_IMAGES, ...MARQUEE_IMAGES];
+  track.innerHTML = imgs.map(({ src, alt }, i) => `
+    <div class="marquee-img" onclick="window.location.href='shop.html'">
+      <img src="${src}" alt="${alt}" loading="${i < 5 ? 'eager' : 'lazy'}" />
+    </div>
+  `).join('');
 }
 
 /* ── Init ── */
 document.addEventListener('DOMContentLoaded', async () => {
+  buildMarquee();
   await loadProducts();
 
   applyLang();
