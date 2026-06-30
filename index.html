@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aselovers — Handmade Amigurumi & Crochet</title>
+  <meta name="description" content="Türkiye'den dünyaya el yapımı amigurumi oyuncaklar, örgü çantalar ve aksesuarlar. Handmade crochet toys and accessories shipped to EU and Turkey." />
+  <meta name="keywords" content="amigurumi, örgü, crochet, handmade, el yapımı, oyuncak, etsy, aselovers" />
+  <meta property="og:title" content="Aselovers — Handmade Amigurumi" />
+  <meta property="og:description" content="Handmade crochet amigurumi & accessories from Turkey to the world." />
+  <meta property="og:type" content="website" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header id="site-header">
+  <div class="container">
+    <nav class="nav-inner">
+      <a href="index.html" class="nav-logo">ASELOVERS</a>
+
+      <ul class="nav-links">
+        <li><a href="index.html" data-i18n="nav_home"></a></li>
+        <li><a href="shop.html" data-i18n="nav_shop"></a></li>
+        <li><a href="index.html#about" data-i18n="nav_about"></a></li>
+        <li><a href="index.html#contact" data-i18n="nav_contact"></a></li>
+        <li><a href="https://aselovers.etsy.com/" target="_blank" class="nav-etsy" data-i18n="nav_etsy"></a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <div class="lang-switch">
+          <button data-lang="tr">TR</button>
+          <span class="lang-sep">|</span>
+          <button data-lang="en">EN</button>
+        </div>
+        <button class="cart-btn" aria-label="Cart">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+            <line x1="3" y1="6" x2="21" y2="6"/>
+            <path d="M16 10a4 4 0 0 1-8 0"/>
+          </svg>
+          <span class="cart-count">0</span>
+        </button>
+        <button class="hamburger" id="hamburger" aria-label="Menu">
+          <span></span><span></span>
+        </button>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<!-- Mobile Nav -->
+<nav class="mobile-nav" id="mobile-nav">
+  <button class="mobile-nav-close" id="mobile-nav-close" aria-label="Close menu">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </button>
+  <a href="index.html" onclick="closeMobileNav()" data-i18n="nav_home"></a>
+  <a href="shop.html" onclick="closeMobileNav()" data-i18n="nav_shop"></a>
+  <a href="index.html#about" onclick="closeMobileNav()" data-i18n="nav_about"></a>
+  <a href="index.html#contact" onclick="closeMobileNav()" data-i18n="nav_contact"></a>
+  <a href="https://aselovers.etsy.com/" target="_blank" data-i18n="nav_etsy"></a>
+  <div class="mobile-lang">
+    <button data-lang="tr">TR</button>
+    <button data-lang="en">EN</button>
+  </div>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="hero" id="home">
+  <div class="hero-inner container">
+
+    <div class="hero-content">
+      <span class="hero-eyebrow" data-i18n="hero_eyebrow"></span>
+      <h1 class="hero-title" data-i18n="hero_title"></h1>
+      <p class="hero-desc" data-i18n="hero_desc"></p>
+      <div class="hero-actions">
+        <a href="shop.html" class="btn btn-light" data-i18n="hero_cta1"></a>
+        <a href="https://aselovers.etsy.com/" target="_blank" class="btn-arrow" data-i18n="hero_cta2"></a>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="hero-mosaic">
+        <div class="mosaic-a">
+          <img
+            src="https://i.etsystatic.com/65409401/r/il/0a28d4/8107536487/il_600x600.8107536487_c15v.jpg"
+            alt="Handmade Crochet Bunny"
+            loading="eager"
+          />
+        </div>
+        <div class="mosaic-b">
+          <img
+            src="https://i.etsystatic.com/65409401/r/il/d6d3ba/8097215171/il_600x600.8097215171_94ly.jpg"
+            alt="Crochet Flamingo"
+            loading="eager"
+          />
+        </div>
+        <div class="mosaic-c">
+          <img
+            src="https://i.etsystatic.com/65409401/r/il/e5d94b/8082226247/il_600x600.8082226247_n28o.jpg"
+            alt="Crochet Teddy Bear"
+            loading="eager"
+          />
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="hero-bar">
+    <div class="container">
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <span class="stat-n" data-i18n="hero_stat1_val"></span>
+          <span class="stat-l" data-i18n="hero_stat1_lab"></span>
+        </div>
+        <div class="hero-stat-sep"></div>
+        <div class="hero-stat">
+          <span class="stat-n" data-i18n="hero_stat2_val"></span>
+          <span class="stat-l" data-i18n="hero_stat2_lab"></span>
+        </div>
+        <div class="hero-stat-sep"></div>
+        <div class="hero-stat">
+          <span class="stat-n" data-i18n="hero_stat3_val"></span>
+          <span class="stat-l" data-i18n="hero_stat3_lab"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── TICKER ── -->
+<div class="ticker">
+  <div class="ticker-track">
+    <div class="ticker-inner">
+      <span data-i18n="feat1"></span><span class="tick-dot">·</span>
+      <span data-i18n="feat2"></span><span class="tick-dot">·</span>
+      <span data-i18n="feat3"></span><span class="tick-dot">·</span>
+      <span data-i18n="feat4"></span><span class="tick-dot">·</span>
+      <span data-i18n="feat5"></span><span class="tick-dot">·</span>
+      <span data-i18n="feat6"></span><span class="tick-dot">·</span>
+    </div>
+    <div class="ticker-inner" aria-hidden="true">
+      <span data-i18n="feat1"></span><span class="tick-dot">·</span>
+      <span data-i18n="feat2"></span><span class="tick-dot">·</span>
+      <span data-i18n="feat3"></span><span class="tick-dot">·</span>
+      <span data-i18n="feat4"></span><span class="tick-dot">·</span>
+      <span data-i18n="feat5"></span><span class="tick-dot">·</span>
+      <span data-i18n="feat6"></span><span class="tick-dot">·</span>
+    </div>
+  </div>
+</div>
+
+<!-- ── SHOP / PRODUCTS ── -->
+<section class="section" id="shop">
+  <div class="container">
+    <div class="section-head fade-up">
+      <span class="eyebrow" data-i18n="shop_tag"></span>
+      <h2 data-i18n="shop_title"></h2>
+    </div>
+
+    <div class="product-filters fade-up">
+      <button class="filter-btn active" data-cat="all" data-i18n="filter_all"></button>
+      <button class="filter-btn" data-cat="amigurumi" data-i18n="filter_amigurumi"></button>
+      <button class="filter-btn" data-cat="bag" data-i18n="filter_bag"></button>
+      <button class="filter-btn" data-cat="decor" data-i18n="filter_decor"></button>
+      <button class="filter-btn" data-cat="accessory" data-i18n="filter_accessory"></button>
+    </div>
+
+    <div class="product-grid" id="product-grid"></div>
+
+    <div class="shop-cta fade-up">
+      <a href="shop.html" class="btn btn-outline" style="margin-right:16px" data-i18n="shop_all_btn"></a>
+      <a href="https://aselovers.etsy.com/" target="_blank" class="btn etsy-btn">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M11.956 0C5.354 0 0 5.354 0 11.956c0 6.603 5.354 11.957 11.956 11.957s11.957-5.354 11.957-11.957C23.913 5.354 18.559 0 11.956 0zm4.47 16.364c-.293.098-.88.196-1.37.196-2.054 0-2.544-1.174-2.544-2.935V9.89h-1.076v-1.37h1.076V6.647l1.86-.587v2.46h1.76v1.37h-1.76v3.54c0 .783.294 1.076.88 1.076.196 0 .49-.098.783-.195l.39 1.053z"/></svg>
+        <span data-i18n="shop_etsy_cta"></span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ── STITCH DIVIDER ── -->
+<div class="stitch-divider">
+  <div class="container"><div class="stitch-line"></div></div>
+</div>
+
+<!-- ── ABOUT ── -->
+<section class="section about-section" id="about">
+  <div class="container">
+    <div class="about-grid">
+
+      <div class="about-images fade-up">
+        <div class="about-img-main">
+          <img
+            src="https://i.etsystatic.com/65409401/r/il/8be45d/7988910978/il_600x600.7988910978_kexd.jpg"
+            alt="Handmade amigurumi"
+          />
+        </div>
+        <div class="about-img-accent">
+          <img
+            src="https://i.etsystatic.com/65409401/r/il/b7c3b9/8111229068/il_600x600.8111229068_jycs.jpg"
+            alt="Handmade accessories"
+          />
+        </div>
+      </div>
+
+      <div class="about-content fade-up">
+        <span class="eyebrow" data-i18n="about_tag"></span>
+        <h2 data-i18n="about_title"></h2>
+        <p class="about-desc" data-i18n="about_desc"></p>
+
+        <div class="about-pillars">
+          <div class="pillar">
+            <div class="pillar-icon">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 11V6a2 2 0 0 0-2-2 2 2 0 0 0-2 2M14 10V4a2 2 0 0 0-2-2 2 2 0 0 0-2 2v2M10 10.5V6a2 2 0 0 0-2-2 2 2 0 0 0-2 2v8l-2-2.5a1.3 1.3 0 0 0-2 1.7l3.6 4.8A6 6 0 0 0 9.4 22H14a4 4 0 0 0 4-4v-7"/>
+              </svg>
+            </div>
+            <div>
+              <strong data-i18n="about_i1_t"></strong>
+              <p data-i18n="about_i1_p"></p>
+            </div>
+          </div>
+          <div class="pillar">
+            <div class="pillar-icon">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/>
+                <path d="M8 14s1.5 2 4 2 4-2 4-2"/>
+                <line x1="9" y1="9" x2="9.01" y2="9"/>
+                <line x1="15" y1="9" x2="15.01" y2="9"/>
+              </svg>
+            </div>
+            <div>
+              <strong data-i18n="about_i2_t"></strong>
+              <p data-i18n="about_i2_p"></p>
+            </div>
+          </div>
+          <div class="pillar">
+            <div class="pillar-icon">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="3"/>
+                <path d="M19.071 4.929a10 10 0 0 1 0 14.142M4.929 4.929a10 10 0 0 0 0 14.142"/>
+              </svg>
+            </div>
+            <div>
+              <strong data-i18n="about_i3_t"></strong>
+              <p data-i18n="about_i3_p"></p>
+            </div>
+          </div>
+        </div>
+
+        <a href="https://aselovers.etsy.com/" target="_blank" class="btn etsy-btn">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M11.956 0C5.354 0 0 5.354 0 11.956c0 6.603 5.354 11.957 11.956 11.957s11.957-5.354 11.957-11.957C23.913 5.354 18.559 0 11.956 0zm4.47 16.364c-.293.098-.88.196-1.37.196-2.054 0-2.544-1.174-2.544-2.935V9.89h-1.076v-1.37h1.076V6.647l1.86-.587v2.46h1.76v1.37h-1.76v3.54c0 .783.294 1.076.88 1.076.196 0 .49-.098.783-.195l.39 1.053z"/></svg>
+          <span data-i18n="about_etsy"></span>
+        </a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── TESTIMONIALS ── -->
+<section class="section reviews-section" id="reviews">
+  <div class="container">
+    <div class="section-head fade-up" style="text-align:center">
+      <span class="eyebrow" data-i18n="reviews_tag"></span>
+      <h2 data-i18n="reviews_title"></h2>
+    </div>
+    <div class="testimonial-grid" id="reviews-grid"></div>
+  </div>
+</section>
+
+<!-- ── NEWSLETTER ── -->
+<section class="newsletter" id="contact">
+  <div class="container">
+    <div class="newsletter-inner">
+      <div>
+        <span class="eyebrow" style="color:rgba(255,255,255,.45)">Newsletter</span>
+        <h2 data-i18n="news_title"></h2>
+        <p data-i18n="news_sub"></p>
+      </div>
+      <form class="newsletter-form" id="newsletter-form">
+        <input type="email" data-i18n="news_ph" required />
+        <button type="submit" data-i18n="news_btn"></button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo">ASELOVERS</div>
+        <p class="footer-desc" data-i18n="footer_desc"></p>
+        <div class="social-links">
+          <a href="https://instagram.com/aselovers" target="_blank" aria-label="Instagram">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          </a>
+          <a href="https://pinterest.com/aselovers" target="_blank" aria-label="Pinterest">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12c0 5.084 3.163 9.426 7.627 11.174-.105-.949-.2-2.405.042-3.441.218-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738a.36.36 0 0 1 .083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.359-.632-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/></svg>
+          </a>
+          <a href="https://aselovers.etsy.com/" target="_blank" aria-label="Etsy">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M11.956 0C5.354 0 0 5.354 0 11.956c0 6.603 5.354 11.957 11.956 11.957s11.957-5.354 11.957-11.957C23.913 5.354 18.559 0 11.956 0zm4.47 16.364c-.293.098-.88.196-1.37.196-2.054 0-2.544-1.174-2.544-2.935V9.89h-1.076v-1.37h1.076V6.647l1.86-.587v2.46h1.76v1.37h-1.76v3.54c0 .783.294 1.076.88 1.076.196 0 .49-.098.783-.195l.39 1.053z"/></svg>
+          </a>
+          <a href="mailto:info@aselovers.com" aria-label="Email">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          </a>
+        </div>
+      </div>
+      <div>
+        <h4 class="footer-heading" data-i18n="footer_shop"></h4>
+        <ul class="footer-links">
+          <li><a href="shop.html" data-i18n="footer_products"></a></li>
+          <li><a href="shop.html?cat=amigurumi" data-i18n="footer_amigurumi"></a></li>
+          <li><a href="shop.html?cat=bag" data-i18n="footer_bags"></a></li>
+          <li><a href="shop.html?cat=accessory" data-i18n="footer_accessories"></a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="footer-heading" data-i18n="footer_help"></h4>
+        <ul class="footer-links">
+          <li><a href="#" data-i18n="footer_faq"></a></li>
+          <li><a href="#" data-i18n="footer_shipping"></a></li>
+          <li><a href="#" data-i18n="footer_returns"></a></li>
+          <li><a href="#contact" data-i18n="footer_contact2"></a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="footer-heading" data-i18n="footer_info"></h4>
+        <ul class="footer-links">
+          <li><a href="#about" data-i18n="footer_about2"></a></li>
+          <li><a href="https://aselovers.etsy.com/" target="_blank" data-i18n="footer_etsy2"></a></li>
+          <li><a href="#contact" data-i18n="footer_custom"></a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span data-i18n="footer_copy"></span>
+      <span data-i18n="footer_made"></span>
+    </div>
+  </div>
+</footer>
+
+<!-- ── CART DRAWER ── -->
+<div class="cart-overlay" id="cart-overlay" onclick="closeCart()"></div>
+<div class="cart-drawer" id="cart-drawer">
+  <div class="cart-header">
+    <h3 id="cart-title" data-i18n="cart_title"></h3>
+    <button class="cart-close" onclick="closeCart()" aria-label="Close cart">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="cart-items" id="cart-items"></div>
+  <div class="cart-footer">
+    <div class="cart-total-row">
+      <span id="cart-total-label" data-i18n="cart_total"></span>
+      <span class="cart-total-price" id="cart-total">0.00 ₺</span>
+    </div>
+    <button class="checkout-btn" id="checkout-btn" onclick="showToast('Ödeme altyapısı yakında / Payment coming soon')">
+      <span data-i18n="cart_checkout"></span>
+    </button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<button class="scroll-top" id="scroll-top" aria-label="Scroll to top">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg>
+</button>
+
+<script src="main.js"></script>
+</body>
+</html>

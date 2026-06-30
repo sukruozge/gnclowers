@@ -1,0 +1,1468 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Admin — Aselovers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@1,400&display=swap" rel="stylesheet">
+<style>
+/* ── Reset & tokens ─────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --sidebar-w:240px;
+  --forest:   #2B3F3F;
+  --forest-d: #1A2828;
+  --forest-l: #3C5555;
+  --teal:     #4A9B8E;
+  --teal-l:   #6ABFB5;
+  --ivory:    #F5F2EE;
+  --sand:     #EAE5DE;
+  --white:    #FFFFFF;
+  --ink:      #1B1918;
+  --mid:      #5A5550;
+  --muted:    #9B9590;
+  --border:   #E0D9D0;
+  --rose:     #C06860;
+  --success:  #3A9E72;
+  --warn:     #E07B3A;
+  --danger:   #C04848;
+  --shadow:   0 1px 3px rgba(0,0,0,.08),0 4px 12px rgba(0,0,0,.04);
+  --shadow-lg:0 8px 32px rgba(0,0,0,.12);
+  --r:        8px;
+  --f-body:   'Inter',system-ui,sans-serif;
+  --f-display:'Cormorant Garamond',Georgia,serif;
+}
+html{font-size:15px;-webkit-text-size-adjust:100%}
+body{
+  font-family:var(--f-body);
+  background:var(--ivory);
+  color:var(--ink);
+  line-height:1.5;
+  min-height:100vh;
+}
+button{font-family:inherit;cursor:pointer}
+input,select,textarea{font-family:inherit}
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
+
+/* ── Login screen ───────────────────────────── */
+#login-screen{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:100vh;
+  background:var(--forest-d);
+  background-image:
+    radial-gradient(ellipse at 20% 50%,rgba(74,155,142,.15) 0%,transparent 60%),
+    radial-gradient(ellipse at 80% 20%,rgba(43,63,63,.4) 0%,transparent 50%);
+}
+.login-card{
+  width:100%;
+  max-width:400px;
+  background:var(--white);
+  border-radius:16px;
+  padding:48px 40px 40px;
+  box-shadow:0 24px 64px rgba(0,0,0,.3);
+}
+.login-logo{
+  text-align:center;
+  margin-bottom:32px;
+}
+.login-logo-text{
+  font-family:var(--f-display);
+  font-style:italic;
+  font-size:28px;
+  color:var(--forest);
+  letter-spacing:.02em;
+  display:block;
+}
+.login-logo-sub{
+  font-size:11px;
+  font-weight:600;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin-top:4px;
+}
+.login-title{
+  font-size:17px;
+  font-weight:600;
+  color:var(--ink);
+  margin-bottom:24px;
+  text-align:center;
+}
+.login-card .form-group{margin-bottom:16px}
+.login-card label{
+  display:block;
+  font-size:12px;
+  font-weight:500;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  color:var(--mid);
+  margin-bottom:6px;
+}
+.login-card input{
+  width:100%;
+  height:44px;
+  border:1.5px solid var(--border);
+  border-radius:var(--r);
+  padding:0 14px;
+  font-size:14px;
+  color:var(--ink);
+  background:var(--white);
+  transition:border-color .15s;
+  outline:none;
+}
+.login-card input:focus{border-color:var(--forest)}
+.login-error{
+  background:#fff0f0;
+  border:1px solid #fcc;
+  color:var(--danger);
+  border-radius:var(--r);
+  padding:10px 14px;
+  font-size:13px;
+  margin-bottom:16px;
+  display:none;
+}
+.login-error.show{display:block}
+.btn-login{
+  width:100%;
+  height:46px;
+  background:var(--forest);
+  color:#fff;
+  border:none;
+  border-radius:var(--r);
+  font-size:14px;
+  font-weight:600;
+  letter-spacing:.04em;
+  transition:background .15s,transform .1s;
+  margin-top:8px;
+}
+.btn-login:hover{background:var(--forest-l)}
+.btn-login:active{transform:scale(.99)}
+.btn-login:disabled{opacity:.6;cursor:not-allowed}
+
+/* ── App shell ──────────────────────────────── */
+#app{display:none;min-height:100vh}
+#app.visible{display:flex}
+
+/* ── Sidebar ────────────────────────────────── */
+.sidebar{
+  width:var(--sidebar-w);
+  min-height:100vh;
+  background:var(--forest-d);
+  display:flex;
+  flex-direction:column;
+  flex-shrink:0;
+  position:sticky;
+  top:0;
+  height:100vh;
+  overflow-y:auto;
+}
+.sidebar-logo{
+  padding:28px 24px 20px;
+  border-bottom:1px solid rgba(255,255,255,.07);
+}
+.sidebar-logo-name{
+  font-family:var(--f-display);
+  font-style:italic;
+  font-size:22px;
+  color:#fff;
+  letter-spacing:.02em;
+}
+.sidebar-logo-badge{
+  display:inline-block;
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--teal-l);
+  background:rgba(74,155,142,.15);
+  border:1px solid rgba(74,155,142,.25);
+  border-radius:4px;
+  padding:2px 7px;
+  margin-top:5px;
+}
+.nav{flex:1;padding:12px 12px}
+.nav-section{
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:rgba(255,255,255,.3);
+  padding:16px 12px 6px;
+}
+.nav-item{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:9px 12px;
+  border-radius:var(--r);
+  color:rgba(255,255,255,.6);
+  font-size:13.5px;
+  font-weight:500;
+  cursor:pointer;
+  transition:all .15s;
+  margin-bottom:2px;
+}
+.nav-item:hover{background:rgba(255,255,255,.07);color:rgba(255,255,255,.9)}
+.nav-item.active{background:var(--forest);color:#fff}
+.nav-item svg{width:16px;height:16px;flex-shrink:0;opacity:.8}
+.nav-item.active svg{opacity:1}
+.nav-badge{
+  margin-left:auto;
+  background:var(--teal);
+  color:#fff;
+  font-size:10px;
+  font-weight:700;
+  padding:2px 7px;
+  border-radius:20px;
+  min-width:20px;
+  text-align:center;
+}
+.sidebar-footer{
+  padding:16px 12px;
+  border-top:1px solid rgba(255,255,255,.07);
+}
+.btn-logout{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  width:100%;
+  padding:9px 12px;
+  border:none;
+  background:transparent;
+  color:rgba(255,255,255,.45);
+  font-size:13px;
+  font-weight:500;
+  border-radius:var(--r);
+  cursor:pointer;
+  transition:all .15s;
+}
+.btn-logout:hover{background:rgba(220,70,70,.12);color:#f08080}
+.btn-logout svg{width:16px;height:16px}
+
+/* ── Main content ───────────────────────────── */
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
+.topbar{
+  background:var(--white);
+  border-bottom:1px solid var(--border);
+  padding:0 32px;
+  height:60px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  position:sticky;
+  top:0;
+  z-index:10;
+}
+.topbar-title{font-size:16px;font-weight:600;color:var(--ink)}
+.topbar-right{display:flex;align-items:center;gap:16px}
+.topbar-date{font-size:12px;color:var(--muted)}
+.avatar{
+  width:34px;height:34px;border-radius:50%;
+  background:var(--forest);
+  color:#fff;
+  font-size:13px;
+  font-weight:600;
+  display:flex;align-items:center;justify-content:center;
+}
+.page{padding:32px;flex:1}
+
+/* ── Stat cards ─────────────────────────────── */
+.stats-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+  gap:16px;
+  margin-bottom:28px;
+}
+.stat-card{
+  background:var(--white);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:20px 22px;
+  display:flex;
+  align-items:flex-start;
+  gap:14px;
+}
+.stat-icon{
+  width:44px;height:44px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+.stat-icon.green{background:#EAF5EF}
+.stat-icon.teal{background:#E7F5F3}
+.stat-icon.rose{background:#FBF0EF}
+.stat-icon.gold{background:#FAF3E7}
+.stat-icon svg{width:20px;height:20px}
+.stat-icon.green svg{color:var(--success)}
+.stat-icon.teal svg{color:var(--teal)}
+.stat-icon.rose svg{color:var(--rose)}
+.stat-icon.gold svg{color:#C49B3C}
+.stat-value{font-size:28px;font-weight:700;color:var(--ink);line-height:1}
+.stat-label{font-size:12px;color:var(--muted);margin-top:4px}
+
+/* ── Section headers ────────────────────────── */
+.section-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:20px;
+}
+.section-title{font-size:17px;font-weight:600;color:var(--ink)}
+.section-sub{font-size:13px;color:var(--muted);margin-top:2px}
+
+/* ── Buttons ────────────────────────────────── */
+.btn{
+  display:inline-flex;align-items:center;gap:7px;
+  height:38px;padding:0 16px;border:none;
+  border-radius:var(--r);font-size:13px;font-weight:500;
+  cursor:pointer;transition:all .15s;white-space:nowrap;
+}
+.btn svg{width:15px;height:15px;flex-shrink:0}
+.btn-primary{background:var(--forest);color:#fff}
+.btn-primary:hover{background:var(--forest-l)}
+.btn-secondary{background:var(--sand);color:var(--ink);border:1px solid var(--border)}
+.btn-secondary:hover{background:var(--border)}
+.btn-danger{background:#fff0f0;color:var(--danger);border:1px solid #fcc}
+.btn-danger:hover{background:var(--danger);color:#fff;border-color:var(--danger)}
+.btn-sm{height:32px;padding:0 12px;font-size:12px}
+.btn-icon{width:32px;height:32px;padding:0;justify-content:center;border-radius:var(--r)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+
+/* ── Table ──────────────────────────────────── */
+.table-wrap{
+  background:var(--white);
+  border:1px solid var(--border);
+  border-radius:12px;
+  overflow:hidden;
+}
+.table-toolbar{
+  padding:14px 18px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  border-bottom:1px solid var(--border);
+  flex-wrap:wrap;
+}
+.search-box{
+  display:flex;align-items:center;gap:8px;
+  background:var(--ivory);
+  border:1.5px solid var(--border);
+  border-radius:var(--r);
+  padding:0 12px;
+  flex:1;min-width:180px;max-width:320px;
+}
+.search-box svg{width:15px;height:15px;color:var(--muted);flex-shrink:0}
+.search-box input{
+  border:none;background:transparent;outline:none;
+  font-size:13px;height:36px;width:100%;color:var(--ink);
+}
+table{width:100%;border-collapse:collapse}
+thead th{
+  padding:11px 16px;
+  font-size:11px;font-weight:600;
+  letter-spacing:.06em;text-transform:uppercase;
+  color:var(--muted);
+  text-align:left;
+  background:var(--ivory);
+  border-bottom:1px solid var(--border);
+}
+tbody tr{border-bottom:1px solid var(--border);transition:background .1s}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:var(--ivory)}
+td{padding:12px 16px;font-size:13.5px;color:var(--ink);vertical-align:middle}
+.td-actions{display:flex;gap:6px;align-items:center}
+.product-thumb{
+  width:44px;height:44px;border-radius:8px;
+  object-fit:cover;background:var(--sand);
+  flex-shrink:0;
+}
+.product-thumb-placeholder{
+  width:44px;height:44px;border-radius:8px;
+  background:var(--sand);
+  display:flex;align-items:center;justify-content:center;
+}
+.td-product{display:flex;align-items:center;gap:12px}
+.td-product-name{font-weight:500}
+.td-product-id{font-size:11px;color:var(--muted);margin-top:1px}
+
+/* ── Badge / chip ───────────────────────────── */
+.chip{
+  display:inline-flex;align-items:center;gap:5px;
+  font-size:11px;font-weight:600;padding:3px 9px;
+  border-radius:20px;
+}
+.chip-green{background:#E8F5EE;color:#2E7D52}
+.chip-red{background:#FBF0F0;color:#C04848}
+.chip-teal{background:#E5F4F3;color:#3A8C83}
+.chip-gold{background:#FBF5E8;color:#A07830}
+.chip-gray{background:var(--sand);color:var(--mid)}
+
+/* ── Modal ──────────────────────────────────── */
+.modal-backdrop{
+  position:fixed;inset:0;
+  background:rgba(0,0,0,.45);
+  display:none;align-items:center;justify-content:center;
+  z-index:100;padding:20px;
+  backdrop-filter:blur(3px);
+}
+.modal-backdrop.open{display:flex}
+.modal{
+  background:var(--white);
+  border-radius:16px;
+  width:100%;max-width:560px;
+  max-height:90vh;
+  overflow-y:auto;
+  box-shadow:var(--shadow-lg);
+  animation:modal-in .18s ease;
+}
+@keyframes modal-in{from{opacity:0;transform:scale(.96) translateY(8px)}to{opacity:1;transform:none}}
+.modal-header{
+  padding:22px 24px 0;
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:20px;
+}
+.modal-title{font-size:17px;font-weight:600}
+.btn-close{
+  width:30px;height:30px;border:none;background:var(--sand);
+  border-radius:6px;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;color:var(--mid);
+}
+.btn-close:hover{background:var(--border)}
+.modal-body{padding:0 24px 24px}
+.form-group{margin-bottom:16px}
+.form-group label{
+  display:block;font-size:12px;font-weight:500;
+  letter-spacing:.05em;text-transform:uppercase;
+  color:var(--mid);margin-bottom:6px;
+}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-control{
+  width:100%;height:40px;
+  border:1.5px solid var(--border);
+  border-radius:var(--r);padding:0 12px;
+  font-size:14px;color:var(--ink);background:var(--white);
+  outline:none;transition:border-color .15s;
+}
+.form-control:focus{border-color:var(--forest)}
+.form-control.is-error{border-color:var(--danger)}
+textarea.form-control{height:80px;padding:10px 12px;resize:vertical}
+select.form-control{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%239B9590'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0}
+.toggle{position:relative;width:40px;height:22px;cursor:pointer}
+.toggle input{opacity:0;width:0;height:0;position:absolute}
+.toggle-slider{
+  position:absolute;inset:0;
+  background:var(--border);border-radius:11px;
+  transition:.2s;
+}
+.toggle-slider::before{
+  content:'';position:absolute;
+  left:3px;top:3px;
+  width:16px;height:16px;
+  background:white;border-radius:50%;
+  transition:.2s;
+}
+.toggle input:checked~.toggle-slider{background:var(--forest)}
+.toggle input:checked~.toggle-slider::before{transform:translateX(18px)}
+.modal-footer{
+  padding:16px 24px;
+  border-top:1px solid var(--border);
+  display:flex;gap:10px;justify-content:flex-end;
+}
+.form-error-msg{font-size:12px;color:var(--danger);margin-top:4px;display:none}
+.form-error-msg.show{display:block}
+
+/* ── Toast ──────────────────────────────────── */
+.toasts{
+  position:fixed;bottom:24px;right:24px;z-index:200;
+  display:flex;flex-direction:column-reverse;gap:8px;
+}
+.toast{
+  display:flex;align-items:center;gap:12px;
+  background:var(--ink);color:#fff;
+  padding:12px 16px;border-radius:10px;
+  font-size:13.5px;
+  box-shadow:0 4px 16px rgba(0,0,0,.2);
+  animation:toast-in .2s ease;
+  max-width:340px;
+  pointer-events:none;
+}
+.toast.success{background:#1A3D2B;border-left:3px solid var(--success)}
+.toast.error{background:#3D1A1A;border-left:3px solid var(--danger)}
+.toast.info{background:#1A2E3D;border-left:3px solid var(--teal)}
+@keyframes toast-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.toast svg{width:16px;height:16px;flex-shrink:0}
+
+/* ── Sync section ───────────────────────────── */
+.sync-card{
+  background:var(--white);border:1px solid var(--border);
+  border-radius:12px;padding:28px;max-width:560px;
+}
+.sync-status{
+  display:flex;align-items:center;gap:8px;
+  font-size:13px;color:var(--mid);margin-bottom:20px;
+}
+.sync-dot{width:8px;height:8px;border-radius:50%;background:var(--success);flex-shrink:0}
+.sync-dot.syncing{animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.progress-bar-wrap{height:6px;background:var(--sand);border-radius:3px;margin:16px 0;overflow:hidden;display:none}
+.progress-bar-wrap.show{display:block}
+.progress-bar{height:100%;background:var(--teal);border-radius:3px;width:0;transition:width .4s}
+
+/* ── Activity log ───────────────────────────── */
+.activity-list{
+  background:var(--white);border:1px solid var(--border);border-radius:12px;overflow:hidden;
+}
+.activity-item{
+  display:flex;gap:14px;align-items:flex-start;
+  padding:13px 20px;border-bottom:1px solid var(--border);
+}
+.activity-item:last-child{border-bottom:none}
+.activity-dot{
+  width:8px;height:8px;border-radius:50%;
+  background:var(--teal);flex-shrink:0;margin-top:5px;
+}
+.activity-time{font-size:11px;color:var(--muted);white-space:nowrap;margin-top:2px}
+.activity-action{font-size:13.5px;font-weight:500}
+.activity-detail{font-size:12px;color:var(--muted)}
+.activity-empty{padding:32px;text-align:center;color:var(--muted);font-size:13px}
+
+/* ── Settings ───────────────────────────────── */
+.settings-card{
+  background:var(--white);border:1px solid var(--border);
+  border-radius:12px;padding:24px;margin-bottom:20px;max-width:560px;
+}
+.settings-card-title{font-size:14px;font-weight:600;margin-bottom:16px;color:var(--ink)}
+.pass-strength{height:4px;background:var(--sand);border-radius:2px;margin-top:6px;overflow:hidden}
+.pass-strength-bar{height:100%;border-radius:2px;transition:width .3s,background .3s;width:0}
+
+/* ── Subscriber list ────────────────────────── */
+.sub-count{
+  font-size:13px;color:var(--mid);
+  background:var(--sand);border-radius:var(--r);
+  padding:8px 14px;margin-bottom:16px;
+  display:inline-block;
+}
+
+/* ── Empty state ────────────────────────────── */
+.empty-state{
+  text-align:center;padding:64px 32px;color:var(--muted);
+}
+.empty-state svg{width:48px;height:48px;margin:0 auto 12px;opacity:.4}
+.empty-state p{font-size:14px}
+
+/* ── Loading spinner ─────────────────────────── */
+.spinner{
+  display:inline-block;
+  width:16px;height:16px;
+  border:2px solid rgba(255,255,255,.3);
+  border-top-color:#fff;
+  border-radius:50%;
+  animation:spin .6s linear infinite;
+  vertical-align:middle;
+  flex-shrink:0;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── Responsive ─────────────────────────────── */
+@media(max-width:768px){
+  .sidebar{width:56px;overflow:hidden}
+  .sidebar-logo-name,.nav-item span,.nav-badge,.sidebar-logo-badge,.nav-section,.btn-logout span{display:none}
+  .nav-item{justify-content:center;padding:10px}
+  .topbar{padding:0 16px}
+  .page{padding:16px}
+  .stats-grid{grid-template-columns:1fr 1fr}
+  .form-row{grid-template-columns:1fr}
+}
+
+/* ── Info pills ─────────────────────────────── */
+.info-pill{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:12px;color:var(--mid);
+  background:var(--sand);border-radius:20px;
+  padding:4px 12px;
+}
+.info-pill svg{width:13px;height:13px;color:var(--muted)}
+
+/* ── Dashboard two-col ──────────────────────── */
+.dash-grid{display:grid;grid-template-columns:1fr 360px;gap:20px}
+@media(max-width:1100px){.dash-grid{grid-template-columns:1fr}}
+.dash-panel{background:var(--white);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.dash-panel-header{
+  padding:16px 18px;border-bottom:1px solid var(--border);
+  font-size:14px;font-weight:600;color:var(--ink);
+}
+</style>
+</head>
+<body>
+
+<!-- ══ LOGIN ═══════════════════════════════════════ -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">
+      <span class="login-logo-text">Aselovers</span>
+      <span class="login-logo-sub">Admin Panel</span>
+    </div>
+    <p class="login-title">Yönetici Girişi</p>
+    <div id="login-error" class="login-error"></div>
+    <form id="login-form" autocomplete="on">
+      <div class="form-group">
+        <label>Kullanıcı Adı</label>
+        <input type="text" id="login-user" name="username" autocomplete="username" required placeholder="admin">
+      </div>
+      <div class="form-group">
+        <label>Şifre</label>
+        <input type="password" id="login-pass" name="password" autocomplete="current-password" required placeholder="••••••••••••">
+      </div>
+      <button type="submit" class="btn-login" id="login-btn">Giriş Yap</button>
+    </form>
+  </div>
+</div>
+
+<!-- ══ APP SHELL ════════════════════════════════════ -->
+<div id="app">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-name">Aselovers</div>
+      <div class="sidebar-logo-badge">Admin</div>
+    </div>
+    <nav class="nav">
+      <div class="nav-section">Yönetim</div>
+      <div class="nav-item active" data-section="dashboard">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+        <span>Dashboard</span>
+      </div>
+      <div class="nav-item" data-section="products">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+        <span>Ürünler</span>
+        <span class="nav-badge" id="nav-product-count">0</span>
+      </div>
+      <div class="nav-item" data-section="subscribers">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+        <span>Aboneler</span>
+        <span class="nav-badge" id="nav-sub-count">0</span>
+      </div>
+      <div class="nav-section">Araçlar</div>
+      <div class="nav-item" data-section="sync">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+        <span>Etsy Sync</span>
+      </div>
+      <div class="nav-item" data-section="activity">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+        <span>Aktivite</span>
+      </div>
+      <div class="nav-item" data-section="settings">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        <span>Ayarlar</span>
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="btn-logout" id="logout-btn">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+        <span>Çıkış Yap</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <div class="main">
+    <header class="topbar">
+      <h1 class="topbar-title" id="page-title">Dashboard</h1>
+      <div class="topbar-right">
+        <span class="topbar-date" id="topbar-date"></span>
+        <div class="avatar" id="topbar-avatar">A</div>
+      </div>
+    </header>
+    <div class="page" id="page-content"></div>
+  </div>
+</div>
+
+<!-- ══ PRODUCT MODAL ════════════════════════════════ -->
+<div class="modal-backdrop" id="product-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title" id="product-modal-title">Ürün Ekle</h2>
+      <button class="btn-close" onclick="closeModal('product-modal')">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" d="M1 1l12 12M13 1L1 13"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <form id="product-form" onsubmit="return false">
+        <input type="hidden" id="pf-id">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Başlık (TR) *</label>
+            <input class="form-control" id="pf-title-tr" required placeholder="Türkçe ürün adı">
+          </div>
+          <div class="form-group">
+            <label>Başlık (EN) *</label>
+            <input class="form-control" id="pf-title-en" required placeholder="English product title">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Açıklama (TR)</label>
+            <textarea class="form-control" id="pf-desc-tr" placeholder="Türkçe açıklama"></textarea>
+          </div>
+          <div class="form-group">
+            <label>Açıklama (EN)</label>
+            <textarea class="form-control" id="pf-desc-en" placeholder="English description"></textarea>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Fiyat *</label>
+            <input class="form-control" type="number" id="pf-price" min="0" step="0.01" placeholder="0.00" required>
+          </div>
+          <div class="form-group">
+            <label>Para Birimi</label>
+            <select class="form-control" id="pf-currency">
+              <option value="TRY">TRY ₺</option>
+              <option value="EUR">EUR €</option>
+              <option value="USD">USD $</option>
+              <option value="GBP">GBP £</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Kategori</label>
+          <select class="form-control" id="pf-category">
+            <option value="amigurumi">Amigurumi</option>
+            <option value="bag">Çanta</option>
+            <option value="decor">Dekor</option>
+            <option value="accessory">Aksesuar</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Görsel URL</label>
+          <input class="form-control" id="pf-image" type="url" placeholder="https://...">
+        </div>
+        <div class="form-group">
+          <label>Etsy URL</label>
+          <input class="form-control" id="pf-url" type="url" placeholder="https://www.etsy.com/listing/...">
+        </div>
+        <div class="toggle-row">
+          <span style="font-size:13px;font-weight:500">Aktif</span>
+          <label class="toggle"><input type="checkbox" id="pf-active" checked><span class="toggle-slider"></span></label>
+        </div>
+        <div class="toggle-row">
+          <span style="font-size:13px;font-weight:500">Yeni ürün rozeti</span>
+          <label class="toggle"><input type="checkbox" id="pf-new" checked><span class="toggle-slider"></span></label>
+        </div>
+        <p id="product-form-error" class="form-error-msg"></p>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('product-modal')">İptal</button>
+      <button class="btn btn-primary" id="product-save-btn" onclick="saveProduct()">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+        Kaydet
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ CONFIRM MODAL ════════════════════════════════ -->
+<div class="modal-backdrop" id="confirm-modal">
+  <div class="modal" style="max-width:400px">
+    <div class="modal-header">
+      <h2 class="modal-title" id="confirm-title">Onay</h2>
+      <button class="btn-close" onclick="closeModal('confirm-modal')">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" d="M1 1l12 12M13 1L1 13"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <p id="confirm-message" style="font-size:14px;color:var(--mid)"></p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('confirm-modal')">İptal</button>
+      <button class="btn btn-danger" id="confirm-ok-btn">Evet, Sil</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ TOASTS ════════════════════════════════════════ -->
+<div class="toasts" id="toasts"></div>
+
+<script>
+// ══════════════════════════════════════════════════════
+// API helpers
+// ══════════════════════════════════════════════════════
+const API = {
+  h: { 'Content-Type': 'application/json', 'X-Ase-Admin': '1' },
+
+  async get(url) {
+    const r = await fetch(url, { credentials: 'same-origin' });
+    if (r.status === 401) { showLogin(); return null; }
+    return r.ok ? r.json() : null;
+  },
+
+  async post(url, body) {
+    const r = await fetch(url, { method: 'POST', headers: this.h, credentials: 'same-origin', body: JSON.stringify(body) });
+    return [r.status, await r.json().catch(() => ({}))];
+  },
+
+  async put(url, body) {
+    const r = await fetch(url, { method: 'PUT', headers: this.h, credentials: 'same-origin', body: JSON.stringify(body) });
+    return [r.status, await r.json().catch(() => ({}))];
+  },
+
+  async del(url) {
+    const r = await fetch(url, { method: 'DELETE', headers: this.h, credentials: 'same-origin' });
+    return [r.status, await r.json().catch(() => ({}))];
+  },
+};
+
+// ══════════════════════════════════════════════════════
+// Utilities
+// ══════════════════════════════════════════════════════
+function esc(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function fmtDate(ts) {
+  if (!ts) return '—';
+  return new Date(ts).toLocaleDateString('tr-TR', { day:'numeric', month:'short', year:'numeric' });
+}
+function fmtTime(ts) {
+  if (!ts) return '';
+  return new Date(ts).toLocaleTimeString('tr-TR', { hour:'2-digit', minute:'2-digit' });
+}
+
+function toast(msg, type = 'success') {
+  const icon = {
+    success: '<svg fill="none" viewBox="0 0 24 24" stroke="currentColor" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>',
+    error:   '<svg fill="none" viewBox="0 0 24 24" stroke="currentColor" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>',
+    info:    '<svg fill="none" viewBox="0 0 24 24" stroke="currentColor" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>',
+  }[type];
+  const el = Object.assign(document.createElement('div'), { className: `toast ${type}`, innerHTML: icon + `<span>${esc(msg)}</span>` });
+  document.getElementById('toasts').prepend(el);
+  setTimeout(() => el.remove(), 3600);
+}
+
+function openModal(id)  { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+document.querySelectorAll('.modal-backdrop').forEach(m =>
+  m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); })
+);
+
+// ══════════════════════════════════════════════════════
+// Auth
+// ══════════════════════════════════════════════════════
+function showLogin() {
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('app').classList.remove('visible');
+}
+
+function showApp(username) {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').classList.add('visible');
+  document.getElementById('topbar-avatar').textContent = (username || 'A')[0].toUpperCase();
+  document.getElementById('topbar-date').textContent = new Date().toLocaleDateString('tr-TR', {
+    day:'numeric', month:'long', year:'numeric',
+  });
+}
+
+document.getElementById('login-form').addEventListener('submit', async e => {
+  e.preventDefault();
+  const btn  = document.getElementById('login-btn');
+  const errEl = document.getElementById('login-error');
+  const user = document.getElementById('login-user').value.trim();
+  const pass = document.getElementById('login-pass').value;
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Giriş yapılıyor…';
+  errEl.classList.remove('show');
+
+  const [status, data] = await API.post('/api/admin/login', { username: user, password: pass });
+
+  if (data?.success) {
+    showApp(user);
+    navigateTo('dashboard');
+  } else {
+    errEl.textContent = data?.error || 'Giriş başarısız.';
+    errEl.classList.add('show');
+    btn.disabled = false;
+    btn.textContent = 'Giriş Yap';
+  }
+});
+
+document.getElementById('logout-btn').addEventListener('click', async () => {
+  await API.post('/api/admin/logout', {});
+  showLogin();
+  document.getElementById('login-pass').value = '';
+});
+
+// ══════════════════════════════════════════════════════
+// Navigation
+// ══════════════════════════════════════════════════════
+const TITLES = {
+  dashboard: 'Dashboard', products: 'Ürünler',
+  subscribers: 'E-posta Aboneleri', sync: 'Etsy Senkronizasyonu',
+  activity: 'Aktivite Günlüğü', settings: 'Ayarlar',
+};
+
+document.querySelectorAll('.nav-item').forEach(item =>
+  item.addEventListener('click', () => navigateTo(item.dataset.section))
+);
+
+function navigateTo(section) {
+  document.querySelectorAll('.nav-item').forEach(n =>
+    n.classList.toggle('active', n.dataset.section === section)
+  );
+  document.getElementById('page-title').textContent = TITLES[section] || section;
+  ({ dashboard, products, subscribers, sync, activity, settings })[section]?.();
+}
+
+// ══════════════════════════════════════════════════════
+// Dashboard
+// ══════════════════════════════════════════════════════
+async function dashboard() {
+  const el = document.getElementById('page-content');
+  el.innerHTML = '<p style="color:var(--muted);font-size:13px">Yükleniyor…</p>';
+  const d = await API.get('/api/admin/dashboard');
+  if (!d) return;
+
+  document.getElementById('nav-product-count').textContent = d.productCount ?? 0;
+  document.getElementById('nav-sub-count').textContent = d.subscriberCount ?? 0;
+
+  const lastSync = d.lastSync
+    ? new Date(d.lastSync).toLocaleString('tr-TR', { day:'numeric',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit' })
+    : 'Henüz yapılmadı';
+
+  el.innerHTML = `
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon green">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+      </div>
+      <div><div class="stat-value">${d.productCount}</div><div class="stat-label">Toplam Ürün</div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon teal">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      </div>
+      <div><div class="stat-value">${d.activeCount}</div><div class="stat-label">Aktif Ürün</div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon gold">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/></svg>
+      </div>
+      <div><div class="stat-value">${d.newCount}</div><div class="stat-label">Yeni Ürün</div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon rose">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+      </div>
+      <div><div class="stat-value">${d.subscriberCount}</div><div class="stat-label">E-posta Abonesi</div></div>
+    </div>
+  </div>
+  <div style="margin-bottom:20px;display:flex;gap:10px;flex-wrap:wrap">
+    <div class="info-pill">
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+      Son sync: ${lastSync}
+    </div>
+    <div class="info-pill" style="${d.apiKeySet ? 'color:var(--success)' : 'color:var(--danger)'}">
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
+      API Key: ${d.apiKeySet ? 'Tanımlı ✓' : 'Eksik ✗'}
+    </div>
+  </div>
+  <div class="dash-grid">
+    <div class="dash-panel">
+      <div class="dash-panel-header">Son Aktiviteler</div>
+      ${d.recentActivity?.length
+        ? d.recentActivity.map(a => `
+          <div class="activity-item">
+            <div class="activity-dot"></div>
+            <div style="flex:1">
+              <div class="activity-action">${esc(a.action)}</div>
+              ${a.detail ? `<div class="activity-detail">${esc(a.detail)}</div>` : ''}
+            </div>
+            <div class="activity-time">${fmtTime(a.ts)}</div>
+          </div>`).join('')
+        : '<div class="activity-empty">Henüz aktivite yok.</div>'}
+    </div>
+    <div class="dash-panel">
+      <div class="dash-panel-header">Hızlı İşlemler</div>
+      <div style="padding:20px;display:flex;flex-direction:column;gap:10px">
+        <button class="btn btn-primary" onclick="navigateTo('sync')">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+          Etsy'den Sync Et
+        </button>
+        <button class="btn btn-secondary" onclick="navigateTo('products');setTimeout(openAddProduct,80)">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+          Yeni Ürün Ekle
+        </button>
+        <button class="btn btn-secondary" onclick="navigateTo('subscribers')">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+          Aboneleri Görüntüle
+        </button>
+        <button class="btn btn-secondary" onclick="navigateTo('settings')">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          Ayarlar
+        </button>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ══════════════════════════════════════════════════════
+// Products
+// ══════════════════════════════════════════════════════
+let allProducts = [];
+let productSearch = '';
+
+async function products() {
+  document.getElementById('page-content').innerHTML = '<p style="color:var(--muted);font-size:13px">Yükleniyor…</p>';
+  allProducts = await API.get('/api/admin/products') || [];
+  renderProducts();
+}
+
+function renderProducts() {
+  const CURR = { TRY:'₺', EUR:'€', USD:'$', GBP:'£' };
+  const CAT  = { amigurumi:'Amigurumi', bag:'Çanta', decor:'Dekor', accessory:'Aksesuar' };
+  const q    = productSearch.toLowerCase();
+  const list = allProducts.filter(p =>
+    !q || (p.title_tr + p.title_en + p.category).toLowerCase().includes(q)
+  );
+
+  document.getElementById('page-content').innerHTML = `
+  <div class="section-header">
+    <div>
+      <div class="section-title">Ürünler <span style="font-size:14px;color:var(--muted);font-weight:400">(${list.length}/${allProducts.length})</span></div>
+      <div class="section-sub">Tüm ürünleri yönetin</div>
+    </div>
+    <button class="btn btn-primary" onclick="openAddProduct()">
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+      Ürün Ekle
+    </button>
+  </div>
+  <div class="table-wrap">
+    <div class="table-toolbar">
+      <div class="search-box">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        <input placeholder="Ürün ara…" oninput="productSearch=this.value;renderProducts()" value="${esc(productSearch)}">
+      </div>
+    </div>
+    ${list.length === 0
+      ? `<div class="empty-state"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg><p>${q ? 'Sonuç bulunamadı.' : 'Ürün yok. Etsy\'den sync edin veya manuel ekleyin.'}</p></div>`
+      : `<div style="overflow-x:auto"><table>
+          <thead><tr><th>Ürün</th><th>Kategori</th><th>Fiyat</th><th>Durum</th><th>Etiket</th><th></th></tr></thead>
+          <tbody>
+          ${list.map(p => `
+            <tr>
+              <td><div class="td-product">
+                ${p.image
+                  ? `<img class="product-thumb" src="${esc(p.image)}" alt="" loading="lazy" onerror="this.style.display='none'">`
+                  : `<div class="product-thumb-placeholder"><svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="color:var(--muted)"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg></div>`}
+                <div>
+                  <div class="td-product-name">${esc(p.title_tr || p.title_en)}</div>
+                  <div class="td-product-id">${esc(p.id)}</div>
+                </div>
+              </div></td>
+              <td><span class="chip chip-teal">${esc(CAT[p.category] || p.category)}</span></td>
+              <td style="font-weight:600">${CURR[p.currency] || ''}${parseFloat(p.price||0).toFixed(2)}</td>
+              <td>${p.isActive !== false ? '<span class="chip chip-green">Aktif</span>' : '<span class="chip chip-gray">Pasif</span>'}</td>
+              <td>${p.isNew ? '<span class="chip chip-gold">Yeni</span>' : ''}</td>
+              <td><div class="td-actions">
+                <button class="btn btn-secondary btn-sm" onclick='openEditProduct(${JSON.stringify(p.id)})'>Düzenle</button>
+                <button class="btn btn-danger btn-sm" onclick='confirmDeleteProduct(${JSON.stringify(p.id)},${JSON.stringify(p.title_tr||p.title_en)})'>Sil</button>
+              </div></td>
+            </tr>`).join('')}
+          </tbody>
+        </table></div>`}
+  </div>`;
+}
+
+function openAddProduct() {
+  document.getElementById('product-modal-title').textContent = 'Yeni Ürün Ekle';
+  document.getElementById('product-form').reset();
+  document.getElementById('pf-id').value = '';
+  document.getElementById('pf-active').checked = true;
+  document.getElementById('pf-new').checked = true;
+  document.getElementById('pf-currency').value = 'TRY';
+  document.getElementById('product-form-error').classList.remove('show');
+  openModal('product-modal');
+}
+
+function openEditProduct(id) {
+  const p = allProducts.find(x => x.id === id);
+  if (!p) return;
+  document.getElementById('product-modal-title').textContent = 'Ürünü Düzenle';
+  document.getElementById('pf-id').value        = p.id;
+  document.getElementById('pf-title-tr').value  = p.title_tr  || '';
+  document.getElementById('pf-title-en').value  = p.title_en  || '';
+  document.getElementById('pf-desc-tr').value   = p.description_tr || '';
+  document.getElementById('pf-desc-en').value   = p.description_en || '';
+  document.getElementById('pf-price').value     = p.price     || 0;
+  document.getElementById('pf-currency').value  = p.currency  || 'TRY';
+  document.getElementById('pf-category').value  = p.category  || 'amigurumi';
+  document.getElementById('pf-image').value     = p.image     || '';
+  document.getElementById('pf-url').value       = p.url       || '';
+  document.getElementById('pf-active').checked  = p.isActive !== false;
+  document.getElementById('pf-new').checked     = !!p.isNew;
+  document.getElementById('product-form-error').classList.remove('show');
+  openModal('product-modal');
+}
+
+async function saveProduct() {
+  const errEl  = document.getElementById('product-form-error');
+  const saveBtn = document.getElementById('product-save-btn');
+  errEl.classList.remove('show');
+
+  const id       = document.getElementById('pf-id').value;
+  const title_tr = document.getElementById('pf-title-tr').value.trim();
+  const title_en = document.getElementById('pf-title-en').value.trim();
+  const price    = document.getElementById('pf-price').value;
+
+  if (!title_tr || !title_en || !price) {
+    errEl.textContent = 'Zorunlu alanları doldurun.';
+    errEl.classList.add('show');
+    return;
+  }
+
+  const body = {
+    title_tr, title_en,
+    description_tr: document.getElementById('pf-desc-tr').value.trim(),
+    description_en: document.getElementById('pf-desc-en').value.trim(),
+    price:    parseFloat(price),
+    currency: document.getElementById('pf-currency').value,
+    category: document.getElementById('pf-category').value,
+    image:    document.getElementById('pf-image').value.trim() || undefined,
+    url:      document.getElementById('pf-url').value.trim()   || undefined,
+    isActive: document.getElementById('pf-active').checked,
+    isNew:    document.getElementById('pf-new').checked,
+  };
+
+  saveBtn.disabled = true;
+  const [status, data] = id
+    ? await API.put(`/api/admin/products/${encodeURIComponent(id)}`, body)
+    : await API.post('/api/admin/products', body);
+  saveBtn.disabled = false;
+
+  if (status === 200 || status === 201) {
+    closeModal('product-modal');
+    toast(id ? 'Ürün güncellendi.' : 'Ürün eklendi.', 'success');
+    await products();
+  } else {
+    errEl.textContent = data?.error || 'Kayıt başarısız.';
+    errEl.classList.add('show');
+  }
+}
+
+function confirmDeleteProduct(id, name) {
+  document.getElementById('confirm-title').textContent    = 'Ürünü Sil';
+  document.getElementById('confirm-message').textContent  = `"${name}" ürününü silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.`;
+  document.getElementById('confirm-ok-btn').onclick = () => deleteProduct(id);
+  openModal('confirm-modal');
+}
+
+async function deleteProduct(id) {
+  const [status, data] = await API.del(`/api/admin/products/${encodeURIComponent(id)}`);
+  closeModal('confirm-modal');
+  if (status === 200) { toast('Ürün silindi.', 'success'); await products(); }
+  else toast(data?.error || 'Silme başarısız.', 'error');
+}
+
+// ══════════════════════════════════════════════════════
+// Subscribers
+// ══════════════════════════════════════════════════════
+async function subscribers() {
+  document.getElementById('page-content').innerHTML = '<p style="color:var(--muted);font-size:13px">Yükleniyor…</p>';
+  const list = await API.get('/api/admin/subscribers') || [];
+  window._subList = list;
+
+  document.getElementById('page-content').innerHTML = `
+  <div class="section-header">
+    <div>
+      <div class="section-title">E-posta Aboneleri</div>
+      <div class="section-sub">Bülten abonelerini yönetin</div>
+    </div>
+    <button class="btn btn-secondary" onclick="exportSubscribers()">
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+      CSV İndir
+    </button>
+  </div>
+  <div class="sub-count">Toplam ${list.length} abone</div>
+  <div class="table-wrap">
+    ${list.length === 0
+      ? '<div class="empty-state"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg><p>Henüz abone yok.</p></div>'
+      : `<div style="overflow-x:auto"><table>
+          <thead><tr><th>E-posta</th><th>İsim</th><th>Dil</th><th>Kayıt Tarihi</th><th></th></tr></thead>
+          <tbody>
+          ${list.map(s => `
+            <tr>
+              <td style="font-weight:500">${esc(s.email)}</td>
+              <td>${esc(s.name || '—')}</td>
+              <td><span class="chip chip-gray">${esc((s.lang||'tr').toUpperCase())}</span></td>
+              <td style="color:var(--muted);font-size:12px">${fmtDate(s.createdAt)}</td>
+              <td><button class="btn btn-danger btn-sm" onclick='confirmDeleteSub(${JSON.stringify(s.email)})'>Sil</button></td>
+            </tr>`).join('')}
+          </tbody>
+        </table></div>`}
+  </div>`;
+}
+
+function confirmDeleteSub(email) {
+  document.getElementById('confirm-title').textContent   = 'Aboneyi Sil';
+  document.getElementById('confirm-message').textContent = `${email} adresini listeden kaldırmak istediğinizden emin misiniz?`;
+  document.getElementById('confirm-ok-btn').onclick = () => deleteSub(email);
+  openModal('confirm-modal');
+}
+
+async function deleteSub(email) {
+  const [status, data] = await API.del(`/api/admin/subscribers/${encodeURIComponent(email)}`);
+  closeModal('confirm-modal');
+  if (status === 200) { toast('Abone silindi.', 'success'); await subscribers(); }
+  else toast(data?.error || 'İşlem başarısız.', 'error');
+}
+
+function exportSubscribers() {
+  const list = window._subList || [];
+  if (!list.length) return toast('Dışa aktarılacak abone yok.', 'info');
+  const csv  = ['E-posta,İsim,Dil,Tarih',
+    ...list.map(s => `"${s.email}","${s.name||''}","${s.lang||'tr'}","${s.createdAt||''}"`)
+  ].join('\n');
+  const a = Object.assign(document.createElement('a'), {
+    href: URL.createObjectURL(new Blob([csv], { type:'text/csv;charset=utf-8;' })),
+    download: `aselovers-aboneler-${new Date().toISOString().slice(0,10)}.csv`,
+  });
+  a.click();
+}
+
+// ══════════════════════════════════════════════════════
+// Sync
+// ══════════════════════════════════════════════════════
+async function sync() {
+  const el       = document.getElementById('page-content');
+  const status   = await API.get('/api/admin/sync/status') || {};
+  const settings = await API.get('/api/admin/settings')    || {};
+
+  const lastText = status.lastSync
+    ? new Date(status.lastSync).toLocaleString('tr-TR', { day:'numeric',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit' })
+    : 'Henüz yapılmadı';
+
+  el.innerHTML = `
+  <div class="section-header">
+    <div><div class="section-title">Etsy Senkronizasyonu</div><div class="section-sub">Ürünleri Etsy mağazanızdan çekin</div></div>
+  </div>
+  <div class="sync-card">
+    <div class="sync-status">
+      <div class="sync-dot ${status.inProgress ? 'syncing' : ''}"></div>
+      <span>${status.inProgress ? 'Sync devam ediyor…' : `Son sync: ${lastText}`}</span>
+    </div>
+    ${settings.etsyApiSet
+      ? `<p style="font-size:13px;color:var(--mid);margin-bottom:16px">Mağaza: <strong>${esc(settings.etsyShop||'aselovers')}</strong> &nbsp;•&nbsp; API Key: <span style="color:var(--success)">✓ Tanımlı</span></p>`
+      : `<div style="background:#FBF5E8;border:1px solid #EDD5A5;border-radius:var(--r);padding:12px 14px;font-size:13px;color:#7A5C1A;margin-bottom:16px">
+          ⚠ Etsy API Key tanımlı değil.
+          <a href="#" onclick="navigateTo('settings')" style="color:inherit;font-weight:600;text-decoration:underline">Ayarlar</a> sayfasından ekleyin.
+        </div>`}
+    <div class="progress-bar-wrap" id="sync-progress-wrap"><div class="progress-bar" id="sync-progress-bar"></div></div>
+    <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+      <button class="btn btn-primary" id="sync-btn" onclick="startSync()" ${!settings.etsyApiSet ? 'disabled' : ''}>
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+        Şimdi Sync Et
+      </button>
+      <span id="sync-result" style="font-size:13px;color:var(--mid)">${status.total ? `Mevcut: ${status.total} ürün` : ''}</span>
+    </div>
+    <p style="font-size:12px;color:var(--muted);margin-top:16px">
+      Sync işlemi Etsy'deki tüm aktif ürünleri çekerek products.json dosyasını günceller.<br>
+      Bu işlem birkaç dakika sürebilir.
+    </p>
+  </div>`;
+}
+
+async function startSync() {
+  const btn = document.getElementById('sync-btn');
+  const res = document.getElementById('sync-result');
+  const pw  = document.getElementById('sync-progress-wrap');
+  const pb  = document.getElementById('sync-progress-bar');
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Sync ediliyor…';
+  pw.classList.add('show');
+
+  let pct = 0;
+  const ticker = setInterval(() => { pct = Math.min(pct + Math.random() * 7, 85); pb.style.width = pct + '%'; }, 500);
+
+  const [status, data] = await API.post('/api/admin/sync', {});
+  clearInterval(ticker);
+  pb.style.width = '100%';
+  setTimeout(() => { pw.classList.remove('show'); pb.style.width = '0'; }, 700);
+
+  btn.disabled = false;
+  btn.innerHTML = `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>Şimdi Sync Et`;
+
+  if (status === 200 && data.success) {
+    res.innerHTML = `<span style="color:var(--success)">✓ ${data.count} ürün senkronize edildi</span>`;
+    toast(`${data.count} ürün başarıyla senkronize edildi!`, 'success');
+    document.getElementById('nav-product-count').textContent = data.count;
+  } else {
+    res.innerHTML = `<span style="color:var(--danger)">✗ ${esc(data?.error || 'Sync başarısız')}</span>`;
+    toast(data?.error || 'Sync başarısız oldu.', 'error');
+  }
+}
+
+// ══════════════════════════════════════════════════════
+// Activity
+// ══════════════════════════════════════════════════════
+async function activity() {
+  document.getElementById('page-content').innerHTML = '<p style="color:var(--muted);font-size:13px">Yükleniyor…</p>';
+  const log = await API.get('/api/admin/activity') || [];
+
+  document.getElementById('page-content').innerHTML = `
+  <div class="section-header">
+    <div><div class="section-title">Aktivite Günlüğü</div><div class="section-sub">Son 500 yönetici işlemi</div></div>
+  </div>
+  <div class="activity-list">
+    ${log.length === 0
+      ? '<div class="activity-empty">Henüz aktivite kaydı yok.</div>'
+      : log.map(a => `
+        <div class="activity-item">
+          <div class="activity-dot"></div>
+          <div style="flex:1">
+            <div class="activity-action">${esc(a.action)}</div>
+            ${a.detail ? `<div class="activity-detail">${esc(a.detail)}</div>` : ''}
+          </div>
+          <div class="activity-time">${fmtDate(a.ts)} ${fmtTime(a.ts)}</div>
+        </div>`).join('')}
+  </div>`;
+}
+
+// ══════════════════════════════════════════════════════
+// Settings
+// ══════════════════════════════════════════════════════
+async function settings() {
+  const el = document.getElementById('page-content');
+  const s  = await API.get('/api/admin/settings') || {};
+
+  el.innerHTML = `
+  <div class="section-header">
+    <div><div class="section-title">Ayarlar</div><div class="section-sub">Etsy bağlantısı ve güvenlik</div></div>
+  </div>
+  <div class="settings-card">
+    <div class="settings-card-title">Etsy Bağlantısı</div>
+    <div class="form-group">
+      <label>Mağaza Adı</label>
+      <input class="form-control" id="set-shop" value="${esc(s.etsyShop||'aselovers')}" placeholder="aselovers">
+    </div>
+    <div class="form-group">
+      <label>API Key &nbsp;${s.etsyApiSet ? '<span style="color:var(--success);font-weight:600;font-size:12px">✓ Tanımlı</span>' : '<span style="color:var(--danger);font-weight:600;font-size:12px">✗ Eksik</span>'}</label>
+      <input class="form-control" id="set-apikey" type="password" placeholder="${s.etsyApiSet ? '••••••••' : 'Etsy API key girin'}" autocomplete="off">
+      <p style="font-size:11px;color:var(--muted);margin-top:4px">Key'i değiştirmek istemiyorsanız boş bırakın.</p>
+    </div>
+    <p id="etsy-msg" style="font-size:12px;margin-top:8px;display:none"></p>
+    <button class="btn btn-primary" onclick="saveEtsySettings()">Kaydet</button>
+  </div>
+  <div class="settings-card">
+    <div class="settings-card-title">Şifre Değiştir</div>
+    <div class="form-group">
+      <label>Mevcut Şifre</label>
+      <input class="form-control" id="set-curr" type="password" autocomplete="current-password">
+    </div>
+    <div class="form-group">
+      <label>Yeni Şifre</label>
+      <input class="form-control" id="set-new" type="password" autocomplete="new-password" oninput="checkPassStr(this.value)">
+      <div class="pass-strength"><div class="pass-strength-bar" id="pass-bar"></div></div>
+      <p style="font-size:11px;color:var(--muted);margin-top:4px">Min. 12 karakter, büyük/küçük harf, rakam ve özel karakter (!@#$%^&*)</p>
+    </div>
+    <div class="form-group">
+      <label>Yeni Şifre (Tekrar)</label>
+      <input class="form-control" id="set-new2" type="password" autocomplete="new-password">
+    </div>
+    <p id="pass-msg" style="font-size:12px;margin-top:8px;display:none"></p>
+    <button class="btn btn-primary" onclick="changePassword()">Şifreyi Değiştir</button>
+  </div>
+  <div class="settings-card" style="margin-bottom:0">
+    <div class="settings-card-title">Hesap Bilgisi</div>
+    <p style="font-size:13px;color:var(--mid)">Kullanıcı adı: <strong>${esc(s.adminUser||'admin')}</strong></p>
+    <p style="font-size:12px;color:var(--muted);margin-top:8px">Kullanıcı adını değiştirmek için <code>.env</code> dosyasındaki <code>ADMIN_USERNAME</code> değerini düzenleyin.</p>
+  </div>`;
+}
+
+async function saveEtsySettings() {
+  const msg    = document.getElementById('etsy-msg');
+  const shop   = document.getElementById('set-shop').value.trim();
+  const apiKey = document.getElementById('set-apikey').value.trim();
+  msg.style.display = 'none';
+
+  const body = {};
+  if (shop)   body.etsyShop   = shop;
+  if (apiKey) body.etsyApiKey = apiKey;
+  if (!Object.keys(body).length) return toast('Değişiklik yapılmadı.', 'info');
+
+  const [status, data] = await API.put('/api/admin/settings', body);
+  msg.style.display = 'block';
+  if (status === 200) {
+    msg.style.color = 'var(--success)';
+    msg.textContent = 'Ayarlar kaydedildi.';
+    toast('Etsy ayarları güncellendi.', 'success');
+    if (apiKey) document.getElementById('set-apikey').value = '';
+  } else {
+    msg.style.color = 'var(--danger)';
+    msg.textContent = data?.error || 'Kayıt başarısız.';
+  }
+}
+
+async function changePassword() {
+  const msg  = document.getElementById('pass-msg');
+  const curr  = document.getElementById('set-curr').value;
+  const next  = document.getElementById('set-new').value;
+  const next2 = document.getElementById('set-new2').value;
+  msg.style.display = 'none';
+
+  if (next !== next2) {
+    msg.style.display = 'block'; msg.style.color = 'var(--danger)';
+    msg.textContent = 'Yeni şifreler eşleşmiyor.'; return;
+  }
+
+  const [status, data] = await API.post('/api/admin/settings/password', {
+    currentPassword: curr, newPassword: next,
+  });
+  msg.style.display = 'block';
+  if (status === 200) {
+    msg.style.color = 'var(--success)';
+    msg.textContent = 'Şifre başarıyla değiştirildi!';
+    toast('Şifre güncellendi.', 'success');
+    ['set-curr','set-new','set-new2'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('pass-bar').style.width = '0';
+  } else {
+    msg.style.color = 'var(--danger)';
+    msg.textContent = data?.error || 'Şifre değiştirilemedi.';
+  }
+}
+
+function checkPassStr(v) {
+  const bar  = document.getElementById('pass-bar');
+  let score  = 0;
+  if (v.length >= 12)                             score++;
+  if (/[a-z]/.test(v) && /[A-Z]/.test(v))        score++;
+  if (/\d/.test(v))                               score++;
+  if (/[!@#$%^&*]/.test(v))                       score++;
+  bar.style.width      = ['0','25%','50%','75%','100%'][score];
+  bar.style.background = ['','#e07b3a','#e0b83a','#4a9b8e','#3a9e72'][score];
+}
+
+// ══════════════════════════════════════════════════════
+// Init: check session on load
+// ══════════════════════════════════════════════════════
+(async () => {
+  const me = await API.get('/api/admin/me');
+  if (me?.username) {
+    showApp(me.username);
+    navigateTo('dashboard');
+  } else {
+    showLogin();
+  }
+})();
+</script>
+</body>
+</html>

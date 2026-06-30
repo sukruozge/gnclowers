@@ -1,0 +1,17 @@
+[
+  {
+    "ts": "2026-06-30T09:23:27.283Z",
+    "action": "LOGIN",
+    "detail": "Kullanıcı: admin, IP: ::1"
+  },
+  {
+    "ts": "2026-06-30T09:21:48.994Z",
+    "action": "LOGIN",
+    "detail": "Kullanıcı: admin, IP: ::1"
+  },
+  {
+    "ts": "2026-06-30T09:21:48.717Z",
+    "action": "LOGIN_FAILED",
+    "detail": "IP: ::1"
+  }
+]
