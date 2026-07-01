@@ -1,5 +1,5 @@
 import { writeFileSync } from 'node:fs';
-import { mapListing, type EtsyListing } from '../src/lib/etsy';
+import { mapListing, type EtsyImage, type EtsyListing } from '../src/lib/etsy';
 
 const API_KEY = process.env.ETSY_API_KEY ?? '';
 const SHOP = process.env.ETSY_SHOP ?? 'aselovers';
@@ -28,6 +28,28 @@ async function getSections(shopId: string): Promise<Record<string, string>> {
     if (s?.shop_section_id != null && s?.title) map[String(s.shop_section_id)] = String(s.title);
   }
   return map;
+}
+
+// getListingsByShop does not reliably attach images under app-key auth even
+// with includes=Images, so fetch each listing's images from the dedicated
+// endpoint (public, works with the API key). Best-effort per listing.
+async function getListingImages(listingId: number | string): Promise<EtsyImage[]> {
+  try {
+    const d = await etsy(`listings/${listingId}/images`);
+    return (d.results ?? []).map((img: any) => ({
+      url_570xN: img.url_570xN,
+      url_fullxfull: img.url_fullxfull,
+    }));
+  } catch {
+    return [];
+  }
+}
+
+async function attachImages(listings: EtsyListing[]): Promise<void> {
+  // Sequential to stay comfortably under Etsy's 5 QPS rate limit.
+  for (const l of listings) {
+    l.images = await getListingImages(l.listing_id);
+  }
 }
 
 async function getListings(shopId: string): Promise<EtsyListing[]> {
@@ -61,6 +83,7 @@ async function main(): Promise<void> {
     console.warn('Could not fetch shop sections (falling back to keyword categories):', err instanceof Error ? err.message : err);
   }
   const listings = await getListings(shopId);
+  await attachImages(listings);
   const products = listings.map((l) => mapListing(l, Date.now(), sections));
   if (products.length === 0) {
     console.warn('Etsy returned 0 products — keeping existing products.json (no overwrite).');
