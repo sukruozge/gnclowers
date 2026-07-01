@@ -1,8 +1,8 @@
 ---
 import { type Locale } from '@lib/i18n';
 import { canonical, alternates } from '@lib/seo';
-import Nav from '../components/Nav.astro';
-import Footer from '../components/Footer.astro';
+import '../styles/tokens.css';
+import '../styles/global.css';
 
 interface Props {
   locale: Locale;
@@ -16,7 +16,6 @@ const { locale, title, description, pathSelf, pathsAlt, ogImage } = Astro.props;
 const site = Astro.site!.toString().replace(/\/+$/, '');
 const canon = canonical(site, locale, pathSelf);
 const alts = alternates(site, pathsAlt);
-const og = ogImage;
 ---
 <!doctype html>
 <html lang={locale}>
@@ -31,16 +30,15 @@ const og = ogImage;
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canon} />
-    {og && <meta property="og:image" content={og} />}
-    <meta name="twitter:card" content={og ? 'summary_large_image' : 'summary'} />
+    {ogImage && <meta property="og:image" content={ogImage} />}
+    <meta name="twitter:card" content={ogImage ? 'summary_large_image' : 'summary'} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="stylesheet" href="/style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Inter:wght@400;500;600&display=swap" />
+    <slot name="head" />
   </head>
   <body>
-    <Nav locale={locale} />
-    <main>
-      <slot />
-    </main>
-    <Footer locale={locale} />
+    <slot />
   </body>
 </html>
