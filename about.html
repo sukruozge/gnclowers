@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hakkımızda | Aselovers — Küçük Bir Aile Hikayesi</title>
+  <meta name="description" content="Aselovers'ın hikayesini keşfedin. Bir annenin sevgiyle ördüğü ilk amigurumi oyuncaktan bugüne — el yapımı kalite, kişisel dokunuş.">
+  <meta property="og:title" content="Hakkımızda | Aselovers">
+  <meta property="og:description" content="Küçük bir aile işletmesi, büyük bir sevgi hikayesi.">
+  <meta property="og:type" content="website">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<nav id="nav">
+  <div class="container">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">Ase<em>lovers</em></a>
+      <ul class="nav-links">
+        <li><a href="index.html" data-i18n="nav_home">Ana Sayfa</a></li>
+        <li><a href="products.html" data-i18n="nav_products">Ürünler</a></li>
+        <li><a href="about.html" class="active" data-i18n="nav_about">Hakkımızda</a></li>
+        <li><a href="blog.html" data-i18n="nav_blog">Blog</a></li>
+        <li><a href="contact.html" data-i18n="nav_contact">İletişim</a></li>
+      </ul>
+      <div class="nav-actions">
+        <div class="lang-toggle">
+          <button data-lang="tr">TR</button>
+          <button data-lang="en">EN</button>
+        </div>
+        <button class="cart-icon" aria-label="Sepet">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2 3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+          <span class="cart-count">0</span>
+        </button>
+        <button class="hamburger" id="hamburger" aria-label="Menü"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="mobile-nav" id="mobile-nav">
+  <button class="mobile-nav-close" id="mobile-nav-close">✕</button>
+  <a href="index.html">Ana Sayfa</a>
+  <a href="products.html">Ürünler</a>
+  <a href="about.html">Hakkımızda</a>
+  <a href="blog.html">Blog</a>
+  <a href="contact.html">İletişim</a>
+  <a href="https://aselovers.etsy.com" target="_blank" style="color:var(--gold)">Etsy ↗</a>
+</div>
+
+<!-- ABOUT HERO -->
+<section class="about-hero">
+  <div class="container">
+    <div class="about-hero-inner">
+      <div class="eyebrow eyebrow-light">Hakkımızda</div>
+      <h1><em data-cms="about.headline">Küçük Bir Aile Hikayesi</em></h1>
+      <p>Evlere mutluluk örüyoruz. Her ürün bir hikayenin parçası.</p>
+    </div>
+  </div>
+</section>
+
+<!-- STORY -->
+<section class="section">
+  <div class="container">
+    <div class="about-story-grid">
+      <div class="about-prose fade-up">
+        <div class="eyebrow">Hikayemiz</div>
+        <h2 data-cms="about.headline">Küçük Bir Aile Hikayesi</h2>
+        <div id="about-story-content"></div>
+        <div class="about-founder">
+          <div class="about-founder-name" data-cms="about.name">Melissa</div>
+          <div class="about-founder-title" data-cms="about.title">Aselovers Kurucusu</div>
+        </div>
+      </div>
+      <div class="about-visual fade-up">
+        <div class="about-visual-card">
+          <div class="about-visual-brand">Ase<em>lovers</em></div>
+          <blockquote class="about-visual-quote">
+            "Her dikişin içinde gerçek bir sevgi var."
+          </blockquote>
+          <div class="about-visual-year">Est. 2022 · Türkiye</div>
+          <div class="about-visual-items">
+            <div class="about-visual-item">
+              <img src="https://i.etsystatic.com/65409401/r/il/0a28d4/8107536487/il_600x600.8107536487_c15v.jpg" alt="Ürün 1" loading="lazy">
+            </div>
+            <div class="about-visual-item">
+              <img src="https://i.etsystatic.com/65409401/r/il/e5d94b/8082226247/il_600x600.8082226247_n28o.jpg" alt="Ürün 2" loading="lazy">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section class="about-stats-strip">
+  <div class="container">
+    <div class="about-stats-grid" id="about-stats"></div>
+  </div>
+</section>
+
+<!-- VALUES -->
+<section class="section section-alt">
+  <div class="container">
+    <div class="section-header fade-up">
+      <div class="eyebrow">Değerlerimiz</div>
+      <h2>Bizi Biz Yapan Nedir?</h2>
+    </div>
+    <div class="grid-4" id="about-values-grid"></div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section class="section">
+  <div class="container">
+    <div class="section-header fade-up">
+      <div class="eyebrow">Süreç</div>
+      <h2>Bir Ürün Nasıl Doğar?</h2>
+      <p>Her ürün, dört titiz adımda hayat bulur.</p>
+    </div>
+    <div class="process-grid">
+      <div class="process-step fade-up">
+        <div class="process-num">01</div>
+        <div class="process-title">İp Seçimi</div>
+        <div class="process-desc">OEKO-TEX sertifikalı, organik pamuk iplikler. Bebek derisi için güvenli, dayanıklı ve yumuşak. Her renk, özenle seçilir.</div>
+      </div>
+      <div class="process-step fade-up">
+        <div class="process-num">02</div>
+        <div class="process-title">Tasarım</div>
+        <div class="process-desc">Standart koleksiyon için test edilmiş desenler; özel siparişler için sıfırdan tasarım. Oranlara ve ayrıntılara özel dikkat.</div>
+      </div>
+      <div class="process-step fade-up">
+        <div class="process-num">03</div>
+        <div class="process-title">El Üretimi</div>
+        <div class="process-desc">Her parça 3–8 saat el emeği gerektirir. Örgü, dolgu, montaj ve göz dikimi — her adım konsantrasyonla yapılır.</div>
+      </div>
+      <div class="process-step fade-up">
+        <div class="process-num">04</div>
+        <div class="process-title">Kalite Kontrolü</div>
+        <div class="process-desc">"Çekme testi": her gözü, her dikiş yerini çekip test ediyoruz. Standart: kendi kızımıza verebilir miyiz?</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="about-cta-section">
+  <div class="container">
+    <div class="about-cta-inner fade-up">
+      <h2><em>Hikayenin Bir Parçası Olun</em></h2>
+      <p>Koleksiyonumuzu keşfedin veya özel sipariş için bizimle iletişime geçin.</p>
+      <div class="about-cta-btns">
+        <a href="products.html" class="btn btn-gold">Ürünleri Keşfet</a>
+        <a href="https://aselovers.etsy.com" target="_blank" class="btn btn-outline-light">Etsy'de Gör ↗</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand-name">Aselovers</div>
+        <p class="footer-desc" data-cms="footer.tagline">Evlere mutluluk örüyoruz.</p>
+        <div class="footer-social">
+          <a href="https://instagram.com/aselovers" target="_blank">📸</a>
+          <a href="https://pinterest.com/aselovers" target="_blank">📌</a>
+          <a href="https://aselovers.etsy.com" target="_blank">🛍️</a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-heading">Mağaza</div>
+        <ul class="footer-links">
+          <li><a href="products.html">Tüm Ürünler</a></li>
+          <li><a href="products.html?cat=amigurumi">Amigurumi</a></li>
+          <li><a href="products.html?cat=decor">Bebek Odası</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-heading">Bilgi</div>
+        <ul class="footer-links">
+          <li><a href="about.html">Hakkımızda</a></li>
+          <li><a href="blog.html">Blog</a></li>
+          <li><a href="contact.html">İletişim</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-heading">Kargo</div>
+        <ul class="footer-links">
+          <li><a href="#">Dünya Geneli</a></li>
+          <li><a href="#">🇺🇸 ABD — Gümrük Bizden</a></li>
+          <li><a href="#">İade Politikası</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span data-cms="footer.copyright">© 2025 Aselovers. Tüm hakları saklıdır.</span>
+      <span data-cms="footer.made_in">Türkiye'de ❤️ ile yapıldı</span>
+    </div>
+  </div>
+</footer>
+
+<div class="overlay" id="cart-overlay"></div>
+<div class="cart-drawer" id="cart-drawer">
+  <div class="cart-drawer-header">
+    <span class="cart-drawer-title">Sepetim</span>
+    <button class="cart-drawer-close" onclick="CART.closeDrawer()">✕</button>
+  </div>
+  <div class="cart-drawer-body" id="cart-body"></div>
+  <div class="cart-drawer-footer">
+    <div class="cart-total-row">
+      <span class="cart-total-label">Toplam</span>
+      <span class="cart-total-val" id="cart-total">0 ₺</span>
+    </div>
+    <button class="checkout-btn" onclick="showToast('Etsy üzerinden sipariş verebilirsiniz.','')">Ödemeye Geç</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<button class="scroll-top" id="scroll-top" aria-label="Yukarı çık">↑</button>
+
+<script src="js/cms.js"></script>
+<script src="js/etsy.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+  await CMS.load();
+  CMS.applyToDOM();
+  I18N.apply();
+  CART.updateBadge();
+  initNav();
+  initScrollTop();
+
+  // Story content
+  const storyFull = CMS.get('about.story_full');
+  if (storyFull) document.getElementById('about-story-content').innerHTML = storyFull;
+
+  // Stats
+  const stats = CMS.get('about.stats') || [];
+  document.getElementById('about-stats').innerHTML = stats.map(s => `
+    <div class="about-stat-item fade-up">
+      <div class="about-stat-val">${s.val}</div>
+      <div class="about-stat-label">${s.label}</div>
+    </div>`).join('');
+
+  // Values
+  const values = CMS.get('values') || [];
+  document.getElementById('about-values-grid').innerHTML = values.map(v => `
+    <div class="value-card fade-up">
+      <div class="value-icon">${v.icon || '✦'}</div>
+      <div class="value-title">${v.title}</div>
+      <div class="value-desc">${v.desc}</div>
+    </div>`).join('');
+
+  observeFadeUp();
+});
+</script>
+</body>
+</html>

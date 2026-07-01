@@ -1,598 +1,326 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Aselovers — Handmade Amigurumi & Crochet</title>
-  <meta name="description" content="Türkiye'den dünyaya el yapımı amigurumi oyuncaklar, örgü çantalar ve aksesuarlar. Handmade crochet toys and accessories shipped to EU and Turkey." />
-  <meta name="keywords" content="amigurumi, örgü, crochet, handmade, el yapımı, oyuncak, etsy, aselovers" />
-  <meta property="og:title" content="Aselovers — Handmade Amigurumi" />
-  <meta property="og:description" content="Handmade crochet amigurumi & accessories from Turkey to the world." />
-  <meta property="og:type" content="website" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aselovers — El Yapımı Amigurumi & Örgü Oyuncaklar</title>
+  <meta name="description" content="El yapımı amigurumi oyuncaklar, örgü bebek odası dekoru ve kişiselleştirilmiş hediyeler. Türkiye'den dünyaya, her dikişte sevgiyle.">
+  <meta property="og:title" content="Aselovers — El Yapımı Amigurumi & Örgü Oyuncaklar">
+  <meta property="og:description" content="Küçük ellerimizle, büyük sevgiyle. Her ürün bir hikayenin parçası.">
+  <meta property="og:type" content="website">
+  <link rel="canonical" href="https://aselovers.com">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"LocalBusiness","name":"Aselovers","description":"El yapımı amigurumi oyuncaklar ve örgü bebek odası dekoru","url":"https://aselovers.com","sameAs":["https://aselovers.etsy.com","https://instagram.com/aselovers"]}</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-<!-- ── SHIPPING BAR ── -->
-<div class="ship-bar">
-  <div class="ship-bar-inner">
-    <span>🧶 <strong data-i18n="ship_free"></strong></span>
-    <span class="ship-sep">·</span>
-    <span data-i18n="ship_custom"></span>
-    <span class="ship-sep">·</span>
-    <span data-i18n="ship_return"></span>
-  </div>
-</div>
-
-<!-- ── HEADER ── -->
-<header id="site-header">
+<nav id="nav">
   <div class="container">
-    <nav class="nav-inner">
-      <a href="index.html" class="nav-logo">ASELOVERS</a>
-
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">Ase<em>lovers</em></a>
       <ul class="nav-links">
-        <li><a href="index.html" data-i18n="nav_home"></a></li>
-        <li><a href="shop.html" data-i18n="nav_shop"></a></li>
-        <li><a href="index.html#about" data-i18n="nav_about"></a></li>
-        <li><a href="index.html#contact" data-i18n="nav_contact"></a></li>
-        <li><a href="https://aselovers.etsy.com/" target="_blank" class="nav-etsy" data-i18n="nav_etsy"></a></li>
+        <li><a href="index.html" class="active" data-i18n="nav_home">Ana Sayfa</a></li>
+        <li><a href="products.html" data-i18n="nav_products">Ürünler</a></li>
+        <li><a href="about.html" data-i18n="nav_about">Hakkımızda</a></li>
+        <li><a href="blog.html" data-i18n="nav_blog">Blog</a></li>
+        <li><a href="contact.html" data-i18n="nav_contact">İletişim</a></li>
       </ul>
-
       <div class="nav-actions">
-        <div class="lang-switch">
+        <div class="lang-toggle">
           <button data-lang="tr">TR</button>
-          <span class="lang-sep">|</span>
           <button data-lang="en">EN</button>
         </div>
-        <button class="cart-btn" aria-label="Cart">
-          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
-            <line x1="3" y1="6" x2="21" y2="6"/>
-            <path d="M16 10a4 4 0 0 1-8 0"/>
-          </svg>
+        <button class="cart-icon" aria-label="Sepet">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2 3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
           <span class="cart-count">0</span>
         </button>
-        <button class="hamburger" id="hamburger" aria-label="Menu">
-          <span></span><span></span>
-        </button>
+        <button class="hamburger" id="hamburger" aria-label="Menü"><span></span><span></span><span></span></button>
       </div>
-    </nav>
-  </div>
-</header>
-
-<!-- Mobile Nav -->
-<nav class="mobile-nav" id="mobile-nav">
-  <button class="mobile-nav-close" id="mobile-nav-close" aria-label="Close menu">
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-  </button>
-  <a href="index.html" onclick="closeMobileNav()" data-i18n="nav_home"></a>
-  <a href="shop.html" onclick="closeMobileNav()" data-i18n="nav_shop"></a>
-  <a href="index.html#about" onclick="closeMobileNav()" data-i18n="nav_about"></a>
-  <a href="index.html#contact" onclick="closeMobileNav()" data-i18n="nav_contact"></a>
-  <a href="https://aselovers.etsy.com/" target="_blank" data-i18n="nav_etsy"></a>
-  <div class="mobile-lang">
-    <button data-lang="tr">TR</button>
-    <button data-lang="en">EN</button>
+    </div>
   </div>
 </nav>
 
-<!-- ── HERO ── -->
-<section class="hero hero-marquee" id="home">
+<div class="mobile-nav" id="mobile-nav">
+  <button class="mobile-nav-close" id="mobile-nav-close">✕</button>
+  <a href="index.html">Ana Sayfa</a>
+  <a href="products.html">Ürünler</a>
+  <a href="about.html">Hakkımızda</a>
+  <a href="blog.html">Blog</a>
+  <a href="contact.html">İletişim</a>
+  <a href="https://aselovers.etsy.com" target="_blank" style="color:var(--gold)">Etsy ↗</a>
+</div>
 
-  <!-- Text block centred on screen -->
-  <div class="hero-center">
-    <span class="hero-eyebrow hero-anim" data-i18n="hero_eyebrow"></span>
-    <h1 class="hero-title hero-anim" data-i18n="hero_title"></h1>
-    <p  class="hero-desc  hero-anim" data-i18n="hero_desc"></p>
-    <div class="hero-actions hero-anim">
-      <a href="shop.html" class="btn btn-light" data-i18n="hero_cta1"></a>
-      <a href="https://aselovers.etsy.com/" target="_blank" class="btn-arrow" data-i18n="hero_cta2"></a>
-    </div>
-
-    <!-- Stats row sits inside the centre block -->
-    <div class="hero-stats-inline hero-anim">
-      <div class="hero-stat">
-        <span class="stat-n" data-i18n="hero_stat1_val"></span>
-        <span class="stat-l" data-i18n="hero_stat1_lab"></span>
+<section class="hero">
+  <div class="container">
+    <div class="hero-inner">
+      <div class="hero-content">
+        <div class="eyebrow">El Yapımı · Premium Kalite</div>
+        <h1 class="hero-headline"><span data-cms="hero.headline">Her Dikişte<br><em>Bir Hikaye</em></span></h1>
+        <p class="hero-sub" data-cms="hero.subheadline">Küçük ellerimizle, büyük sevgiyle. Amigurumi oyuncaklar, bebek odası dekorları ve kişiselleştirilmiş hediyeler — her biri bir ailenin hikayesinin parçası olmak için örüldü.</p>
+        <div class="hero-cta">
+          <a href="products.html" class="btn btn-gold" data-cms="hero.cta_primary">Koleksiyonu Keşfet</a>
+          <a href="https://aselovers.etsy.com" target="_blank" class="btn btn-outline" data-cms="hero.cta_secondary">Etsy'de Gör</a>
+        </div>
+        <div class="hero-stats">
+          <div class="hero-stat"><span class="hero-stat-num">500+</span><span class="hero-stat-label">Mutlu Aile</span></div>
+          <div class="hero-stat-divider"></div>
+          <div class="hero-stat"><span class="hero-stat-num">12+</span><span class="hero-stat-label">Ülke</span></div>
+          <div class="hero-stat-divider"></div>
+          <div class="hero-stat"><span class="hero-stat-num">100%</span><span class="hero-stat-label">El Yapımı</span></div>
+        </div>
       </div>
-      <div class="hero-stat-sep"></div>
-      <div class="hero-stat">
-        <span class="stat-n" data-i18n="hero_stat2_val"></span>
-        <span class="stat-l" data-i18n="hero_stat2_lab"></span>
-      </div>
-      <div class="hero-stat-sep"></div>
-      <div class="hero-stat">
-        <span class="stat-n" data-i18n="hero_stat3_val"></span>
-        <span class="stat-l" data-i18n="hero_stat3_lab"></span>
+      <div class="hero-visual">
+        <div class="hero-img-grid">
+          <div class="hero-img-item hero-img-main">
+            <img src="https://i.etsystatic.com/65409401/r/il/0a28d4/8107536487/il_600x600.8107536487_c15v.jpg" alt="El yapımı amigurumi tavşan" loading="eager">
+          </div>
+          <div class="hero-img-item hero-img-sm">
+            <img src="https://i.etsystatic.com/65409401/r/il/d6d3ba/8097215171/il_600x600.8097215171_94ly.jpg" alt="Örgü flamingo" loading="eager">
+          </div>
+          <div class="hero-img-item hero-img-sm">
+            <img src="https://i.etsystatic.com/65409401/r/il/b7c3b9/8111229068/il_600x600.8111229068_jycs.jpg" alt="Saç tokası seti" loading="eager">
+          </div>
+        </div>
       </div>
     </div>
   </div>
-
-  <!-- Marquee image strip pinned to bottom -->
-  <div class="hero-marquee-strip">
-    <div class="marquee-track" id="marquee-track">
-      <!-- Filled by JS -->
-    </div>
-  </div>
-
 </section>
 
-<!-- ── TICKER ── -->
-<div class="ticker">
-  <div class="ticker-track">
-    <div class="ticker-inner">
-      <span data-i18n="feat1"></span><span class="tick-dot">·</span>
-      <span data-i18n="feat2"></span><span class="tick-dot">·</span>
-      <span data-i18n="feat3"></span><span class="tick-dot">·</span>
-      <span data-i18n="feat4"></span><span class="tick-dot">·</span>
-      <span data-i18n="feat5"></span><span class="tick-dot">·</span>
-      <span data-i18n="feat6"></span><span class="tick-dot">·</span>
-    </div>
-    <div class="ticker-inner" aria-hidden="true">
-      <span data-i18n="feat1"></span><span class="tick-dot">·</span>
-      <span data-i18n="feat2"></span><span class="tick-dot">·</span>
-      <span data-i18n="feat3"></span><span class="tick-dot">·</span>
-      <span data-i18n="feat4"></span><span class="tick-dot">·</span>
-      <span data-i18n="feat5"></span><span class="tick-dot">·</span>
-      <span data-i18n="feat6"></span><span class="tick-dot">·</span>
-    </div>
+<!-- Image Marquee — product photos from Etsy -->
+<div class="img-marquee" aria-hidden="true">
+  <div class="img-marquee-track" id="img-marquee-track"></div>
+</div>
+
+<!-- Text ticker -->
+<div class="marquee-strip">
+  <div class="marquee-track">
+    <span>El Yapımı</span><span class="dot">✦</span>
+    <span>Premium Pamuk</span><span class="dot">✦</span>
+    <span>Dünya Geneli Kargo</span><span class="dot">✦</span>
+    <span>ABD Gümrük Bizden</span><span class="dot">✦</span>
+    <span>Kişisel Sipariş</span><span class="dot">✦</span>
+    <span>12+ Ülke</span><span class="dot">✦</span>
+    <span>OEKO-TEX Sertifikalı</span><span class="dot">✦</span>
+    <span>Hediye Ambalajı</span><span class="dot">✦</span>
+    <span>El Yapımı</span><span class="dot">✦</span>
+    <span>Premium Pamuk</span><span class="dot">✦</span>
+    <span>Dünya Geneli Kargo</span><span class="dot">✦</span>
+    <span>ABD Gümrük Bizden</span><span class="dot">✦</span>
+    <span>Kişisel Sipariş</span><span class="dot">✦</span>
+    <span>12+ Ülke</span><span class="dot">✦</span>
+    <span>OEKO-TEX Sertifikalı</span><span class="dot">✦</span>
+    <span>Hediye Ambalajı</span><span class="dot">✦</span>
   </div>
 </div>
 
-<!-- ── TRUST BADGES ── -->
-<section class="trust-section">
+<section class="section" id="products">
   <div class="container">
-    <div class="trust-grid">
-      <div class="trust-item fade-up">
-        <div class="trust-icon">
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M18 11V6a2 2 0 0 0-2-2 2 2 0 0 0-2 2M14 10V4a2 2 0 0 0-2-2 2 2 0 0 0-2 2v2M10 10.5V6a2 2 0 0 0-2-2 2 2 0 0 0-2 2v8l-2-2.5a1.3 1.3 0 0 0-2 1.7l3.6 4.8A6 6 0 0 0 9.4 22H14a4 4 0 0 0 4-4v-7"/>
-          </svg>
-        </div>
-        <div class="trust-title" data-i18n="trust1_t"></div>
-        <div class="trust-desc" data-i18n="trust1_d"></div>
+    <div class="section-header fade-up">
+      <div class="eyebrow">Koleksiyon</div>
+      <h2>Öne Çıkan Ürünler</h2>
+      <p>Her biri özenle örülmüş, sevgiyle paketlenmiş.</p>
+    </div>
+    <div class="product-grid" id="featured-grid"></div>
+    <div style="text-align:center;margin-top:48px" class="fade-up">
+      <a href="products.html" class="btn btn-forest">Tüm Koleksiyonu Gör</a>
+    </div>
+  </div>
+</section>
+
+<section class="section section-alt">
+  <div class="container">
+    <div class="section-header fade-up">
+      <div class="eyebrow">Değerlerimiz</div>
+      <h2>Neden Aselovers?</h2>
+    </div>
+    <div class="grid-4" id="values-grid"></div>
+  </div>
+</section>
+
+<section class="shipping-section">
+  <div class="container">
+    <div class="shipping-inner">
+      <div class="shipping-left fade-up">
+        <div class="eyebrow eyebrow-light">Teslimat</div>
+        <h2 data-cms="shipping.headline">Dünya Geneline Güvenli Teslimat</h2>
+        <p data-cms="shipping.desc">Aselovers ürünleri şu anda 12'den fazla ülkeye ulaşıyor. Her paket özenle sarılır.</p>
+        <div class="shipping-items" id="shipping-items"></div>
       </div>
-      <div class="trust-item fade-up">
-        <div class="trust-icon">
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-          </svg>
+      <div class="shipping-right fade-up">
+        <div class="usa-card">
+          <div class="usa-card-flag">🇺🇸</div>
+          <div class="usa-card-title" data-cms="shipping.usa_title">Amerika'ya Özel Avantaj</div>
+          <div class="usa-card-desc" data-cms="shipping.usa_desc">ABD'ye yapılan tüm siparişlerde gümrük vergisi Aselovers tarafından karşılanmaktadır. Kapıya gelinceye kadar hiçbir ekstra ücret ödenmez.</div>
+          <a href="https://aselovers.etsy.com" target="_blank" class="usa-card-btn">Etsy'de Sipariş Ver ↗</a>
         </div>
-        <div class="trust-title" data-i18n="trust2_t"></div>
-        <div class="trust-desc" data-i18n="trust2_d"></div>
-      </div>
-      <div class="trust-item fade-up">
-        <div class="trust-icon">
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>
-          </svg>
-        </div>
-        <div class="trust-title" data-i18n="trust3_t"></div>
-        <div class="trust-desc" data-i18n="trust3_d"></div>
-      </div>
-      <div class="trust-item fade-up">
-        <div class="trust-icon">
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
-          </svg>
-        </div>
-        <div class="trust-title" data-i18n="trust4_t"></div>
-        <div class="trust-desc" data-i18n="trust4_d"></div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ── CATEGORY STRIP ── -->
-<section class="cat-strip">
+<section class="section">
   <div class="container">
-    <div class="cat-strip-head fade-up">
-      <span class="eyebrow" data-i18n="cats_tag"></span>
-      <h2 data-i18n="cats_title"></h2>
+    <div class="section-header fade-up">
+      <div class="eyebrow">Yorumlar</div>
+      <h2>Müşterilerimiz Anlatıyor</h2>
+      <div class="stars-row">★★★★★ <span>500+ değerlendirme</span></div>
     </div>
-    <div class="cat-strip-grid">
-      <a href="shop.html?cat=amigurumi" class="cat-card fade-up">
-        <img src="https://i.etsystatic.com/65409401/r/il/0a28d4/8107536487/il_600x600.8107536487_c15v.jpg" alt="Amigurumi" loading="lazy" />
-        <div class="cat-card-overlay">
-          <div class="cat-card-label">
-            <small data-i18n="cats_tag_label"></small>
-            Amigurumi
-            <div class="cat-card-arrow">
-              <span data-i18n="cats_explore"></span>
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-            </div>
-          </div>
-        </div>
-      </a>
-      <a href="shop.html?cat=bag" class="cat-card fade-up">
-        <img src="https://i.etsystatic.com/65409401/r/il/b7c3b9/8111229068/il_600x600.8111229068_jycs.jpg" alt="Çantalar" loading="lazy" />
-        <div class="cat-card-overlay">
-          <div class="cat-card-label">
-            <small data-i18n="cats_tag_label"></small>
-            <span data-i18n="filter_bag"></span>
-            <div class="cat-card-arrow">
-              <span data-i18n="cats_explore"></span>
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-            </div>
-          </div>
-        </div>
-      </a>
-      <a href="shop.html?cat=decor" class="cat-card fade-up">
-        <img src="https://i.etsystatic.com/65409401/r/il/e5d94b/8082226247/il_600x600.8082226247_n28o.jpg" alt="Dekorasyon" loading="lazy" />
-        <div class="cat-card-overlay">
-          <div class="cat-card-label">
-            <small data-i18n="cats_tag_label"></small>
-            <span data-i18n="filter_decor"></span>
-            <div class="cat-card-arrow">
-              <span data-i18n="cats_explore"></span>
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-            </div>
-          </div>
-        </div>
-      </a>
-      <a href="shop.html?cat=accessory" class="cat-card fade-up">
-        <img src="https://i.etsystatic.com/65409401/r/il/8be45d/7988910978/il_600x600.7988910978_kexd.jpg" alt="Aksesuarlar" loading="lazy" />
-        <div class="cat-card-overlay">
-          <div class="cat-card-label">
-            <small data-i18n="cats_tag_label"></small>
-            <span data-i18n="filter_accessory"></span>
-            <div class="cat-card-arrow">
-              <span data-i18n="cats_explore"></span>
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-            </div>
-          </div>
-        </div>
-      </a>
-    </div>
+    <div class="reviews-grid" id="reviews-grid"></div>
   </div>
 </section>
 
-<!-- ── SHOP / PRODUCTS ── -->
-<section class="section" id="shop">
+<section class="section section-alt">
   <div class="container">
-    <div class="section-head fade-up">
-      <span class="eyebrow" data-i18n="shop_tag"></span>
-      <h2 data-i18n="shop_title"></h2>
-    </div>
-
-    <div class="product-filters fade-up">
-      <button class="filter-btn active" data-cat="all" data-i18n="filter_all"></button>
-      <button class="filter-btn" data-cat="amigurumi" data-i18n="filter_amigurumi"></button>
-      <button class="filter-btn" data-cat="bag" data-i18n="filter_bag"></button>
-      <button class="filter-btn" data-cat="decor" data-i18n="filter_decor"></button>
-      <button class="filter-btn" data-cat="accessory" data-i18n="filter_accessory"></button>
-    </div>
-
-    <div class="product-grid" id="product-grid"></div>
-
-    <div class="shop-cta fade-up">
-      <a href="shop.html" class="btn btn-outline" style="margin-right:16px" data-i18n="shop_all_btn"></a>
-      <a href="https://aselovers.etsy.com/" target="_blank" class="btn etsy-btn">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M11.956 0C5.354 0 0 5.354 0 11.956c0 6.603 5.354 11.957 11.956 11.957s11.957-5.354 11.957-11.957C23.913 5.354 18.559 0 11.956 0zm4.47 16.364c-.293.098-.88.196-1.37.196-2.054 0-2.544-1.174-2.544-2.935V9.89h-1.076v-1.37h1.076V6.647l1.86-.587v2.46h1.76v1.37h-1.76v3.54c0 .783.294 1.076.88 1.076.196 0 .49-.098.783-.195l.39 1.053z"/></svg>
-        <span data-i18n="shop_etsy_cta"></span>
-      </a>
-    </div>
-  </div>
-</section>
-
-<!-- ── PROCESS SECTION ── -->
-<section class="process-section">
-  <div class="container">
-    <div class="process-head fade-up">
-      <span class="eyebrow" data-i18n="process_tag"></span>
-      <h2 data-i18n="process_title"></h2>
-      <p data-i18n="process_sub"></p>
-    </div>
-    <div class="process-steps">
-      <div class="process-step">
-        <div class="step-num">01</div>
-        <div class="step-icon-ring">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="10"/>
-            <path d="M12 8v4l3 3"/>
-          </svg>
-        </div>
-        <div class="step-title" data-i18n="process_s1_t"></div>
-        <p class="step-desc" data-i18n="process_s1_d"></p>
+    <div class="about-snippet">
+      <div class="about-snippet-text fade-up">
+        <div class="eyebrow">Hakkımızda</div>
+        <h2 data-cms="about.headline">Küçük Bir Aile Hikayesi</h2>
+        <p data-cms="about.story_short">Aselovers, bir annenin kendi çocuğu için ördüğü ilk amigurumi oyuncakla başladı.</p>
+        <a href="about.html" class="btn btn-forest" style="margin-top:24px">Hikayemizi Okuyun</a>
       </div>
-      <div class="process-arrow">→</div>
-      <div class="process-step">
-        <div class="step-num">02</div>
-        <div class="step-icon-ring">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M18 11V6a2 2 0 0 0-2-2 2 2 0 0 0-2 2M14 10V4a2 2 0 0 0-2-2 2 2 0 0 0-2 2v2M10 10.5V6a2 2 0 0 0-2-2 2 2 0 0 0-2 2v8l-2-2.5a1.3 1.3 0 0 0-2 1.7l3.6 4.8A6 6 0 0 0 9.4 22H14a4 4 0 0 0 4-4v-7"/>
-          </svg>
+      <div class="about-snippet-visual fade-up">
+        <div class="about-quote-card">
+          <div class="about-quote-mark">"</div>
+          <p class="about-quote-text">Her dikişin içinde gerçek bir sevgi var. Müşterilerimiz sadece bir oyuncak almıyor — bir hikayenin parçası oluyorlar.</p>
+          <div class="about-quote-author">— <span data-cms="about.name">Melissa</span>, <em data-cms="about.title">Aselovers Kurucusu</em></div>
         </div>
-        <div class="step-title" data-i18n="process_s2_t"></div>
-        <p class="step-desc" data-i18n="process_s2_d"></p>
-      </div>
-      <div class="process-arrow">→</div>
-      <div class="process-step">
-        <div class="step-num">03</div>
-        <div class="step-icon-ring">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
-          </svg>
-        </div>
-        <div class="step-title" data-i18n="process_s3_t"></div>
-        <p class="step-desc" data-i18n="process_s3_d"></p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ── FEATURED BANNER ── -->
-<section class="featured-banner">
+<section class="newsletter-section">
   <div class="container">
-    <div class="featured-banner-inner">
-      <div class="featured-banner-copy fade-up">
-        <span class="eyebrow" data-i18n="feat_ban_tag"></span>
-        <h2 data-i18n="feat_ban_title"></h2>
-        <p data-i18n="feat_ban_desc"></p>
-        <a href="https://aselovers.etsy.com/" target="_blank" class="btn btn-light">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M11.956 0C5.354 0 0 5.354 0 11.956c0 6.603 5.354 11.957 11.956 11.957s11.957-5.354 11.957-11.957C23.913 5.354 18.559 0 11.956 0zm4.47 16.364c-.293.098-.88.196-1.37.196-2.054 0-2.544-1.174-2.544-2.935V9.89h-1.076v-1.37h1.076V6.647l1.86-.587v2.46h1.76v1.37h-1.76v3.54c0 .783.294 1.076.88 1.076.196 0 .49-.098.783-.195l.39 1.053z"/></svg>
-          <span data-i18n="feat_ban_cta"></span>
-        </a>
-      </div>
-      <div class="featured-banner-imgs fade-up">
-        <div><img src="https://i.etsystatic.com/65409401/r/il/0a28d4/8107536487/il_600x600.8107536487_c15v.jpg" alt="Amigurumi" loading="lazy" /></div>
-        <div><img src="https://i.etsystatic.com/65409401/r/il/d6d3ba/8097215171/il_600x600.8097215171_94ly.jpg" alt="Flamingo" loading="lazy" /></div>
-        <div><img src="https://i.etsystatic.com/65409401/r/il/8be45d/7988910978/il_600x600.7988910978_kexd.jpg" alt="Aksesuar" loading="lazy" /></div>
-        <div><img src="https://i.etsystatic.com/65409401/r/il/b7c3b9/8111229068/il_600x600.8111229068_jycs.jpg" alt="Çanta" loading="lazy" /></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ── STITCH DIVIDER ── -->
-<div class="stitch-divider">
-  <div class="container"><div class="stitch-line"></div></div>
-</div>
-
-<!-- ── ABOUT ── -->
-<section class="section about-section" id="about">
-  <div class="container">
-    <div class="about-grid">
-
-      <div class="about-images fade-up">
-        <div class="about-img-main">
-          <img src="https://i.etsystatic.com/65409401/r/il/8be45d/7988910978/il_600x600.7988910978_kexd.jpg" alt="Handmade amigurumi" />
-        </div>
-        <div class="about-img-accent">
-          <img src="https://i.etsystatic.com/65409401/r/il/b7c3b9/8111229068/il_600x600.8111229068_jycs.jpg" alt="Handmade accessories" />
-        </div>
-      </div>
-
-      <div class="about-content fade-up">
-        <span class="eyebrow" data-i18n="about_tag"></span>
-        <h2 data-i18n="about_title"></h2>
-        <p class="about-desc" data-i18n="about_desc"></p>
-
-        <div class="about-pillars">
-          <div class="pillar">
-            <div class="pillar-icon">
-              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M18 11V6a2 2 0 0 0-2-2 2 2 0 0 0-2 2M14 10V4a2 2 0 0 0-2-2 2 2 0 0 0-2 2v2M10 10.5V6a2 2 0 0 0-2-2 2 2 0 0 0-2 2v8l-2-2.5a1.3 1.3 0 0 0-2 1.7l3.6 4.8A6 6 0 0 0 9.4 22H14a4 4 0 0 0 4-4v-7"/>
-              </svg>
-            </div>
-            <div>
-              <strong data-i18n="about_i1_t"></strong>
-              <p data-i18n="about_i1_p"></p>
-            </div>
-          </div>
-          <div class="pillar">
-            <div class="pillar-icon">
-              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/>
-                <path d="M8 14s1.5 2 4 2 4-2 4-2"/>
-                <line x1="9" y1="9" x2="9.01" y2="9"/>
-                <line x1="15" y1="9" x2="15.01" y2="9"/>
-              </svg>
-            </div>
-            <div>
-              <strong data-i18n="about_i2_t"></strong>
-              <p data-i18n="about_i2_p"></p>
-            </div>
-          </div>
-          <div class="pillar">
-            <div class="pillar-icon">
-              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="3"/>
-                <path d="M19.071 4.929a10 10 0 0 1 0 14.142M4.929 4.929a10 10 0 0 0 0 14.142"/>
-              </svg>
-            </div>
-            <div>
-              <strong data-i18n="about_i3_t"></strong>
-              <p data-i18n="about_i3_p"></p>
-            </div>
-          </div>
-        </div>
-
-        <a href="https://aselovers.etsy.com/" target="_blank" class="btn etsy-btn">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M11.956 0C5.354 0 0 5.354 0 11.956c0 6.603 5.354 11.957 11.956 11.957s11.957-5.354 11.957-11.957C23.913 5.354 18.559 0 11.956 0zm4.47 16.364c-.293.098-.88.196-1.37.196-2.054 0-2.544-1.174-2.544-2.935V9.89h-1.076v-1.37h1.076V6.647l1.86-.587v2.46h1.76v1.37h-1.76v3.54c0 .783.294 1.076.88 1.076.196 0 .49-.098.783-.195l.39 1.053z"/></svg>
-          <span data-i18n="about_etsy"></span>
-        </a>
-      </div>
-
-    </div>
-  </div>
-</section>
-
-<!-- ── TESTIMONIALS ── -->
-<section class="section reviews-section" id="reviews">
-  <div class="container">
-    <div class="section-head fade-up" style="text-align:center">
-      <span class="eyebrow" data-i18n="reviews_tag"></span>
-      <h2 data-i18n="reviews_title"></h2>
-    </div>
-    <div class="testimonial-grid" id="reviews-grid"></div>
-  </div>
-</section>
-
-<!-- ── GALLERY ── -->
-<section class="gallery-section">
-  <div class="container">
-    <div class="gallery-head fade-up">
-      <h2 data-i18n="gallery_title"></h2>
-    </div>
-    <div class="gallery-grid">
-      <div class="gallery-item fade-up">
-        <img src="https://i.etsystatic.com/65409401/r/il/0a28d4/8107536487/il_600x600.8107536487_c15v.jpg" alt="" loading="lazy" />
-        <div class="gallery-overlay">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
-        </div>
-      </div>
-      <div class="gallery-item fade-up">
-        <img src="https://i.etsystatic.com/65409401/r/il/d6d3ba/8097215171/il_600x600.8097215171_94ly.jpg" alt="" loading="lazy" />
-        <div class="gallery-overlay">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
-        </div>
-      </div>
-      <div class="gallery-item fade-up">
-        <img src="https://i.etsystatic.com/65409401/r/il/e5d94b/8082226247/il_600x600.8082226247_n28o.jpg" alt="" loading="lazy" />
-        <div class="gallery-overlay">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
-        </div>
-      </div>
-      <div class="gallery-item fade-up">
-        <img src="https://i.etsystatic.com/65409401/r/il/8be45d/7988910978/il_600x600.7988910978_kexd.jpg" alt="" loading="lazy" />
-        <div class="gallery-overlay">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
-        </div>
-      </div>
-      <div class="gallery-item fade-up">
-        <img src="https://i.etsystatic.com/65409401/r/il/b7c3b9/8111229068/il_600x600.8111229068_jycs.jpg" alt="" loading="lazy" />
-        <div class="gallery-overlay">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
-        </div>
-      </div>
-      <div class="gallery-item fade-up">
-        <img src="https://i.etsystatic.com/65409401/r/il/0a28d4/8107536487/il_600x600.8107536487_c15v.jpg" alt="" loading="lazy" />
-        <div class="gallery-overlay">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
-        </div>
-      </div>
-    </div>
-    <div class="gallery-cta fade-up">
-      <a href="https://instagram.com/aselovers" target="_blank">
-        <span data-i18n="gallery_cta"></span>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-      </a>
-    </div>
-  </div>
-</section>
-
-<!-- ── NEWSLETTER ── -->
-<section class="newsletter" id="contact">
-  <div class="container">
-    <div class="newsletter-inner">
-      <div>
-        <span class="eyebrow" style="color:rgba(255,255,255,.45)">Newsletter</span>
-        <h2 data-i18n="news_title"></h2>
-        <p data-i18n="news_sub"></p>
-      </div>
+    <div class="newsletter-inner fade-up">
+      <div class="eyebrow">Bülten</div>
+      <h2>Yeni Ürünlerden İlk Siz Haberdar Olun</h2>
+      <p>Haftada bir, yeni koleksiyonlar ve hikayeler.</p>
       <form class="newsletter-form" id="newsletter-form">
-        <input type="email" data-i18n="news_ph" required />
-        <button type="submit" data-i18n="news_btn"></button>
+        <input type="email" placeholder="E-posta adresiniz" required>
+        <button type="submit" class="btn btn-gold">Abone Ol</button>
       </form>
     </div>
   </div>
 </section>
 
-<!-- ── FOOTER ── -->
 <footer class="site-footer">
   <div class="container">
     <div class="footer-grid">
       <div>
-        <div class="footer-logo">ASELOVERS</div>
-        <p class="footer-desc" data-i18n="footer_desc"></p>
-        <div class="social-links">
-          <a href="https://instagram.com/aselovers" target="_blank" aria-label="Instagram">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
-          </a>
-          <a href="https://pinterest.com/aselovers" target="_blank" aria-label="Pinterest">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12c0 5.084 3.163 9.426 7.627 11.174-.105-.949-.2-2.405.042-3.441.218-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738a.36.36 0 0 1 .083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.359-.632-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/></svg>
-          </a>
-          <a href="https://aselovers.etsy.com/" target="_blank" aria-label="Etsy">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M11.956 0C5.354 0 0 5.354 0 11.956c0 6.603 5.354 11.957 11.956 11.957s11.957-5.354 11.957-11.957C23.913 5.354 18.559 0 11.956 0zm4.47 16.364c-.293.098-.88.196-1.37.196-2.054 0-2.544-1.174-2.544-2.935V9.89h-1.076v-1.37h1.076V6.647l1.86-.587v2.46h1.76v1.37h-1.76v3.54c0 .783.294 1.076.88 1.076.196 0 .49-.098.783-.195l.39 1.053z"/></svg>
-          </a>
-          <a href="mailto:info@aselovers.com" aria-label="Email">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-          </a>
+        <div class="footer-brand-name">Aselovers</div>
+        <p class="footer-desc" data-cms="footer.tagline">Evlere mutluluk örüyoruz.</p>
+        <div class="footer-social">
+          <a href="https://instagram.com/aselovers" target="_blank" aria-label="Instagram">📸</a>
+          <a href="https://pinterest.com/aselovers" target="_blank" aria-label="Pinterest">📌</a>
+          <a href="https://aselovers.etsy.com" target="_blank" aria-label="Etsy">🛍️</a>
         </div>
       </div>
       <div>
-        <h4 class="footer-heading" data-i18n="footer_shop"></h4>
+        <div class="footer-heading">Mağaza</div>
         <ul class="footer-links">
-          <li><a href="shop.html" data-i18n="footer_products"></a></li>
-          <li><a href="shop.html?cat=amigurumi" data-i18n="footer_amigurumi"></a></li>
-          <li><a href="shop.html?cat=bag" data-i18n="footer_bags"></a></li>
-          <li><a href="shop.html?cat=accessory" data-i18n="footer_accessories"></a></li>
+          <li><a href="products.html">Tüm Ürünler</a></li>
+          <li><a href="products.html?cat=amigurumi">Amigurumi</a></li>
+          <li><a href="products.html?cat=decor">Bebek Odası</a></li>
+          <li><a href="products.html?cat=bag">Çantalar</a></li>
+          <li><a href="products.html?cat=accessory">Aksesuarlar</a></li>
         </ul>
       </div>
       <div>
-        <h4 class="footer-heading" data-i18n="footer_help"></h4>
+        <div class="footer-heading">Bilgi</div>
         <ul class="footer-links">
-          <li><a href="#" data-i18n="footer_faq"></a></li>
-          <li><a href="#" data-i18n="footer_shipping"></a></li>
-          <li><a href="#" data-i18n="footer_returns"></a></li>
-          <li><a href="#contact" data-i18n="footer_contact2"></a></li>
+          <li><a href="about.html">Hakkımızda</a></li>
+          <li><a href="blog.html">Blog</a></li>
+          <li><a href="contact.html">İletişim</a></li>
+          <li><a href="https://aselovers.etsy.com" target="_blank">Etsy Mağaza ↗</a></li>
         </ul>
       </div>
       <div>
-        <h4 class="footer-heading" data-i18n="footer_info"></h4>
+        <div class="footer-heading">Kargo</div>
         <ul class="footer-links">
-          <li><a href="#about" data-i18n="footer_about2"></a></li>
-          <li><a href="https://aselovers.etsy.com/" target="_blank" data-i18n="footer_etsy2"></a></li>
-          <li><a href="#contact" data-i18n="footer_custom"></a></li>
+          <li><a href="#">Dünya Geneli</a></li>
+          <li><a href="#">🇺🇸 ABD — Gümrük Bizden</a></li>
+          <li><a href="#">Takip & Teslimat</a></li>
+          <li><a href="#">İade Politikası</a></li>
         </ul>
       </div>
     </div>
     <div class="footer-bottom">
-      <span data-i18n="footer_copy"></span>
-      <span data-i18n="footer_made"></span>
+      <span data-cms="footer.copyright">© 2025 Aselovers. Tüm hakları saklıdır.</span>
+      <span data-cms="footer.made_in">Türkiye'de ❤️ ile yapıldı</span>
     </div>
   </div>
 </footer>
 
-<!-- ── CART DRAWER ── -->
-<div class="cart-overlay" id="cart-overlay" onclick="closeCart()"></div>
+<div class="overlay" id="cart-overlay"></div>
 <div class="cart-drawer" id="cart-drawer">
-  <div class="cart-header">
-    <h3 id="cart-title" data-i18n="cart_title"></h3>
-    <button class="cart-close" onclick="closeCart()" aria-label="Close cart">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-    </button>
+  <div class="cart-drawer-header">
+    <span class="cart-drawer-title">Sepetim</span>
+    <button class="cart-drawer-close" onclick="CART.closeDrawer()">✕</button>
   </div>
-  <div class="cart-items" id="cart-items"></div>
-  <div class="cart-footer">
+  <div class="cart-drawer-body" id="cart-body"></div>
+  <div class="cart-drawer-footer">
     <div class="cart-total-row">
-      <span id="cart-total-label" data-i18n="cart_total"></span>
-      <span class="cart-total-price" id="cart-total">0.00 ₺</span>
+      <span class="cart-total-label">Toplam</span>
+      <span class="cart-total-val" id="cart-total">0 ₺</span>
     </div>
-    <button class="checkout-btn" id="checkout-btn" onclick="showToast('Ödeme altyapısı yakında / Payment coming soon')">
-      <span data-i18n="cart_checkout"></span>
-    </button>
-  </div>
-</div>
-
-<!-- ── QUICK VIEW MODAL ── -->
-<div class="qv-backdrop" id="qv-backdrop" onclick="closeQuickView(event)">
-  <div class="qv-panel" id="qv-panel">
-    <button class="qv-close" onclick="closeQuickView()" aria-label="Close">✕</button>
-    <div class="qv-img-wrap" id="qv-img"></div>
-    <div class="qv-body" id="qv-body"></div>
+    <button class="checkout-btn" onclick="showToast('Ödeme sistemi yakında! Etsy üzerinden sipariş verebilirsiniz.','')">Ödemeye Geç</button>
   </div>
 </div>
 
 <div class="toast" id="toast"></div>
-<button class="scroll-top" id="scroll-top" aria-label="Scroll to top">
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg>
-</button>
+<button class="scroll-top" id="scroll-top" aria-label="Yukarı çık">↑</button>
 
-<script src="main.js"></script>
+<script src="js/cms.js"></script>
+<script src="js/etsy.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+  await CMS.load();
+  CMS.applyToDOM();
+  I18N.apply();
+  CART.updateBadge();
+  initNav();
+  initScrollTop();
+  initNewsletter();
+  buildImgMarquee();
+
+  const values = CMS.get('values') || [];
+  document.getElementById('values-grid').innerHTML = values.map(v => `
+    <div class="value-card fade-up">
+      <div class="value-icon">${v.icon || '✦'}</div>
+      <div class="value-title">${v.title}</div>
+      <div class="value-desc">${v.desc}</div>
+    </div>`).join('');
+
+  const si = CMS.get('shipping.items') || [];
+  document.getElementById('shipping-items').innerHTML = si.map(i => `
+    <div class="shipping-item">
+      <span class="shipping-item-icon">${i.icon}</span>
+      <span class="shipping-item-label">${i.label}</span>
+    </div>`).join('');
+
+  const reviews = CMS.get('reviews') || [];
+  document.getElementById('reviews-grid').innerHTML = reviews.map(r => `
+    <div class="review-card fade-up">
+      <div class="stars">${'★'.repeat(r.stars || 5)}</div>
+      <div class="review-text">"${r.text}"</div>
+      <div class="review-author">
+        <div class="review-avatar">${(r.author || 'A').charAt(0)}</div>
+        <div>
+          <div class="review-name">${r.author}</div>
+          <div class="review-loc">📍 ${r.location}</div>
+          <div class="review-product">${r.product}</div>
+        </div>
+      </div>
+    </div>`).join('');
+
+  await ETSY.load();
+  const lang = I18N.getLang();
+  ETSY.renderGrid('featured-grid', ETSY.getAll().slice(0, 4), lang);
+  observeFadeUp();
+});
+</script>
 </body>
 </html>

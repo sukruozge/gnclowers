@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>İletişim | Aselovers</title>
+  <meta name="description" content="Özel sipariş talebi, stok sorusu veya herhangi bir konuda bize ulaşın. En geç 24 saat içinde dönüyoruz.">
+  <meta property="og:title" content="İletişim | Aselovers">
+  <meta property="og:type" content="website">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<nav id="nav">
+  <div class="container">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">Ase<em>lovers</em></a>
+      <ul class="nav-links">
+        <li><a href="index.html" data-i18n="nav_home">Ana Sayfa</a></li>
+        <li><a href="products.html" data-i18n="nav_products">Ürünler</a></li>
+        <li><a href="about.html" data-i18n="nav_about">Hakkımızda</a></li>
+        <li><a href="blog.html" data-i18n="nav_blog">Blog</a></li>
+        <li><a href="contact.html" class="active" data-i18n="nav_contact">İletişim</a></li>
+      </ul>
+      <div class="nav-actions">
+        <div class="lang-toggle">
+          <button data-lang="tr">TR</button>
+          <button data-lang="en">EN</button>
+        </div>
+        <button class="cart-icon" aria-label="Sepet">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2 3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+          <span class="cart-count">0</span>
+        </button>
+        <button class="hamburger" id="hamburger" aria-label="Menü"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="mobile-nav" id="mobile-nav">
+  <button class="mobile-nav-close" id="mobile-nav-close">✕</button>
+  <a href="index.html">Ana Sayfa</a>
+  <a href="products.html">Ürünler</a>
+  <a href="about.html">Hakkımızda</a>
+  <a href="blog.html">Blog</a>
+  <a href="contact.html">İletişim</a>
+  <a href="https://aselovers.etsy.com" target="_blank" style="color:var(--gold)">Etsy ↗</a>
+</div>
+
+<!-- PAGE HERO -->
+<section class="page-hero">
+  <div class="container">
+    <div class="page-hero-inner">
+      <div class="eyebrow eyebrow-light">İletişim</div>
+      <h1><em data-cms="contact.headline">İletişime Geçin</em></h1>
+      <p data-cms="contact.desc">Özel sipariş talebi, stok sorusu veya herhangi bir konuda — size en geç 24 saat içinde dönüyoruz.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT SECTION -->
+<section class="section">
+  <div class="container">
+    <div class="contact-grid">
+      <!-- FORM -->
+      <div class="contact-form-wrap fade-up">
+        <h2>Mesaj Gönderin</h2>
+        <form class="contact-form" id="contact-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="contact-name">Adınız</label>
+              <input type="text" id="contact-name" name="name" placeholder="Adınız Soyadınız" required>
+            </div>
+            <div class="form-group">
+              <label for="contact-email">E-posta</label>
+              <input type="email" id="contact-email" name="email" placeholder="ornek@email.com" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="contact-subject">Konu</label>
+            <select id="contact-subject" name="subject">
+              <option value="">Konu seçin</option>
+              <option value="custom">Özel Sipariş Talebi</option>
+              <option value="order">Mevcut Sipariş</option>
+              <option value="shipping">Kargo & Teslimat</option>
+              <option value="wholesale">Toptan Sipariş</option>
+              <option value="other">Diğer</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="contact-message">Mesajınız</label>
+            <textarea id="contact-message" name="message" rows="6" placeholder="Özel sipariş için renk, boyut, isim gibi detayları belirtin..." required></textarea>
+          </div>
+          <button type="submit" class="btn btn-gold contact-submit">Gönder</button>
+        </form>
+      </div>
+
+      <!-- INFO -->
+      <div class="contact-info fade-up">
+        <div class="contact-info-card">
+          <div class="contact-info-icon">✉️</div>
+          <div class="contact-info-label">E-posta</div>
+          <div class="contact-info-val"><a href="mailto:hello@aselovers.com" data-cms="contact.email">hello@aselovers.com</a></div>
+        </div>
+        <div class="contact-info-card">
+          <div class="contact-info-icon">⏱️</div>
+          <div class="contact-info-label">Yanıt Süresi</div>
+          <div class="contact-info-val" data-cms="contact.response_time">24 saat içinde cevap</div>
+        </div>
+        <div class="contact-info-card">
+          <div class="contact-info-icon">🛍️</div>
+          <div class="contact-info-label">Etsy Mağazamız</div>
+          <div class="contact-info-val"><a href="https://aselovers.etsy.com" target="_blank">aselovers.etsy.com ↗</a></div>
+        </div>
+        <div class="contact-info-card">
+          <div class="contact-info-icon">📸</div>
+          <div class="contact-info-label">Instagram</div>
+          <div class="contact-info-val"><a href="https://instagram.com/aselovers" target="_blank">@aselovers</a></div>
+        </div>
+        <div class="contact-custom-order">
+          <div class="contact-custom-title">🧶 Özel Sipariş?</div>
+          <p>Renk, boyut, isim — her detayı sizinle konuşarak tasarlıyoruz. İletişime geçin, birlikte planlayalım.</p>
+          <a href="https://aselovers.etsy.com" target="_blank" class="btn btn-forest" style="margin-top:16px;font-size:.78rem">Etsy'de Sipariş Ver ↗</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="section section-alt">
+  <div class="container">
+    <div class="section-header fade-up">
+      <div class="eyebrow">SSS</div>
+      <h2>Sık Sorulan Sorular</h2>
+    </div>
+    <div class="faq-list" id="faq-list">
+      <div class="faq-item">
+        <button class="faq-question">
+          Özel sipariş alıyor musunuz?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <p>Evet! Neredeyse tüm ürünlerimiz için özel sipariş alıyoruz. Renk, boyut, isim kişiselleştirmesi gibi detayları birlikte belirleriz. Özel siparişler genellikle 1–2 hafta sürer. Sipariş için formu doldurun veya Etsy mağazamızdan mesaj gönderin.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question">
+          Kargo süresi ne kadar?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <p>Türkiye içi siparişlerde 3–5 iş günü, Avrupa'ya 7–14 iş günü, ABD ve diğer ülkelere 10–21 iş günü arasında teslimat yapıyoruz. Tüm siparişler takip numarasıyla gönderilir.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question">
+          Amerika'ya gönderimde gümrük ücreti var mı?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <p>Hayır! ABD'ye yapılan tüm Aselovers siparişlerinde gümrük vergisi tarafımızdan karşılanmaktadır. Kapınıza geldiğinde hiçbir ekstra ücret ödemeniz gerekmez. Bu bizim ABD müşterilerimize sunduğumuz özel avantajdır.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question">
+          İade politikanız nedir?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <p>Özel kişiselleştirilmiş ürünler dışında tüm ürünlerde 14 gün iade politikamız vardır. Ürün hasarlı veya hatalı gelmişse, lütfen fotoğrafla birlikte bizimle iletişime geçin — en hızlı şekilde çözüm üretiriz.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand-name">Aselovers</div>
+        <p class="footer-desc" data-cms="footer.tagline">Evlere mutluluk örüyoruz.</p>
+        <div class="footer-social">
+          <a href="https://instagram.com/aselovers" target="_blank">📸</a>
+          <a href="https://pinterest.com/aselovers" target="_blank">📌</a>
+          <a href="https://aselovers.etsy.com" target="_blank">🛍️</a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-heading">Mağaza</div>
+        <ul class="footer-links">
+          <li><a href="products.html">Tüm Ürünler</a></li>
+          <li><a href="products.html?cat=amigurumi">Amigurumi</a></li>
+          <li><a href="products.html?cat=decor">Bebek Odası</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-heading">Bilgi</div>
+        <ul class="footer-links">
+          <li><a href="about.html">Hakkımızda</a></li>
+          <li><a href="blog.html">Blog</a></li>
+          <li><a href="contact.html">İletişim</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-heading">Kargo</div>
+        <ul class="footer-links">
+          <li><a href="#">Dünya Geneli</a></li>
+          <li><a href="#">🇺🇸 ABD — Gümrük Bizden</a></li>
+          <li><a href="#">İade Politikası</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span data-cms="footer.copyright">© 2025 Aselovers. Tüm hakları saklıdır.</span>
+      <span data-cms="footer.made_in">Türkiye'de ❤️ ile yapıldı</span>
+    </div>
+  </div>
+</footer>
+
+<div class="overlay" id="cart-overlay"></div>
+<div class="cart-drawer" id="cart-drawer">
+  <div class="cart-drawer-header">
+    <span class="cart-drawer-title">Sepetim</span>
+    <button class="cart-drawer-close" onclick="CART.closeDrawer()">✕</button>
+  </div>
+  <div class="cart-drawer-body" id="cart-body"></div>
+  <div class="cart-drawer-footer">
+    <div class="cart-total-row">
+      <span class="cart-total-label">Toplam</span>
+      <span class="cart-total-val" id="cart-total">0 ₺</span>
+    </div>
+    <button class="checkout-btn" onclick="showToast('Etsy üzerinden sipariş verebilirsiniz.','')">Ödemeye Geç</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<button class="scroll-top" id="scroll-top" aria-label="Yukarı çık">↑</button>
+
+<script src="js/cms.js"></script>
+<script src="js/etsy.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+  await CMS.load();
+  CMS.applyToDOM();
+  I18N.apply();
+  CART.updateBadge();
+  initNav();
+  initScrollTop();
+  observeFadeUp();
+
+  // Contact form
+  document.getElementById('contact-form')?.addEventListener('submit', e => {
+    e.preventDefault();
+    showToast(I18N.get('contact_success'), 'ok');
+    e.target.reset();
+  });
+
+  // FAQ accordion
+  document.querySelectorAll('.faq-question').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const item = btn.closest('.faq-item');
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+      if (!isOpen) item.classList.add('open');
+    });
+  });
+});
+</script>
+</body>
+</html>

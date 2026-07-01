@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Koleksiyonumuz | Aselovers — El Yapımı Amigurumi & Örgü</title>
+  <meta name="description" content="El yapımı amigurumi oyuncaklar, bebek odası dekoru, örgü çantalar ve aksesuarlar. Türkiye'den dünyaya, her biri bir aşk işi.">
+  <meta property="og:title" content="Koleksiyonumuz | Aselovers">
+  <meta property="og:type" content="website">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<nav id="nav">
+  <div class="container">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">Ase<em>lovers</em></a>
+      <ul class="nav-links">
+        <li><a href="index.html" data-i18n="nav_home">Ana Sayfa</a></li>
+        <li><a href="products.html" class="active" data-i18n="nav_products">Ürünler</a></li>
+        <li><a href="about.html" data-i18n="nav_about">Hakkımızda</a></li>
+        <li><a href="blog.html" data-i18n="nav_blog">Blog</a></li>
+        <li><a href="contact.html" data-i18n="nav_contact">İletişim</a></li>
+      </ul>
+      <div class="nav-actions">
+        <div class="lang-toggle">
+          <button data-lang="tr">TR</button>
+          <button data-lang="en">EN</button>
+        </div>
+        <button class="cart-icon" aria-label="Sepet">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2 3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+          <span class="cart-count">0</span>
+        </button>
+        <button class="hamburger" id="hamburger" aria-label="Menü"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="mobile-nav" id="mobile-nav">
+  <button class="mobile-nav-close" id="mobile-nav-close">✕</button>
+  <a href="index.html">Ana Sayfa</a>
+  <a href="products.html">Ürünler</a>
+  <a href="about.html">Hakkımızda</a>
+  <a href="blog.html">Blog</a>
+  <a href="contact.html">İletişim</a>
+  <a href="https://aselovers.etsy.com" target="_blank" style="color:var(--gold)">Etsy ↗</a>
+</div>
+
+<!-- PAGE HERO -->
+<section class="page-hero">
+  <div class="container">
+    <div class="page-hero-inner">
+      <div class="eyebrow eyebrow-light">Koleksiyon</div>
+      <h1><em>Koleksiyonumuz</em></h1>
+      <p>Her biri özenle örülmüş, sevgiyle paketlenmiş. El emeği, doğal pamuk, kişisel dokunuş.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUCTS -->
+<section class="section">
+  <div class="container">
+    <div class="filter-bar" id="filter-bar">
+      <button class="filter-btn active" data-cat="all" data-i18n="filter_all">Tümü</button>
+      <button class="filter-btn" data-cat="amigurumi" data-i18n="filter_amigurumi">Amigurumi</button>
+      <button class="filter-btn" data-cat="decor" data-i18n="filter_decor">Bebek Odası</button>
+      <button class="filter-btn" data-cat="bag" data-i18n="filter_bag">Çantalar</button>
+      <button class="filter-btn" data-cat="accessory" data-i18n="filter_accessory">Aksesuarlar</button>
+    </div>
+
+    <div id="products-loading" class="loading-state">
+      <div class="spinner"></div>
+      <p>Ürünler yükleniyor...</p>
+    </div>
+
+    <div class="product-grid" id="products-grid"></div>
+
+    <div style="text-align:center;margin-top:56px" class="fade-up">
+      <a href="https://aselovers.etsy.com" target="_blank" class="etsy-badge">🛍 Etsy'de Daha Fazlası ↗</a>
+    </div>
+  </div>
+</section>
+
+<!-- SHIPPING CALLOUT -->
+<div class="shipping-callout">
+  <div class="container">
+    <div class="shipping-callout-inner">
+      <span>🌍 Dünya geneline kargo</span>
+      <span class="dot">·</span>
+      <span>🇺🇸 ABD gümrük vergisi bizden</span>
+      <span class="dot">·</span>
+      <span>📦 Takip numarasıyla gönderim</span>
+      <span class="dot">·</span>
+      <span>🎁 Hediye ambalajı seçeneği</span>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand-name">Aselovers</div>
+        <p class="footer-desc" data-cms="footer.tagline">Evlere mutluluk örüyoruz.</p>
+        <div class="footer-social">
+          <a href="https://instagram.com/aselovers" target="_blank">📸</a>
+          <a href="https://pinterest.com/aselovers" target="_blank">📌</a>
+          <a href="https://aselovers.etsy.com" target="_blank">🛍️</a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-heading">Kategoriler</div>
+        <ul class="footer-links">
+          <li><a href="products.html?cat=amigurumi">Amigurumi</a></li>
+          <li><a href="products.html?cat=decor">Bebek Odası</a></li>
+          <li><a href="products.html?cat=bag">Çantalar</a></li>
+          <li><a href="products.html?cat=accessory">Aksesuarlar</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-heading">Bilgi</div>
+        <ul class="footer-links">
+          <li><a href="about.html">Hakkımızda</a></li>
+          <li><a href="blog.html">Blog</a></li>
+          <li><a href="contact.html">İletişim</a></li>
+          <li><a href="https://aselovers.etsy.com" target="_blank">Etsy Mağaza ↗</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-heading">Kargo</div>
+        <ul class="footer-links">
+          <li><a href="#">Dünya Geneli</a></li>
+          <li><a href="#">🇺🇸 ABD — Gümrük Bizden</a></li>
+          <li><a href="#">Takip & Teslimat</a></li>
+          <li><a href="#">İade Politikası</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span data-cms="footer.copyright">© 2025 Aselovers. Tüm hakları saklıdır.</span>
+      <span data-cms="footer.made_in">Türkiye'de ❤️ ile yapıldı</span>
+    </div>
+  </div>
+</footer>
+
+<div class="overlay" id="cart-overlay"></div>
+<div class="cart-drawer" id="cart-drawer">
+  <div class="cart-drawer-header">
+    <span class="cart-drawer-title">Sepetim</span>
+    <button class="cart-drawer-close" onclick="CART.closeDrawer()">✕</button>
+  </div>
+  <div class="cart-drawer-body" id="cart-body"></div>
+  <div class="cart-drawer-footer">
+    <div class="cart-total-row">
+      <span class="cart-total-label">Toplam</span>
+      <span class="cart-total-val" id="cart-total">0 ₺</span>
+    </div>
+    <button class="checkout-btn" onclick="showToast('Etsy üzerinden sipariş verebilirsiniz.','')">Ödemeye Geç</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<button class="scroll-top" id="scroll-top" aria-label="Yukarı çık">↑</button>
+
+<script src="js/cms.js"></script>
+<script src="js/etsy.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+  await CMS.load();
+  I18N.apply();
+  CART.updateBadge();
+  initNav();
+  initScrollTop();
+
+  // Read URL param
+  const urlParams = new URLSearchParams(window.location.search);
+  let activeFilter = urlParams.get('cat') || 'all';
+
+  // Set active filter button
+  document.querySelectorAll('.filter-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.cat === activeFilter);
+  });
+
+  // Load products
+  await ETSY.load();
+  document.getElementById('products-loading').style.display = 'none';
+
+  function renderProducts() {
+    const lang = I18N.getLang();
+    const filtered = activeFilter === 'all' ? ETSY.getAll() : ETSY.getFiltered(activeFilter);
+    ETSY.renderGrid('products-grid', filtered, lang);
+    observeFadeUp();
+  }
+
+  renderProducts();
+
+  // Filter clicks
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      activeFilter = btn.dataset.cat;
+      document.querySelectorAll('.filter-btn').forEach(b =>
+        b.classList.toggle('active', b.dataset.cat === activeFilter));
+      renderProducts();
+    });
+  });
+});
+</script>
+</body>
+</html>

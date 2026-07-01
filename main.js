@@ -5,9 +5,9 @@
 /* ── i18n Translations ── */
 const translations = {
   tr: {
-    ship_free:   "500₺ Üzeri Ücretsiz Kargo",
-    ship_custom: "Özel Sipariş Kabul Edilir",
-    ship_return: "30 Gün İade Garantisi",
+    ship_handmade: "El Yapımı",
+    ship_custom:   "Özel Sipariş Kabul Edilir",
+    ship_world:    "Türkiye'den Dünyaya Kargo",
 
     trust1_t: "100% El Yapımı",    trust1_d: "Her ürün makinede değil, sevgiyle ellerimle yapılır.",
     trust2_t: "Güvenli Alışveriş", trust2_d: "Tüm ödemeleriniz SSL ile korunur.",
@@ -76,9 +76,24 @@ const translations = {
     about_i3_t:  "Kişisel Sipariş",
     about_i3_p:  "Renk, boyut, tasarım — seninle birlikte kişiselleştiririz.",
     about_etsy:  "Etsy Mağazama Git",
+    about_c1:    "Mutlu Müşteri",
+    about_c2:    "Ülkeye Kargo",
+    about_c3:    "El Yapımı",
+    about_badge: "El ile örüldü",
+    about_tab_story:   "Hikayemiz",
+    about_tab_values:  "Değerlerimiz",
+    about_tab_process: "Süreç",
+    about_shop_cta:    "Koleksiyonu Keşfet",
+    val_care_t:    "Sevgi & Özen",    val_care_p:    "Her dikişte bir parçamı bırakıyorum.",
+    val_quality_t: "Üst Kalite",      val_quality_p: "İplikten paketlemeye, en iyisinden ödün vermiyorum.",
+    proc_1_t: "İplik Seçimi",         proc_1_p: "Avrupa ve Türkiye'nin en iyilerini özenle seçiyorum.",
+    proc_2_t: "El ile Örme",          proc_2_p: "Her ilmek tek tek, sevgiyle ve sabrımla işleniyor.",
+    proc_3_t: "Kalite Kontrolü",      proc_3_p: "Her ürün göndermeden önce dikkatle kontrol edilir.",
+    proc_4_t: "Özenli Paketleme",     proc_4_p: "Ürününüz hediye gibi paketlenerek dünyaya yolculuk eder.",
 
     reviews_tag:   "MÜŞTERİ YORUMLARI",
     reviews_title: "Müşterilerim Ne Diyor?",
+    reviews_sub:   "Dünyanın dört bir yanından mutlu müşterilerin yorumları.",
 
     news_title: "Yeni Koleksiyonlardan Haberdar Ol",
     news_sub:   "E-posta listemize katıl, yeni ürünlerden ilk sen haber al.",
@@ -118,9 +133,9 @@ const translations = {
   },
 
   en: {
-    ship_free:   "Free Shipping Over 500₺",
-    ship_custom: "Custom Orders Welcome",
-    ship_return: "30-Day Return Guarantee",
+    ship_handmade: "Handmade",
+    ship_custom:   "Custom Orders Welcome",
+    ship_world:    "Worldwide Shipping from Turkey",
 
     trust1_t: "100% Handmade",      trust1_d: "Every product is crafted by hand with love, never by machine.",
     trust2_t: "Secure Shopping",    trust2_d: "All payments are protected with SSL encryption.",
@@ -189,9 +204,24 @@ const translations = {
     about_i3_t:  "Custom Orders",
     about_i3_p:  "Color, size, design — we personalize it together with you.",
     about_etsy:  "Visit My Etsy Store",
+    about_c1:    "Happy Customers",
+    about_c2:    "Countries Shipped",
+    about_c3:    "Handmade",
+    about_badge: "Handcrafted",
+    about_tab_story:   "Our Story",
+    about_tab_values:  "Our Values",
+    about_tab_process: "Process",
+    about_shop_cta:    "Explore Collection",
+    val_care_t:    "Love & Care",       val_care_p:    "I pour a piece of myself into every stitch.",
+    val_quality_t: "Top Quality",       val_quality_p: "From yarn to packaging, I never compromise.",
+    proc_1_t: "Yarn Selection",         proc_1_p: "I carefully choose the finest yarns from Europe and Turkey.",
+    proc_2_t: "Handcrafting",           proc_2_p: "Every stitch is made one by one, with patience and love.",
+    proc_3_t: "Quality Control",        proc_3_p: "Every piece is carefully inspected before shipping.",
+    proc_4_t: "Careful Packaging",      proc_4_p: "Your order travels the world wrapped like a gift.",
 
     reviews_tag:   "CUSTOMER REVIEWS",
     reviews_title: "What My Customers Say",
+    reviews_sub:   "Happy customers from all over the world sharing their experiences.",
 
     news_title: "Stay Updated on New Collections",
     news_sub:   "Join the list to be the first to hear about new arrivals.",
@@ -239,25 +269,71 @@ let activeFilter = 'all';
 
 /* ── Reviews ── */
 const reviews = [
+  // Column 1
   {
     text_tr: 'Flamingo çok güzel! Açıklandığı gibi. Harika bir hediye olacak.',
     text_en: 'The flamingo is beautiful! Just as described. Will make a wonderful gift.',
-    author: 'K.', loc: 'Etsy · Jun 2025', stars: 5
+    author: 'K. L.', role_tr: 'Etsy Alıcısı', role_en: 'Etsy Buyer',
+    avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&h=80&fit=crop&q=80',
+    stars: 5
   },
   {
     text_tr: 'Özel sipariş verdim, belirli renk ve boyut istedim. Harika görünüyor! Doğum günü kızına vermek için sabırsızlanıyorum.',
-    text_en: "I placed a custom order with a specific color and size. It looks GREAT! Can't wait to give it to the birthday girl!",
-    author: 'Julie', loc: 'Etsy · Jun 2025', stars: 5
+    text_en: "Custom order with a specific color and size. It looks GREAT! Can't wait to give it to the birthday girl!",
+    author: 'Julie M.', role_tr: 'Hollanda', role_en: 'Netherlands',
+    avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=80&h=80&fit=crop&q=80',
+    stars: 5
   },
   {
-    text_tr: 'Bu özel hediyenin sonucunu çok sevdim! Müşteri hizmetleri mükemmeldi, kalite beklentimin çok üzerinde.',
-    text_en: 'I love the result of this custom gift! The customer service was outstanding and the quality exceeded my expectations.',
-    author: 'Etsy Buyer', loc: 'Etsy · May 2025', stars: 5
+    text_tr: 'Kalite beklentimin çok üzerindeydi. Her dikişte özen hissediliyor. Kesinlikle tekrar sipariş vereceğim.',
+    text_en: 'The quality far exceeded my expectations. You can feel the care in every stitch. I will definitely order again.',
+    author: 'Sophie R.', role_tr: 'Almanya', role_en: 'Germany',
+    avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=80&h=80&fit=crop&q=80',
+    stars: 5
   },
+  // Column 2
+  {
+    text_tr: 'Bu özel hediyenin sonucunu çok sevdim! Müşteri hizmetleri mükemmeldi.',
+    text_en: 'I love the result of this custom gift! The customer service was outstanding.',
+    author: 'Etsy Buyer', role_tr: 'İngiltere', role_en: 'United Kingdom',
+    avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=80&h=80&fit=crop&q=80',
+    stars: 5
+  },
+  {
+    text_tr: 'Amigurumi tavşan çocuğumun en sevdiği oyuncak oldu. Kalitesi ve işçiliği olağanüstü.',
+    text_en: "The amigurumi bunny became my child's favourite toy. The quality and craftsmanship are extraordinary.",
+    author: 'Anna K.', role_tr: 'Belçika', role_en: 'Belgium',
+    avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=80&h=80&fit=crop&q=80',
+    stars: 5
+  },
+  {
+    text_tr: 'İlk siparişimde çok memnun kaldım. Paketleme de çok özenli, hediye olarak çok şık geldi.',
+    text_en: 'Very happy with my first order. The packaging was so thoughtful — arrived looking like a beautiful gift.',
+    author: 'Maria T.', role_tr: 'İspanya', role_en: 'Spain',
+    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=80&h=80&fit=crop&q=80',
+    stars: 5
+  },
+  // Column 3
   {
     text_tr: 'Perde tutucular harika yapılmış ve çok sevimli. Oğlumun safari temalı bebek odasında mükemmel görünecekler.',
-    text_en: "Wonderfully made and very cute. They'll look beautiful in our son's safari-themed nursery.",
-    author: 'Zoe', loc: 'Etsy · May 2025', stars: 5
+    text_en: "Wonderfully made and very cute. They'll look perfect in our son's safari nursery.",
+    author: 'Zoe P.', role_tr: 'Avustralya', role_en: 'Australia',
+    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop&q=80',
+    stars: 5
+  },
+  {
+    text_tr: 'Renk seçenekleri ve kişiselleştirme imkânı harika. Tam istediğim gibi çıktı.',
+    text_en: 'The colour options and customisation possibilities are amazing. It came out exactly as I wanted.',
+    author: 'Lena B.', role_tr: 'Fransa', role_en: 'France',
+    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&h=80&fit=crop&q=80',
+    stars: 5
+  },
+  {
+    text_tr: 'Etsy\'de pek çok satıcı denedim ama Aselovers açık ara en iyisi. Hızlı, özenli ve çok kaliteli.',
+    text_en: "I've tried many Etsy sellers but Aselovers is by far the best. Fast, careful, and incredibly high quality.",
+    author: 'Claire D.', role_tr: 'İrlanda', role_en: 'Ireland',
+    avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=80&h=80&fit=crop&q=80',
+    stars: 5
   },
 ];
 
@@ -422,27 +498,43 @@ function renderProducts(filter) {
   observeFadeElements();
 }
 
-/* ── Render Reviews ── */
+/* ── Render Reviews — 3-column infinite scroll ── */
 function renderReviews() {
-  const grid = document.getElementById('reviews-grid');
-  if (!grid) return;
-  grid.innerHTML = reviews.map(r => {
-    const text = currentLang === 'tr' ? r.text_tr : r.text_en;
-    const initial = r.author.charAt(0).toUpperCase();
-    return `
-    <div class="testimonial-card fade-up">
-      <div class="stars">${'★'.repeat(r.stars)}</div>
-      <p class="testimonial-text">"${text}"</p>
-      <div class="testimonial-author">
-        <div class="author-avatar">${initial}</div>
-        <div>
-          <div class="author-name">${r.author}</div>
-          <div class="author-loc">${r.loc}</div>
-        </div>
-      </div>
-    </div>`;
-  }).join('');
-  observeFadeElements();
+  const cols = [
+    document.getElementById('testi-col-1'),
+    document.getElementById('testi-col-2'),
+    document.getElementById('testi-col-3'),
+  ];
+  if (!cols[0]) return;
+
+  const col1 = reviews.slice(0, 3);
+  const col2 = reviews.slice(3, 6);
+  const col3 = reviews.slice(6, 9);
+  const durations = [15, 19, 17];
+
+  [col1, col2, col3].forEach((colData, ci) => {
+    const el = cols[ci];
+    if (!el) return;
+    // duplicate for seamless loop
+    const doubled = [...colData, ...colData];
+    const cardHtml = doubled.map((r, i) => {
+      const text  = currentLang === 'tr' ? r.text_tr : r.text_en;
+      const role  = currentLang === 'tr' ? r.role_tr : r.role_en;
+      return `
+      <article class="testi-card" ${i >= colData.length ? 'aria-hidden="true"' : ''}>
+        <div class="testi-stars">${'★'.repeat(r.stars)}</div>
+        <p class="testi-text">${text}</p>
+        <footer class="testi-footer">
+          <img class="testi-avatar" src="${r.avatar}" alt="${r.author}" width="40" height="40" loading="lazy" />
+          <div>
+            <div class="testi-name">${r.author}</div>
+            <div class="testi-role">${role}</div>
+          </div>
+        </footer>
+      </article>`;
+    }).join('');
+    el.innerHTML = `<div class="testi-scroll" style="--dur:${durations[ci]}s">${cardHtml}</div>`;
+  });
 }
 
 /* ── Cart ── */
@@ -545,10 +637,14 @@ function closeCart() {
 /* ── Mobile Nav ── */
 function openMobileNav() {
   document.getElementById('mobile-nav')?.classList.add('open');
+  document.getElementById('mobile-nav-backdrop')?.classList.add('open');
+  document.getElementById('hamburger')?.classList.add('active');
   document.body.style.overflow = 'hidden';
 }
 function closeMobileNav() {
   document.getElementById('mobile-nav')?.classList.remove('open');
+  document.getElementById('mobile-nav-backdrop')?.classList.remove('open');
+  document.getElementById('hamburger')?.classList.remove('active');
   document.body.style.overflow = '';
 }
 
@@ -646,6 +742,46 @@ function buildMarquee() {
 }
 
 /* ── Init ── */
+/* ── Animated Counters ── */
+function initCounters() {
+  const nums = document.querySelectorAll('.counter-num');
+  if (!nums.length) return;
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      const el = entry.target;
+      const target = +el.dataset.target;
+      const dur = 1600;
+      const step = target / (dur / 16);
+      let cur = 0;
+      const tick = () => {
+        cur = Math.min(cur + step, target);
+        el.textContent = Math.floor(cur);
+        if (cur < target) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+      obs.unobserve(el);
+    });
+  }, { threshold: 0.4 });
+  nums.forEach(n => obs.observe(n));
+}
+
+/* ── About Tabs ── */
+function initAboutTabs() {
+  document.querySelectorAll('.about-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      const target = tab.dataset.tab;
+      document.querySelectorAll('.about-tab').forEach(t => {
+        t.classList.toggle('active', t.dataset.tab === target);
+        t.setAttribute('aria-selected', t.dataset.tab === target);
+      });
+      document.querySelectorAll('.about-panel').forEach(p => {
+        p.classList.toggle('active', p.dataset.panel === target);
+      });
+    });
+  });
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
   buildMarquee();
   await loadProducts();
@@ -654,6 +790,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   updateCartCount();
   onScroll();
   observeFadeElements();
+  initCounters();
+  initAboutTabs();
 
   window.addEventListener('scroll', onScroll, { passive: true });
 

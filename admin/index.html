@@ -1,0 +1,1523 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aselovers Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,400;1,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --forest: #1B2E2A;
+      --forest-m: #263D37;
+      --forest-l: #34564E;
+      --teal: #4A9B8E;
+      --cream: #FAF8F5;
+      --cream-d: #F0EAE0;
+      --gold: #C49A3C;
+      --gold-l: #ECD9A8;
+      --white: #FFFFFF;
+      --ink: #18100C;
+      --ink-s: #5A4A42;
+      --border: #E0D8CE;
+      --red: #C0392B;
+      --green: #27AE60;
+      --sidebar-w: 240px;
+    }
+    body { font-family: 'Inter', sans-serif; background: #F2EDE7; color: var(--ink); min-height: 100vh; }
+
+    /* LOGIN */
+    #login-screen {
+      position: fixed; inset: 0; background: var(--forest);
+      display: flex; align-items: center; justify-content: center; z-index: 9999;
+    }
+    #login-screen.hidden { display: none; }
+    .login-card {
+      background: var(--forest-m); border-radius: 16px; padding: 48px 40px;
+      width: 100%; max-width: 380px; text-align: center;
+      box-shadow: 0 24px 80px rgba(0,0,0,.4);
+    }
+    .login-logo { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 2rem; color: var(--gold); margin-bottom: 8px; }
+    .login-sub { font-size: .75rem; letter-spacing: .15em; text-transform: uppercase; color: rgba(255,255,255,.4); margin-bottom: 32px; }
+    .login-input {
+      width: 100%; padding: 12px 16px; border-radius: 8px; border: 1px solid rgba(255,255,255,.1);
+      background: rgba(255,255,255,.06); color: #fff; font-size: .9rem; margin-bottom: 12px;
+      outline: none; font-family: 'Inter', sans-serif;
+    }
+    .login-input:focus { border-color: var(--gold); }
+    .login-btn {
+      width: 100%; padding: 13px; border-radius: 8px; background: var(--gold);
+      color: var(--forest); font-weight: 700; font-size: .88rem; letter-spacing: .05em;
+      border: none; cursor: pointer; transition: opacity .2s;
+    }
+    .login-btn:hover { opacity: .9; }
+    .login-error { color: #FF6B6B; font-size: .8rem; margin-top: 10px; min-height: 20px; }
+
+    /* APP SHELL */
+    #app { display: none; min-height: 100vh; }
+    #app.visible { display: flex; }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: var(--sidebar-w); background: var(--forest); color: #fff;
+      display: flex; flex-direction: column; position: fixed; left: 0; top: 0; bottom: 0;
+      z-index: 100; overflow-y: auto;
+    }
+    .sidebar-logo {
+      padding: 24px 20px 20px; border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+    .sidebar-logo-name { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 1.4rem; color: var(--gold); }
+    .sidebar-badge { font-size: .6rem; letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.3); margin-top: 2px; }
+    .sidebar-nav { flex: 1; padding: 16px 0; }
+    .sidebar-nav-item {
+      display: flex; align-items: center; gap: 10px; padding: 10px 20px;
+      color: rgba(255,255,255,.6); cursor: pointer; border-radius: 0;
+      font-size: .84rem; font-weight: 500; transition: all .15s; border: none; background: none;
+      width: 100%; text-align: left;
+    }
+    .sidebar-nav-item:hover { color: #fff; background: rgba(255,255,255,.05); }
+    .sidebar-nav-item.active { color: var(--gold); background: rgba(196,154,60,.1); }
+    .sidebar-nav-item .nav-icon { width: 18px; text-align: center; font-size: 1rem; }
+    .sidebar-footer { padding: 16px 20px; border-top: 1px solid rgba(255,255,255,.08); }
+    .sidebar-footer a, .sidebar-footer button {
+      display: block; color: rgba(255,255,255,.4); font-size: .78rem;
+      text-decoration: none; background: none; border: none; cursor: pointer;
+      padding: 6px 0; transition: color .15s; text-align: left;
+    }
+    .sidebar-footer a:hover, .sidebar-footer button:hover { color: #fff; }
+
+    /* MAIN CONTENT */
+    .main-content { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; min-width: 0; }
+    .topbar {
+      background: var(--white); border-bottom: 1px solid var(--border);
+      padding: 0 28px; height: 60px; display: flex; align-items: center;
+      gap: 16px; position: sticky; top: 0; z-index: 50;
+    }
+    .topbar-title { font-size: 1rem; font-weight: 600; color: var(--ink); flex: 1; }
+    .topbar-date { font-size: .78rem; color: var(--ink-s); }
+    .topbar-sync { padding: 7px 14px; border-radius: 7px; background: var(--forest); color: #fff; font-size: .78rem; font-weight: 600; border: none; cursor: pointer; display: flex; align-items: center; gap: 6px; }
+    .topbar-sync:hover { background: var(--forest-m); }
+    .topbar-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--gold); color: var(--forest); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: .88rem; }
+
+    /* PAGES */
+    .page { display: none; padding: 28px; }
+    .page.active { display: block; }
+    .page-title { font-size: 1.4rem; font-weight: 700; margin-bottom: 6px; }
+    .page-subtitle { font-size: .85rem; color: var(--ink-s); margin-bottom: 28px; }
+
+    /* CARDS */
+    .card { background: var(--white); border-radius: 12px; border: 1px solid var(--border); }
+    .card-header { padding: 18px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .card-title { font-size: .9rem; font-weight: 600; }
+    .card-body { padding: 20px; }
+
+    /* STAT CARDS */
+    .stats-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; margin-bottom: 24px; }
+    .stat-card { background: var(--white); border-radius: 12px; padding: 20px; border: 1px solid var(--border); }
+    .stat-val { font-size: 1.8rem; font-weight: 700; color: var(--forest); }
+    .stat-label { font-size: .78rem; color: var(--ink-s); margin-top: 4px; }
+    .stat-icon { font-size: 1.4rem; margin-bottom: 8px; }
+
+    /* GRID LAYOUTS */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+
+    /* TABLES */
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: .84rem; }
+    th { text-align: left; padding: 10px 12px; font-size: .72rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-s); border-bottom: 2px solid var(--border); background: #FAFAF8; }
+    td { padding: 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #FDFCFB; }
+    .product-thumb { width: 44px; height: 44px; border-radius: 6px; object-fit: cover; }
+    .product-thumb-placeholder { width: 44px; height: 44px; border-radius: 6px; background: var(--cream-d); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+
+    /* BADGES */
+    .badge { display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: .7rem; font-weight: 600; }
+    .badge-green { background: #D5F5E3; color: #1A7A40; }
+    .badge-red { background: #FDECEA; color: #C0392B; }
+    .badge-gold { background: var(--gold-l); color: var(--forest); }
+    .badge-gray { background: #EEE; color: #666; }
+
+    /* FORMS */
+    .form-section { margin-bottom: 28px; }
+    .form-section-title { font-size: .84rem; font-weight: 600; color: var(--ink-s); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+    .form-group { margin-bottom: 16px; }
+    label { display: block; font-size: .8rem; font-weight: 600; color: var(--ink-s); margin-bottom: 5px; }
+    input[type="text"], input[type="email"], input[type="url"], input[type="date"], input[type="password"], input[type="number"], select, textarea {
+      width: 100%; padding: 10px 12px; border-radius: 8px; border: 1.5px solid var(--border);
+      font-size: .88rem; font-family: 'Inter', sans-serif; color: var(--ink);
+      background: var(--white); outline: none; transition: border-color .2s;
+    }
+    input:focus, select:focus, textarea:focus { border-color: var(--forest); }
+    textarea { resize: vertical; min-height: 80px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-hint { font-size: .74rem; color: var(--ink-s); margin-top: 4px; }
+
+    /* BUTTONS */
+    .btn { display: inline-flex; align-items: center; gap: 6px; padding: 9px 18px; border-radius: 8px; font-size: .83rem; font-weight: 600; border: none; cursor: pointer; transition: all .15s; font-family: 'Inter', sans-serif; text-decoration: none; }
+    .btn-primary { background: var(--forest); color: #fff; }
+    .btn-primary:hover { background: var(--forest-m); }
+    .btn-gold { background: var(--gold); color: var(--forest); }
+    .btn-gold:hover { opacity: .9; }
+    .btn-outline { background: transparent; border: 1.5px solid var(--border); color: var(--ink); }
+    .btn-outline:hover { border-color: var(--forest); }
+    .btn-danger { background: var(--red); color: #fff; }
+    .btn-danger:hover { opacity: .85; }
+    .btn-sm { padding: 5px 10px; font-size: .74rem; }
+    .btn-icon { padding: 6px 8px; border-radius: 6px; border: 1.5px solid var(--border); background: transparent; cursor: pointer; font-size: .9rem; color: var(--ink-s); }
+    .btn-icon:hover { background: var(--cream-d); }
+
+    /* TABS */
+    .tabs { display: flex; gap: 4px; border-bottom: 2px solid var(--border); margin-bottom: 24px; }
+    .tab-btn { padding: 8px 16px; border: none; background: none; cursor: pointer; font-size: .84rem; font-weight: 500; color: var(--ink-s); border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all .15s; }
+    .tab-btn.active { color: var(--forest); border-bottom-color: var(--forest); font-weight: 600; }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* TOGGLE */
+    .toggle-wrap { display: flex; align-items: center; gap: 10px; }
+    .toggle { position: relative; width: 36px; height: 20px; }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider { position: absolute; inset: 0; border-radius: 20px; background: var(--border); cursor: pointer; transition: .2s; }
+    .toggle input:checked + .toggle-slider { background: var(--teal); }
+    .toggle-slider::before { content: ''; position: absolute; width: 14px; height: 14px; border-radius: 50%; background: #fff; left: 3px; top: 3px; transition: .2s; }
+    .toggle input:checked + .toggle-slider::before { transform: translateX(16px); }
+
+    /* STAR TOGGLE */
+    .star-btn { background: none; border: none; cursor: pointer; font-size: 1.1rem; color: var(--border); transition: color .15s; padding: 2px; }
+    .star-btn.starred { color: var(--gold); }
+
+    /* SYNC STATUS */
+    .sync-status { display: flex; align-items: center; gap: 8px; font-size: .82rem; padding: 10px 14px; border-radius: 8px; background: var(--cream); }
+    .sync-dot { width: 8px; height: 8px; border-radius: 50%; }
+    .sync-dot.green { background: var(--green); }
+    .sync-dot.orange { background: #E67E22; }
+    .sync-dot.gray { background: var(--border); }
+
+    /* TOAST */
+    .admin-toast {
+      position: fixed; bottom: 24px; right: 24px; background: var(--forest);
+      color: #fff; padding: 12px 20px; border-radius: 10px; font-size: .85rem;
+      transform: translateY(20px); opacity: 0; pointer-events: none;
+      transition: all .3s; z-index: 9999; max-width: 320px;
+    }
+    .admin-toast.show { transform: translateY(0); opacity: 1; }
+    .admin-toast.ok { background: var(--green); }
+    .admin-toast.err { background: var(--red); }
+
+    /* MODAL */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 500;
+      display: none; align-items: center; justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal { background: var(--white); border-radius: 14px; padding: 28px; max-width: 440px; width: 90%; }
+    .modal-title { font-size: 1rem; font-weight: 700; margin-bottom: 10px; }
+    .modal-body { font-size: .88rem; color: var(--ink-s); margin-bottom: 24px; }
+    .modal-footer { display: flex; gap: 10px; justify-content: flex-end; }
+
+    /* REVIEW CARD IN ADMIN */
+    .review-admin-card { border: 1px solid var(--border); border-radius: 10px; padding: 14px; margin-bottom: 12px; }
+    .review-admin-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+    .review-admin-stars { color: var(--gold); font-size: .9rem; }
+    .review-admin-text { font-size: .84rem; color: var(--ink-s); margin-bottom: 8px; font-style: italic; }
+    .review-admin-meta { font-size: .78rem; color: var(--ink-s); }
+
+    /* ACTIVITY LOG */
+    .activity-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: .82rem; }
+    .activity-item:last-child { border-bottom: none; }
+    .activity-icon { width: 28px; height: 28px; border-radius: 50%; background: var(--cream-d); display: flex; align-items: center; justify-content: center; font-size: .8rem; flex-shrink: 0; }
+    .activity-time { font-size: .72rem; color: var(--ink-s); }
+
+    /* SELECT WITH CATEGORY */
+    select.cat-select { padding: 5px 8px; font-size: .78rem; width: auto; border-radius: 6px; }
+
+    /* EMPTY STATE */
+    .empty-state { text-align: center; padding: 60px 20px; color: var(--ink-s); }
+    .empty-state-icon { font-size: 2.4rem; margin-bottom: 12px; }
+
+    /* API KEY STATUS */
+    .api-status { display: inline-flex; align-items: center; gap: 6px; font-size: .78rem; padding: 4px 10px; border-radius: 20px; }
+    .api-status.configured { background: #D5F5E3; color: #1A7A40; }
+    .api-status.missing { background: #FDECEA; color: var(--red); }
+
+    /* BLOG FORM */
+    .blog-editor { background: var(--white); border-radius: 12px; border: 1px solid var(--border); padding: 24px; }
+
+    @media (max-width: 900px) {
+      .stats-grid { grid-template-columns: repeat(2,1fr); }
+      .grid-2 { grid-template-columns: 1fr; }
+      .form-row { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 640px) {
+      .sidebar { display: none; }
+      .main-content { margin-left: 0; }
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">Aselovers</div>
+    <div class="login-sub">Admin Paneli</div>
+    <input type="password" class="login-input" id="login-pass" placeholder="Şifre" autocomplete="current-password">
+    <button class="login-btn" onclick="doLogin()">Giriş Yap</button>
+    <div class="login-error" id="login-error"></div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-name">Aselovers</div>
+      <div class="sidebar-badge">Admin Paneli</div>
+    </div>
+    <div class="sidebar-nav">
+      <button class="sidebar-nav-item active" onclick="showPage('dashboard',this)">
+        <span class="nav-icon">📊</span> Dashboard
+      </button>
+      <button class="sidebar-nav-item" onclick="showPage('products',this)">
+        <span class="nav-icon">📦</span> Ürünler
+      </button>
+      <button class="sidebar-nav-item" onclick="showPage('content',this)">
+        <span class="nav-icon">✏️</span> İçerik
+      </button>
+      <button class="sidebar-nav-item" onclick="showPage('blog',this)">
+        <span class="nav-icon">📝</span> Blog
+      </button>
+      <button class="sidebar-nav-item" onclick="showPage('settings',this)">
+        <span class="nav-icon">⚙️</span> Ayarlar
+      </button>
+    </div>
+    <div class="sidebar-footer">
+      <a href="../index.html" target="_blank">🏠 Mağazaya Git ↗</a>
+      <button onclick="doLogout()">🚪 Çıkış Yap</button>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <div class="main-content">
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <div class="topbar-title" id="topbar-title">Dashboard</div>
+      <div class="topbar-date" id="topbar-date"></div>
+      <button class="topbar-sync" onclick="doSync()">🔄 Etsy Sync</button>
+      <div class="topbar-avatar">A</div>
+    </div>
+
+    <!-- DASHBOARD PAGE -->
+    <div class="page active" id="page-dashboard">
+      <div class="page-title">Dashboard</div>
+      <div class="page-subtitle">Mağazanızın genel durumu</div>
+
+      <div class="stats-grid" id="dash-stats"></div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Son Ürünler</div>
+            <button class="btn btn-sm btn-outline" onclick="showPage('products', document.querySelector('[onclick*=products]'))">Tümünü Gör</button>
+          </div>
+          <div class="card-body">
+            <div id="dash-products-list"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Etsy Sync</div>
+          </div>
+          <div class="card-body">
+            <div id="sync-status-panel"></div>
+            <div style="margin-top:16px">
+              <div class="form-group">
+                <label>Etsy API Key</label>
+                <input type="text" id="quick-api-key" placeholder="keystring_xxxxxxxxxxxx">
+              </div>
+              <button class="btn btn-primary" onclick="saveQuickApiKey()">Kaydet</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Son Blog Yazıları</div>
+          <button class="btn btn-sm btn-gold" onclick="showPage('blog', document.querySelector('[onclick*=blog]')); newBlogPost()">+ Yeni Yazı</button>
+        </div>
+        <div class="card-body">
+          <div id="dash-blog-list"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRODUCTS PAGE -->
+    <div class="page" id="page-products">
+      <div class="page-title">Ürün Yönetimi</div>
+      <div class="page-subtitle">Etsy API bağlantısı ve ürün listesi</div>
+
+      <div class="card" style="margin-bottom:20px">
+        <div class="card-header"><div class="card-title">Etsy API Ayarları</div></div>
+        <div class="card-body">
+          <div class="form-row">
+            <div class="form-group">
+              <label>API Key (keystring)</label>
+              <input type="text" id="etsy-api-key" placeholder="keystring_xxxxxxxxxxxx">
+              <div class="form-hint">Etsy Developer hesabınızdan alın: etsy.com/developers</div>
+            </div>
+            <div class="form-group">
+              <label>Mağaza Adı</label>
+              <input type="text" id="etsy-shop-name" placeholder="aselovers" value="aselovers">
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+            <button class="btn btn-primary" onclick="saveEtsyConfig()">💾 Kaydet</button>
+            <button class="btn btn-gold" onclick="doSync()">🔄 Sync Yap</button>
+            <span id="etsy-api-status" class="api-status missing">⚠️ API key girilmedi</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Ürün Listesi</div>
+          <div id="products-count" style="font-size:.8rem;color:var(--ink-s)"></div>
+        </div>
+        <div class="card-body" style="padding:0">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Görsel</th>
+                  <th>Ürün Adı</th>
+                  <th>Kategori</th>
+                  <th>Fiyat</th>
+                  <th>Öne Çıkar</th>
+                  <th>Durum</th>
+                  <th>Etsy</th>
+                </tr>
+              </thead>
+              <tbody id="products-tbody"></tbody>
+            </table>
+          </div>
+          <div id="products-empty" class="empty-state" style="display:none">
+            <div class="empty-state-icon">📦</div>
+            <p>Henüz ürün yok. Etsy sync yapın veya products.json dosyasını güncelleyin.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTENT PAGE -->
+    <div class="page" id="page-content">
+      <div class="page-title">İçerik Yönetimi</div>
+      <div class="page-subtitle">Site içeriklerini düzenleyin — değişiklikler anında aktif olur</div>
+
+      <div class="tabs" id="content-tabs">
+        <button class="tab-btn active" onclick="switchContentTab('hero',this)">Hero</button>
+        <button class="tab-btn" onclick="switchContentTab('about',this)">Hakkımızda</button>
+        <button class="tab-btn" onclick="switchContentTab('shipping',this)">Kargo</button>
+        <button class="tab-btn" onclick="switchContentTab('reviews',this)">Yorumlar</button>
+        <button class="tab-btn" onclick="switchContentTab('footer',this)">Footer</button>
+      </div>
+
+      <!-- HERO TAB -->
+      <div class="tab-panel active" id="ctab-hero">
+        <div class="card">
+          <div class="card-header"><div class="card-title">Hero Bölümü</div></div>
+          <div class="card-body">
+            <div class="form-group">
+              <label>Başlık</label>
+              <input type="text" id="c-hero-headline" placeholder="Her Dikişte Bir Hikaye">
+            </div>
+            <div class="form-group">
+              <label>Alt Başlık</label>
+              <textarea id="c-hero-subheadline" rows="3"></textarea>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Ana Buton Metni</label>
+                <input type="text" id="c-hero-cta-primary" placeholder="Koleksiyonu Keşfet">
+              </div>
+              <div class="form-group">
+                <label>İkinci Buton Metni</label>
+                <input type="text" id="c-hero-cta-secondary" placeholder="Etsy'de Gör">
+              </div>
+            </div>
+            <button class="btn btn-primary" onclick="saveContentSection('hero')">💾 Hero'yu Kaydet</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ABOUT TAB -->
+      <div class="tab-panel" id="ctab-about">
+        <div class="card">
+          <div class="card-header"><div class="card-title">Hakkımızda</div></div>
+          <div class="card-body">
+            <div class="form-group">
+              <label>Sayfa Başlığı</label>
+              <input type="text" id="c-about-headline" placeholder="Küçük Bir Aile Hikayesi">
+            </div>
+            <div class="form-group">
+              <label>Kısa Hikaye (ana sayfa)</label>
+              <textarea id="c-about-story-short" rows="3"></textarea>
+            </div>
+            <div class="form-group">
+              <label>Tam Hikaye (hakkımızda sayfası — HTML)</label>
+              <textarea id="c-about-story-full" rows="8"></textarea>
+              <div class="form-hint">HTML etiketleri kullanabilirsiniz: &lt;p&gt;, &lt;em&gt;, &lt;h2&gt;, &lt;ul&gt;, &lt;li&gt;</div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Kurucu Adı</label>
+                <input type="text" id="c-about-name" placeholder="Melissa">
+              </div>
+              <div class="form-group">
+                <label>Kurucu Unvanı</label>
+                <input type="text" id="c-about-title" placeholder="Aselovers Kurucusu">
+              </div>
+            </div>
+            <button class="btn btn-primary" onclick="saveContentSection('about')">💾 Hakkımızda Kaydet</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- SHIPPING TAB -->
+      <div class="tab-panel" id="ctab-shipping">
+        <div class="card">
+          <div class="card-header"><div class="card-title">Kargo Bölümü</div></div>
+          <div class="card-body">
+            <div class="form-group">
+              <label>Başlık</label>
+              <input type="text" id="c-shipping-headline">
+            </div>
+            <div class="form-group">
+              <label>Açıklama</label>
+              <textarea id="c-shipping-desc" rows="3"></textarea>
+            </div>
+            <div class="form-section-title" style="margin-top:20px">ABD Özel Kartı</div>
+            <div class="form-group">
+              <label>ABD Kart Başlığı</label>
+              <input type="text" id="c-shipping-usa-title">
+            </div>
+            <div class="form-group">
+              <label>ABD Kart Açıklaması</label>
+              <textarea id="c-shipping-usa-desc" rows="3"></textarea>
+            </div>
+            <button class="btn btn-primary" onclick="saveContentSection('shipping')">💾 Kargo Kaydet</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- REVIEWS TAB -->
+      <div class="tab-panel" id="ctab-reviews">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+          <div style="font-size:.9rem;font-weight:600">Müşteri Yorumları</div>
+          <button class="btn btn-gold btn-sm" onclick="showAddReview()">+ Yorum Ekle</button>
+        </div>
+        <div id="reviews-admin-list"></div>
+
+        <div class="card" id="add-review-form" style="display:none;margin-top:20px">
+          <div class="card-header"><div class="card-title" id="review-form-title">Yorum Ekle</div></div>
+          <div class="card-body">
+            <input type="hidden" id="review-edit-id">
+            <div class="form-row">
+              <div class="form-group">
+                <label>Müşteri Adı</label>
+                <input type="text" id="r-author" placeholder="Julie">
+              </div>
+              <div class="form-group">
+                <label>Ülke</label>
+                <input type="text" id="r-location" placeholder="United States">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Ürün Adı</label>
+              <input type="text" id="r-product" placeholder="Crochet Bunny">
+            </div>
+            <div class="form-group">
+              <label>Puan</label>
+              <select id="r-stars">
+                <option value="5">★★★★★ (5)</option>
+                <option value="4">★★★★☆ (4)</option>
+                <option value="3">★★★☆☆ (3)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Yorum Metni</label>
+              <textarea id="r-text" rows="4"></textarea>
+            </div>
+            <div style="display:flex;gap:10px">
+              <button class="btn btn-primary" onclick="saveReview()">💾 Kaydet</button>
+              <button class="btn btn-outline" onclick="document.getElementById('add-review-form').style.display='none'">İptal</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FOOTER TAB -->
+      <div class="tab-panel" id="ctab-footer">
+        <div class="card">
+          <div class="card-header"><div class="card-title">Footer</div></div>
+          <div class="card-body">
+            <div class="form-group">
+              <label>Slogan</label>
+              <input type="text" id="c-footer-tagline" placeholder="Evlere mutluluk örüyoruz.">
+            </div>
+            <div class="form-group">
+              <label>Telif Hakkı</label>
+              <input type="text" id="c-footer-copyright" placeholder="© 2025 Aselovers.">
+            </div>
+            <button class="btn btn-primary" onclick="saveContentSection('footer')">💾 Footer Kaydet</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BLOG PAGE -->
+    <div class="page" id="page-blog">
+      <div class="page-title">Blog Yönetimi</div>
+      <div class="page-subtitle">Blog yazılarınızı oluşturun ve yönetin</div>
+
+      <!-- BLOG LIST VIEW -->
+      <div id="blog-list-view">
+        <div style="display:flex;justify-content:flex-end;margin-bottom:16px">
+          <button class="btn btn-gold" onclick="newBlogPost()">+ Yeni Yazı Ekle</button>
+        </div>
+        <div class="card">
+          <div class="card-body" style="padding:0">
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Başlık</th>
+                    <th>Kategori</th>
+                    <th>Tarih</th>
+                    <th>Durum</th>
+                    <th>İşlem</th>
+                  </tr>
+                </thead>
+                <tbody id="blog-tbody"></tbody>
+              </table>
+            </div>
+            <div id="blog-empty" class="empty-state" style="display:none">
+              <div class="empty-state-icon">📝</div>
+              <p>Henüz blog yazısı yok. Yeni yazı ekleyin.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BLOG EDITOR VIEW -->
+      <div id="blog-editor-view" style="display:none">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
+          <button class="btn btn-outline" onclick="showBlogList()">← Geri</button>
+          <div class="page-title" style="margin-bottom:0" id="blog-editor-title">Yeni Yazı</div>
+        </div>
+        <div class="blog-editor">
+          <input type="hidden" id="blog-edit-id">
+          <div class="form-row">
+            <div class="form-group" style="grid-column:1/-1">
+              <label>Başlık *</label>
+              <input type="text" id="b-title" placeholder="Yazı başlığı" oninput="autoSlug()">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Slug (URL)</label>
+              <input type="text" id="b-slug" placeholder="yazi-basligi">
+            </div>
+            <div class="form-group">
+              <label>Kategori</label>
+              <input type="text" id="b-category" placeholder="Craft & Story" list="cat-list">
+              <datalist id="cat-list">
+                <option value="Craft & Story">
+                <option value="Home & Design">
+                <option value="Values">
+                <option value="Gift Guide">
+                <option value="Behind the Brand">
+              </datalist>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Tarih</label>
+              <input type="date" id="b-date">
+            </div>
+            <div class="form-group">
+              <label>Okuma Süresi</label>
+              <input type="text" id="b-readtime" placeholder="5 min">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Kapak Görseli URL</label>
+            <input type="url" id="b-cover" placeholder="https://...">
+          </div>
+          <div class="form-group">
+            <label>Özet</label>
+            <textarea id="b-excerpt" rows="2" placeholder="Kısa özet (blog listesinde görünür)"></textarea>
+          </div>
+          <div class="form-group">
+            <label>İçerik (HTML)</label>
+            <textarea id="b-content" rows="12" placeholder="&lt;p&gt;Yazı içeriği...&lt;/p&gt;"></textarea>
+            <div class="form-hint">HTML kullanabilirsiniz: &lt;p&gt;, &lt;h2&gt;, &lt;em&gt;, &lt;ul&gt;, &lt;li&gt;, &lt;strong&gt;</div>
+          </div>
+          <div class="form-section-title">SEO</div>
+          <div class="form-group">
+            <label>Meta Başlık</label>
+            <input type="text" id="b-meta-title" placeholder="SEO başlığı | Aselovers">
+          </div>
+          <div class="form-group">
+            <label>Meta Açıklama</label>
+            <textarea id="b-meta-desc" rows="2" placeholder="Arama motorları için açıklama (120-160 karakter)"></textarea>
+          </div>
+          <div class="toggle-wrap" style="margin-bottom:24px">
+            <label class="toggle">
+              <input type="checkbox" id="b-published" checked>
+              <span class="toggle-slider"></span>
+            </label>
+            <span style="font-size:.85rem;font-weight:500">Yayınlandı</span>
+          </div>
+          <div style="display:flex;gap:12px;flex-wrap:wrap">
+            <button class="btn btn-primary" onclick="saveBlogPost()">💾 Kaydet</button>
+            <button class="btn btn-outline" onclick="showBlogList()">İptal</button>
+            <a id="preview-link" href="#" target="_blank" class="btn btn-outline" style="display:none">👁 Önizleme</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SETTINGS PAGE -->
+    <div class="page" id="page-settings">
+      <div class="page-title">Ayarlar</div>
+      <div class="page-subtitle">Site ayarları ve yapılandırma</div>
+
+      <div class="tabs">
+        <button class="tab-btn active" onclick="switchSettingsTab('site',this)">Site</button>
+        <button class="tab-btn" onclick="switchSettingsTab('social',this)">Sosyal Medya</button>
+        <button class="tab-btn" onclick="switchSettingsTab('appearance',this)">Görünüm</button>
+        <button class="tab-btn" onclick="switchSettingsTab('password',this)">Admin Şifre</button>
+      </div>
+
+      <div class="tab-panel active" id="stab-site">
+        <div class="card">
+          <div class="card-body">
+            <div class="form-group">
+              <label>Site Adı</label>
+              <input type="text" id="s-site-name" placeholder="Aselovers">
+            </div>
+            <div class="form-group">
+              <label>Site Açıklaması</label>
+              <textarea id="s-site-desc" rows="2"></textarea>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>E-posta</label>
+                <input type="email" id="s-site-email">
+              </div>
+              <div class="form-group">
+                <label>Google Analytics ID</label>
+                <input type="text" id="s-analytics" placeholder="G-XXXXXXXXXX">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Para Birimi</label>
+              <select id="s-currency">
+                <option value="TRY">TRY — Türk Lirası</option>
+                <option value="EUR">EUR — Euro</option>
+                <option value="USD">USD — Dolar</option>
+              </select>
+            </div>
+            <button class="btn btn-primary" onclick="saveSettings('site')">💾 Kaydet</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="stab-social">
+        <div class="card">
+          <div class="card-body">
+            <div class="form-group">
+              <label>Instagram URL</label>
+              <input type="url" id="s-instagram" placeholder="https://instagram.com/aselovers">
+            </div>
+            <div class="form-group">
+              <label>Pinterest URL</label>
+              <input type="url" id="s-pinterest" placeholder="https://pinterest.com/aselovers">
+            </div>
+            <div class="form-group">
+              <label>Etsy URL</label>
+              <input type="url" id="s-etsy" placeholder="https://aselovers.etsy.com">
+            </div>
+            <button class="btn btn-primary" onclick="saveSettings('social')">💾 Kaydet</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="stab-appearance">
+        <div class="card">
+          <div class="card-body">
+            <div class="form-group">
+              <label>Logo URL</label>
+              <input type="url" id="s-logo" placeholder="https://... (boş bırakırsanız metin logo kullanılır)">
+            </div>
+            <div class="form-group">
+              <label>Favicon URL</label>
+              <input type="url" id="s-favicon" placeholder="https://.../favicon.ico">
+            </div>
+            <button class="btn btn-primary" onclick="saveSettings('appearance')">💾 Kaydet</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="stab-password">
+        <div class="card">
+          <div class="card-body">
+            <div class="form-group">
+              <label>Mevcut Şifre</label>
+              <input type="password" id="s-curr-pass" placeholder="Mevcut şifre">
+            </div>
+            <div class="form-group">
+              <label>Yeni Şifre</label>
+              <input type="password" id="s-new-pass" placeholder="Yeni şifre (min 6 karakter)">
+            </div>
+            <div class="form-group">
+              <label>Yeni Şifre Tekrar</label>
+              <input type="password" id="s-new-pass2" placeholder="Yeni şifre tekrar">
+            </div>
+            <button class="btn btn-primary" onclick="changePassword()">🔐 Şifreyi Güncelle</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRM MODAL -->
+<div class="modal-overlay" id="confirm-modal">
+  <div class="modal">
+    <div class="modal-title" id="modal-title">Emin misiniz?</div>
+    <div class="modal-body" id="modal-body">Bu işlem geri alınamaz.</div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal()">İptal</button>
+      <button class="btn btn-danger" id="modal-confirm-btn">Sil</button>
+    </div>
+  </div>
+</div>
+
+<div class="admin-toast" id="admin-toast"></div>
+
+<script>
+// ── DATA STORE ──────────────────────────────────────────────
+const DEFAULT_PASS = 'aselovers2024';
+let _products = [];
+let _blogPosts = [];
+let _content = {};
+
+function getPass() { return localStorage.getItem('ase_admin_pass') || DEFAULT_PASS; }
+function getEtsyConfig() {
+  try { return JSON.parse(localStorage.getItem('ase_etsy_config') || '{}'); } catch { return {}; }
+}
+function saveEtsyConfigData(cfg) { localStorage.setItem('ase_etsy_config', JSON.stringify(cfg)); }
+function getProductOverrides() {
+  try { return JSON.parse(localStorage.getItem('ase_products_overrides') || '{}'); } catch { return {}; }
+}
+function saveProductOverrides(o) { localStorage.setItem('ase_products_overrides', JSON.stringify(o)); }
+function getLocalContent() {
+  try { return JSON.parse(localStorage.getItem('ase_content') || '{}'); } catch { return {}; }
+}
+function saveLocalContent(c) { localStorage.setItem('ase_content', JSON.stringify(c)); }
+function getBlogPosts() {
+  // Merge: content.json posts overridden by localStorage
+  const local = getLocalContent();
+  return (local.blog && local.blog.posts) ? local.blog.posts : (_content.blog && _content.blog.posts) || [];
+}
+function saveBlogPosts(posts) {
+  const local = getLocalContent();
+  local.blog = local.blog || {};
+  local.blog.posts = posts;
+  saveLocalContent(local);
+  _blogPosts = posts;
+}
+function getSettings() {
+  try { return JSON.parse(localStorage.getItem('ase_settings') || '{}'); } catch { return {}; }
+}
+function saveSettingsData(s) { localStorage.setItem('ase_settings', JSON.stringify(s)); }
+
+// ── AUTH ───────────────────────────────────────────────────
+const ADM_HDR = { 'Content-Type': 'application/json', 'X-Ase-Admin': '1' };
+
+async function checkAuth() {
+  // Try JWT cookie (server auth)
+  try {
+    const res = await fetch('/api/admin/me', {
+      credentials: 'include', headers: { 'X-Ase-Admin': '1' }
+    });
+    if (res.ok) { showApp(); return; }
+  } catch {}
+  // Fallback: sessionStorage (client-only mode)
+  if (sessionStorage.getItem('ase_authed') === '1') { showApp(); }
+}
+
+function showApp() {
+  document.getElementById('login-screen').classList.add('hidden');
+  document.getElementById('app').classList.add('visible');
+  initApp();
+}
+
+async function doLogin() {
+  const pass = document.getElementById('login-pass').value;
+  const errEl = document.getElementById('login-error');
+  errEl.textContent = '';
+
+  // Try server login first
+  try {
+    const res = await fetch('/api/admin/login', {
+      method: 'POST', credentials: 'include',
+      headers: ADM_HDR,
+      body: JSON.stringify({ username: 'admin', password: pass })
+    });
+    if (res.ok) {
+      sessionStorage.setItem('ase_authed', '1');
+      showApp(); return;
+    }
+    const data = await res.json().catch(() => ({}));
+    errEl.textContent = data.error || 'Hatalı şifre.';
+    document.getElementById('login-pass').value = '';
+    return;
+  } catch {}
+
+  // Fallback: client-side check (server offline)
+  if (pass === getPass()) {
+    sessionStorage.setItem('ase_authed', '1');
+    showApp();
+  } else {
+    errEl.textContent = 'Hatalı şifre.';
+    document.getElementById('login-pass').value = '';
+  }
+}
+document.getElementById('login-pass').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+
+async function doLogout() {
+  try {
+    await fetch('/api/admin/logout', {
+      method: 'POST', credentials: 'include', headers: ADM_HDR
+    });
+  } catch {}
+  sessionStorage.removeItem('ase_authed');
+  location.reload();
+}
+
+// ── INIT ───────────────────────────────────────────────────
+async function initApp() {
+  document.getElementById('topbar-date').textContent = new Date().toLocaleDateString('tr-TR', {day:'numeric',month:'long',year:'numeric'});
+
+  // Load content.json
+  try {
+    const res = await fetch('../content.json?v=' + Date.now());
+    _content = await res.json();
+  } catch { _content = {}; }
+
+  // Load products
+  try {
+    const res = await fetch('../products.json?v=' + Date.now());
+    const data = await res.json();
+    _products = (data.products || []);
+  } catch { _products = []; }
+
+  _blogPosts = getBlogPosts();
+
+  renderDashboard();
+  renderProducts();
+  renderContentForms();
+  renderBlogList();
+  renderSettings();
+  updateApiStatus();
+  loadQuickApiKey();
+}
+
+// ── NAVIGATION ────────────────────────────────────────────
+function showPage(pageId, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sidebar-nav-item').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + pageId)?.classList.add('active');
+  if (btn) btn.classList.add('active');
+  const titles = { dashboard:'Dashboard', products:'Ürün Yönetimi', content:'İçerik Yönetimi', blog:'Blog Yönetimi', settings:'Ayarlar' };
+  document.getElementById('topbar-title').textContent = titles[pageId] || pageId;
+}
+
+// ── DASHBOARD ─────────────────────────────────────────────
+function renderDashboard() {
+  const posts = getBlogPosts();
+  const publishedCount = posts.filter(p => p.published).length;
+  const lastSync = localStorage.getItem('ase_last_sync');
+  const cfg = getEtsyConfig();
+
+  document.getElementById('dash-stats').innerHTML = `
+    <div class="stat-card"><div class="stat-icon">📦</div><div class="stat-val">${_products.length}</div><div class="stat-label">Toplam Ürün</div></div>
+    <div class="stat-card"><div class="stat-icon">📝</div><div class="stat-val">${publishedCount}</div><div class="stat-label">Blog Yazısı</div></div>
+    <div class="stat-card"><div class="stat-icon">🔄</div><div class="stat-val" style="font-size:1rem">${lastSync ? new Date(parseInt(lastSync)).toLocaleDateString('tr-TR') : '—'}</div><div class="stat-label">Son Sync</div></div>
+    <div class="stat-card"><div class="stat-icon">🔑</div>
+      <div class="stat-val" style="font-size:1rem">${cfg.apiKey ? '<span style="color:var(--green)">✓ Aktif</span>' : '<span style="color:var(--red)">Girilmedi</span>'}</div>
+      <div class="stat-label">API Key Durumu</div></div>`;
+
+  // Recent products
+  const prod5 = _products.slice(0,5);
+  document.getElementById('dash-products-list').innerHTML = prod5.length === 0
+    ? '<div style="color:var(--ink-s);font-size:.84rem;text-align:center;padding:20px">Ürün bulunamadı.</div>'
+    : prod5.map(p => `<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)">
+        ${p.image ? `<img src="${p.image}" style="width:40px;height:40px;border-radius:6px;object-fit:cover">` : '<div style="width:40px;height:40px;border-radius:6px;background:var(--cream-d);display:flex;align-items:center;justify-content:center">🧶</div>'}
+        <div style="flex:1;min-width:0"><div style="font-size:.84rem;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.title_tr || p.title_en}</div><div style="font-size:.75rem;color:var(--ink-s)">${p.category}</div></div>
+        <div style="font-size:.82rem;font-weight:600;color:var(--forest)">${p.price ? p.price + ' ₺' : ''}</div>
+      </div>`).join('');
+
+  // Blog list
+  const blog3 = getBlogPosts().slice(0,3);
+  document.getElementById('dash-blog-list').innerHTML = blog3.length === 0
+    ? '<div style="color:var(--ink-s);font-size:.84rem;text-align:center;padding:20px">Blog yazısı yok.</div>'
+    : blog3.map(p => `<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)">
+        <div>
+          <div style="font-size:.84rem;font-weight:500">${p.title}</div>
+          <div style="font-size:.75rem;color:var(--ink-s)">${p.category} · ${new Date(p.date).toLocaleDateString('tr-TR')}</div>
+        </div>
+        <span class="badge ${p.published ? 'badge-green' : 'badge-gray'}">${p.published ? 'Yayında' : 'Taslak'}</span>
+      </div>`).join('');
+
+  // Sync status
+  renderSyncStatus();
+}
+
+function renderSyncStatus() {
+  const lastSync = localStorage.getItem('ase_last_sync');
+  const cfg = getEtsyConfig();
+  document.getElementById('sync-status-panel').innerHTML = `
+    <div class="sync-status">
+      <div class="sync-dot ${cfg.apiKey ? 'green' : 'gray'}"></div>
+      <div>
+        <div style="font-weight:600">${cfg.apiKey ? 'API Bağlı' : 'API Key Girilmedi'}</div>
+        <div style="font-size:.75rem;color:var(--ink-s);margin-top:2px">Son sync: ${lastSync ? new Date(parseInt(lastSync)).toLocaleString('tr-TR') : 'Hiç yapılmadı'}</div>
+      </div>
+    </div>`;
+}
+
+function loadQuickApiKey() {
+  const cfg = getEtsyConfig();
+  const el = document.getElementById('quick-api-key');
+  if (el && cfg.apiKey) el.value = cfg.apiKey;
+}
+
+function saveQuickApiKey() {
+  const val = document.getElementById('quick-api-key').value.trim();
+  const cfg = getEtsyConfig();
+  cfg.apiKey = val;
+  saveEtsyConfigData(cfg);
+  updateApiStatus();
+  renderSyncStatus();
+  toast('API key kaydedildi', 'ok');
+}
+
+// ── ETSY SYNC ─────────────────────────────────────────────
+async function doSync() {
+  toast('Sync başlatılıyor...');
+  try {
+    const res = await fetch('/api/admin/sync', {
+      method: 'POST',
+      headers: ADM_HDR,
+      credentials: 'include'
+    });
+    if (res.ok) {
+      localStorage.setItem('ase_last_sync', Date.now().toString());
+      const pr = await fetch('/products.json?v=' + Date.now());
+      const data = await pr.json();
+      _products = data.products || [];
+      renderProducts();
+      renderDashboard();
+      toast('✅ Sync başarılı! ' + _products.length + ' ürün güncellendi', 'ok');
+    } else {
+      const d = await res.json().catch(() => ({}));
+      toast('Sync hatası: ' + (d.error || res.statusText), 'err');
+    }
+  } catch {
+    toast('⚠️ Server bağlantısı kurulamadı. "node server.js" çalışıyor mu?', 'err');
+  }
+}
+
+// ── PRODUCTS ──────────────────────────────────────────────
+function renderProducts() {
+  const overrides = getProductOverrides();
+  const tbody = document.getElementById('products-tbody');
+  const empty = document.getElementById('products-empty');
+  const count = document.getElementById('products-count');
+
+  if (!_products.length) {
+    tbody.innerHTML = '';
+    empty.style.display = '';
+    count.textContent = '0 ürün';
+    return;
+  }
+  empty.style.display = 'none';
+  count.textContent = _products.length + ' ürün';
+
+  tbody.innerHTML = _products.map((p, i) => {
+    const isFeatured = (overrides.featured || []).includes(p.id);
+    const name = p.title_tr || p.title_en || '(isimsiz)';
+    return `<tr>
+      <td>${p.image ? `<img src="${p.image}" class="product-thumb" loading="lazy">` : '<div class="product-thumb-placeholder">🧶</div>'}</td>
+      <td><div style="font-weight:500;font-size:.84rem">${name}</div></td>
+      <td>
+        <select class="cat-select" onchange="updateProductCat('${p.id}',this.value)">
+          ${['amigurumi','decor','bag','accessory'].map(c => `<option value="${c}" ${p.category===c?'selected':''}>${c}</option>`).join('')}
+        </select>
+      </td>
+      <td style="font-weight:600;font-size:.84rem">${p.price ? p.price + ' ₺' : '—'}</td>
+      <td>
+        <button class="star-btn ${isFeatured ? 'starred' : ''}" onclick="toggleFeatured('${p.id}',this)" title="${isFeatured ? 'Öne çıkar kaldır' : 'Öne çıkar'}">
+          ${isFeatured ? '★' : '☆'}
+        </button>
+      </td>
+      <td><span class="badge ${p.isActive !== false ? 'badge-green' : 'badge-gray'}">${p.isActive !== false ? 'Aktif' : 'Pasif'}</span></td>
+      <td><a href="${p.url || 'https://aselovers.etsy.com'}" target="_blank" class="btn btn-sm btn-outline">↗</a></td>
+    </tr>`;
+  }).join('');
+}
+
+function toggleFeatured(productId, btn) {
+  const overrides = getProductOverrides();
+  overrides.featured = overrides.featured || [];
+  const idx = overrides.featured.indexOf(productId);
+  if (idx === -1) { overrides.featured.push(productId); btn.classList.add('starred'); btn.textContent = '★'; }
+  else { overrides.featured.splice(idx,1); btn.classList.remove('starred'); btn.textContent = '☆'; }
+  saveProductOverrides(overrides);
+  toast('Güncellendi', 'ok');
+}
+
+function updateProductCat(productId, cat) {
+  const overrides = getProductOverrides();
+  overrides.categories = overrides.categories || {};
+  overrides.categories[productId] = cat;
+  saveProductOverrides(overrides);
+}
+
+async function saveEtsyConfig() {
+  const apiKey = document.getElementById('etsy-api-key').value.trim();
+  const shopName = document.getElementById('etsy-shop-name').value.trim() || 'aselovers';
+
+  // Always save to localStorage (fast local access)
+  saveEtsyConfigData({ apiKey, shopName });
+  updateApiStatus();
+
+  // Also persist to server so sync can read it
+  try {
+    const res = await fetch('/api/admin/settings', {
+      method: 'PUT', credentials: 'include',
+      headers: ADM_HDR,
+      body: JSON.stringify({ etsyApiKey: apiKey, etsyShop: shopName })
+    });
+    if (res.ok) {
+      toast('✅ Etsy ayarları kaydedildi', 'ok');
+    } else {
+      const d = await res.json().catch(() => ({}));
+      toast('Yerel kaydedildi. Sunucu: ' + (d.error || 'hata'), 'warn');
+    }
+  } catch {
+    toast('Yerel kaydedildi (sunucu çevrimdışı)', 'ok');
+  }
+}
+
+function updateApiStatus() {
+  const cfg = getEtsyConfig();
+  const el = document.getElementById('etsy-api-status');
+  if (!el) return;
+  if (cfg.apiKey) {
+    el.className = 'api-status configured';
+    el.textContent = '✓ API key aktif';
+    const inp = document.getElementById('etsy-api-key');
+    if (inp) inp.value = cfg.apiKey;
+  } else {
+    el.className = 'api-status missing';
+    el.textContent = '⚠️ API key girilmedi';
+  }
+}
+
+// ── CONTENT ───────────────────────────────────────────────
+function renderContentForms() {
+  const local = getLocalContent();
+  const site = _content;
+  const merged = deepMerge(site, local);
+
+  // Hero
+  setVal('c-hero-headline', merged.hero?.headline || '');
+  setVal('c-hero-subheadline', merged.hero?.subheadline || '');
+  setVal('c-hero-cta-primary', merged.hero?.cta_primary || '');
+  setVal('c-hero-cta-secondary', merged.hero?.cta_secondary || '');
+
+  // About
+  setVal('c-about-headline', merged.about?.headline || '');
+  setVal('c-about-story-short', merged.about?.story_short || '');
+  setVal('c-about-story-full', merged.about?.story_full || '');
+  setVal('c-about-name', merged.about?.name || '');
+  setVal('c-about-title', merged.about?.title || '');
+
+  // Shipping
+  setVal('c-shipping-headline', merged.shipping?.headline || '');
+  setVal('c-shipping-desc', merged.shipping?.desc || '');
+  setVal('c-shipping-usa-title', merged.shipping?.usa_title || '');
+  setVal('c-shipping-usa-desc', merged.shipping?.usa_desc || '');
+
+  // Footer
+  setVal('c-footer-tagline', merged.footer?.tagline || '');
+  setVal('c-footer-copyright', merged.footer?.copyright || '');
+
+  // Reviews
+  renderReviewsAdmin();
+}
+
+function saveContentSection(section) {
+  const local = getLocalContent();
+  if (section === 'hero') {
+    local.hero = local.hero || {};
+    local.hero.headline = getVal('c-hero-headline');
+    local.hero.subheadline = getVal('c-hero-subheadline');
+    local.hero.cta_primary = getVal('c-hero-cta-primary');
+    local.hero.cta_secondary = getVal('c-hero-cta-secondary');
+  } else if (section === 'about') {
+    local.about = local.about || {};
+    local.about.headline = getVal('c-about-headline');
+    local.about.story_short = getVal('c-about-story-short');
+    local.about.story_full = getVal('c-about-story-full');
+    local.about.name = getVal('c-about-name');
+    local.about.title = getVal('c-about-title');
+  } else if (section === 'shipping') {
+    local.shipping = local.shipping || {};
+    local.shipping.headline = getVal('c-shipping-headline');
+    local.shipping.desc = getVal('c-shipping-desc');
+    local.shipping.usa_title = getVal('c-shipping-usa-title');
+    local.shipping.usa_desc = getVal('c-shipping-usa-desc');
+  } else if (section === 'footer') {
+    local.footer = local.footer || {};
+    local.footer.tagline = getVal('c-footer-tagline');
+    local.footer.copyright = getVal('c-footer-copyright');
+  }
+  saveLocalContent(local);
+  toast('✅ ' + section + ' kaydedildi', 'ok');
+}
+
+// Reviews admin
+function renderReviewsAdmin() {
+  const local = getLocalContent();
+  const reviews = local.reviews || _content.reviews || [];
+  const list = document.getElementById('reviews-admin-list');
+  if (!list) return;
+  if (!reviews.length) {
+    list.innerHTML = '<div class="empty-state"><div class="empty-state-icon">⭐</div><p>Henüz yorum yok.</p></div>';
+    return;
+  }
+  list.innerHTML = reviews.map((r, i) => `
+    <div class="review-admin-card">
+      <div class="review-admin-header">
+        <div class="review-admin-stars">${'★'.repeat(r.stars || 5)}</div>
+        <div style="display:flex;gap:6px">
+          <button class="btn-icon" onclick="editReview(${i})" title="Düzenle">✏️</button>
+          <button class="btn-icon" onclick="confirmDeleteReview(${i})" title="Sil">🗑️</button>
+        </div>
+      </div>
+      <div class="review-admin-text">"${r.text}"</div>
+      <div class="review-admin-meta">${r.author} · ${r.location} · ${r.product}</div>
+    </div>`).join('');
+}
+
+function showAddReview() {
+  document.getElementById('review-form-title').textContent = 'Yorum Ekle';
+  document.getElementById('review-edit-id').value = '';
+  ['r-author','r-location','r-product','r-text'].forEach(id => setVal(id, ''));
+  setVal('r-stars', '5');
+  document.getElementById('add-review-form').style.display = '';
+}
+
+function editReview(idx) {
+  const local = getLocalContent();
+  const reviews = local.reviews || _content.reviews || [];
+  const r = reviews[idx];
+  if (!r) return;
+  document.getElementById('review-form-title').textContent = 'Yorumu Düzenle';
+  document.getElementById('review-edit-id').value = idx;
+  setVal('r-author', r.author || '');
+  setVal('r-location', r.location || '');
+  setVal('r-product', r.product || '');
+  setVal('r-stars', String(r.stars || 5));
+  setVal('r-text', r.text || '');
+  document.getElementById('add-review-form').style.display = '';
+}
+
+function saveReview() {
+  const local = getLocalContent();
+  const reviews = [...(local.reviews || _content.reviews || [])];
+  const editId = document.getElementById('review-edit-id').value;
+  const review = {
+    id: 'r' + Date.now(),
+    author: getVal('r-author'),
+    location: getVal('r-location'),
+    product: getVal('r-product'),
+    stars: parseInt(getVal('r-stars')) || 5,
+    text: getVal('r-text'),
+    date: new Date().toISOString().split('T')[0]
+  };
+  if (editId !== '') {
+    reviews[parseInt(editId)] = review;
+  } else {
+    reviews.push(review);
+  }
+  local.reviews = reviews;
+  saveLocalContent(local);
+  renderReviewsAdmin();
+  document.getElementById('add-review-form').style.display = 'none';
+  toast('Yorum kaydedildi', 'ok');
+}
+
+function confirmDeleteReview(idx) {
+  openModal('Yorumu Sil', 'Bu yorumu silmek istediğinizden emin misiniz?', () => {
+    const local = getLocalContent();
+    const reviews = [...(local.reviews || _content.reviews || [])];
+    reviews.splice(idx, 1);
+    local.reviews = reviews;
+    saveLocalContent(local);
+    renderReviewsAdmin();
+    toast('Yorum silindi', 'ok');
+  });
+}
+
+function switchContentTab(tab, btn) {
+  document.querySelectorAll('#page-content .tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('#page-content .tab-panel').forEach(p => p.classList.remove('active'));
+  btn?.classList.add('active');
+  document.getElementById('ctab-' + tab)?.classList.add('active');
+}
+
+// ── BLOG ─────────────────────────────────────────────────
+function renderBlogList() {
+  const posts = getBlogPosts();
+  const tbody = document.getElementById('blog-tbody');
+  const empty = document.getElementById('blog-empty');
+  if (!posts.length) {
+    tbody.innerHTML = '';
+    empty.style.display = '';
+    return;
+  }
+  empty.style.display = 'none';
+  tbody.innerHTML = posts.map((p, i) => `
+    <tr>
+      <td style="font-weight:500;max-width:300px">${p.title}</td>
+      <td><span class="badge badge-gold">${p.category || '—'}</span></td>
+      <td style="white-space:nowrap">${p.date ? new Date(p.date).toLocaleDateString('tr-TR') : '—'}</td>
+      <td><span class="badge ${p.published ? 'badge-green' : 'badge-gray'}">${p.published ? 'Yayında' : 'Taslak'}</span></td>
+      <td style="white-space:nowrap">
+        <button class="btn-icon" onclick="editBlogPost(${i})" title="Düzenle">✏️</button>
+        <a href="../blog.html?post=${p.slug}" target="_blank" class="btn-icon" title="Önizle">👁</a>
+        <button class="btn-icon" onclick="confirmDeletePost(${i})" title="Sil">🗑️</button>
+      </td>
+    </tr>`).join('');
+}
+
+function showBlogList() {
+  document.getElementById('blog-list-view').style.display = '';
+  document.getElementById('blog-editor-view').style.display = 'none';
+}
+
+function newBlogPost() {
+  document.getElementById('blog-editor-title').textContent = 'Yeni Yazı';
+  document.getElementById('blog-edit-id').value = '';
+  ['b-title','b-slug','b-category','b-cover','b-excerpt','b-content','b-meta-title','b-meta-desc','b-readtime'].forEach(id => setVal(id,''));
+  document.getElementById('b-date').value = new Date().toISOString().split('T')[0];
+  document.getElementById('b-published').checked = true;
+  document.getElementById('preview-link').style.display = 'none';
+  document.getElementById('blog-list-view').style.display = 'none';
+  document.getElementById('blog-editor-view').style.display = '';
+}
+
+function editBlogPost(idx) {
+  const posts = getBlogPosts();
+  const p = posts[idx];
+  if (!p) return;
+  document.getElementById('blog-editor-title').textContent = 'Yazıyı Düzenle';
+  document.getElementById('blog-edit-id').value = idx;
+  setVal('b-title', p.title || '');
+  setVal('b-slug', p.slug || '');
+  setVal('b-category', p.category || '');
+  setVal('b-cover', p.cover || '');
+  setVal('b-excerpt', p.excerpt || '');
+  setVal('b-content', p.content || '');
+  setVal('b-meta-title', p.metaTitle || '');
+  setVal('b-meta-desc', p.metaDesc || '');
+  setVal('b-readtime', p.readTime || '');
+  document.getElementById('b-date').value = p.date || '';
+  document.getElementById('b-published').checked = !!p.published;
+  const prev = document.getElementById('preview-link');
+  prev.href = '../blog.html?post=' + (p.slug || '');
+  prev.style.display = '';
+  document.getElementById('blog-list-view').style.display = 'none';
+  document.getElementById('blog-editor-view').style.display = '';
+}
+
+function autoSlug() {
+  const title = getVal('b-title');
+  const slug = title.toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/[ğ]/g,'g').replace(/[ü]/g,'u').replace(/[ş]/g,'s')
+    .replace(/[ı]/g,'i').replace(/[ö]/g,'o').replace(/[ç]/g,'c')
+    .replace(/[^a-z0-9-]/g,'')
+    .replace(/-+/g,'-').replace(/^-|-$/g,'');
+  if (!document.getElementById('blog-edit-id').value) {
+    setVal('b-slug', slug);
+  }
+}
+
+function saveBlogPost() {
+  const title = getVal('b-title').trim();
+  if (!title) { toast('Başlık zorunludur', 'err'); return; }
+
+  const posts = getBlogPosts();
+  const editId = document.getElementById('blog-edit-id').value;
+  const post = {
+    id: editId !== '' ? (posts[parseInt(editId)]?.id || 'b' + Date.now()) : 'b' + Date.now(),
+    slug: getVal('b-slug') || slugify(title),
+    title, category: getVal('b-category'),
+    cover: getVal('b-cover'),
+    excerpt: getVal('b-excerpt'),
+    content: getVal('b-content'),
+    metaTitle: getVal('b-meta-title') || title + ' | Aselovers',
+    metaDesc: getVal('b-meta-desc'),
+    readTime: getVal('b-readtime') || '5 min',
+    date: document.getElementById('b-date').value || new Date().toISOString().split('T')[0],
+    published: document.getElementById('b-published').checked
+  };
+
+  if (editId !== '') {
+    posts[parseInt(editId)] = post;
+  } else {
+    posts.unshift(post);
+  }
+  saveBlogPosts(posts);
+  renderBlogList();
+  showBlogList();
+  toast('✅ Blog yazısı kaydedildi', 'ok');
+}
+
+function confirmDeletePost(idx) {
+  openModal('Yazıyı Sil', 'Bu blog yazısını silmek istediğinizden emin misiniz?', () => {
+    const posts = getBlogPosts();
+    posts.splice(idx, 1);
+    saveBlogPosts(posts);
+    renderBlogList();
+    toast('Yazı silindi', 'ok');
+  });
+}
+
+// ── SETTINGS ─────────────────────────────────────────────
+function renderSettings() {
+  const s = getSettings();
+  const local = getLocalContent();
+  const merged = deepMerge(_content.site || {}, s);
+
+  setVal('s-site-name', merged.name || 'Aselovers');
+  setVal('s-site-desc', merged.description || '');
+  setVal('s-site-email', merged.email || '');
+  setVal('s-analytics', merged.analytics || '');
+  setVal('s-currency', merged.currency || 'TRY');
+  setVal('s-instagram', merged.instagram || '');
+  setVal('s-pinterest', merged.pinterest || '');
+  setVal('s-etsy', merged.etsy || '');
+  setVal('s-logo', merged.logo || '');
+  setVal('s-favicon', merged.favicon || '');
+}
+
+function saveSettings(section) {
+  const local = getLocalContent();
+  local.site = local.site || {};
+  if (section === 'site') {
+    local.site.name = getVal('s-site-name');
+    local.site.description = getVal('s-site-desc');
+    local.site.email = getVal('s-site-email');
+    local.site.analytics = getVal('s-analytics');
+    local.site.currency = getVal('s-currency');
+  } else if (section === 'social') {
+    local.site.instagram = getVal('s-instagram');
+    local.site.pinterest = getVal('s-pinterest');
+    local.site.etsy = getVal('s-etsy');
+  } else if (section === 'appearance') {
+    local.site.logo = getVal('s-logo');
+    local.site.favicon = getVal('s-favicon');
+  }
+  saveLocalContent(local);
+  toast('✅ Ayarlar kaydedildi', 'ok');
+}
+
+function changePassword() {
+  const curr = document.getElementById('s-curr-pass').value;
+  const newP = document.getElementById('s-new-pass').value;
+  const newP2 = document.getElementById('s-new-pass2').value;
+  if (curr !== getPass()) { toast('Mevcut şifre yanlış', 'err'); return; }
+  if (newP.length < 6) { toast('Yeni şifre en az 6 karakter olmalı', 'err'); return; }
+  if (newP !== newP2) { toast('Şifreler eşleşmiyor', 'err'); return; }
+  localStorage.setItem('ase_admin_pass', newP);
+  toast('✅ Şifre güncellendi', 'ok');
+  ['s-curr-pass','s-new-pass','s-new-pass2'].forEach(id => setVal(id,''));
+}
+
+function switchSettingsTab(tab, btn) {
+  document.querySelectorAll('#page-settings .tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('#page-settings .tab-panel').forEach(p => p.classList.remove('active'));
+  btn?.classList.add('active');
+  document.getElementById('stab-' + tab)?.classList.add('active');
+}
+
+// ── MODAL ─────────────────────────────────────────────────
+let _modalCallback = null;
+function openModal(title, body, callback) {
+  document.getElementById('modal-title').textContent = title;
+  document.getElementById('modal-body').textContent = body;
+  _modalCallback = callback;
+  document.getElementById('confirm-modal').classList.add('open');
+  document.getElementById('modal-confirm-btn').onclick = () => { closeModal(); if (_modalCallback) _modalCallback(); };
+}
+function closeModal() { document.getElementById('confirm-modal').classList.remove('open'); }
+
+// ── TOAST ─────────────────────────────────────────────────
+function toast(msg, type = '') {
+  const el = document.getElementById('admin-toast');
+  el.textContent = msg;
+  el.className = 'admin-toast ' + type;
+  void el.offsetWidth;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 3500);
+}
+
+// ── UTILS ─────────────────────────────────────────────────
+function getVal(id) { return document.getElementById(id)?.value || ''; }
+function setVal(id, val) { const el = document.getElementById(id); if (el) el.value = val; }
+function slugify(s) {
+  return s.toLowerCase()
+    .replace(/[ğ]/g,'g').replace(/[ü]/g,'u').replace(/[ş]/g,'s')
+    .replace(/[ı]/g,'i').replace(/[ö]/g,'o').replace(/[ç]/g,'c')
+    .replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'').replace(/-+/g,'-');
+}
+function deepMerge(target, source) {
+  const result = Object.assign({}, target);
+  for (const key of Object.keys(source || {})) {
+    if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
+      result[key] = deepMerge(result[key] || {}, source[key]);
+    } else {
+      result[key] = source[key];
+    }
+  }
+  return result;
+}
+
+// ── BOOT ──────────────────────────────────────────────────
+checkAuth();
+</script>
+</body>
+</html>

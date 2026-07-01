@@ -1,5 +1,10 @@
 [
   {
+    "ts": "2026-06-30T18:24:49.900Z",
+    "action": "LOGIN",
+    "detail": "Kullanıcı: admin, IP: ::1"
+  },
+  {
     "ts": "2026-06-30T09:23:27.283Z",
     "action": "LOGIN",
     "detail": "Kullanıcı: admin, IP: ::1"

@@ -1,0 +1,178 @@
+{
+  "site": {
+    "name": "Aselovers",
+    "tagline": "Evlere Mutluluk Örüyoruz",
+    "description": "El yapımı amigurumi oyuncaklar, örgü bebek odası dekoru ve kişiselleştirilmiş hediyeler. Türkiye'den dünyaya, her dikişte sevgiyle.",
+    "email": "hello@aselovers.com",
+    "instagram": "https://instagram.com/aselovers",
+    "pinterest": "https://pinterest.com/aselovers",
+    "etsy": "https://aselovers.etsy.com",
+    "analytics": "",
+    "currency": "TRY",
+    "logo": "",
+    "favicon": ""
+  },
+  "hero": {
+    "headline": "Her Dikişte\nBir Hikaye",
+    "subheadline": "Küçük ellerimizle, büyük sevgiyle. Amigurumi oyuncaklar, bebek odası dekorları ve kişiselleştirilmiş hediyeler — her biri bir ailenin hikayesinin parçası olmak için örüldü.",
+    "cta_primary": "Koleksiyonu Keşfet",
+    "cta_secondary": "Etsy'de Gör",
+    "badge": "500+ Mutlu Aile"
+  },
+  "values": [
+    { "icon": "✦", "title": "Saf El Emeği", "desc": "Her ürün, makinenin dokunmadığı, yalnızca ellerin şekillendirdiği bir emek eseridir." },
+    { "icon": "✦", "title": "Premium Pamuk", "desc": "Bebek derisi için güvenli, OEKO-TEX sertifikalı organik pamuk iplikler kullanıyoruz." },
+    { "icon": "✦", "title": "Dünya Geneli Teslimat", "desc": "12'den fazla ülkeye gönderim. Amerika'ya özel: gümrük vergisini biz karşılıyoruz." },
+    { "icon": "✦", "title": "Kişisel Sipariş", "desc": "Renk, boyut, isim — her detayı sizinle konuşarak, size özel tasarlıyoruz." }
+  ],
+  "shipping": {
+    "headline": "Dünya Geneline Güvenli Teslimat",
+    "desc": "Aselovers ürünleri şu anda 12'den fazla ülkeye ulaşıyor. Her paket, teslim edildiği ana kadar takip edilebilir ve özenle sarılır.",
+    "usa_highlight": true,
+    "usa_title": "Amerika'ya Özel Avantaj",
+    "usa_desc": "ABD'ye yapılan tüm siparişlerde gümrük vergisi Aselovers tarafından karşılanmaktadır. Kapıya gelinceye kadar hiçbir ekstra ücret ödenmez.",
+    "items": [
+      { "icon": "🌍", "label": "12+ ülkeye teslimat" },
+      { "icon": "📦", "label": "Takip numarasıyla gönderim" },
+      { "icon": "🛡️", "label": "ABD gümrük vergisi bizden" },
+      { "icon": "🎁", "label": "Hediye ambalajı seçeneği" }
+    ]
+  },
+  "about": {
+    "headline": "Küçük Bir Aile Hikayesi",
+    "story_short": "Aselovers, bir annenin kendi çocuğu için ördüğü ilk amigurumi oyuncakla başladı. Bugün, dünyanın dört bir yanındaki ailelere el yapımı sevgi gönderiyoruz.",
+    "story_full": "<p>Her şey bir örgü şişesi ve bir yumaK iplikle başladı.</p><p>Kızım için ilk oyuncağı ördüğümde, sadece bir oyuncak yapmıyordum. Ellerimin dokunuşunu, sabahın sessizliğini, sevgimin tüm ağırlığını bir nesneye aktarıyordum. O ilk tavşancık bugün hâlâ onun başucunda duruyor.</p><p>Arkadaşlarım sordu, tanıdıklar istedi. Ve bir gün, Etsy'de küçük bir mağaza açtık. <em>Aselovers</em> — evleri sevmek, evlere sevgi göndermek.</p><p>Bugün her gün, aynı tutkuyla örgü örüyorum. Premium pamuklu iplikler, gözler için güvenli malzemeler, her ürünü kalite kontrolden geçiren titiz bir süreç. Ama en önemlisi: her dikişin içinde gerçek bir sevgi var.</p><p>Müşterilerimiz sadece bir oyuncak almıyor. Bir hikayenin parçası oluyorlar.</p>",
+    "name": "Melissa",
+    "title": "Aselovers Kurucusu",
+    "image_url": "",
+    "stats": [
+      { "val": "500+", "label": "Mutlu Müşteri" },
+      { "val": "12+", "label": "Ülke" },
+      { "val": "3+", "label": "Yıllık Deneyim" },
+      { "val": "100%", "label": "El Yapımı" }
+    ]
+  },
+  "reviews": [
+    {
+      "id": "r1",
+      "text": "The flamingo is absolutely beautiful — even better than the photos. My daughter's face when she unwrapped it was priceless. Shipping was fast and the packaging felt like a luxury gift.",
+      "author": "K.",
+      "location": "United States",
+      "product": "Crochet Flamingo Plush",
+      "stars": 5,
+      "date": "2026-06-27"
+    },
+    {
+      "id": "r2",
+      "text": "I placed a custom order with specific colors and a name embroidered on it. The communication was outstanding — Melissa kept me updated at every step. The final piece exceeded every expectation.",
+      "author": "Julie",
+      "location": "Canada",
+      "product": "Personalized Crochet Monkey",
+      "stars": 5,
+      "date": "2026-06-21"
+    },
+    {
+      "id": "r3",
+      "text": "Wonderful craftsmanship. The curtain tiebacks are adorable and perfectly made. They look beautiful in our son's safari nursery. I would order again without hesitation.",
+      "author": "Zoe",
+      "location": "United Kingdom",
+      "product": "Crochet Animal Curtain Tiebacks",
+      "stars": 5,
+      "date": "2026-05-20"
+    },
+    {
+      "id": "r4",
+      "text": "What a thoughtful and talented artisan. The quality and workmanship is well above my expectations. You can truly feel the love in every stitch. Highly recommend.",
+      "author": "Sarah M.",
+      "location": "Australia",
+      "product": "Custom Crochet Gift",
+      "stars": 5,
+      "date": "2026-05-15"
+    }
+  ],
+  "blog": {
+    "posts": [
+      {
+        "id": "b1",
+        "slug": "the-value-of-handmade",
+        "title": "The Irreplaceable Value of Handmade: Why Crochet Toys Are More Than Just Toys",
+        "excerpt": "In a world of mass production, something profound happens when a person makes something by hand. Here's why handmade crochet toys carry a meaning that no factory can replicate.",
+        "cover": "",
+        "date": "2025-06-15",
+        "category": "Craft & Story",
+        "metaTitle": "Why Handmade Crochet Toys Matter | Aselovers",
+        "metaDesc": "Discover why handmade amigurumi toys are more meaningful than mass-produced alternatives. A story about craft, love, and the things we give our children.",
+        "readTime": "5 min",
+        "published": true,
+        "content": "<p>There is a moment in every handmade object where the maker's intention becomes permanent. A decision about which color comes next, how tight to pull a stitch, when a nose is exactly in the right place — these micro-choices accumulate into something that cannot be replicated by any machine.</p><p>This is the first thing you notice when you hold an Aselovers toy: the quiet intention behind it.</p><h2>The Problem with 'Good Enough'</h2><p>Walk into any toy store and you'll find rows of plush animals, brightly colored and uniformly stitched. They're safe, functional, and perfectly adequate. But adequate is the ceiling.</p><p>Mass production optimizes for consistency and cost. It cannot optimize for the specific shade of teal that a particular mother loved, or the slightly oversized ears that make a rabbit look wonderfully goofy. It cannot account for the fact that a child might need something <em>theirs</em> — not one of ten thousand identical copies.</p><h2>What a Stitch Actually Carries</h2><p>When we talk about handmade items, we often fall back on abstract words like 'love' and 'soul.' But let's be more specific.</p><p>Each crochet piece involves thousands of individual decisions. The maker thinks about the end recipient — a newborn, a toddler, a child who loves giraffes or astronauts — and those thoughts shape every loop. The tension in the yarn changes with concentration. The pace of work slows when something needs to be perfect.</p><p>This is not metaphor. It is literally how craft works.</p><h2>The Gift That Stays</h2><p>Ask any parent what toy their child has had the longest, and it's rarely something from a big box retailer. It's the worn teddy bear from grandma, the rabbit with the slightly mismatched eyes. It's the thing that feels like it was made specifically for them — because it was.</p><p>Handmade toys tend to survive childhood. They become keepsakes. They get passed on.</p><p>At Aselovers, we think about this with every piece we make. Not just 'will this survive washing?' but 'will this be something a child tells their own children about someday?'</p><h2>Choosing Differently</h2><p>Choosing a handmade toy is a small act of resistance against the disposable. It says: this child deserves something made with intention. This occasion matters enough to wait for something real.</p><p>It's also a way of supporting a person — a maker — who has dedicated years to mastering a craft. When you buy from Aselovers, you're not funding a factory. You're paying for a skill, a tradition, and a commitment to quality that takes years to develop.</p><p>We think that's worth something.</p>"
+      },
+      {
+        "id": "b2",
+        "slug": "nursery-decor-trends-2025",
+        "title": "Nursery Decor Trends 2025: Creating a Space That Grows With Your Child",
+        "excerpt": "The best nurseries aren't just beautiful — they're meaningful. Here's what's shaping thoughtful baby room design in 2025, and why handmade elements are at the center of it.",
+        "cover": "",
+        "date": "2025-05-20",
+        "category": "Home & Design",
+        "metaTitle": "Nursery Decor Trends 2025 — Handmade, Natural, Meaningful | Aselovers",
+        "metaDesc": "Explore the top nursery decor trends of 2025: natural materials, handcrafted accents, and spaces designed to nurture curiosity. Plus ideas from Aselovers.",
+        "readTime": "6 min",
+        "published": true,
+        "content": "<p>The nursery has quietly become one of the most thoughtfully designed rooms in the home. New parents are no longer simply furnishing a functional space — they're creating an environment, an atmosphere, a first world.</p><p>And in 2025, the trends reflect a deeper shift in how we think about what surrounds our children.</p><h2>1. Natural Textures Over Plastic Everything</h2><p>The synthetic, primary-colored aesthetic that defined nurseries for decades is giving way to something warmer. Cotton, linen, wood, and rattan are replacing plastic wherever possible. Parents are increasingly conscious of what materials their children interact with — and choosing accordingly.</p><p>Crochet fits naturally into this shift. Cotton amigurumi, knitted wall hangings, and woven baskets bring texture and warmth in a way that manufactured items simply can't.</p><h2>2. Neutral Palettes with Intentional Color</h2><p>The all-white nursery peaked and passed. In its place: warm creams, dusty sage, terracotta, and muted botanicals. These palettes feel calming rather than clinical, and they provide a better backdrop for the handmade and organic elements that define the trend.</p><p>Pops of color come through accessories — curtain tiebacks, toy displays, small textile art pieces — rather than painted walls.</p><h2>3. Pieces with Stories</h2><p>There's a noticeable shift toward items that come with a narrative. Where was this made? By whom? What material is it? Parents are asking these questions in a way they weren't ten years ago.</p><p>Handmade items answer all of them immediately. They bring a story into the room — and children, even very young ones, respond to authenticity in ways that are hard to quantify but unmistakably real.</p><h2>4. Functional Decor</h2><p>The best nursery pieces serve double duty. Curtain tiebacks that are also adorable amigurumi animals. Storage baskets that are also beautiful. Toys that can be displayed on shelves and played with on the floor.</p><p>At Aselovers, our curtain tiebacks are a perfect example: they're functional, they're charming, and they become part of the visual story of the room in a way that standard hardware never could.</p><h2>5. Personalization</h2><p>Mass personalization — where a company offers a name on a product — has become standard. But truly bespoke is different. A toy made to specification, in exact colors to match a nursery, with a name that was discussed and chosen with care, is a different category entirely.</p><p>That kind of personalization is what handmade makers offer. And it's increasingly what parents are seeking.</p>"
+      },
+      {
+        "id": "b3",
+        "slug": "sustainable-gifting",
+        "title": "Sustainable Gifting: Why Handmade Is the Most Meaningful Choice You Can Make",
+        "excerpt": "What does it mean to give a gift that lasts — not just physically, but in memory and meaning? We explore the ethics and joy of choosing handmade over disposable.",
+        "cover": "",
+        "date": "2025-04-10",
+        "category": "Values",
+        "metaTitle": "Sustainable Baby Gifts: Why Handmade Lasts | Aselovers",
+        "metaDesc": "Choosing a handmade baby gift is one of the most sustainable choices you can make. Learn why quality over quantity matters — and how to find the perfect piece.",
+        "readTime": "5 min",
+        "published": true,
+        "content": "<p>We live in an era of remarkable abundance and equally remarkable waste. The average toy lasts eighteen months before it's discarded. The average baby shower produces more stuff than a small apartment can comfortably hold, most of which will be donated or thrown away within two years.</p><p>There is another way.</p><h2>The Durability Question</h2><p>When we talk about sustainable gifting, we often focus on materials — recycled, organic, biodegradable. These things matter. But the most sustainable object is one that is never discarded at all.</p><p>A handmade toy made with quality materials and genuine craft survives. It can be washed, repaired, passed on. The amigurumi rabbit that kept a toddler company can welcome a younger sibling years later. This is not theoretical — it's the experience of many of our customers.</p><h2>Supporting Human Skill</h2><p>Every dollar spent on a handmade item is a vote for a different kind of economy. One where skill is valued, where slow production is honored, where the maker knows the person who will receive what they've made.</p><p>Fast fashion and cheap toys exist because demand sustains them. Choosing differently, even occasionally, reshapes that demand in small but real ways.</p><h2>The Emotional Calculus</h2><p>There is also something to be said for how a handmade gift feels to give — and to receive.</p><p>When someone unwraps an Aselovers piece, there is a moment of recognition. This took time. Someone made this. And that recognition carries emotional weight that no mass-produced alternative can match.</p><p>We've received messages from customers about the reaction their gift received at a baby shower, a birthday, a christening. The handmade piece is always the one that gets photographed, kept, remembered.</p><h2>A Practical Guide</h2><p>If you're considering a handmade gift for the first time, here's what we've learned from thousands of orders:</p><ul><li><strong>Consider the recipient's aesthetic.</strong> Handmade gifts feel most at home in spaces that already value warmth and texture.</li><li><strong>Allow lead time.</strong> Custom orders take longer, and that time is part of what makes them special.</li><li><strong>Think long-term.</strong> A well-made toy can be a keepsake. Choose accordingly.</li><li><strong>Ask about materials.</strong> For baby gifts especially, organic cotton and tested-safe fillings matter.</li></ul><p>A handmade gift is never just an object. It's a position on how you want to spend your money, what you want to support, and what you want to mean to the people you love.</p>"
+      },
+      {
+        "id": "b4",
+        "slug": "baby-gift-guide",
+        "title": "The Complete Guide to Choosing a Handmade Baby Gift (That They'll Actually Keep)",
+        "excerpt": "Not all baby gifts survive the first year. Here's a thoughtful guide to choosing a handmade piece that becomes a treasured part of a child's story.",
+        "cover": "",
+        "date": "2025-03-05",
+        "category": "Gift Guide",
+        "metaTitle": "Best Handmade Baby Shower Gifts 2025 | Aselovers Gift Guide",
+        "metaDesc": "Looking for a baby shower gift that stands out? Our complete guide to choosing meaningful handmade baby gifts — from amigurumi toys to nursery decor.",
+        "readTime": "7 min",
+        "published": true,
+        "content": "<p>There are gifts people give, and gifts people remember. At every baby shower, every birthday, every welcoming-home gathering, someone brings something that gets photographed and talked about and kept for years. That something is usually handmade.</p><p>If you're trying to be that person — this guide is for you.</p><h2>Start With the Nursery Theme</h2><p>Before anything else, find out if the parents have a nursery theme. Safari animals, woodland creatures, botanical illustrations, ocean life — these themes shape what will feel intentional versus random.</p><p>Aselovers offers pieces across all of these aesthetics. A giraffe that matches a safari nursery is not just a toy; it's part of the room's story.</p><h2>The Longevity Test</h2><p>Ask yourself: will this piece survive until the child is old enough to consciously love it? A baby won't remember who gave them something at their shower — but a two-year-old will have a relationship with the soft bunny that's been in their crib since birth.</p><p>Choose quality over cuteness. The piece that's still around at age five was worth every dollar.</p><h2>Personalization: When and How</h2><p>Personalization is one of the most meaningful things you can do with a handmade gift. A name embroidered on a toy, colors chosen to match a nursery, a design discussed specifically for this child — these elevations make a gift unrepeatable.</p><p>At Aselovers, we take custom orders for almost every piece in our collection. The process is straightforward: you tell us what you're imagining, we tell you what's possible, and we make it happen. Lead time for custom pieces is typically 1–2 weeks, so plan accordingly.</p><h2>By Occasion</h2><p><strong>Baby Shower:</strong> Go large and meaningful. A personalized amigurumi, a curtain tieback set for the nursery, or a complete safari animal collection. This is the gift they'll photograph.</p><p><strong>First Birthday:</strong> By now you know the child's preferences. A toy that matches what they're drawn to — soft animals, bright colors, specific animals — will be immediately beloved.</p><p><strong>Christening or Naming Ceremony:</strong> A personalized piece with the child's name is the gold standard. It will be kept long after other gifts are forgotten.</p><p><strong>New Sibling:</strong> Consider a 'big sibling' gift — something that acknowledges the transition and makes the older child feel celebrated.</p><h2>A Note on Price</h2><p>Handmade costs more than mass-produced, and that cost reflects reality: skilled labor, quality materials, time. But the comparison shouldn't be between a handmade piece and a toy store equivalent. It should be between a handmade piece and the thing they'll actually keep.</p><p>On that basis, handmade is almost always the better value.</p>"
+      },
+      {
+        "id": "b5",
+        "slug": "inside-aselovers",
+        "title": "Inside Aselovers: How Every Crochet Piece Is Born",
+        "excerpt": "From the first stitch to the moment it's wrapped and posted, every Aselovers piece travels a careful journey. Here's what that looks like from the inside.",
+        "cover": "",
+        "date": "2025-02-01",
+        "category": "Behind the Brand",
+        "metaTitle": "How Aselovers Handmade Crochet Toys Are Made | Behind the Brand",
+        "metaDesc": "Take a look behind the scenes at Aselovers — from yarn selection and pattern design to quality checks and packaging. Every piece tells a story.",
+        "readTime": "6 min",
+        "published": true,
+        "content": "<p>I get asked often: how long does it take to make one piece? The honest answer is that the time depends on the piece — but that's not quite the right question. The better question is: how much of yourself goes into it?</p><p>The answer to that is: everything.</p><h2>It Starts With the Yarn</h2><p>Not all cotton yarn is the same. The difference between a soft, luxurious feel and a scratchy disappointment is in the quality of the raw material. At Aselovers, I source only premium cotton yarns that meet the standards I'd want for my own child's skin.</p><p>Color selection is its own art form. Matching a specific shade to a nursery palette, achieving the right warmth or coolness, finding colors that are true to life in photographs — this requires physical swatching and testing, not just looking at a screen.</p><h2>The Pattern</h2><p>For standard pieces in our collection, I work from refined patterns that have been through dozens of iterations. Each pattern was tested, adjusted, tested again. Proportions matter: the exact ratio of head to body that makes a rabbit look right, the ear length that's lovable versus strange.</p><p>For custom orders, new patterns are sometimes developed from scratch. This is one of my favorite parts of the work — translating a description or a sketch into something three-dimensional and real.</p><h2>The Making</h2><p>A typical amigurumi takes between three and eight hours to complete, depending on complexity. That time includes the crocheting itself, but also the stuffing (which affects the final shape dramatically), the assembly of parts, and the attachment of safety eyes and any embroidered details.</p><p>I work during the quiet hours — early morning, late evening. The concentration required is real; this isn't background activity.</p><h2>Quality Control</h2><p>Before any piece is prepared for shipping, it goes through a check that I call 'the pull test.' Every eye, every joint, every seam gets pulled to ensure it can survive the enthusiastic attention of a small child. If anything gives, it goes back.</p><p>The standard: would I feel comfortable giving this to my own daughter?</p><h2>Packaging</h2><p>Receiving an Aselovers piece should feel like receiving a gift, even when you're the one who ordered it. We wrap everything carefully, include a handwritten note with every order, and use packaging that protects without waste.</p><p>For customers in the United States, we handle customs documentation carefully to ensure no surprise charges at delivery. We believe the experience of receiving something should be as good as the thing itself.</p><h2>What It All Adds Up To</h2><p>Every piece that leaves this studio carries something invisible: the decision-making, the care, the accumulated knowledge of years of practice. You can't see it, but you can feel it when you hold the finished piece.</p><p>That's what handmade means to us. Not just 'made by a human' — but made with the full weight of a human's attention, craft, and love.</p>"
+      }
+    ]
+  },
+  "contact": {
+    "headline": "İletişime Geçin",
+    "desc": "Özel sipariş talebi, stok sorusu veya herhangi bir konuda — size en geç 24 saat içinde dönüyoruz.",
+    "email": "hello@aselovers.com",
+    "response_time": "24 saat içinde cevap"
+  },
+  "footer": {
+    "tagline": "Evlere mutluluk örüyoruz.",
+    "copyright": "© 2025 Aselovers. Tüm hakları saklıdır.",
+    "made_in": "Türkiye'de ❤️ ile yapıldı"
+  }
+}
