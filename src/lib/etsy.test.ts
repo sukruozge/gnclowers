@@ -31,8 +31,22 @@ describe('mapListing', () => {
   it('uses the Turkish translation for tr fields, English for en', () => {
     expect(p.title_tr).toBe('Örgü Tavşan Bebek');
     expect(p.title_en).toBe('Personalized Crochet Bunny Plush Doll');
-    expect(p.description_en).toBe('Removable dress rabbit.');
-    expect(p.description_tr).toBe('Çıkarılabilir elbise.');
+    expect(p.description_en).toBe('Removable dress rabbit.\nSecond line.');
+    expect(p.description_tr).toBe('Çıkarılabilir elbise.\nİkinci.');
+  });
+  it('keeps the full (multi-line) description, not just the first line', () => {
+    const q = mapListing({ ...base, description: 'Line one.\nLine two.\nLine three.', translations: [] });
+    expect(q.description_en).toBe('Line one.\nLine two.\nLine three.');
+  });
+  it('uses the Etsy shop section title as the category when available', () => {
+    const q = mapListing({ ...base, shop_section_id: 54321 }, Date.UTC(2020, 0, 1), { '54321': 'Bags' });
+    expect(q.category).toBe('Bags');
+  });
+  it('falls back to keyword detection when the section id is unknown or missing', () => {
+    const unknown = mapListing({ ...base, shop_section_id: 999 }, Date.UTC(2020, 0, 1), { '54321': 'Bags' });
+    expect(unknown.category).toBe('amigurumi');
+    const none = mapListing(base, Date.UTC(2020, 0, 1));
+    expect(none.category).toBe('amigurumi');
   });
   it('computes price from amount/divisor and reads currency', () => {
     expect(p.price).toBe(1912.5);

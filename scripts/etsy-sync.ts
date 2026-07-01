@@ -20,12 +20,23 @@ async function getShopId(): Promise<string> {
   return String(d.results[0].shop_id);
 }
 
+// Map shop_section_id -> section title (the seller's real categories).
+async function getSections(shopId: string): Promise<Record<string, string>> {
+  const d = await etsy(`shops/${shopId}/sections`);
+  const map: Record<string, string> = {};
+  for (const s of d.results ?? []) {
+    if (s?.shop_section_id != null && s?.title) map[String(s.shop_section_id)] = String(s.title);
+  }
+  return map;
+}
+
 async function getListings(shopId: string): Promise<EtsyListing[]> {
   const all: EtsyListing[] = [];
   let offset = 0;
   for (;;) {
+    // Etsy v3 array params are comma-separated (not includes[]=...).
     const d = await etsy(
-      `shops/${shopId}/listings/active?limit=${LIMIT}&offset=${offset}&includes[]=Images&includes[]=Translations`,
+      `shops/${shopId}/listings/active?limit=${LIMIT}&offset=${offset}&includes=Images,Translations`,
     );
     const results: EtsyListing[] = d.results ?? [];
     all.push(...results);
@@ -41,8 +52,16 @@ async function main(): Promise<void> {
     process.exit(1);
   }
   const shopId = await getShopId();
+  // Sections are best-effort: a failure here must not wipe the whole sync;
+  // we fall back to keyword categories.
+  let sections: Record<string, string> = {};
+  try {
+    sections = await getSections(shopId);
+  } catch (err) {
+    console.warn('Could not fetch shop sections (falling back to keyword categories):', err instanceof Error ? err.message : err);
+  }
   const listings = await getListings(shopId);
-  const products = listings.map((l) => mapListing(l));
+  const products = listings.map((l) => mapListing(l, Date.now(), sections));
   if (products.length === 0) {
     console.warn('Etsy returned 0 products — keeping existing products.json (no overwrite).');
     process.exit(0);
@@ -55,7 +74,12 @@ async function main(): Promise<void> {
     products,
   };
   writeFileSync(OUT, JSON.stringify(out, null, 2) + '\n', 'utf8');
-  console.log(`Synced ${products.length} products to src/data/products.json`);
+  const withImages = products.filter((p) => p.image).length;
+  const cats = new Set(products.map((p) => p.category)).size;
+  console.log(
+    `Synced ${products.length} products to src/data/products.json ` +
+      `(${withImages} with images, ${cats} categories, ${Object.keys(sections).length} shop sections)`,
+  );
 }
 
 main().catch((err) => {

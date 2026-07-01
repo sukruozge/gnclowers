@@ -7,7 +7,8 @@ import ProductCard from '../../components/ProductCard.astro';
 import { loadProducts } from '@lib/products';
 const products = loadProducts();
 const cats = ['all', ...new Set(products.map((p) => p.category))];
-const catLabel: Record<string, string> = { all: 'All', amigurumi: 'Amigurumi', bag: 'Bags', accessory: 'Accessories', decor: 'Decor' };
+// Categories come from Etsy shop sections (real seller titles), shown as-is; only "all" is localized.
+const catLabel: Record<string, string> = { all: 'All' };
 ---
 <Base locale="en" title="Products — Aselovers"
   description="The handmade amigurumi collection — toys, bags, and accessories."

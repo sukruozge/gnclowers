@@ -4,16 +4,14 @@ import { loadProducts, localizedTitle } from '@lib/products';
 import SectionHeading from '../SectionHeading.astro';
 const { locale } = Astro.props as { locale: Locale };
 const products = loadProducts();
-const catLabel: Record<string, { tr: string; en: string }> = {
-  amigurumi: { tr: 'Amigurumi', en: 'Amigurumi' },
-  bag: { tr: 'Çanta', en: 'Bags' },
-  accessory: { tr: 'Aksesuar', en: 'Accessories' },
-  decor: { tr: 'Dekor', en: 'Decor' },
-};
-const cats = [...new Set(products.map((p) => p.category))].map((c) => {
-  const sample = products.find((p) => p.category === c && p.image);
-  return { c, label: (catLabel[c] ?? { tr: c, en: c })[locale], img: sample?.image, alt: sample ? localizedTitle(sample, locale) : c };
-});
+// Collections are the real Etsy shop-section titles; show up to 8 that have imagery.
+const cats = [...new Set(products.map((p) => p.category))]
+  .map((c) => {
+    const sample = products.find((p) => p.category === c && p.image);
+    return { c, label: c, img: sample?.image, alt: sample ? localizedTitle(sample, locale) : c };
+  })
+  .filter((cat) => cat.img)
+  .slice(0, 8);
 const catalog = locale === 'tr' ? '/tr/urunler' : '/en/products';
 ---
 <section class="section">
@@ -21,7 +19,7 @@ const catalog = locale === 'tr' ? '/tr/urunler' : '/en/products';
     <SectionHeading title={t('home.categories', locale)} />
     <div class="cats">
       {cats.map((cat) => (
-        <a class="cat" href={`${catalog}?cat=${cat.c}`}>
+        <a class="cat" href={`${catalog}?cat=${encodeURIComponent(cat.c)}`}>
           <div class="cat__media">{cat.img && <img src={cat.img} alt={cat.alt} loading="lazy" />}</div>
           <span class="cat__label">{cat.label}</span>
         </a>

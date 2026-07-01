@@ -32,7 +32,7 @@ const ld = productJsonLd(product, 'en', `${site}/en/${selfPath}`);
           {product.isNew && <Badge>New</Badge>}
           <h1>{title}</h1>
           <p class="detail__price">{price}</p>
-          <p class="prose">{product.description_en}</p>
+          <p class="prose" style="white-space: pre-line">{product.description_en}</p>
           <Button href={product.url} variant="primary" external>Buy on Etsy</Button>
           <div class="detail__ship">
             <h4>Shipping</h4>

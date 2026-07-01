@@ -11,6 +11,7 @@ export interface EtsyListing {
   tags?: string[];
   state?: string;
   creation_timestamp?: number;
+  shop_section_id?: number | null;
   images?: EtsyImage[];
   translations?: EtsyTranslation[];
 }
@@ -38,15 +39,25 @@ export function isNewListing(listing: EtsyListing, now: number = Date.now()): bo
   return createdMs > now - 30 * 24 * 60 * 60 * 1000;
 }
 
-export function mapListing(listing: EtsyListing, now: number = Date.now()): Product {
+// `sections` maps a shop_section_id (as string) to the seller-defined section
+// title from Etsy's getShopSections. When a listing has a matching section we
+// use its title as the category; otherwise we fall back to keyword detection.
+export function mapListing(
+  listing: EtsyListing,
+  now: number = Date.now(),
+  sections: Record<string, string> = {},
+): Product {
   const image = listing.images && listing.images.length > 0
     ? (listing.images[0].url_570xN ?? listing.images[0].url_fullxfull ?? null)
     : null;
   const tr = listing.translations?.find((t) => t.language === 'tr') ?? null;
   const title_en = listing.title ?? '';
   const title_tr = tr?.title ?? title_en;
-  const desc_en = (listing.description ?? '').split('\n')[0].substring(0, 200);
-  const desc_tr = tr ? (tr.description ?? '').split('\n')[0].substring(0, 200) : desc_en;
+  const desc_en = (listing.description ?? '').trim();
+  const desc_tr = tr ? (tr.description ?? '').trim() : desc_en;
+  const sectionTitle = listing.shop_section_id != null
+    ? sections[String(listing.shop_section_id)]
+    : undefined;
   return {
     id: String(listing.listing_id),
     title_en,
@@ -57,7 +68,7 @@ export function mapListing(listing: EtsyListing, now: number = Date.now()): Prod
     currency: listing.price?.currency_code ?? 'TRY',
     image,
     url: listing.url ?? `https://www.etsy.com/listing/${listing.listing_id}/`,
-    category: detectCategory(listing),
+    category: sectionTitle ?? detectCategory(listing),
     tags: listing.tags ?? [],
     isNew: isNewListing(listing, now),
     isActive: listing.state === 'active',
