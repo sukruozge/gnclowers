@@ -16,7 +16,7 @@ const { locale, title, description, pathSelf, pathsAlt, ogImage } = Astro.props;
 const site = Astro.site!.toString().replace(/\/+$/, '');
 const canon = canonical(site, locale, pathSelf);
 const alts = alternates(site, pathsAlt);
-const og = ogImage ?? `${site}/og-default.jpg`;
+const og = ogImage;
 ---
 <!doctype html>
 <html lang={locale}>
@@ -31,8 +31,9 @@ const og = ogImage ?? `${site}/og-default.jpg`;
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canon} />
-    <meta property="og:image" content={og} />
-    <meta name="twitter:card" content="summary_large_image" />
+    {og && <meta property="og:image" content={og} />}
+    <meta name="twitter:card" content={og ? 'summary_large_image' : 'summary'} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="stylesheet" href="/style.css" />
   </head>
   <body>
