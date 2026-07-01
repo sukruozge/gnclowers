@@ -1,9 +1,21 @@
 ---
 import Base from '../../layouts/Base.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
 ---
 <Base locale="tr" title="Hakkımızda — Aselovers"
-  description="Aselovers hikayesi: el yapımı amigurumi tutkusu."
+  description="Aselovers'ın hikâyesi: el yapımı amigurumiye adanmış küçük bir atölye."
   pathSelf="hakkimizda" pathsAlt={{ tr: 'hakkimizda', en: 'about' }}>
-  <section class="page"><h1>Hakkımızda</h1>
-  <p>Aselovers, sevgiyle örülen el yapımı amigurumi markasıdır.</p></section>
+  <Nav locale="tr" />
+  <main>
+    <section class="section">
+      <div class="container prose">
+        <p class="eyebrow">Hikâyemiz</p>
+        <h1>Her ilmek elde, sevgiyle</h1>
+        <p>Aselovers, her parçayı tek tek örerek anlam katan küçük bir atölyedir. Premium iplikler, sabırlı işçilik ve özenli detaylarla; sevilmek için yapılmış amigurumi oyuncaklar ve aksesuarlar üretiyoruz.</p>
+        <p>Ürünlerimizi hem Türkiye'de hem de dünyada müşterilerimizle buluşturuyoruz. Her sipariş, sizin için özenle örülür.</p>
+      </div>
+    </section>
+  </main>
+  <Footer locale="tr" />
 </Base>

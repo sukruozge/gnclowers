@@ -1,9 +1,22 @@
 ---
 import Base from '../../layouts/Base.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+import Button from '../../components/Button.astro';
 ---
 <Base locale="en" title="Contact — Aselovers"
-  description="Get in touch with Aselovers."
+  description="Get in touch with Aselovers — Etsy and social media."
   pathSelf="contact" pathsAlt={{ tr: 'iletisim', en: 'contact' }}>
-  <section class="page"><h1>Contact</h1>
-  <p>Reach us on Etsy or social media.</p></section>
+  <Nav locale="en" />
+  <main>
+    <section class="section">
+      <div class="container prose">
+        <p class="eyebrow">Contact</p>
+        <h1>Get in touch</h1>
+        <p>For questions, custom orders, and collaborations, reach us through our Etsy shop or on social media.</p>
+        <p><Button href="https://www.etsy.com/shop/aselovers" variant="primary" external>Our Etsy shop</Button></p>
+      </div>
+    </section>
+  </main>
+  <Footer locale="en" />
 </Base>

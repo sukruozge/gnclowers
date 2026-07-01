@@ -1,8 +1,20 @@
 ---
 import Base from '../../layouts/Base.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
 ---
 <Base locale="tr" title="Blog — Aselovers"
-  description="Amigurumi ipuçları, hikayeler ve yenilikler."
+  description="Amigurumi ipuçları, atölyeden hikâyeler ve yenilikler."
   pathSelf="blog" pathsAlt={{ tr: 'blog', en: 'blog' }}>
-  <section class="page"><h1>Blog</h1><p>Yakında yazılar burada.</p></section>
+  <Nav locale="tr" />
+  <main>
+    <section class="section">
+      <div class="container prose">
+        <p class="eyebrow">Günlük</p>
+        <h1>Blog</h1>
+        <p>Yakında: amigurumi bakım ipuçları, atölyeden hikâyeler ve yeni koleksiyon duyuruları.</p>
+      </div>
+    </section>
+  </main>
+  <Footer locale="tr" />
 </Base>

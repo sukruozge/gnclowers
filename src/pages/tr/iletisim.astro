@@ -1,9 +1,22 @@
 ---
 import Base from '../../layouts/Base.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+import Button from '../../components/Button.astro';
 ---
 <Base locale="tr" title="İletişim — Aselovers"
-  description="Aselovers ile iletişime geçin."
+  description="Aselovers ile iletişime geçin — Etsy ve sosyal medya."
   pathSelf="iletisim" pathsAlt={{ tr: 'iletisim', en: 'contact' }}>
-  <section class="page"><h1>İletişim</h1>
-  <p>Bize Etsy üzerinden ya da sosyal medyadan ulaşabilirsiniz.</p></section>
+  <Nav locale="tr" />
+  <main>
+    <section class="section">
+      <div class="container prose">
+        <p class="eyebrow">İletişim</p>
+        <h1>Bize ulaşın</h1>
+        <p>Sorularınız, özel siparişleriniz ve iş birlikleri için Etsy mağazamızdan veya sosyal medyadan bize yazabilirsiniz.</p>
+        <p><Button href="https://www.etsy.com/shop/aselovers" variant="primary" external>Etsy Mağazamız</Button></p>
+      </div>
+    </section>
+  </main>
+  <Footer locale="tr" />
 </Base>

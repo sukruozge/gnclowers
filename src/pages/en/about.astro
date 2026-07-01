@@ -1,9 +1,21 @@
 ---
 import Base from '../../layouts/Base.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
 ---
 <Base locale="en" title="About — Aselovers"
-  description="The Aselovers story: a passion for handmade amigurumi."
+  description="The Aselovers story: a small studio devoted to handmade amigurumi."
   pathSelf="about" pathsAlt={{ tr: 'hakkimizda', en: 'about' }}>
-  <section class="page"><h1>About</h1>
-  <p>Aselovers is a handmade amigurumi brand crocheted with love.</p></section>
+  <Nav locale="en" />
+  <main>
+    <section class="section">
+      <div class="container prose">
+        <p class="eyebrow">Our story</p>
+        <h1>Every stitch by hand, with love</h1>
+        <p>Aselovers is a small studio that gives meaning to each piece by crocheting it one at a time. With premium yarn, patient craft, and careful detail, we make amigurumi toys and accessories that are made to be loved.</p>
+        <p>We ship to customers in Turkey and around the world. Every order is crocheted with care, just for you.</p>
+      </div>
+    </section>
+  </main>
+  <Footer locale="en" />
 </Base>
