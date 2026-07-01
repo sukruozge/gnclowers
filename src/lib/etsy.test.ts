@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { mapListing, detectCategory, type EtsyListing } from '@lib/etsy';
+import { mapListing, detectCategory, isNewListing, type EtsyListing } from '@lib/etsy';
 
 const base: EtsyListing = {
   listing_id: 4511067258,
@@ -50,4 +50,21 @@ describe('mapListing', () => {
   it('marks isActive false for non-active state', () => {
     expect(mapListing({ ...base, state: 'inactive' }).isActive).toBe(false);
   });
+  it('falls back to url_fullxfull when url_570xN is absent', () => {
+    const q = mapListing({ ...base, images: [{ url_fullxfull: 'https://img/full.jpg' }] });
+    expect(q.image).toBe('https://img/full.jpg');
+  });
+  it('sets image to null when there are no images', () => {
+    const q = mapListing({ ...base, images: [] });
+    expect(q.image).toBe(null);
+  });
+});
+
+describe('isNewListing', () => {
+  const now = Date.UTC(2024, 5, 1);
+  const daysAgo = (d: number) => ({ ...base, creation_timestamp: Math.floor((now - d * 86400000) / 1000) });
+  it('is new when created 29 days ago', () => expect(isNewListing(daysAgo(29), now)).toBe(true));
+  it('is not new when created 31 days ago', () => expect(isNewListing(daysAgo(31), now)).toBe(false));
+  it('is not new when creation_timestamp is missing', () =>
+    expect(isNewListing({ ...base, creation_timestamp: undefined }, now)).toBe(false));
 });
