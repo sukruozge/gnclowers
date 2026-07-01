@@ -122,6 +122,21 @@
       "tags": ["giraffe", "amigurumi", "safari"],
       "isNew": false,
       "isActive": true
+    },
+    {
+      "id": "inactive-fixture-0",
+      "title_en": "Inactive Test Product",
+      "title_tr": "Pasif Test Ürünü",
+      "description_en": "This is a test product that is inactive and should be excluded.",
+      "description_tr": "Bu, non-aktif olan ve hariç tutulması gereken bir test ürünüdür.",
+      "price": 0,
+      "currency": "TRY",
+      "image": null,
+      "url": "https://www.etsy.com/listing/0/",
+      "category": "amigurumi",
+      "tags": [],
+      "isNew": false,
+      "isActive": false
     }
   ]
 }

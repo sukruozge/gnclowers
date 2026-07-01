@@ -8,6 +8,9 @@ describe('products', () => {
     expect(all.length).toBeGreaterThan(0);
     expect(all.every((p) => p.isActive)).toBe(true);
   });
+  it('excludes inactive products', () => {
+    expect(all.some((p) => p.id === 'inactive-fixture-0')).toBe(false);
+  });
   it('localizes title by locale', () => {
     const p = all[0];
     expect(localizedTitle(p, 'tr')).toBe(p.title_tr);
