@@ -1,0 +1,11 @@
+---
+interface Props { eyebrow?: string; title: string; }
+const { eyebrow, title } = Astro.props;
+---
+<div class="sh">
+  {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+  <h2>{title}</h2>
+</div>
+<style>
+  .sh { margin-bottom: var(--space-6); max-width: 40ch; }
+</style>
