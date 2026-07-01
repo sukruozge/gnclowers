@@ -1,7 +1,10 @@
-import { writeFileSync } from 'node:fs';
+import { readFileSync, writeFileSync } from 'node:fs';
 import { mapListing, type EtsyImage, type EtsyListing } from '../src/lib/etsy';
+import type { Product } from '../src/lib/products';
+import { cachedTranslation } from '../src/lib/translate';
 
 const API_KEY = process.env.ETSY_API_KEY ?? '';
+const DEEPL_API_KEY = process.env.DEEPL_API_KEY ?? '';
 const SHOP = process.env.ETSY_SHOP ?? 'aselovers';
 const OUT = new URL('../src/data/products.json', import.meta.url);
 const LIMIT = 100;
@@ -75,6 +78,81 @@ async function getListings(shopId: string): Promise<EtsyListing[]> {
   return all;
 }
 
+function loadPrevious(): Map<string, Product> {
+  const map = new Map<string, Product>();
+  try {
+    const raw = JSON.parse(readFileSync(OUT, 'utf8'));
+    for (const p of raw.products ?? []) map.set(String(p.id), p);
+  } catch {
+    // no previous products.json — first run
+  }
+  return map;
+}
+
+// DeepL free keys end in ':fx' and use the api-free host; Pro keys use api.
+async function deeplTranslate(texts: string[]): Promise<string[]> {
+  if (texts.length === 0) return [];
+  const host = DEEPL_API_KEY.endsWith(':fx') ? 'api-free.deepl.com' : 'api.deepl.com';
+  const body = new URLSearchParams();
+  body.set('target_lang', 'TR');
+  body.set('source_lang', 'EN');
+  for (const t of texts) body.append('text', t);
+  const res = await fetch(`https://${host}/v2/translate`, {
+    method: 'POST',
+    headers: {
+      Authorization: `DeepL-Auth-Key ${DEEPL_API_KEY}`,
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body,
+  });
+  if (!res.ok) throw new Error(`DeepL ${res.status}: ${await res.text()}`);
+  const data = await res.json();
+  return (data.translations ?? []).map((t: any) => String(t.text));
+}
+
+// Fill Turkish fields: reuse Etsy/previous translations where possible, and
+// only call DeepL for products whose English source is new or changed.
+async function applyTranslations(products: Product[], prev: Map<string, Product>): Promise<void> {
+  const needing: Product[] = [];
+  for (const p of products) {
+    const cached = cachedTranslation(p, prev.get(p.id));
+    if (cached) {
+      p.title_tr = cached.title_tr;
+      p.description_tr = cached.description_tr;
+    } else {
+      needing.push(p);
+    }
+  }
+  if (needing.length === 0) {
+    console.log('Translations: all reused from cache (no DeepL calls).');
+    return;
+  }
+  if (!DEEPL_API_KEY) {
+    console.warn(`Translations: ${needing.length} products need Turkish but DEEPL_API_KEY is not set — leaving English.`);
+    return;
+  }
+  console.log(`Translating ${needing.length} products to Turkish via DeepL...`);
+  const CHUNK = 25; // 25 products * 2 texts = 50 texts/request (DeepL max)
+  for (let i = 0; i < needing.length; i += CHUNK) {
+    const chunk = needing.slice(i, i + CHUNK);
+    const texts: string[] = [];
+    for (const p of chunk) {
+      texts.push(p.title_en);
+      texts.push(p.description_en);
+    }
+    try {
+      const out = await deeplTranslate(texts);
+      chunk.forEach((p, idx) => {
+        if (out[idx * 2]) p.title_tr = out[idx * 2];
+        if (out[idx * 2 + 1]) p.description_tr = out[idx * 2 + 1];
+      });
+    } catch (err) {
+      console.warn('DeepL chunk failed (leaving English for it):', err instanceof Error ? err.message : err);
+    }
+    await sleep(300);
+  }
+}
+
 async function main(): Promise<void> {
   if (!API_KEY) {
     console.error('ETSY_API_KEY is not set — aborting.');
@@ -96,6 +174,8 @@ async function main(): Promise<void> {
     console.warn('Etsy returned 0 products — keeping existing products.json (no overwrite).');
     process.exit(0);
   }
+  const prev = loadPrevious();
+  await applyTranslations(products, prev);
   const out = {
     lastSync: new Date().toISOString(),
     shopId,
