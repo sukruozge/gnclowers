@@ -12,4 +12,9 @@ describe('i18n', () => {
   it('falls back to the key when missing', () => {
     expect(t('does.not.exist', 'en')).toBe('does.not.exist');
   });
+  it('has redesign nav/footer strings', () => {
+    expect(t('footer.tagline', 'tr')).toBe('Sevgiyle örülmüş el yapımı amigurumi.');
+    expect(t('footer.tagline', 'en')).toBe('Handmade amigurumi, crocheted with love.');
+    expect(t('footer.shop', 'en')).toBe('Shop');
+  });
 });

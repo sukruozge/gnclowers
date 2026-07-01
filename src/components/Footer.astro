@@ -1,8 +1,38 @@
 ---
 import { t, type Locale } from '@lib/i18n';
 const { locale } = Astro.props as { locale: Locale };
+const p = (tr: string, en: string) => (locale === 'tr' ? `/tr/${tr}` : `/en/${en}`);
 const year = new Date().getFullYear();
 ---
-<footer class="site-footer">
-  <p>© {year} Aselovers — {t('footer.rights', locale)}</p>
+<footer class="foot">
+  <div class="container foot__inner">
+    <div class="foot__brand">
+      <span class="foot__logo">aselovers</span>
+      <p class="foot__tag">{t('footer.tagline', locale)}</p>
+    </div>
+    <nav class="foot__col" aria-label={t('footer.shop', locale)}>
+      <h4>{t('footer.shop', locale)}</h4>
+      <a href={p('urunler', 'products')}>{t('nav.products', locale)}</a>
+      <a href={p('hakkimizda', 'about')}>{t('footer.about', locale)}</a>
+      <a href={p('iletisim', 'contact')}>{t('nav.contact', locale)}</a>
+    </nav>
+    <div class="foot__col">
+      <h4>{t('footer.follow', locale)}</h4>
+      <a href="https://www.etsy.com/shop/aselovers" target="_blank" rel="noopener">Etsy</a>
+      <a href="https://www.instagram.com/" target="_blank" rel="noopener">Instagram</a>
+    </div>
+  </div>
+  <div class="container foot__base"><p>© {year} Aselovers — {t('footer.rights', locale)}</p></div>
 </footer>
+<style>
+  .foot { background: var(--footer-bg); color: var(--footer-fg); margin-top: var(--space-8); padding: var(--space-7) 0 var(--space-5); }
+  .foot__inner { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: var(--space-6); }
+  .foot__logo { font-family: var(--font-display); font-size: 1.6rem; font-weight: 600; }
+  .foot__tag { color: color-mix(in srgb, var(--footer-fg) 72%, transparent); max-width: 34ch; margin-top: var(--space-3); }
+  .foot__col h4 { font-family: var(--font-body); font-size: var(--step-small); letter-spacing: .12em; text-transform: uppercase; color: color-mix(in srgb, var(--footer-fg) 65%, transparent); margin-bottom: var(--space-3); }
+  .foot__col a { display: block; color: var(--footer-fg); padding: 4px 0; transition: color var(--dur) var(--ease); }
+  .foot__col a:hover { color: var(--accent); }
+  .foot__base { border-top: 1px solid color-mix(in srgb, var(--footer-fg) 18%, transparent); margin-top: var(--space-6); padding-top: var(--space-4); }
+  .foot__base p { font-size: var(--step-small); color: color-mix(in srgb, var(--footer-fg) 60%, transparent); margin: 0; }
+  @media (max-width: 640px) { .foot__inner { grid-template-columns: 1fr; gap: var(--space-5); } }
+</style>

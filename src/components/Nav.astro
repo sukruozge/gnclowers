@@ -3,12 +3,33 @@ import { t, type Locale } from '@lib/i18n';
 const { locale } = Astro.props as { locale: Locale };
 const p = (tr: string, en: string) => (locale === 'tr' ? `/tr/${tr}` : `/en/${en}`);
 const other = locale === 'tr' ? '/en' : '/tr';
+const links = [
+  { href: p('urunler', 'products'), label: t('nav.products', locale) },
+  { href: p('hakkimizda', 'about'), label: t('nav.about', locale) },
+  { href: p('blog', 'blog'), label: t('nav.blog', locale) },
+  { href: p('iletisim', 'contact'), label: t('nav.contact', locale) },
+];
 ---
-<nav class="site-nav">
-  <a class="brand" href={`/${locale}`}>Aselovers</a>
-  <a href={p('urunler', 'products')}>{t('nav.products', locale)}</a>
-  <a href={p('hakkimizda', 'about')}>{t('nav.about', locale)}</a>
-  <a href={p('blog', 'blog')}>{t('nav.blog', locale)}</a>
-  <a href={p('iletisim', 'contact')}>{t('nav.contact', locale)}</a>
-  <a class="lang-switch" href={other}>{locale === 'tr' ? 'EN' : 'TR'}</a>
-</nav>
+<header class="nav">
+  <div class="container nav__inner">
+    <a class="nav__brand" href={`/${locale}`}>aselovers</a>
+    <nav class="nav__links" aria-label="Primary">
+      {links.map((l) => <a href={l.href}>{l.label}</a>)}
+    </nav>
+    <a class="nav__lang" href={other} aria-label={locale === 'tr' ? 'English' : 'Türkçe'}>{locale === 'tr' ? 'EN' : 'TR'}</a>
+  </div>
+</header>
+<style>
+  .nav { position: sticky; top: 0; z-index: 20; background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+  .nav__inner { display: flex; align-items: center; gap: var(--space-5); height: 68px; }
+  .nav__brand { font-family: var(--font-display); font-size: 1.5rem; font-weight: 600; letter-spacing: .01em; }
+  .nav__links { display: flex; gap: var(--space-5); margin-left: auto; }
+  .nav__links a { font-size: .95rem; color: var(--muted); transition: color var(--dur) var(--ease); }
+  .nav__links a:hover { color: var(--ink); }
+  .nav__lang { font-size: .8rem; letter-spacing: .1em; padding: 6px 12px; border: 1px solid var(--line); border-radius: var(--radius-pill); transition: border-color var(--dur) var(--ease), color var(--dur) var(--ease); }
+  .nav__lang:hover { border-color: var(--accent); color: var(--accent); }
+  @media (max-width: 640px) {
+    .nav__links { display: none; }
+    .nav__inner { gap: var(--space-3); }
+  }
+</style>
