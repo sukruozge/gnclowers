@@ -19,8 +19,15 @@ Function (`functions/index.js`) handling the country-based `/` redirect.
    - **`SITE_URL`** = `https://<your-domain>` (your Cloudflare-managed domain).
      This drives all canonical/hreflang/sitemap absolute URLs — set it before
      the first production build.
-5. Save and deploy. The first build runs `npm run build` and publishes `dist/`
-   plus the root `functions/` directory automatically.
+5. Compatibility flag: the repo ships a `wrangler.toml` that sets
+   `compatibility_flags = ["nodejs_compat"]` and `pages_build_output_dir = "dist"`.
+   Cloudflare Pages reads this automatically, so the `/` redirect worker boots
+   without any manual dashboard flag. (If your Pages project ever ignores
+   `wrangler.toml`, set `nodejs_compat` manually under Settings → Functions →
+   Compatibility flags for BOTH Production and Preview.)
+6. Save and deploy. The first build runs `npm run build` and publishes `dist/`.
+   The `/` country redirect runs as an on-demand worker route
+   (`src/pages/index.ts`); all `/tr/*` and `/en/*` pages are static.
 
 ## Custom domain
 
