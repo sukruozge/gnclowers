@@ -1089,10 +1089,21 @@ export const onRequestGet = (context) => {
   Strict-Transport-Security: max-age=31536000; includeSubDomains
 ```
 
-- [ ] **Step 3: Build and confirm Function is bundled**
+- [ ] **Step 3: Build and confirm output**
 
 Run: `npm run build`
-Expected: PASS. Astro + Cloudflare adapter output includes `functions/` for Pages. (`_headers` is copied from `public/` to `dist/`.)
+Expected: PASS. (`_headers` is copied from `public/` to `dist/`.)
+
+> **CORRECTION (post-implementation):** The original plan assumed a root
+> `functions/index.js` would run on Cloudflare Pages. That is FALSE when the
+> `@astrojs/cloudflare` adapter is used: the adapter emits `dist/_worker.js`,
+> and Pages ignores the `functions/` directory whenever a `_worker.js` exists.
+> The country `/` redirect was therefore implemented as an on-demand Astro
+> route (`src/pages/index.ts`, `export const prerender = false`, routing through
+> `pickLocale`), and `functions/index.js` was removed. The adapter also needs
+> `imageService: 'passthrough'` (to keep native `sharp` out of the worker) and
+> the `nodejs_compat` flag (shipped via `wrangler.toml`) to boot. Plans 2/3
+> should assume Astro routes + `_worker.js`, NOT a root `functions/` dir.
 
 - [ ] **Step 4: Commit**
 
