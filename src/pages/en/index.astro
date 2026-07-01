@@ -1,16 +1,25 @@
 ---
 import Base from '../../layouts/Base.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+import Hero from '../../components/home/Hero.astro';
+import FeaturedProducts from '../../components/home/FeaturedProducts.astro';
+import StoryStrip from '../../components/home/StoryStrip.astro';
+import Categories from '../../components/home/Categories.astro';
+import TrustBar from '../../components/home/TrustBar.astro';
+import NewsletterCta from '../../components/home/NewsletterCta.astro';
 ---
-<Base
-  locale="en"
-  title="Aselovers — Handmade Amigurumi"
-  description="Lovingly crocheted handmade amigurumi toys and accessories."
-  pathSelf=""
-  pathsAlt={{ tr: '', en: '' }}
->
-  <section class="hero">
-    <h1>Aselovers</h1>
-    <p>Lovingly crocheted handmade amigurumi.</p>
-    <a class="btn" href="/en/products">Explore Products</a>
-  </section>
+<Base locale="en" title="Aselovers — Handmade Amigurumi"
+  description="Lovingly crocheted, premium handmade amigurumi toys and accessories."
+  pathSelf="" pathsAlt={{ tr: '', en: '' }}>
+  <Nav locale="en" />
+  <main>
+    <Hero locale="en" />
+    <FeaturedProducts locale="en" />
+    <StoryStrip locale="en" />
+    <Categories locale="en" />
+    <TrustBar locale="en" />
+    <NewsletterCta locale="en" />
+  </main>
+  <Footer locale="en" />
 </Base>

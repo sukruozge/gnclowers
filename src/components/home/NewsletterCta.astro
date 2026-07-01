@@ -1,0 +1,22 @@
+---
+import { t, type Locale } from '@lib/i18n';
+const { locale } = Astro.props as { locale: Locale };
+---
+<section class="section">
+  <div class="container news">
+    <h2>{t('home.newsletterTitle', locale)}</h2>
+    <form class="news__form" onsubmit="return false;">
+      <input type="email" required placeholder={t('home.newsletterPlaceholder', locale)} aria-label={t('home.newsletterPlaceholder', locale)} />
+      <button type="submit">{t('home.newsletterCta', locale)}</button>
+    </form>
+  </div>
+</section>
+<style>
+  .news { text-align: center; max-width: 620px; }
+  .container.news { margin: 0 auto; }
+  .news__form { display: flex; gap: var(--space-2); justify-content: center; margin-top: var(--space-4); flex-wrap: wrap; }
+  .news__form input { flex: 1; min-width: 220px; padding: 13px 18px; border: 1px solid var(--line); border-radius: var(--radius-pill); font: inherit; background: var(--surface); }
+  .news__form input:focus-visible { border-color: var(--accent); }
+  .news__form button { padding: 13px 26px; border: none; border-radius: var(--radius-pill); background: var(--accent); color: #fff; font: inherit; font-weight: 500; cursor: pointer; transition: background var(--dur) var(--ease); }
+  .news__form button:hover { background: var(--accent-ink); }
+</style>

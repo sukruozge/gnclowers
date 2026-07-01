@@ -1,0 +1,25 @@
+---
+import { t, type Locale } from '@lib/i18n';
+const { locale } = Astro.props as { locale: Locale };
+const items = [
+  { t: t('home.trustHandmade', locale), s: t('home.trustHandmadeSub', locale) },
+  { t: t('home.trustShip', locale), s: t('home.trustShipSub', locale) },
+  { t: t('home.trustEtsy', locale), s: t('home.trustEtsySub', locale) },
+];
+---
+<section class="section section--tint">
+  <div class="container trust">
+    {items.map((i) => (
+      <div class="trust__item">
+        <h4>{i.t}</h4>
+        <p>{i.s}</p>
+      </div>
+    ))}
+  </div>
+</section>
+<style>
+  .trust { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-6); text-align: center; }
+  .trust__item h4 { font-family: var(--font-display); font-size: 1.3rem; margin-bottom: var(--space-1); }
+  .trust__item p { color: var(--muted); margin: 0; }
+  @media (max-width: 640px) { .trust { grid-template-columns: 1fr; gap: var(--space-5); } }
+</style>

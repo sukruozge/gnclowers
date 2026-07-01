@@ -1,0 +1,24 @@
+---
+import { t, type Locale } from '@lib/i18n';
+import { loadProducts, localizedTitle } from '@lib/products';
+import Button from '../Button.astro';
+const { locale } = Astro.props as { locale: Locale };
+const p = (tr: string, en: string) => (locale === 'tr' ? `/tr/${tr}` : `/en/${en}`);
+const img = loadProducts().find((x) => x.image);
+---
+<section class="section section--tint">
+  <div class="container story">
+    <div class="story__media">{img && <img src={img.image} alt={localizedTitle(img, locale)} loading="lazy" />}</div>
+    <div class="story__copy">
+      <h2>{t('home.storyTitle', locale)}</h2>
+      <p class="prose">{t('home.storyBody', locale)}</p>
+      <Button href={p('hakkimizda', 'about')} variant="outline">{t('home.storyCta', locale)}</Button>
+    </div>
+  </div>
+</section>
+<style>
+  .story { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-7); align-items: center; }
+  .story__media { aspect-ratio: 5 / 4; overflow: hidden; border-radius: var(--radius); }
+  .story__media img { width: 100%; height: 100%; object-fit: cover; }
+  @media (max-width: 900px) { .story { grid-template-columns: 1fr; } }
+</style>

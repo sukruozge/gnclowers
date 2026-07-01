@@ -1,0 +1,39 @@
+---
+import { t, type Locale } from '@lib/i18n';
+import { loadProducts, localizedTitle } from '@lib/products';
+import SectionHeading from '../SectionHeading.astro';
+const { locale } = Astro.props as { locale: Locale };
+const products = loadProducts();
+const catLabel: Record<string, { tr: string; en: string }> = {
+  amigurumi: { tr: 'Amigurumi', en: 'Amigurumi' },
+  bag: { tr: 'Çanta', en: 'Bags' },
+  accessory: { tr: 'Aksesuar', en: 'Accessories' },
+  decor: { tr: 'Dekor', en: 'Decor' },
+};
+const cats = [...new Set(products.map((p) => p.category))].map((c) => {
+  const sample = products.find((p) => p.category === c && p.image);
+  return { c, label: (catLabel[c] ?? { tr: c, en: c })[locale], img: sample?.image, alt: sample ? localizedTitle(sample, locale) : c };
+});
+const catalog = locale === 'tr' ? '/tr/urunler' : '/en/products';
+---
+<section class="section">
+  <div class="container">
+    <SectionHeading title={t('home.categories', locale)} />
+    <div class="cats">
+      {cats.map((cat) => (
+        <a class="cat" href={`${catalog}?cat=${cat.c}`}>
+          <div class="cat__media">{cat.img && <img src={cat.img} alt={cat.alt} loading="lazy" />}</div>
+          <span class="cat__label">{cat.label}</span>
+        </a>
+      ))}
+    </div>
+  </div>
+</section>
+<style>
+  .cats { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: var(--space-5); }
+  .cat { display: block; }
+  .cat__media { aspect-ratio: 1 / 1; overflow: hidden; border-radius: var(--radius); background: var(--section); }
+  .cat__media img { width: 100%; height: 100%; object-fit: cover; transition: transform 600ms var(--ease); }
+  .cat:hover .cat__media img { transform: scale(1.05); }
+  .cat__label { display: block; font-family: var(--font-display); font-size: 1.2rem; margin-top: var(--space-3); }
+</style>

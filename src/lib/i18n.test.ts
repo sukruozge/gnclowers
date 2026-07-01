@@ -17,4 +17,9 @@ describe('i18n', () => {
     expect(t('footer.tagline', 'en')).toBe('Handmade amigurumi, crocheted with love.');
     expect(t('footer.shop', 'en')).toBe('Shop');
   });
+  it('has home strings', () => {
+    expect(t('home.heroTitle', 'en')).toBe('Handmade amigurumi, made to be loved');
+    expect(t('home.featured', 'tr')).toBe('Öne Çıkanlar');
+    expect(t('home.newsletterCta', 'en')).toBe('Join the list');
+  });
 });
