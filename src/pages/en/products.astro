@@ -1,16 +1,50 @@
 ---
 import Base from '../../layouts/Base.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+import SectionHeading from '../../components/SectionHeading.astro';
 import ProductCard from '../../components/ProductCard.astro';
 import { loadProducts } from '@lib/products';
 const products = loadProducts();
+const cats = ['all', ...new Set(products.map((p) => p.category))];
+const catLabel: Record<string, string> = { all: 'All', amigurumi: 'Amigurumi', bag: 'Bags', accessory: 'Accessories', decor: 'Decor' };
 ---
 <Base locale="en" title="Products — Aselovers"
-  description="The handmade amigurumi collection."
+  description="The handmade amigurumi collection — toys, bags, and accessories."
   pathSelf="products" pathsAlt={{ tr: 'urunler', en: 'products' }}>
-  <section class="catalog">
-    <h1>Products</h1>
-    <div class="grid">
-      {products.map((p) => <ProductCard product={p} locale="en" />)}
-    </div>
-  </section>
+  <Nav locale="en" />
+  <main>
+    <section class="section">
+      <div class="container">
+        <SectionHeading eyebrow="Collection" title="Products" />
+        <div class="filters" role="tablist">
+          {cats.map((c) => <button class="filter" data-cat={c}>{catLabel[c] ?? c}</button>)}
+        </div>
+        <div class="grid" id="grid">
+          {products.map((p) => <div class="grid__item" data-cat={p.category}><ProductCard product={p} locale="en" /></div>)}
+        </div>
+      </div>
+    </section>
+  </main>
+  <Footer locale="en" />
+  <style>
+    .filters { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-bottom: var(--space-6); }
+    .filter { font: inherit; font-size: .9rem; padding: 8px 18px; border: 1px solid var(--line); background: var(--surface); border-radius: var(--radius-pill); cursor: pointer; transition: all var(--dur) var(--ease); }
+    .filter:hover { border-color: var(--accent); color: var(--accent); }
+    .filter[aria-selected="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: var(--space-6) var(--space-5); }
+    .grid__item[hidden] { display: none; }
+  </style>
+  <script>
+    const params = new URLSearchParams(location.search);
+    const initial = params.get('cat') || 'all';
+    const filters = Array.from(document.querySelectorAll<HTMLButtonElement>('.filter'));
+    const items = Array.from(document.querySelectorAll<HTMLElement>('.grid__item'));
+    function apply(cat: string) {
+      filters.forEach((f) => f.setAttribute('aria-selected', String(f.dataset.cat === cat)));
+      items.forEach((it) => { it.hidden = !(cat === 'all' || it.dataset.cat === cat); });
+    }
+    filters.forEach((f) => f.addEventListener('click', () => apply(f.dataset.cat!)));
+    apply(initial);
+  </script>
 </Base>
