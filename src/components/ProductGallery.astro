@@ -1,0 +1,39 @@
+---
+interface Props { images: string[]; alt: string; }
+const { images, alt } = Astro.props;
+---
+{images.length > 0 && (
+  <div class="gallery">
+    <div class="gallery__main"><img id="gallery-main" src={images[0]} alt={alt} /></div>
+    {images.length > 1 && (
+      <div class="gallery__thumbs">
+        {images.map((src, i) => (
+          <button class={`gallery__thumb${i === 0 ? ' is-active' : ''}`} data-src={src} aria-label={`${alt} — ${i + 1}`}>
+            <img src={src} alt="" loading="lazy" />
+          </button>
+        ))}
+      </div>
+    )}
+  </div>
+)}
+<style>
+  .gallery { position: sticky; top: 92px; }
+  .gallery__main { aspect-ratio: 1 / 1; overflow: hidden; border-radius: var(--radius); background: var(--section); }
+  .gallery__main img { width: 100%; height: 100%; object-fit: cover; }
+  .gallery__thumbs { display: grid; grid-template-columns: repeat(auto-fill, minmax(64px, 1fr)); gap: var(--space-2); margin-top: var(--space-3); }
+  .gallery__thumb { padding: 0; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; cursor: pointer; aspect-ratio: 1 / 1; background: var(--section); transition: border-color var(--dur) var(--ease); }
+  .gallery__thumb:hover { border-color: var(--accent); }
+  .gallery__thumb.is-active { border-color: var(--accent); }
+  .gallery__thumb img { width: 100%; height: 100%; object-fit: cover; }
+  @media (max-width: 900px) { .gallery { position: static; } }
+</style>
+<script>
+  document.querySelectorAll('.gallery').forEach((g) => {
+    const main = g.querySelector('#gallery-main') as HTMLImageElement | null;
+    const thumbs = Array.from(g.querySelectorAll('.gallery__thumb')) as HTMLButtonElement[];
+    thumbs.forEach((t) => t.addEventListener('click', () => {
+      if (main && t.dataset.src) main.src = t.dataset.src;
+      thumbs.forEach((x) => x.classList.toggle('is-active', x === t));
+    }));
+  });
+</script>

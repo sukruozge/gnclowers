@@ -4,7 +4,7 @@ import type { Product } from '@lib/products';
 
 const p: Product = {
   id: '9', title_en: 'Bunny', title_tr: 'Tavşan', description_en: 'A bunny', description_tr: 'Bir tavşan',
-  price: 1912.5, currency: 'TRY', image: 'https://img/x.jpg', url: 'https://etsy/9', category: 'amigurumi', tags: [], isNew: true, isActive: true,
+  price: 1912.5, currency: 'TRY', image: 'https://img/x.jpg', images: ['https://img/x.jpg'], url: 'https://etsy/9', category: 'amigurumi', tags: [], isNew: true, isActive: true,
 };
 
 describe('productJsonLd', () => {
@@ -22,7 +22,7 @@ describe('productJsonLd', () => {
     expect(obj.offers.url).toBe('https://etsy/9');
   });
   it('omits image when the product has no image', () => {
-    const noImg = { ...p, image: null };
+    const noImg = { ...p, image: null, images: [] };
     const obj2 = JSON.parse(productJsonLd(noImg, 'en', 'https://x/y'));
     expect('image' in obj2).toBe(false);
   });

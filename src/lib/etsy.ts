@@ -47,9 +47,10 @@ export function mapListing(
   now: number = Date.now(),
   sections: Record<string, string> = {},
 ): Product {
-  const image = listing.images && listing.images.length > 0
-    ? (listing.images[0].url_570xN ?? listing.images[0].url_fullxfull ?? null)
-    : null;
+  const imageUrls = (listing.images ?? [])
+    .map((im) => im.url_570xN ?? im.url_fullxfull)
+    .filter((u): u is string => Boolean(u));
+  const image = imageUrls[0] ?? null;
   const tr = listing.translations?.find((t) => t.language === 'tr') ?? null;
   const title_en = listing.title ?? '';
   const title_tr = tr?.title ?? title_en;
@@ -67,6 +68,7 @@ export function mapListing(
     price: parseFloat(String(listing.price?.amount ?? 0)) / (listing.price?.divisor ?? 100),
     currency: listing.price?.currency_code ?? 'TRY',
     image,
+    images: imageUrls,
     url: listing.url ?? `https://www.etsy.com/listing/${listing.listing_id}/`,
     category: sectionTitle ?? detectCategory(listing),
     tags: listing.tags ?? [],

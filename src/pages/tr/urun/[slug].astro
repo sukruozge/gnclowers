@@ -5,6 +5,7 @@ import Footer from '../../../components/Footer.astro';
 import Button from '../../../components/Button.astro';
 import Badge from '../../../components/Badge.astro';
 import ProductCard from '../../../components/ProductCard.astro';
+import ProductGallery from '../../../components/ProductGallery.astro';
 import { loadProducts, localizedTitle, productSlug, type Product } from '@lib/products';
 import { productJsonLd } from '@lib/jsonld';
 
@@ -12,6 +13,7 @@ export function getStaticPaths() {
   return loadProducts().map((p) => ({ params: { slug: productSlug(p, 'tr') }, props: { product: p } }));
 }
 const { product } = Astro.props as { product: Product };
+const gallery = product.images?.length ? product.images : (product.image ? [product.image] : []);
 const site = Astro.site!.toString().replace(/\/+$/, '');
 const selfPath = `urun/${productSlug(product, 'tr')}`;
 const enSlug = productSlug(product, 'en');
@@ -27,7 +29,7 @@ const ld = productJsonLd(product, 'tr', `${site}/tr/${selfPath}`);
   <main>
     <section class="section">
       <div class="container detail">
-        <div class="detail__media">{product.image && <img src={product.image} alt={title} />}</div>
+        <ProductGallery images={gallery} alt={title} />
         <div class="detail__info">
           {product.isNew && <Badge>Yeni</Badge>}
           <h1>{title}</h1>

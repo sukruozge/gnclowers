@@ -17,6 +17,7 @@ export function productJsonLd(product: Product, locale: Locale, url: string): st
       availability: 'https://schema.org/InStock',
     },
   };
-  if (product.image) data.image = [product.image];
+  const images = product.images?.length ? product.images : (product.image ? [product.image] : []);
+  if (images.length) data.image = images;
   return JSON.stringify(data).replace(/</g, '\\u003c');
 }

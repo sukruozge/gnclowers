@@ -72,6 +72,18 @@ describe('mapListing', () => {
     const q = mapListing({ ...base, images: [] });
     expect(q.image).toBe(null);
   });
+  it('collects every image url into the images array (first stays as image)', () => {
+    const q = mapListing({ ...base, images: [
+      { url_570xN: 'https://img/a.jpg' },
+      { url_570xN: 'https://img/b.jpg' },
+      { url_fullxfull: 'https://img/c.jpg' },
+    ] });
+    expect(q.images).toEqual(['https://img/a.jpg', 'https://img/b.jpg', 'https://img/c.jpg']);
+    expect(q.image).toBe('https://img/a.jpg');
+  });
+  it('sets images to [] when there are no images', () => {
+    expect(mapListing({ ...base, images: [] }).images).toEqual([]);
+  });
 });
 
 describe('isNewListing', () => {
