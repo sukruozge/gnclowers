@@ -1,0 +1,14 @@
+---
+import { type Locale } from '@lib/i18n';
+import { localizedTitle, productSlug, type Product } from '@lib/products';
+const { product, locale } = Astro.props as { product: Product; locale: Locale };
+const title = localizedTitle(product, locale);
+const href = locale === 'tr'
+  ? `/tr/urun/${productSlug(product, 'tr')}`
+  : `/en/product/${productSlug(product, 'en')}`;
+---
+<a class="product-card" href={href}>
+  {product.image && <img src={product.image} alt={title} loading="lazy" />}
+  <h3>{title}</h3>
+  <span class="price">{product.price} {product.currency}</span>
+</a>

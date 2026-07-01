@@ -1,0 +1,16 @@
+---
+import Base from '../../layouts/Base.astro';
+import ProductCard from '../../components/ProductCard.astro';
+import { loadProducts } from '@lib/products';
+const products = loadProducts();
+---
+<Base locale="en" title="Products — Aselovers"
+  description="The handmade amigurumi collection."
+  pathSelf="products" pathsAlt={{ tr: 'urunler', en: 'products' }}>
+  <section class="catalog">
+    <h1>Products</h1>
+    <div class="grid">
+      {products.map((p) => <ProductCard product={p} locale="en" />)}
+    </div>
+  </section>
+</Base>

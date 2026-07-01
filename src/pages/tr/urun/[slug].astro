@@ -1,0 +1,28 @@
+---
+import Base from '../../../layouts/Base.astro';
+import { t } from '@lib/i18n';
+import { loadProducts, localizedTitle, productSlug, type Product } from '@lib/products';
+
+export function getStaticPaths() {
+  return loadProducts().map((p) => ({
+    params: { slug: productSlug(p, 'tr') },
+    props: { product: p },
+  }));
+}
+const { product } = Astro.props as { product: Product };
+const title = localizedTitle(product, 'tr');
+const enSlug = productSlug(product, 'en');
+---
+<Base locale="tr" title={`${title} — Aselovers`}
+  description={product.description_tr || title}
+  pathSelf={`urun/${productSlug(product, 'tr')}`}
+  pathsAlt={{ tr: `urun/${productSlug(product, 'tr')}`, en: `product/${enSlug}` }}
+  ogImage={product.image ?? undefined}>
+  <article class="product-detail">
+    {product.image && <img src={product.image} alt={title} />}
+    <h1>{title}</h1>
+    <p class="price">{product.price} {product.currency}</p>
+    <p>{product.description_tr}</p>
+    <a class="btn buy" href={product.url} target="_blank" rel="noopener">{t('cta.buy', 'tr')}</a>
+  </article>
+</Base>
