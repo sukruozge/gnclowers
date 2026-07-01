@@ -1,28 +1,64 @@
 ---
 import Base from '../../../layouts/Base.astro';
-import { t } from '@lib/i18n';
+import Nav from '../../../components/Nav.astro';
+import Footer from '../../../components/Footer.astro';
+import Button from '../../../components/Button.astro';
+import Badge from '../../../components/Badge.astro';
+import ProductCard from '../../../components/ProductCard.astro';
 import { loadProducts, localizedTitle, productSlug, type Product } from '@lib/products';
+import { productJsonLd } from '@lib/jsonld';
 
 export function getStaticPaths() {
-  return loadProducts().map((p) => ({
-    params: { slug: productSlug(p, 'tr') },
-    props: { product: p },
-  }));
+  return loadProducts().map((p) => ({ params: { slug: productSlug(p, 'tr') }, props: { product: p } }));
 }
 const { product } = Astro.props as { product: Product };
-const title = localizedTitle(product, 'tr');
+const site = Astro.site!.toString().replace(/\/+$/, '');
+const selfPath = `urun/${productSlug(product, 'tr')}`;
 const enSlug = productSlug(product, 'en');
+const title = localizedTitle(product, 'tr');
+const price = new Intl.NumberFormat('tr-TR', { style: 'currency', currency: product.currency }).format(product.price);
+const related = loadProducts().filter((x) => x.category === product.category && x.id !== product.id).slice(0, 4);
+const ld = productJsonLd(product, 'tr', `${site}/tr/${selfPath}`);
 ---
-<Base locale="tr" title={`${title} — Aselovers`}
-  description={product.description_tr || title}
-  pathSelf={`urun/${productSlug(product, 'tr')}`}
-  pathsAlt={{ tr: `urun/${productSlug(product, 'tr')}`, en: `product/${enSlug}` }}
-  ogImage={product.image ?? undefined}>
-  <article class="product-detail">
-    {product.image && <img src={product.image} alt={title} />}
-    <h1>{title}</h1>
-    <p class="price">{product.price} {product.currency}</p>
-    <p>{product.description_tr}</p>
-    <a class="btn buy" href={product.url} target="_blank" rel="noopener">{t('cta.buy', 'tr')}</a>
-  </article>
+<Base locale="tr" title={`${title} — Aselovers`} description={product.description_tr || title}
+  pathSelf={selfPath} pathsAlt={{ tr: selfPath, en: `product/${enSlug}` }} ogImage={product.image ?? undefined}>
+  <Fragment slot="head"><script type="application/ld+json" set:html={ld} /></Fragment>
+  <Nav locale="tr" />
+  <main>
+    <section class="section">
+      <div class="container detail">
+        <div class="detail__media">{product.image && <img src={product.image} alt={title} />}</div>
+        <div class="detail__info">
+          {product.isNew && <Badge>Yeni</Badge>}
+          <h1>{title}</h1>
+          <p class="detail__price">{price}</p>
+          <p class="prose">{product.description_tr}</p>
+          <Button href={product.url} variant="primary" external>Etsy'de Satın Al</Button>
+          <div class="detail__ship">
+            <h4>Kargo</h4>
+            <p>Türkiye ve ABD'ye özenli gönderim. Her ürün siparişten sonra elde örülür.</p>
+          </div>
+        </div>
+      </div>
+      {related.length > 0 && (
+        <div class="container detail__related">
+          <h2>Benzer Ürünler</h2>
+          <div class="grid">{related.map((r) => <ProductCard product={r} locale="tr" />)}</div>
+        </div>
+      )}
+    </section>
+  </main>
+  <Footer locale="tr" />
+  <style>
+    .detail { display: grid; grid-template-columns: 1.1fr 1fr; gap: var(--space-7); align-items: start; }
+    .detail__media { aspect-ratio: 4 / 5; overflow: hidden; border-radius: var(--radius); background: var(--section); position: sticky; top: 92px; }
+    .detail__media img { width: 100%; height: 100%; object-fit: cover; }
+    .detail__price { font-family: var(--font-display); font-size: 1.6rem; color: var(--accent-ink); margin: var(--space-3) 0 var(--space-4); }
+    .detail__ship { border-top: 1px solid var(--line); margin-top: var(--space-6); padding-top: var(--space-4); }
+    .detail__ship h4 { font-family: var(--font-body); font-size: var(--step-small); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: var(--space-2); }
+    .detail__ship p { color: var(--muted); margin: 0; }
+    .detail__related { margin-top: var(--space-8); }
+    .detail__related .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: var(--space-5); }
+    @media (max-width: 900px) { .detail { grid-template-columns: 1fr; } .detail__media { position: static; } }
+  </style>
 </Base>
