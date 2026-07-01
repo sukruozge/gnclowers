@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { loadProducts, localizedTitle, productSlug } from '@lib/products';
+import { loadProducts, localizedTitle, productSlug, activeOnly } from '@lib/products';
 
 describe('products', () => {
   const all = loadProducts();
@@ -8,8 +8,13 @@ describe('products', () => {
     expect(all.length).toBeGreaterThan(0);
     expect(all.every((p) => p.isActive)).toBe(true);
   });
-  it('excludes inactive products', () => {
-    expect(all.some((p) => p.id === 'inactive-fixture-0')).toBe(false);
+  it('activeOnly excludes inactive products', () => {
+    const mock = [
+      { ...all[0], id: 'x-active', isActive: true },
+      { ...all[0], id: 'x-inactive', isActive: false },
+    ];
+    const result = activeOnly(mock);
+    expect(result.map((p) => p.id)).toEqual(['x-active']);
   });
   it('localizes title by locale', () => {
     const p = all[0];

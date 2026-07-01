@@ -18,9 +18,13 @@ export interface Product {
   isActive: boolean;
 }
 
+export function activeOnly(products: Product[]): Product[] {
+  return products.filter((p) => p.isActive);
+}
+
 export function loadProducts(): Product[] {
   const list = (raw as { products: Product[] }).products ?? [];
-  return list.filter((p) => p.isActive);
+  return activeOnly(list);
 }
 
 export function localizedTitle(p: Product, l: Locale): string {
