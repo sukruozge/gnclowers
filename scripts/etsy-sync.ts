@@ -33,22 +33,29 @@ async function getSections(shopId: string): Promise<Record<string, string>> {
 // getListingsByShop does not reliably attach images under app-key auth even
 // with includes=Images, so fetch each listing's images from the dedicated
 // endpoint (public, works with the API key). Best-effort per listing.
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
 async function getListingImages(listingId: number | string): Promise<EtsyImage[]> {
-  try {
-    const d = await etsy(`listings/${listingId}/images`);
-    return (d.results ?? []).map((img: any) => ({
-      url_570xN: img.url_570xN,
-      url_fullxfull: img.url_fullxfull,
-    }));
-  } catch {
-    return [];
+  // Retry once with a backoff to survive a transient rate-limit (429).
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      const d = await etsy(`listings/${listingId}/images`);
+      return (d.results ?? []).map((img: any) => ({
+        url_570xN: img.url_570xN,
+        url_fullxfull: img.url_fullxfull,
+      }));
+    } catch {
+      if (attempt === 0) await sleep(1500);
+    }
   }
+  return [];
 }
 
 async function attachImages(listings: EtsyListing[]): Promise<void> {
-  // Sequential to stay comfortably under Etsy's 5 QPS rate limit.
+  // Sequential + 250ms spacing keeps us under Etsy's 5 QPS rate limit.
   for (const l of listings) {
     l.images = await getListingImages(l.listing_id);
+    await sleep(250);
   }
 }
 
