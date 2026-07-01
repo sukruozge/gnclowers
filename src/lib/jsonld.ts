@@ -4,11 +4,10 @@ import type { Locale } from './i18n';
 
 export function productJsonLd(product: Product, locale: Locale, url: string): string {
   const desc = locale === 'tr' ? product.description_tr : product.description_en;
-  const data = {
+  const data: Record<string, unknown> = {
     '@context': 'https://schema.org',
     '@type': 'Product',
     name: localizedTitle(product, locale),
-    image: product.image ? [product.image] : [],
     description: desc,
     offers: {
       '@type': 'Offer',
@@ -18,5 +17,6 @@ export function productJsonLd(product: Product, locale: Locale, url: string): st
       availability: 'https://schema.org/InStock',
     },
   };
-  return JSON.stringify(data);
+  if (product.image) data.image = [product.image];
+  return JSON.stringify(data).replace(/</g, '\\u003c');
 }

@@ -21,4 +21,13 @@ describe('productJsonLd', () => {
     expect(obj.offers.availability).toBe('https://schema.org/InStock');
     expect(obj.offers.url).toBe('https://etsy/9');
   });
+  it('omits image when the product has no image', () => {
+    const noImg = { ...p, image: null };
+    const obj2 = JSON.parse(productJsonLd(noImg, 'en', 'https://x/y'));
+    expect('image' in obj2).toBe(false);
+  });
+  it('escapes < to prevent script-tag breakout', () => {
+    const evil = { ...p, description_en: 'safe </script> text' };
+    expect(productJsonLd(evil, 'en', 'https://x/y')).not.toContain('</script>');
+  });
 });

@@ -17,7 +17,7 @@ const catLabel: Record<string, string> = { all: 'Tümü', amigurumi: 'Amigurumi'
     <section class="section">
       <div class="container">
         <SectionHeading eyebrow="Koleksiyon" title="Ürünler" />
-        <div class="filters" role="tablist">
+        <div class="filters">
           {cats.map((c) => <button class="filter" data-cat={c}>{catLabel[c] ?? c}</button>)}
         </div>
         <div class="grid" id="grid">
