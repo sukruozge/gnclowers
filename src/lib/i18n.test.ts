@@ -22,4 +22,11 @@ describe('i18n', () => {
     expect(t('home.featured', 'tr')).toBe('Öne Çıkanlar');
     expect(t('home.newsletterCta', 'en')).toBe('Join the list');
   });
+  it('has enhancement strings', () => {
+    expect(t('trust.handmade', 'tr')).toBe('El yapımı, siparişe özel');
+    expect(t('reviews.title', 'en')).toBe('What buyers say');
+    expect(t('faq.title', 'tr')).toBe('Sıkça Sorulan Sorular');
+    expect(t('process.step1Title', 'en')).toBe('Designed');
+    expect(t('nav.shopAll', 'tr')).toBe('Tüm Ürünler');
+  });
 });

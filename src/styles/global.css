@@ -27,6 +27,18 @@ main { min-height: 50vh; }
 
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
 
+/* Scroll reveal */
+.reveal { opacity: 0; transform: translateY(16px); transition: opacity .6s var(--ease), transform .6s var(--ease); }
+.reveal.is-visible { opacity: 1; transform: none; }
+.reveal--d1 { transition-delay: .08s; }
+.reveal--d2 { transition-delay: .16s; }
+.reveal--d3 { transition-delay: .24s; }
+
+/* Stars */
+.stars { --star: #E0A43B; display: inline-flex; gap: 2px; color: var(--star); line-height: 1; }
+.stars svg { width: 1em; height: 1em; fill: currentColor; }
+
 @media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; transition: none; }
   * { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
 }
