@@ -15,4 +15,8 @@ describe('buildSitemap', () => {
     expect(xml).toContain('https://aselovers.example/tr/urunler');
     expect(xml).toContain('https://aselovers.example/en/products');
   });
+  it('includes blog post urls', () => {
+    expect(xml).toContain('/tr/blog/');
+    expect(xml).toContain('/en/blog/');
+  });
 });

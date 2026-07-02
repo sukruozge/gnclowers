@@ -1,0 +1,28 @@
+---
+import Base from '../../../layouts/Base.astro';
+import Nav from '../../../components/Nav.astro';
+import Footer from '../../../components/Footer.astro';
+import { t } from '@lib/i18n';
+import { loadPosts, postSlug, type Post } from '@lib/blog';
+export function getStaticPaths() {
+  return loadPosts().map((post) => ({ params: { slug: postSlug(post) }, props: { post } }));
+}
+const { post } = Astro.props as { post: Post };
+const selfPath = `blog/${post.slug}`;
+---
+<Base locale="tr" title={`${post.title_tr} — Aselovers`} description={post.excerpt_tr}
+  pathSelf={selfPath} pathsAlt={{ tr: selfPath, en: selfPath }}>
+  <Nav locale="tr" />
+  <main>
+    <article class="section">
+      <div class="container prose reveal">
+        <a class="blogback" href="/tr/blog">{t('blog.back', 'tr')}</a>
+        <p class="eyebrow">{post.date}</p>
+        <h1>{post.title_tr}</h1>
+        <div set:html={post.bodyHtml_tr} />
+      </div>
+    </article>
+  </main>
+  <Footer locale="tr" />
+  <style>.blogback { display: inline-block; color: var(--accent); margin-bottom: var(--space-4); } .prose :global(p) { color: var(--muted); }</style>
+</Base>

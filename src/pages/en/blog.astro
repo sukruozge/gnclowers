@@ -2,19 +2,40 @@
 import Base from '../../layouts/Base.astro';
 import Nav from '../../components/Nav.astro';
 import Footer from '../../components/Footer.astro';
+import SectionHeading from '../../components/SectionHeading.astro';
+import { t } from '@lib/i18n';
+import { loadPosts } from '@lib/blog';
+const posts = loadPosts();
 ---
-<Base locale="en" title="Blog — Aselovers"
-  description="Amigurumi tips, studio stories, and news."
+<Base locale="en" title="Blog — Aselovers" description="Personalized baby gifts, handmade crochet, and stories from our studio."
   pathSelf="blog" pathsAlt={{ tr: 'blog', en: 'blog' }}>
   <Nav locale="en" />
   <main>
     <section class="section">
-      <div class="container prose">
-        <p class="eyebrow">Journal</p>
-        <h1>Blog</h1>
-        <p>Coming soon: amigurumi care tips, stories from the studio, and new collection announcements.</p>
+      <div class="container reveal">
+        <SectionHeading eyebrow={t('blog.eyebrow', 'en')} title={t('blog.title', 'en')} />
+        <p class="prose">{t('blog.intro', 'en')}</p>
+        <div class="posts">
+          {posts.map((post) => (
+            <a class="post" href={`/en/blog/${post.slug}`}>
+              <span class="post__date">{post.date}</span>
+              <h3 class="post__title">{post.title_en}</h3>
+              <p class="post__excerpt">{post.excerpt_en}</p>
+              <span class="post__more">{t('blog.readMore', 'en')} →</span>
+            </a>
+          ))}
+        </div>
       </div>
     </section>
   </main>
   <Footer locale="en" />
+  <style>
+    .posts { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: var(--space-5); margin-top: var(--space-6); }
+    .post { display: block; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: var(--space-5); transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease); }
+    .post:hover { transform: translateY(-4px); box-shadow: var(--shadow-hover); }
+    .post__date { font-size: var(--step-small); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+    .post__title { font-size: 1.3rem; margin: var(--space-2) 0; }
+    .post__excerpt { color: var(--muted); margin: 0 0 var(--space-3); }
+    .post__more { color: var(--accent); font-weight: 500; }
+  </style>
 </Base>

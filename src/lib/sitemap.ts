@@ -1,5 +1,6 @@
 import { canonical } from './seo';
 import { loadProducts, productSlug } from './products';
+import { loadPosts } from './blog';
 
 const STATIC: Array<{ tr: string; en: string }> = [
   { tr: '', en: '' },
@@ -18,6 +19,10 @@ export function buildSitemap(site: string): string {
   for (const p of loadProducts()) {
     urls.push(canonical(site, 'tr', `urun/${productSlug(p, 'tr')}`));
     urls.push(canonical(site, 'en', `product/${productSlug(p, 'en')}`));
+  }
+  for (const post of loadPosts()) {
+    urls.push(canonical(site, 'tr', `blog/${post.slug}`));
+    urls.push(canonical(site, 'en', `blog/${post.slug}`));
   }
   const body = urls.map((u) => `  <url><loc>${u}</loc></url>`).join('\n');
   return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${body}\n</urlset>`;
