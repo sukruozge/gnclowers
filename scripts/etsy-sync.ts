@@ -17,10 +17,43 @@ async function etsy(endpoint: string): Promise<any> {
   return res.json();
 }
 
-async function getShopId(): Promise<string> {
+interface ShopInfo { shopId: string; rating: number | null; count: number; }
+
+async function getShop(): Promise<ShopInfo> {
   const d = await etsy(`shops?shop_name=${encodeURIComponent(SHOP)}`);
   if (!d.results?.length) throw new Error(`Etsy shop '${SHOP}' not found`);
-  return String(d.results[0].shop_id);
+  const s = d.results[0];
+  return {
+    shopId: String(s.shop_id),
+    rating: typeof s.review_average === 'number' ? s.review_average : null,
+    count: typeof s.review_count === 'number' ? s.review_count : 0,
+  };
+}
+
+const REVIEWS_OUT = new URL('../src/data/reviews.json', import.meta.url);
+
+interface SyncReview { rating: number; text: string; language: string; date: string; }
+
+async function getReviews(shopId: string): Promise<SyncReview[]> {
+  const d = await etsy(`shops/${shopId}/reviews?limit=100`);
+  return (d.results ?? []).map((r: any) => ({
+    rating: Number(r.rating ?? 0),
+    text: String(r.review ?? '').trim(),
+    language: String(r.language ?? 'en').toLowerCase().startsWith('tr') ? 'tr' : 'en',
+    date: r.created_timestamp ? new Date(r.created_timestamp * 1000).toISOString().slice(0, 10) : '',
+  }));
+}
+
+async function writeReviews(shop: ShopInfo): Promise<void> {
+  let reviews: SyncReview[] = [];
+  try {
+    reviews = await getReviews(shop.shopId);
+  } catch (err) {
+    console.warn('Could not fetch reviews (rating badge only):', err instanceof Error ? err.message : err);
+  }
+  const out = { shop: { rating: shop.rating, count: shop.count }, reviews };
+  writeFileSync(REVIEWS_OUT, JSON.stringify(out, null, 2) + '\n', 'utf8');
+  console.log(`Reviews: rating ${shop.rating ?? 'n/a'} (${shop.count}), ${reviews.length} reviews written.`);
 }
 
 // Map shop_section_id -> section title (the seller's real categories).
@@ -158,7 +191,8 @@ async function main(): Promise<void> {
     console.error('ETSY_API_KEY is not set — aborting.');
     process.exit(1);
   }
-  const shopId = await getShopId();
+  const shop = await getShop();
+  const shopId = shop.shopId;
   // Sections are best-effort: a failure here must not wipe the whole sync;
   // we fall back to keyword categories.
   let sections: Record<string, string> = {};
@@ -190,6 +224,7 @@ async function main(): Promise<void> {
     `Synced ${products.length} products to src/data/products.json ` +
       `(${withImages} with images, ${cats} categories, ${Object.keys(sections).length} shop sections)`,
   );
+  await writeReviews(shop);
 }
 
 main().catch((err) => {
