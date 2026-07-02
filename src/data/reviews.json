@@ -1,11 +1,32 @@
 {
-  "shop": { "rating": 4.9, "count": 500 },
+  "shop": {
+    "rating": 5,
+    "count": 4
+  },
   "reviews": [
-    { "rating": 5, "text": "Absolutely beautiful craftsmanship — even softer and cuter in person. Shipped quickly and packaged with care.", "language": "en", "date": "2026-06-20" },
-    { "rating": 5, "text": "Bought a bunny for my daughter and she adores it. The quality is amazing, you can feel the love in every stitch.", "language": "en", "date": "2026-06-12" },
-    { "rating": 5, "text": "Harika bir işçilik, tam beklediğim gibi geldi. Çok özenli paketlenmişti, teşekkürler!", "language": "tr", "date": "2026-06-05" },
-    { "rating": 5, "text": "The seller was lovely and the amigurumi is a work of art. Will absolutely order again.", "language": "en", "date": "2026-05-28" },
-    { "rating": 5, "text": "Elde örülmüş, kaliteli ve çok sevimli. Hediye olarak aldım, bayıldılar.", "language": "tr", "date": "2026-05-15" },
-    { "rating": 5, "text": "Exceeded my expectations. Beautifully made and arrived earlier than expected.", "language": "en", "date": "2026-05-02" }
+    {
+      "rating": 5,
+      "text": "The flamingo is beautiful! Just as described. Will make a wonderful gift.",
+      "language": "en",
+      "date": "2026-06-27"
+    },
+    {
+      "rating": 5,
+      "text": "I placed a special order for this item.  Specific color and size.  He looks GREAT!!  Can&#39;t wait to give him to the birthday girl.  She&#39;s going to LOVE him!  Thank you for your hard work.  Love love love.",
+      "language": "en",
+      "date": "2026-06-21"
+    },
+    {
+      "rating": 5,
+      "text": "I love the result of this custom gift!!!!  The customer service was outstanding and the quality and workmanship is well above my expectations. Thank you!!!!!!!",
+      "language": "en",
+      "date": "2026-05-21"
+    },
+    {
+      "rating": 5,
+      "text": "Melissa was very helpful and accommodating when I reached out about our order, as we needed 3 tie backs -  I was able to order 1 of each. They are wonderfully made, and very cute. They will work beautifully in our son’s safari themed nursery.\r\nI would highly recommend.",
+      "language": "en",
+      "date": "2026-05-20"
+    }
   ]
 }
