@@ -33,7 +33,7 @@ Site şu an işlevsel ve premium ama "ince" duruyor; ziyaretçide güven ve dolu
 
 ## 3. Ana Sayfa Bölümleri (sırayla)
 
-1. **Hero** — Playfair başlık + değer önermesi + satır içi **puan rozeti** (`★ 4.9 · Etsy'de 500+ değerlendirme`, veriden), iki CTA (Koleksiyonu Keşfet / Hikâyemiz), "el yapımı, siparişe özel · Türkiye & ABD'ye gönderim" mikro-satırı. Sağda Etsy görsellerinden çerçeveli kolaj (mevcut hero grid'in rafine hâli, 1:1 hücreler).
+1. **Hero (ŞATAFATLI — bkz. §3A)** — neredeyse tam ekran, çarpıcı; detay §3A'da.
 2. **Güven şeridi** (`TrustBar` genişletilir) — 4 madde: El yapımı, siparişe özel · Dünyaya özenli gönderim · Etsy'de {rating}★ · Etsy güvencesiyle ödeme.
 3. **Öne Çıkanlar** (`FeaturedProducts`, mevcut) — 8 ürün, 1:1 kartlar.
 4. **Koleksiyonlar** (`Categories`, mevcut) — gerçek Etsy section'ları.
@@ -43,6 +43,26 @@ Site şu an işlevsel ve premium ama "ince" duruyor; ziyaretçide güven ve dolu
 8. **Bülten** (`NewsletterCta`, mevcut) — küçük teşvik satırı ("yeni koleksiyon + %10 ilham" tarzı; sadece metin, işlev Faz sonrası).
 
 ---
+
+## 3A. Hero & Menü — "Wow" Faktörü (öncelikli)
+
+Marka fotoğrafı olmadığından "wow" hissi **hareket + iri editorial tipografi + akan ürün mozaiği + dönüşen nav** ile kurulur. Hepsi vanilla JS + CSS (framework yok), performanslı ve `prefers-reduced-motion` altında sakinleşir.
+
+**Hero (neredeyse tam ekran, ~min(88vh)):**
+- Sol: dev Playfair başlık; bir vurgulu kelime terracotta ve italik (ör. "Sevgiyle örülmüş **oyuncaklar**"). Kelime kelime **kademeli reveal** (staggered fade/slide-up, ~60ms arayla) sayfa açılışında.
+- Değer önermesi + satır içi **puan rozeti** (`★ {rating} · Etsy'de {count}+ değerlendirme`, veriden) + iki CTA (birincil "Koleksiyonu Keşfet", ikincil "Hikâyemiz") + "el yapımı, siparişe özel · Türkiye & ABD'ye gönderim" mikro-satırı.
+- Sağ/arka: Etsy ürün görsellerinden **sonsuz akan dikey mozaik** — 2-3 kolon, kolonlar zıt yönde yavaşça kayar (CSS marquee, `translateY` sonsuz döngü; hover'da/reduced-motion'da durur). 1:1 kareler, yuvarlak köşe, yumuşak gölge. Dolu ve canlı bir "atölye vitrini" hissi.
+- İnce derinlik: mozaik hafif parallax/tilt (küçük, isteğe bağlı, reduced-motion'da kapalı); zeminde çok hafif terracotta radyal ışıma.
+- Altında yukarı-akan "güven şeridi"ne yumuşak geçiş.
+
+**Menü / Navigasyon (dönüşen + tam ekran):**
+- **Kaydırmayla dönüşür:** hero üzerindeyken şeffaf/hafif, aşağı kaydırınca fildişi + blur + ince alt çizgi + kompakt yükseklik (scroll listener bir `is-scrolled` sınıfı ekler; yumuşak geçiş).
+- **Marka wordmark'ı** rafine; link'lerde zarif alt-çizgi animasyonu (sol→sağ), aktif sayfa vurgusu.
+- **Koleksiyonlar mega-menüsü (masaüstü):** "Ürünler"e hover/focus'ta gerçek Etsy section'larını küçük görsellerle açan zarif panel.
+- **Mobil:** hamburger → **tam ekran şık overlay menü** (kademeli açılan linkler, büyük tipografi, dil değişimi, kapanış animasyonu); odak tuzağı + Esc ile kapanır (erişilebilir).
+- Dil değişimi (TR/EN) belirgin ve şık bir pill.
+
+**Erişilebilirlik/performans:** tüm animasyonlar `prefers-reduced-motion: reduce` altında kapanır; marquee ve mega-menü klavye/odak dostu; görseller `loading` stratejisiyle (hero ilk kareler eager, gerisi lazy).
 
 ## 4. Ürün Detay ve Katalog
 
@@ -79,7 +99,7 @@ Sync'e (scripts/etsy-sync.ts) eklenir:
 ## 7. Bileşen Envanteri
 
 - Yeni: `Reviews.astro` (ana sayfa), `Faq.astro`, `StarRating.astro`, `RatingBadge.astro`, `TrustPoints.astro` (ürün detay), `src/lib/reviews.ts` (+ test), `src/data/reviews.json`.
-- Zenginleştirilen: `Hero.astro`, `TrustBar.astro`, `StoryStrip.astro`, ürün detay sayfaları (tr/en), katalog sayfaları (tr/en), `hakkimizda`/`about`.
+- Zenginleştirilen: `Nav.astro` (dönüşen + tam ekran overlay + koleksiyon mega-menüsü), `Hero.astro` (§3A şatafatlı hero + akan mozaik), `TrustBar.astro`, `StoryStrip.astro`, ürün detay sayfaları (tr/en), katalog sayfaları (tr/en), `hakkimizda`/`about`.
 - i18n: yeni anahtarlar (güven, SSS, yorum başlıkları, süreç adımları, kargo).
 - global.css: scroll-reveal yardımcı sınıfı + yıldız stilleri.
 - Korunur: token/renk sistemi, ProductCard/ProductGallery, sync'in Etsy/DeepL/görsel mantığı, SEO/i18n/redirect.
