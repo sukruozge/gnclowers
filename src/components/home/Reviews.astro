@@ -26,7 +26,7 @@ const initial = (txt: string) => (txt.trim()[0] ?? '★').toUpperCase();
           <figure class="review">
             <StarRating rating={r.rating} />
             <blockquote class="review__text">“{r.text}”</blockquote>
-            <figcaption class="review__meta"><span class="review__avatar">{initial(r.text)}</span><span>{r.date}</span></figcaption>
+            <figcaption class="review__meta"><span class="review__avatar">{initial(r.text)}</span>{r.date && <span>{r.date}</span>}</figcaption>
           </figure>
         ))}
       </div>

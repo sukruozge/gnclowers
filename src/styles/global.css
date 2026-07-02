@@ -35,7 +35,7 @@ main { min-height: 50vh; }
 .reveal--d3 { transition-delay: .24s; }
 
 /* Stars */
-.stars { --star: #E0A43B; display: inline-flex; gap: 2px; color: var(--star); line-height: 1; }
+.stars { --star: var(--star-gold); display: inline-flex; gap: 2px; color: var(--star); line-height: 1; }
 .stars svg { width: 1em; height: 1em; fill: currentColor; }
 
 @media (prefers-reduced-motion: reduce) {

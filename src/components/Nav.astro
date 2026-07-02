@@ -25,10 +25,10 @@ const collections = [...new Set(products.map((x) => x.category))]
     <a class="nav__brand" href={`/${locale}`}>aselovers</a>
     <nav class="nav__links" aria-label="Primary">
       <div class="nav__item nav__item--mega">
-        <a href={links[0].href}>{links[0].label}</a>
-        <div class="mega" role="menu">
+        <a href={links[0].href} aria-haspopup="true">{links[0].label}</a>
+        <div class="mega">
           {collections.map((col) => (
-            <a class="mega__card" role="menuitem" href={`${catalog}?cat=${encodeURIComponent(col.c)}`}>
+            <a class="mega__card" href={`${catalog}?cat=${encodeURIComponent(col.c)}`}>
               <span class="mega__media"><img src={col.img} alt={col.alt} loading="lazy" /></span>
               <span class="mega__label">{col.c}</span>
             </a>
