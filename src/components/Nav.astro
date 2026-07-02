@@ -1,35 +1,116 @@
 ---
 import { t, type Locale } from '@lib/i18n';
+import { loadProducts, localizedTitle } from '@lib/products';
 const { locale } = Astro.props as { locale: Locale };
 const p = (tr: string, en: string) => (locale === 'tr' ? `/tr/${tr}` : `/en/${en}`);
 const other = locale === 'tr' ? '/en' : '/tr';
+const catalog = locale === 'tr' ? '/tr/urunler' : '/en/products';
 const links = [
   { href: p('urunler', 'products'), label: t('nav.products', locale) },
   { href: p('hakkimizda', 'about'), label: t('nav.about', locale) },
   { href: p('blog', 'blog'), label: t('nav.blog', locale) },
   { href: p('iletisim', 'contact'), label: t('nav.contact', locale) },
 ];
+const products = loadProducts();
+const collections = [...new Set(products.map((x) => x.category))]
+  .map((c) => {
+    const sample = products.find((x) => x.category === c && x.image);
+    return { c, img: sample?.image, alt: sample ? localizedTitle(sample, locale) : c };
+  })
+  .filter((x) => x.img)
+  .slice(0, 6);
 ---
-<header class="nav">
+<header class="nav" data-nav>
   <div class="container nav__inner">
     <a class="nav__brand" href={`/${locale}`}>aselovers</a>
     <nav class="nav__links" aria-label="Primary">
-      {links.map((l) => <a href={l.href}>{l.label}</a>)}
+      <div class="nav__item nav__item--mega">
+        <a href={links[0].href}>{links[0].label}</a>
+        <div class="mega" role="menu">
+          {collections.map((col) => (
+            <a class="mega__card" role="menuitem" href={`${catalog}?cat=${encodeURIComponent(col.c)}`}>
+              <span class="mega__media"><img src={col.img} alt={col.alt} loading="lazy" /></span>
+              <span class="mega__label">{col.c}</span>
+            </a>
+          ))}
+        </div>
+      </div>
+      {links.slice(1).map((l) => <a class="nav__item" href={l.href}>{l.label}</a>)}
     </nav>
-    <a class="nav__lang" href={other} aria-label={locale === 'tr' ? 'English' : 'Türkçe'}>{locale === 'tr' ? 'EN' : 'TR'}</a>
+    <div class="nav__actions">
+      <a class="nav__lang" href={other}>{locale === 'tr' ? 'EN' : 'TR'}</a>
+      <button class="nav__burger" data-burger aria-label="Menu" aria-expanded="false"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+  <div class="overlay" data-overlay hidden>
+    <nav class="overlay__nav" aria-label="Mobile">
+      {links.map((l, i) => <a class={`overlay__link overlay__link--${i}`} href={l.href}>{l.label}</a>)}
+      <a class="overlay__link overlay__lang" href={other}>{locale === 'tr' ? 'English' : 'Türkçe'}</a>
+    </nav>
   </div>
 </header>
 <style>
-  .nav { position: sticky; top: 0; z-index: 20; background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
-  .nav__inner { display: flex; align-items: center; gap: var(--space-5); height: 68px; }
-  .nav__brand { font-family: var(--font-display); font-size: 1.5rem; font-weight: 600; letter-spacing: .01em; }
-  .nav__links { display: flex; gap: var(--space-5); margin-left: auto; }
-  .nav__links a { font-size: .95rem; color: var(--muted); transition: color var(--dur) var(--ease); }
+  .nav { position: sticky; top: 0; z-index: 40; transition: background var(--dur) var(--ease), box-shadow var(--dur) var(--ease), backdrop-filter var(--dur) var(--ease); }
+  .nav__inner { display: flex; align-items: center; gap: var(--space-5); height: 76px; transition: height var(--dur) var(--ease); }
+  :global(body.is-scrolled) .nav { background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); box-shadow: 0 4px 20px rgba(34,32,30,.05); }
+  :global(body.is-scrolled) .nav__inner { height: 62px; }
+  .nav__brand { font-family: var(--font-display); font-size: 1.55rem; font-weight: 600; letter-spacing: .01em; }
+  .nav__links { display: flex; align-items: center; gap: var(--space-5); margin-left: auto; }
+  .nav__item { position: relative; font-size: .95rem; color: var(--muted); transition: color var(--dur) var(--ease); }
+  .nav__item > a, a.nav__item { color: inherit; }
+  .nav__links a { position: relative; }
+  .nav__links a::after { content: ''; position: absolute; left: 0; bottom: -6px; width: 100%; height: 1px; background: var(--accent); transform: scaleX(0); transform-origin: left; transition: transform var(--dur) var(--ease); }
   .nav__links a:hover { color: var(--ink); }
+  .nav__links a:hover::after { transform: scaleX(1); }
+  .nav__actions { display: flex; align-items: center; gap: var(--space-3); }
   .nav__lang { font-size: .8rem; letter-spacing: .1em; padding: 6px 12px; border: 1px solid var(--line); border-radius: var(--radius-pill); transition: border-color var(--dur) var(--ease), color var(--dur) var(--ease); }
   .nav__lang:hover { border-color: var(--accent); color: var(--accent); }
-  @media (max-width: 640px) {
+  .nav__lang::after { display: none; }
+  /* Mega menu */
+  .nav__item--mega .mega { position: absolute; top: calc(100% + 14px); left: 50%; transform: translateX(-50%) translateY(8px); width: min(680px, 90vw); background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow-hover); padding: var(--space-4); display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-3); opacity: 0; visibility: hidden; transition: opacity var(--dur) var(--ease), transform var(--dur) var(--ease); z-index: 50; }
+  .nav__item--mega:hover .mega, .nav__item--mega:focus-within .mega { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
+  .mega__card { display: flex; flex-direction: column; gap: 6px; }
+  .mega__card::after { display: none; }
+  .mega__media { aspect-ratio: 1/1; overflow: hidden; border-radius: 10px; background: var(--section); }
+  .mega__media img { width: 100%; height: 100%; object-fit: cover; transition: transform 500ms var(--ease); }
+  .mega__card:hover .mega__media img { transform: scale(1.06); }
+  .mega__label { font-size: .85rem; color: var(--ink); }
+  /* Burger + overlay */
+  .nav__burger { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 8px; }
+  .nav__burger span { width: 22px; height: 2px; background: var(--ink); transition: transform var(--dur) var(--ease), opacity var(--dur) var(--ease); }
+  .overlay { position: fixed; inset: 0; z-index: 39; background: var(--bg); display: grid; place-items: center; }
+  .overlay[hidden] { display: none; }
+  .overlay__nav { display: flex; flex-direction: column; gap: var(--space-4); text-align: center; }
+  .overlay__link { font-family: var(--font-display); font-size: clamp(1.8rem, 8vw, 2.6rem); color: var(--ink); opacity: 0; transform: translateY(12px); }
+  .overlay.is-open .overlay__link { animation: overlayIn .5s var(--ease) forwards; }
+  .overlay__link--1 { animation-delay: .06s; }
+  .overlay__link--2 { animation-delay: .12s; }
+  .overlay__link--3 { animation-delay: .18s; }
+  .overlay__lang { animation-delay: .24s; font-family: var(--font-body); font-size: 1.1rem; color: var(--accent); }
+  @keyframes overlayIn { to { opacity: 1; transform: none; } }
+  @media (max-width: 860px) {
     .nav__links { display: none; }
-    .nav__inner { gap: var(--space-3); }
+    .nav__burger { display: flex; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .overlay.is-open .overlay__link { animation: none; opacity: 1; transform: none; }
+    .nav__links a::after { transition: none; }
   }
 </style>
+<script>
+  const burger = document.querySelector('[data-burger]') as HTMLButtonElement | null;
+  const overlay = document.querySelector('[data-overlay]') as HTMLElement | null;
+  function close() {
+    if (!overlay || !burger) return;
+    overlay.classList.remove('is-open'); overlay.hidden = true;
+    burger.setAttribute('aria-expanded', 'false'); document.body.style.overflow = '';
+  }
+  function open() {
+    if (!overlay || !burger) return;
+    overlay.hidden = false; requestAnimationFrame(() => overlay.classList.add('is-open'));
+    burger.setAttribute('aria-expanded', 'true'); document.body.style.overflow = 'hidden';
+  }
+  burger?.addEventListener('click', () => (overlay?.hidden ? open() : close()));
+  overlay?.querySelectorAll('a').forEach((a) => a.addEventListener('click', close));
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+</script>
