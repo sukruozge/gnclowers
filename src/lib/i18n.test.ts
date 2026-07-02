@@ -29,4 +29,11 @@ describe('i18n', () => {
     expect(t('process.step1Title', 'en')).toBe('Designed');
     expect(t('nav.shopAll', 'tr')).toBe('Tüm Ürünler');
   });
+  it('has brand/polish strings', () => {
+    expect(t('nav.home', 'tr')).toBe('Anasayfa');
+    expect(t('nav.home', 'en')).toBe('Home');
+    expect(t('wa.msg', 'en')).toBe("Hi! I'd like to ask about your products.");
+    expect(t('blog.readMore', 'tr')).toBe('Devamını oku');
+    expect(t('contact.title', 'en')).toBe('Get in touch');
+  });
 });
