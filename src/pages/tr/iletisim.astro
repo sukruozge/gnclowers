@@ -3,20 +3,25 @@ import Base from '../../layouts/Base.astro';
 import Nav from '../../components/Nav.astro';
 import Footer from '../../components/Footer.astro';
 import Button from '../../components/Button.astro';
+import { t } from '@lib/i18n';
+const wa = `https://wa.me/905067927685?text=${encodeURIComponent(t('wa.msg', 'tr'))}`;
 ---
-<Base locale="tr" title="İletişim — Aselovers"
-  description="Aselovers ile iletişime geçin — Etsy ve sosyal medya."
+<Base locale="tr" title="İletişim — Aselovers" description="Aselovers ile WhatsApp, Etsy ve sosyal medyadan iletişime geçin."
   pathSelf="iletisim" pathsAlt={{ tr: 'iletisim', en: 'contact' }}>
   <Nav locale="tr" />
   <main>
     <section class="section">
-      <div class="container prose">
-        <p class="eyebrow">İletişim</p>
-        <h1>Bize ulaşın</h1>
-        <p>Sorularınız, özel siparişleriniz ve iş birlikleri için Etsy mağazamızdan veya sosyal medyadan bize yazabilirsiniz.</p>
-        <p><Button href="https://www.etsy.com/shop/aselovers" variant="primary" external>Etsy Mağazamız</Button></p>
+      <div class="container prose reveal">
+        <p class="eyebrow">{t('contact.eyebrow', 'tr')}</p>
+        <h1>{t('contact.title', 'tr')}</h1>
+        <p>{t('contact.body', 'tr')}</p>
+        <p class="contact__cta">
+          <Button href={wa} variant="primary" external>{t('contact.whatsapp', 'tr')}</Button>
+          <Button href="https://www.etsy.com/shop/aselovers" variant="outline" external>{t('contact.etsy', 'tr')}</Button>
+        </p>
       </div>
     </section>
   </main>
   <Footer locale="tr" />
+  <style>.contact__cta { display: flex; gap: var(--space-3); flex-wrap: wrap; margin-top: var(--space-5); }</style>
 </Base>
