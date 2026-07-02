@@ -1,39 +1,73 @@
 ---
 import { t, type Locale } from '@lib/i18n';
 import { loadProducts, localizedTitle } from '@lib/products';
+import { loadReviews, formatRating } from '@lib/reviews';
 import Button from '../Button.astro';
 const { locale } = Astro.props as { locale: Locale };
-const p = (tr: string, en: string) => (locale === 'tr' ? `/tr/${tr}` : `/en/${en}`);
-const imgs = loadProducts().filter((x) => x.image).slice(0, 3);
+const pth = (tr: string, en: string) => (locale === 'tr' ? `/tr/${tr}` : `/en/${en}`);
+const imgs = loadProducts().filter((x) => x.image);
+const colA = imgs.filter((_, i) => i % 2 === 0).slice(0, 6);
+const colB = imgs.filter((_, i) => i % 2 === 1).slice(0, 6);
+const dup = <T,>(a: T[]) => [...a, ...a];
+const { shop } = loadReviews();
+const ratingLine = shop.rating != null
+  ? t('reviews.ratingLine', locale).replace('{rating}', formatRating(shop.rating)).replace('{count}', String(shop.count))
+  : '';
+const words = locale === 'tr'
+  ? ['Sevgiyle', 'örülmüş', 'el yapımı', ['amigurumi', true]]
+  : ['Handmade', 'amigurumi,', 'made to be', ['loved', true]];
 ---
 <section class="hero">
   <div class="container hero__inner">
     <div class="hero__copy">
       <p class="eyebrow">{t('home.heroEyebrow', locale)}</p>
-      <h1>{t('home.heroTitle', locale)}</h1>
+      <h1 class="hero__title">
+        {words.map((w, i) => {
+          const [text, accent] = Array.isArray(w) ? w : [w, false];
+          return <span class="hero__w" style={`--i:${i}`}><span class={accent ? 'hero__accent' : ''}>{text}</span>{' '}</span>;
+        })}
+      </h1>
       <p class="hero__sub">{t('home.heroSub', locale)}</p>
+      {ratingLine && <p class="hero__rating">★ {ratingLine}</p>}
       <div class="hero__cta">
-        <Button href={p('urunler', 'products')} variant="primary">{t('home.heroCtaPrimary', locale)}</Button>
-        <Button href={p('hakkimizda', 'about')} variant="outline">{t('home.heroCtaSecondary', locale)}</Button>
+        <Button href={pth('urunler', 'products')} variant="primary">{t('home.heroCtaPrimary', locale)}</Button>
+        <Button href={pth('hakkimizda', 'about')} variant="outline">{t('home.heroCtaSecondary', locale)}</Button>
       </div>
+      <p class="hero__micro">{t('trust.handmade', locale)} · {t('trust.shipping', locale)}</p>
     </div>
-    <div class="hero__grid">
-      {imgs.map((x, i) => (
-        <div class={`hero__cell hero__cell--${i}`}>
-          <img src={x.image} alt={localizedTitle(x, locale)} loading="eager" />
-        </div>
-      ))}
+    <div class="hero__mosaic" aria-hidden="true">
+      <div class="mos mos--down">{dup(colA).map((x) => <div class="mos__cell"><img src={x.image} alt="" loading="lazy" /></div>)}</div>
+      <div class="mos mos--up">{dup(colB).map((x) => <div class="mos__cell"><img src={x.image} alt="" loading="lazy" /></div>)}</div>
     </div>
   </div>
 </section>
 <style>
-  .hero { padding: var(--space-8) 0; }
-  .hero__inner { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-7); align-items: center; }
-  .hero__sub { font-size: 1.1rem; color: var(--muted); max-width: 42ch; }
-  .hero__cta { display: flex; gap: var(--space-3); margin-top: var(--space-5); flex-wrap: wrap; }
-  .hero__grid { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: repeat(2, 200px); gap: var(--space-3); }
-  .hero__cell { overflow: hidden; border-radius: var(--radius); background: var(--section); }
-  .hero__cell img { width: 100%; height: 100%; object-fit: cover; }
-  .hero__cell--0 { grid-row: 1 / span 2; }
-  @media (max-width: 900px) { .hero__inner { grid-template-columns: 1fr; } .hero__grid { grid-template-rows: repeat(2, 160px); } }
+  .hero { position: relative; overflow: hidden; padding: var(--space-7) 0 var(--space-8); }
+  .hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(60% 50% at 15% 20%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 70%); pointer-events: none; }
+  .hero__inner { position: relative; display: grid; grid-template-columns: 1.05fr .95fr; gap: var(--space-7); align-items: center; min-height: min(88vh, 760px); }
+  .hero__title { font-size: clamp(2.8rem, 6.5vw, 5rem); line-height: 1.04; margin: 0 0 var(--space-4); }
+  .hero__w { display: inline-block; opacity: 0; transform: translateY(18px); animation: heroWord .7s var(--ease) forwards; animation-delay: calc(var(--i) * .09s + .1s); }
+  .hero__accent { color: var(--accent); font-style: italic; }
+  @keyframes heroWord { to { opacity: 1; transform: none; } }
+  .hero__sub { font-size: 1.15rem; color: var(--muted); max-width: 44ch; }
+  .hero__rating { color: var(--accent-ink); font-weight: 500; margin: 0 0 var(--space-4); }
+  .hero__cta { display: flex; gap: var(--space-3); flex-wrap: wrap; }
+  .hero__micro { margin-top: var(--space-4); font-size: var(--step-small); color: var(--muted); letter-spacing: .04em; }
+  .hero__mosaic { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); height: min(88vh, 760px); overflow: hidden; -webkit-mask-image: linear-gradient(180deg, transparent, #000 12%, #000 88%, transparent); mask-image: linear-gradient(180deg, transparent, #000 12%, #000 88%, transparent); }
+  .mos { display: grid; gap: var(--space-3); grid-auto-rows: 1fr; }
+  .mos--down { animation: mosDown 40s linear infinite; }
+  .mos--up { animation: mosUp 40s linear infinite; }
+  .mos__cell { aspect-ratio: 1/1; overflow: hidden; border-radius: var(--radius); background: var(--section); box-shadow: 0 8px 24px rgba(34,32,30,.06); }
+  .mos__cell img { width: 100%; height: 100%; object-fit: cover; }
+  .hero__mosaic:hover .mos { animation-play-state: paused; }
+  @keyframes mosDown { from { transform: translateY(-50%); } to { transform: translateY(0); } }
+  @keyframes mosUp { from { transform: translateY(0); } to { transform: translateY(-50%); } }
+  @media (max-width: 900px) {
+    .hero__inner { grid-template-columns: 1fr; min-height: auto; }
+    .hero__mosaic { height: 420px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hero__w { animation: none; opacity: 1; transform: none; }
+    .mos--down, .mos--up { animation: none; }
+  }
 </style>
