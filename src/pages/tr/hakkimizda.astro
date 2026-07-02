@@ -2,20 +2,32 @@
 import Base from '../../layouts/Base.astro';
 import Nav from '../../components/Nav.astro';
 import Footer from '../../components/Footer.astro';
+import { loadProducts, localizedTitle } from '@lib/products';
+const img = loadProducts().find((x) => x.image);
 ---
 <Base locale="tr" title="Hakkımızda — Aselovers"
-  description="Aselovers'ın hikâyesi: el yapımı amigurumiye adanmış küçük bir atölye."
+  description="Aselovers'ın hikâyesi: el yapımı amigurumiye adanmış, sevgiyle ören küçük bir atölye."
   pathSelf="hakkimizda" pathsAlt={{ tr: 'hakkimizda', en: 'about' }}>
   <Nav locale="tr" />
   <main>
     <section class="section">
-      <div class="container prose">
-        <p class="eyebrow">Hikâyemiz</p>
-        <h1>Her ilmek elde, sevgiyle</h1>
-        <p>Aselovers, her parçayı tek tek örerek anlam katan küçük bir atölyedir. Premium iplikler, sabırlı işçilik ve özenli detaylarla; sevilmek için yapılmış amigurumi oyuncaklar ve aksesuarlar üretiyoruz.</p>
-        <p>Ürünlerimizi hem Türkiye'de hem de dünyada müşterilerimizle buluşturuyoruz. Her sipariş, sizin için özenle örülür.</p>
+      <div class="container about reveal">
+        <div class="about__copy prose">
+          <p class="eyebrow">Hikâyemiz</p>
+          <h1>Her ilmek elde, sevgiyle</h1>
+          <p>Aselovers, her parçayı tek tek örerek anlam katan küçük bir atölyedir. Premium iplikler, sabırlı işçilik ve özenli detaylarla; sevilmek için yapılmış amigurumi oyuncaklar ve aksesuarlar üretiyoruz.</p>
+          <p>Her sipariş, siz sipariş verdikten sonra elle örülür — bu yüzden hiçbir iki parça tıpatıp aynı değildir. Bebek dostu, yumuşak ve güvenli malzemeler kullanır, her ürünü şık şekilde paketleyip Türkiye ve ABD'ye gönderiyoruz.</p>
+          <p>Ürünlerimizi Etsy üzerinden dünyanın dört bir yanındaki müşterilerimizle buluşturuyoruz; yüzlerce mutlu değerlendirme bizim en büyük gururumuz.</p>
+        </div>
+        <div class="about__media">{img && <img src={img.image} alt={localizedTitle(img, 'tr')} loading="lazy" />}</div>
       </div>
     </section>
   </main>
   <Footer locale="tr" />
+  <style>
+    .about { display: grid; grid-template-columns: 1.1fr .9fr; gap: var(--space-7); align-items: start; }
+    .about__media { aspect-ratio: 1/1; overflow: hidden; border-radius: var(--radius); position: sticky; top: 92px; }
+    .about__media img { width: 100%; height: 100%; object-fit: cover; }
+    @media (max-width: 900px) { .about { grid-template-columns: 1fr; } .about__media { position: static; } }
+  </style>
 </Base>
