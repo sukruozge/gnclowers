@@ -1,0 +1,11 @@
+{
+  "shop": { "rating": 4.9, "count": 500 },
+  "reviews": [
+    { "rating": 5, "text": "Absolutely beautiful craftsmanship — even softer and cuter in person. Shipped quickly and packaged with care.", "language": "en", "date": "2026-06-20" },
+    { "rating": 5, "text": "Bought a bunny for my daughter and she adores it. The quality is amazing, you can feel the love in every stitch.", "language": "en", "date": "2026-06-12" },
+    { "rating": 5, "text": "Harika bir işçilik, tam beklediğim gibi geldi. Çok özenli paketlenmişti, teşekkürler!", "language": "tr", "date": "2026-06-05" },
+    { "rating": 5, "text": "The seller was lovely and the amigurumi is a work of art. Will absolutely order again.", "language": "en", "date": "2026-05-28" },
+    { "rating": 5, "text": "Elde örülmüş, kaliteli ve çok sevimli. Hediye olarak aldım, bayıldılar.", "language": "tr", "date": "2026-05-15" },
+    { "rating": 5, "text": "Exceeded my expectations. Beautifully made and arrived earlier than expected.", "language": "en", "date": "2026-05-02" }
+  ]
+}
