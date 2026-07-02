@@ -1,5 +1,6 @@
 ---
 import { t, type Locale } from '@lib/i18n';
+import Logo from './Logo.astro';
 const { locale } = Astro.props as { locale: Locale };
 const p = (tr: string, en: string) => (locale === 'tr' ? `/tr/${tr}` : `/en/${en}`);
 const year = new Date().getFullYear();
@@ -7,7 +8,7 @@ const year = new Date().getFullYear();
 <footer class="foot">
   <div class="container foot__inner">
     <div class="foot__brand">
-      <span class="foot__logo">aselovers</span>
+      <Logo mode="full" class="foot__brandlogo" />
       <p class="foot__tag">{t('footer.tagline', locale)}</p>
     </div>
     <nav class="foot__col" aria-label={t('footer.shop', locale)}>
@@ -27,7 +28,7 @@ const year = new Date().getFullYear();
 <style>
   .foot { background: var(--footer-bg); color: var(--footer-fg); margin-top: var(--space-8); padding: var(--space-7) 0 var(--space-5); }
   .foot__inner { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: var(--space-6); }
-  .foot__logo { font-family: var(--font-display); font-size: 1.6rem; font-weight: 600; }
+  .foot__brandlogo :global(.logo__word), .foot__brandlogo :global(.logo__tag) { color: var(--footer-fg); }
   .foot__tag { color: color-mix(in srgb, var(--footer-fg) 72%, transparent); max-width: 34ch; margin-top: var(--space-3); }
   .foot__col h4 { font-family: var(--font-body); font-size: var(--step-small); letter-spacing: .12em; text-transform: uppercase; color: color-mix(in srgb, var(--footer-fg) 65%, transparent); margin-bottom: var(--space-3); }
   .foot__col a { display: block; color: var(--footer-fg); padding: 4px 0; transition: color var(--dur) var(--ease); }

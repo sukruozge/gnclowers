@@ -1,0 +1,31 @@
+---
+interface Props { mode?: 'full' | 'mark'; class?: string; }
+const { mode = 'full', class: cls = '' } = Astro.props;
+---
+<span class={`logo logo--${mode} ${cls}`}>
+  <svg class="logo__mark" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Aselovers">
+    <circle cx="60" cy="60" r="56" fill="var(--blush)" />
+    <!-- crescent moon carved out of the disc -->
+    <mask id="crescent"><rect width="120" height="120" fill="#fff" /><circle cx="80" cy="38" r="36" fill="#000" /></mask>
+    <circle cx="54" cy="62" r="42" fill="var(--bg)" mask="url(#crescent)" />
+    <!-- sleeping baby nestled in the lower curve of the crescent -->
+    <g fill="var(--blush)">
+      <circle cx="38" cy="76" r="13" />
+      <path d="M47 82c9 .5 17 5.5 19.5 13 1.2 3.6-2 6-5.2 4.2-4.6-2.6-10-4.3-16-4.9-4.3-.4-5.3-4.2-3.5-7.3 1.4-2.5 3.2-4.7 5.2-5z" />
+    </g>
+    <path d="M33 75.3c1.7 1.4 3.5 1.4 5.2 0" stroke="var(--bg)" stroke-width="1.6" stroke-linecap="round" fill="none" />
+  </svg>
+  {mode === 'full' && (
+    <span class="logo__type">
+      <span class="logo__word">Aselovers</span>
+      <span class="logo__tag">Personalized Baby Gifts</span>
+    </span>
+  )}
+</span>
+<style>
+  .logo { display: inline-flex; align-items: center; gap: var(--space-3); }
+  .logo__mark { width: 40px; height: 40px; flex: none; }
+  .logo__type { display: flex; flex-direction: column; line-height: 1; }
+  .logo__word { font-family: 'Dancing Script', cursive; font-weight: 700; font-size: 1.7rem; color: var(--ink); }
+  .logo__tag { font-size: .58rem; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); margin-top: 2px; }
+</style>
