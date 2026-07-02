@@ -1,7 +1,13 @@
 import { describe, it, expect } from 'vitest';
-import { t, LOCALES } from '@lib/i18n';
+import { t, LOCALES, strings } from '@lib/i18n';
 
 describe('i18n', () => {
+  it('uses curly apostrophes/quotes in Turkish strings, never straight ASCII', () => {
+    const offenders = Object.entries(strings.tr)
+      .filter(([, value]) => /[a-zçğıöşüA-ZÇĞİÖŞÜ]'[a-zçğıöşü]/.test(value) || value.includes('"'))
+      .map(([key]) => key);
+    expect(offenders).toEqual([]);
+  });
   it('exposes exactly tr and en', () => {
     expect(LOCALES).toEqual(['tr', 'en']);
   });
