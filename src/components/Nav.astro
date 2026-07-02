@@ -1,11 +1,13 @@
 ---
 import { t, type Locale } from '@lib/i18n';
 import { loadProducts, localizedTitle } from '@lib/products';
+import Logo from './Logo.astro';
 const { locale } = Astro.props as { locale: Locale };
 const p = (tr: string, en: string) => (locale === 'tr' ? `/tr/${tr}` : `/en/${en}`);
 const other = locale === 'tr' ? '/en' : '/tr';
 const catalog = locale === 'tr' ? '/tr/urunler' : '/en/products';
 const links = [
+  { href: `/${locale}`, label: t('nav.home', locale) },
   { href: p('urunler', 'products'), label: t('nav.products', locale) },
   { href: p('hakkimizda', 'about'), label: t('nav.about', locale) },
   { href: p('blog', 'blog'), label: t('nav.blog', locale) },
@@ -22,10 +24,11 @@ const collections = [...new Set(products.map((x) => x.category))]
 ---
 <header class="nav" data-nav>
   <div class="container nav__inner">
-    <a class="nav__brand" href={`/${locale}`}>aselovers</a>
+    <a class="nav__brand" href={`/${locale}`} aria-label="Aselovers"><Logo mode="full" /></a>
     <nav class="nav__links" aria-label="Primary">
+      <a class="nav__item" href={`/${locale}`}>{t('nav.home', locale)}</a>
       <div class="nav__item nav__item--mega">
-        <a href={links[0].href} aria-haspopup="true">{links[0].label}</a>
+        <a href={p('urunler', 'products')} aria-haspopup="true">{t('nav.products', locale)}</a>
         <div class="mega">
           {collections.map((col) => (
             <a class="mega__card" href={`${catalog}?cat=${encodeURIComponent(col.c)}`}>
@@ -35,7 +38,9 @@ const collections = [...new Set(products.map((x) => x.category))]
           ))}
         </div>
       </div>
-      {links.slice(1).map((l) => <a class="nav__item" href={l.href}>{l.label}</a>)}
+      <a class="nav__item" href={p('hakkimizda', 'about')}>{t('nav.about', locale)}</a>
+      <a class="nav__item" href={p('blog', 'blog')}>{t('nav.blog', locale)}</a>
+      <a class="nav__item" href={p('iletisim', 'contact')}>{t('nav.contact', locale)}</a>
     </nav>
     <div class="nav__actions">
       <a class="nav__lang" href={other}>{locale === 'tr' ? 'EN' : 'TR'}</a>
@@ -54,7 +59,7 @@ const collections = [...new Set(products.map((x) => x.category))]
   .nav__inner { display: flex; align-items: center; gap: var(--space-5); height: 76px; transition: height var(--dur) var(--ease); }
   :global(body.is-scrolled) .nav { background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); box-shadow: 0 4px 20px rgba(34,32,30,.05); }
   :global(body.is-scrolled) .nav__inner { height: 62px; }
-  .nav__brand { font-family: var(--font-display); font-size: 1.55rem; font-weight: 600; letter-spacing: .01em; }
+  .nav__brand { display: inline-flex; }
   .nav__links { display: flex; align-items: center; gap: var(--space-5); margin-left: auto; }
   .nav__item { position: relative; font-size: .95rem; color: var(--muted); transition: color var(--dur) var(--ease); }
   .nav__item > a, a.nav__item { color: inherit; }
@@ -86,7 +91,8 @@ const collections = [...new Set(products.map((x) => x.category))]
   .overlay__link--1 { animation-delay: .06s; }
   .overlay__link--2 { animation-delay: .12s; }
   .overlay__link--3 { animation-delay: .18s; }
-  .overlay__lang { animation-delay: .24s; font-family: var(--font-body); font-size: 1.1rem; color: var(--accent); }
+  .overlay__link--4 { animation-delay: .24s; }
+  .overlay__lang { animation-delay: .3s; font-family: var(--font-body); font-size: 1.1rem; color: var(--accent); }
   @keyframes overlayIn { to { opacity: 1; transform: none; } }
   @media (max-width: 860px) {
     .nav__links { display: none; }
