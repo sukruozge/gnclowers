@@ -1,6 +1,7 @@
 ---
 import { type Locale } from '@lib/i18n';
 import { canonical, alternates } from '@lib/seo';
+import WhatsAppFab from '../components/WhatsAppFab.astro';
 import '../styles/tokens.css';
 import '../styles/global.css';
 
@@ -40,6 +41,7 @@ const alts = alternates(site, pathsAlt);
   </head>
   <body>
     <slot />
+    <WhatsAppFab locale={locale} />
     <script>
       // Scroll-reveal
       const io = new IntersectionObserver((entries) => {
