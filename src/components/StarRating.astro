@@ -1,0 +1,11 @@
+---
+interface Props { rating: number; }
+const { rating } = Astro.props;
+const full = Math.round(rating);
+const star = 'M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 5.9 20.4l1.4-6.8L2.2 9l6.9-.7z';
+---
+<span class="stars" role="img" aria-label={`${full} / 5`}>
+  {Array.from({ length: 5 }).map((_, i) => (
+    <svg viewBox="0 0 24 24" aria-hidden="true" style={i < full ? '' : 'opacity:.25'}><path d={star} /></svg>
+  ))}
+</span>
