@@ -1,0 +1,13 @@
+---
+import { t, type Locale } from '@lib/i18n';
+const { locale } = Astro.props as { locale: Locale };
+const items = [t('trust.handmade', locale), t('trust.shipping', locale), t('trust.secure', locale)];
+---
+<ul class="trustpoints">
+  {items.map((i) => <li>{i}</li>)}
+</ul>
+<style>
+  .trustpoints { list-style: none; padding: var(--space-4) 0 0; margin: var(--space-4) 0 0; border-top: 1px solid var(--line); display: grid; gap: var(--space-2); }
+  .trustpoints li { position: relative; padding-left: var(--space-5); color: var(--muted); font-size: .95rem; }
+  .trustpoints li::before { content: '✓'; position: absolute; left: 0; color: var(--accent); font-weight: 700; }
+</style>

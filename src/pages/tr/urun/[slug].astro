@@ -6,8 +6,11 @@ import Button from '../../../components/Button.astro';
 import Badge from '../../../components/Badge.astro';
 import ProductCard from '../../../components/ProductCard.astro';
 import ProductGallery from '../../../components/ProductGallery.astro';
+import RatingBadge from '../../../components/RatingBadge.astro';
+import TrustPoints from '../../../components/TrustPoints.astro';
 import { loadProducts, localizedTitle, productSlug, type Product } from '@lib/products';
 import { productJsonLd } from '@lib/jsonld';
+import { loadReviews } from '@lib/reviews';
 
 export function getStaticPaths() {
   return loadProducts().map((p) => ({ params: { slug: productSlug(p, 'tr') }, props: { product: p } }));
@@ -21,6 +24,7 @@ const title = localizedTitle(product, 'tr');
 const price = new Intl.NumberFormat('tr-TR', { style: 'currency', currency: product.currency }).format(product.price);
 const related = loadProducts().filter((x) => x.category === product.category && x.id !== product.id).slice(0, 4);
 const ld = productJsonLd(product, 'tr', `${site}/tr/${selfPath}`);
+const shop = loadReviews().shop;
 ---
 <Base locale="tr" title={`${title} — Aselovers`} description={product.description_tr || title}
   pathSelf={selfPath} pathsAlt={{ tr: selfPath, en: `product/${enSlug}` }} ogImage={product.image ?? undefined}>
@@ -33,13 +37,11 @@ const ld = productJsonLd(product, 'tr', `${site}/tr/${selfPath}`);
         <div class="detail__info">
           {product.isNew && <Badge>Yeni</Badge>}
           <h1>{title}</h1>
+          <RatingBadge rating={shop.rating} count={shop.count} locale="tr" />
           <p class="detail__price">{price}</p>
           <p class="prose" style="white-space: pre-line">{product.description_tr}</p>
           <Button href={product.url} variant="primary" external>Etsy'de Satın Al</Button>
-          <div class="detail__ship">
-            <h4>Kargo</h4>
-            <p>Türkiye ve ABD'ye özenli gönderim. Her ürün siparişten sonra elde örülür.</p>
-          </div>
+          <TrustPoints locale="tr" />
         </div>
       </div>
       {related.length > 0 && (
