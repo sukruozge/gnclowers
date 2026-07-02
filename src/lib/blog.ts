@@ -15,10 +15,10 @@ const POSTS: Post[] = [
     date: '2026-06-25',
     title_tr: 'Kişiye Özel Bebek Hediyesi Neden Bu Kadar Özel?',
     title_en: 'Why a Personalized Baby Gift Means So Much',
-    excerpt_tr: 'İsmi işlenmiş, elde örülmüş bir hediye; bir bebeğe "sen bekleniyordun" demenin en sıcak yolu.',
-    excerpt_en: 'A hand-crocheted gift with a name on it is the warmest way to say "you were waited for."',
-    bodyHtml_tr: `<p>Bir bebek için seçtiğiniz hediye, çoğu zaman ilk anılardan birinin parçası olur. Kişiye özel, elde örülmüş bir amigurumi ya da isimli bir parça; mağaza rafındaki sıradan bir üründen çok daha fazlasını anlatır — zaman, emek ve sevgi.</p><p>Aselovers'ta her parça siparişten sonra tek tek örülür. Bebeğin adını, sevdiğiniz rengi ve küçük detayları ekleyerek, yıllarca saklanacak bir hatıra yaratırız. Baby shower, doğum ya da "sadece sevdiğim için" anları için tam da bu yüzden tercih ediliyoruz.</p>`,
-    bodyHtml_en: `<p>The gift you choose for a baby often becomes part of a first memory. A personalized, hand-crocheted amigurumi or a piece with a name on it says far more than something off a shelf — it says time, care, and love.</p><p>At Aselovers every piece is crocheted to order. We add the baby's name, your favourite colours, and the little details that turn an object into a keepsake kept for years. That's exactly why families choose us for baby showers, births, and "just because" moments.</p>`,
+    excerpt_tr: 'İsmi işlenmiş, elde örülmüş bir hediye; bir bebeğe “sen bekleniyordun” demenin en sıcak yolu.',
+    excerpt_en: 'A hand-crocheted gift with a name on it is the warmest way to say “you were waited for.”',
+    bodyHtml_tr: `<p>Bir bebek için seçtiğiniz hediye, çoğu zaman ilk anılardan birinin parçası olur. Kişiye özel, elde örülmüş bir amigurumi ya da isimli bir parça; mağaza rafındaki sıradan bir üründen çok daha fazlasını anlatır — zaman, emek ve sevgi.</p><p>Aselovers’ta her parça siparişten sonra tek tek örülür. Bebeğin adını, sevdiğiniz rengi ve küçük detayları ekleyerek, yıllarca saklanacak bir hatıra yaratırız. Baby shower, doğum ya da “sadece sevdiğim için” anları için tam da bu yüzden tercih ediliyoruz.</p>`,
+    bodyHtml_en: `<p>The gift you choose for a baby often becomes part of a first memory. A personalized, hand-crocheted amigurumi or a piece with a name on it says far more than something off a shelf — it says time, care, and love.</p><p>At Aselovers every piece is crocheted to order. We add the baby’s name, your favourite colours, and the little details that turn an object into a keepsake kept for years. That’s exactly why families choose us for baby showers, births, and “just because” moments.</p>`,
   },
   {
     slug: 'amigurumi-bakimi',
@@ -37,8 +37,8 @@ const POSTS: Post[] = [
     title_en: 'The Story of a Piece: From First Stitch to Your Door',
     excerpt_tr: 'Sipariş verdiğiniz an ile kapınızda bir kutu arasında; iplik, sabır ve minik detaylar var.',
     excerpt_en: 'Between your order and the box at your door: yarn, patience, and tiny details.',
-    bodyHtml_tr: `<p>Her sipariş boş bir tezgâhta başlar. Önce iplik ve renkler seçilir; sonra saatler süren, ilmek ilmek sabırlı bir işçilik gelir. Gözler, minik aksesuarlar ve isim detayları en sona, en büyük özenle eklenir.</p><p>Bitince her parça tek tek kontrol edilir, şık şekilde paketlenir ve Türkiye ile ABD'ye yola çıkar. Kapınıza gelen kutunun içinde sadece bir oyuncak değil; sizin için ayrılmış bir zaman var.</p>`,
-    bodyHtml_en: `<p>Every order begins at an empty table. First the yarn and colours are chosen; then come the hours of patient, stitch-by-stitch work. Eyes, tiny accessories, and name details are added last, with the greatest care.</p><p>When it's done, each piece is checked one by one, packaged beautifully, and sent to Turkey and the US. Inside the box at your door is not just a toy — it's time set aside just for you.</p>`,
+    bodyHtml_tr: `<p>Her sipariş boş bir tezgâhta başlar. Önce iplik ve renkler seçilir; sonra saatler süren, ilmek ilmek sabırlı bir işçilik gelir. Gözler, minik aksesuarlar ve isim detayları en sona, en büyük özenle eklenir.</p><p>Bitince her parça tek tek kontrol edilir, şık şekilde paketlenir ve Türkiye ile ABD’ye yola çıkar. Kapınıza gelen kutunun içinde sadece bir oyuncak değil; sizin için ayrılmış bir zaman var.</p>`,
+    bodyHtml_en: `<p>Every order begins at an empty table. First the yarn and colours are chosen; then come the hours of patient, stitch-by-stitch work. Eyes, tiny accessories, and name details are added last, with the greatest care.</p><p>When it’s done, each piece is checked one by one, packaged beautifully, and sent to Turkey and the US. Inside the box at your door is not just a toy — it’s time set aside just for you.</p>`,
   },
   {
     slug: 'yeni-dogana-hediye-rehberi',
@@ -47,8 +47,8 @@ const POSTS: Post[] = [
     title_en: 'A Guide to Meaningful Gifts for a Newborn',
     excerpt_tr: 'Baby shower ya da hoş geldin bebek: akılda kalan, kişisel ve güvenli hediyeler için fikirler.',
     excerpt_en: 'Baby shower or welcome-baby: ideas for memorable, personal, and safe gifts.',
-    bodyHtml_tr: `<p>En sevilen hediyeler genellikle en kişisel olanlardır. İsimli bir amigurumi, odası için yumuşak bir dekor ya da minik bir aksesuar seti; hem şık görünür hem de yıllarca saklanır.</p><p>Seçim yaparken güvenli malzemeleri ve bebek dostu detayları önceliklendirin. Emin değilseniz WhatsApp'tan yazın — renk, isim ve tema için birlikte en anlamlı hediyeyi seçelim.</p>`,
-    bodyHtml_en: `<p>The best-loved gifts are usually the most personal. A named amigurumi, a soft piece of décor for the nursery, or a little accessory set looks lovely and is kept for years.</p><p>When choosing, prioritise safe materials and baby-friendly details. Not sure? Message us on WhatsApp — we'll pick the most meaningful gift together, from colour to name to theme.</p>`,
+    bodyHtml_tr: `<p>En sevilen hediyeler genellikle en kişisel olanlardır. İsimli bir amigurumi, odası için yumuşak bir dekor ya da minik bir aksesuar seti; hem şık görünür hem de yıllarca saklanır.</p><p>Seçim yaparken güvenli malzemeleri ve bebek dostu detayları önceliklendirin. Emin değilseniz WhatsApp’tan yazın — renk, isim ve tema için birlikte en anlamlı hediyeyi seçelim.</p>`,
+    bodyHtml_en: `<p>The best-loved gifts are usually the most personal. A named amigurumi, a soft piece of décor for the nursery, or a little accessory set looks lovely and is kept for years.</p><p>When choosing, prioritise safe materials and baby-friendly details. Not sure? Message us on WhatsApp — we’ll pick the most meaningful gift together, from colour to name to theme.</p>`,
   },
 ];
 
