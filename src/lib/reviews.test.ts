@@ -27,6 +27,14 @@ describe('pickReviews', () => {
   it('respects the count limit', () => {
     expect(pickReviews(all, 'en', 2)).toHaveLength(2);
   });
+  it('orders newest-first within the matching locale, then the rest', () => {
+    const trs: Review[] = [
+      mk(5, 'Eski TR yorum', 'tr', '2026-01-01'),
+      mk(5, 'Yeni TR yorum', 'tr', '2026-03-01'),
+      mk(5, 'English one', 'en', '2026-06-01'),
+    ];
+    expect(pickReviews(trs, 'tr', 10).map((x) => x.text)).toEqual(['Yeni TR yorum', 'Eski TR yorum', 'English one']);
+  });
 });
 
 describe('formatRating', () => {
