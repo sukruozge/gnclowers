@@ -1,0 +1,45 @@
+---
+import { t, type Locale } from '@lib/i18n';
+import { loadReviews, pickReviews, formatRating } from '@lib/reviews';
+import StarRating from '../StarRating.astro';
+const { locale } = Astro.props as { locale: Locale };
+const { shop, reviews } = loadReviews();
+const picks = pickReviews(reviews, locale, 6);
+const ratingLine = shop.rating != null
+  ? t('reviews.ratingLine', locale).replace('{rating}', formatRating(shop.rating)).replace('{count}', String(shop.count))
+  : '';
+const initial = (txt: string) => (txt.trim()[0] ?? '★').toUpperCase();
+---
+<section class="section section--tint">
+  <div class="container reviews reveal">
+    <div class="reviews__head">
+      <p class="eyebrow">{t('reviews.eyebrow', locale)}</p>
+      <h2>{t('reviews.title', locale)}</h2>
+      {ratingLine && (
+        <p class="reviews__rating">{shop.rating != null && <StarRating rating={shop.rating} />} <span>{ratingLine}</span></p>
+      )}
+      <a class="reviews__link" href="https://www.etsy.com/shop/aselovers/reviews" target="_blank" rel="noopener">{t('reviews.seeAll', locale)}</a>
+    </div>
+    {picks.length > 0 && (
+      <div class="reviews__grid">
+        {picks.map((r) => (
+          <figure class="review">
+            <StarRating rating={r.rating} />
+            <blockquote class="review__text">“{r.text}”</blockquote>
+            <figcaption class="review__meta"><span class="review__avatar">{initial(r.text)}</span><span>{r.date}</span></figcaption>
+          </figure>
+        ))}
+      </div>
+    )}
+  </div>
+</section>
+<style>
+  .reviews__head { max-width: 46ch; margin-bottom: var(--space-6); }
+  .reviews__rating { display: flex; align-items: center; gap: var(--space-2); color: var(--accent-ink); font-weight: 500; }
+  .reviews__link { color: var(--accent); border-bottom: 1px solid currentColor; }
+  .reviews__grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: var(--space-4); }
+  .review { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: var(--space-5); margin: 0; display: flex; flex-direction: column; gap: var(--space-3); }
+  .review__text { margin: 0; font-size: 1.02rem; line-height: 1.6; color: var(--ink); }
+  .review__meta { display: flex; align-items: center; gap: var(--space-2); font-size: var(--step-small); color: var(--muted); }
+  .review__avatar { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: color-mix(in srgb, var(--accent) 16%, transparent); color: var(--accent-ink); font-weight: 600; }
+</style>

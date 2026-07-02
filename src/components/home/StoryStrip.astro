@@ -3,22 +3,33 @@ import { t, type Locale } from '@lib/i18n';
 import { loadProducts, localizedTitle } from '@lib/products';
 import Button from '../Button.astro';
 const { locale } = Astro.props as { locale: Locale };
-const p = (tr: string, en: string) => (locale === 'tr' ? `/tr/${tr}` : `/en/${en}`);
+const pth = (tr: string, en: string) => (locale === 'tr' ? `/tr/${tr}` : `/en/${en}`);
 const img = loadProducts().find((x) => x.image);
+const steps = [1, 2, 3].map((n) => ({ t: t(`process.step${n}Title`, locale), b: t(`process.step${n}Body`, locale), n }));
 ---
-<section class="section section--tint">
-  <div class="container story">
+<section class="section">
+  <div class="container story reveal">
     <div class="story__media">{img && <img src={img.image} alt={localizedTitle(img, locale)} loading="lazy" />}</div>
     <div class="story__copy">
-      <h2>{t('home.storyTitle', locale)}</h2>
-      <p class="prose">{t('home.storyBody', locale)}</p>
-      <Button href={p('hakkimizda', 'about')} variant="outline">{t('home.storyCta', locale)}</Button>
+      <p class="eyebrow">{t('process.eyebrow', locale)}</p>
+      <h2>{t('process.title', locale)}</h2>
+      <ol class="story__steps">
+        {steps.map((s) => (
+          <li class="story__step"><span class="story__num">{s.n}</span><div><h3>{s.t}</h3><p>{s.b}</p></div></li>
+        ))}
+      </ol>
+      <Button href={pth('hakkimizda', 'about')} variant="outline">{t('home.storyCta', locale)}</Button>
     </div>
   </div>
 </section>
 <style>
-  .story { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-7); align-items: center; }
-  .story__media { aspect-ratio: 5 / 4; overflow: hidden; border-radius: var(--radius); }
+  .story { display: grid; grid-template-columns: 1fr 1.05fr; gap: var(--space-7); align-items: center; }
+  .story__media { aspect-ratio: 1/1; overflow: hidden; border-radius: var(--radius); }
   .story__media img { width: 100%; height: 100%; object-fit: cover; }
+  .story__steps { list-style: none; padding: 0; margin: 0 0 var(--space-5); display: grid; gap: var(--space-4); }
+  .story__step { display: flex; gap: var(--space-4); align-items: flex-start; }
+  .story__num { flex: none; display: grid; place-items: center; width: 38px; height: 38px; border-radius: 50%; background: color-mix(in srgb, var(--accent) 14%, transparent); color: var(--accent-ink); font-family: var(--font-display); font-size: 1.1rem; }
+  .story__step h3 { font-size: 1.15rem; margin: 0 0 4px; }
+  .story__step p { color: var(--muted); margin: 0; }
   @media (max-width: 900px) { .story { grid-template-columns: 1fr; } }
 </style>

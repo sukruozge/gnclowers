@@ -1,25 +1,19 @@
 ---
 import { t, type Locale } from '@lib/i18n';
+import { loadReviews, formatRating } from '@lib/reviews';
 const { locale } = Astro.props as { locale: Locale };
-const items = [
-  { t: t('home.trustHandmade', locale), s: t('home.trustHandmadeSub', locale) },
-  { t: t('home.trustShip', locale), s: t('home.trustShipSub', locale) },
-  { t: t('home.trustEtsy', locale), s: t('home.trustEtsySub', locale) },
-];
+const { shop } = loadReviews();
+const rated = shop.rating != null ? t('trust.rated', locale).replace('{rating}', formatRating(shop.rating)) : t('trust.rated', locale).replace('{rating}', '5');
+const items = [t('trust.handmade', locale), t('trust.shipping', locale), rated, t('trust.secure', locale)];
 ---
-<section class="section section--tint">
-  <div class="container trust">
-    {items.map((i) => (
-      <div class="trust__item">
-        <h4>{i.t}</h4>
-        <p>{i.s}</p>
-      </div>
-    ))}
+<section class="section--tint trustbar">
+  <div class="container trustbar__inner reveal">
+    {items.map((label) => <span class="trustbar__item">{label}</span>)}
   </div>
 </section>
 <style>
-  .trust { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-6); text-align: center; }
-  .trust__item h4 { font-family: var(--font-display); font-size: 1.3rem; margin-bottom: var(--space-1); }
-  .trust__item p { color: var(--muted); margin: 0; }
-  @media (max-width: 640px) { .trust { grid-template-columns: 1fr; gap: var(--space-5); } }
+  .trustbar { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .trustbar__inner { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-3) var(--space-6); padding: var(--space-4) 0; }
+  .trustbar__item { position: relative; font-size: var(--step-small); letter-spacing: .04em; color: var(--muted); padding-left: var(--space-4); }
+  .trustbar__item::before { content: '✦'; position: absolute; left: 0; color: var(--accent); }
 </style>
