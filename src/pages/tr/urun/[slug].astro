@@ -43,10 +43,38 @@ const buyText = product.url && product.url.includes('shopier.com')
           <RatingBadge rating={shop.rating} count={shop.count} locale="tr" />
           <p class="detail__price">{price}</p>
           <p class="prose" style="white-space: pre-line">{product.description_tr}</p>
-          <Button href={product.url} variant="primary" external>{buyText}</Button>
+          <div class="detail__actions" style="display: flex; gap: var(--space-3); margin: var(--space-4) 0;">
+            <Button id="add-to-cart" variant="primary" class="w-100" data-product={JSON.stringify(product)}>Sepete Ekle</Button>
+            {product.url && (
+              <Button href={product.url} variant="outline" class="w-100" external>Etsy'de Gör</Button>
+            )}
+          </div>
           <TrustPoints locale="tr" />
         </div>
       </div>
+
+<script>
+  import { addToCart } from '@lib/cart';
+  
+  const btn = document.getElementById('add-to-cart');
+  btn?.addEventListener('click', () => {
+    const raw = btn.getAttribute('data-product');
+    if (raw) {
+      const prod = JSON.parse(raw);
+      addToCart(prod);
+      
+      const toast = document.createElement('div');
+      toast.className = 'cart-toast';
+      toast.textContent = 'Ürün başarıyla sepete eklendi!';
+      
+      document.body.appendChild(toast);
+      setTimeout(() => {
+        toast.classList.add('fade-out');
+        setTimeout(() => toast.remove(), 500);
+      }, 2500);
+    }
+  });
+</script>
       {related.length > 0 && (
         <div class="container detail__related">
           <h2>Benzer Ürünler</h2>
@@ -67,5 +95,32 @@ const buyText = product.url && product.url.includes('shopier.com')
     .detail__related { margin-top: var(--space-8); }
     .detail__related .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: var(--space-5); }
     @media (max-width: 900px) { .detail { grid-template-columns: 1fr; } .detail__media { position: static; } }
+    .w-100 { width: 100%; }
+    
+    :global(.cart-toast) {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--accent-ink);
+      color: var(--on-accent);
+      padding: 12px 24px;
+      border-radius: var(--radius);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      z-index: 1000;
+      font-size: 0.92rem;
+      font-weight: 600;
+      animation: toastIn 300ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    :global(.cart-toast.fade-out) {
+      animation: toastOut 300ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes toastOut {
+      from { opacity: 1; transform: translateY(0); }
+      to { opacity: 0; transform: translateY(12px); }
+    }
   </style>
 </Base>

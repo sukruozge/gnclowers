@@ -1,0 +1,206 @@
+---
+import Base from '../../layouts/Base.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+import { loadProducts } from '@lib/products';
+
+const allProducts = loadProducts();
+---
+<Base locale="en" title="Shopping Cart — Aselovers" description="Check the items in your shopping cart and proceed to checkout." pathSelf="cart" pathsAlt={{ tr: 'sepet', en: 'cart' }}>
+  <Nav locale="en" />
+  <main>
+    <section class="section">
+      <div class="container">
+        <h1 class="cart__heading">Shopping Cart</h1>
+        
+        <div id="cart-empty" class="cart__empty" style="display: none;">
+          <p>Your cart is currently empty.</p>
+          <a class="btn btn--primary" href="/en/products">Start Shopping</a>
+        </div>
+
+        <div id="cart-content" class="cart__content" style="display: none;">
+          <div class="cart__items-col">
+            <div class="cart__table-header">
+              <span>Product</span>
+              <span class="txt-center">Quantity</span>
+              <span class="txt-right">Total</span>
+            </div>
+            <div id="cart-items-list" class="cart__items-list">
+              <!-- Filled via JS -->
+            </div>
+          </div>
+
+          <div class="cart__summary-col">
+            <div class="summary-card">
+              <h3>Order Summary</h3>
+              <div class="summary-row">
+                <span>Subtotal</span>
+                <span id="cart-subtotal">$0.00</span>
+              </div>
+              <div class="summary-row">
+                <span>Shipping</span>
+                <span class="txt-success">Free</span>
+              </div>
+              <div class="summary-row summary-row--total">
+                <span>Total</span>
+                <span id="cart-total">$0.00</span>
+              </div>
+              <a href="/en/checkout" class="btn btn--primary w-100" style="margin-top: var(--space-4); text-align: center;">Proceed to Checkout</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <div id="cart-data" data-products={JSON.stringify(allProducts)} style="display: none;"></div>
+  <Footer locale="en" />
+</Base>
+
+<script>
+  // Client-side cart logic
+  import { getCart, updateCartQuantity, removeFromCart } from '@lib/cart';
+
+  const allProducts = JSON.parse(document.getElementById('cart-data')?.getAttribute('data-products') || '[]');
+
+  const emptyDiv = document.getElementById('cart-empty');
+  const contentDiv = document.getElementById('cart-content');
+  const itemsList = document.getElementById('cart-items-list');
+  const subtotalEl = document.getElementById('cart-subtotal');
+  const totalEl = document.getElementById('cart-total');
+
+  function renderCart() {
+    const cart = getCart();
+    if (cart.length === 0) {
+      emptyDiv.style.display = 'block';
+      contentDiv.style.display = 'none';
+      return;
+    }
+
+    emptyDiv.style.display = 'none';
+    contentDiv.style.display = 'grid';
+    itemsList.innerHTML = '';
+
+    let subtotal = 0;
+    let currency = 'USD';
+
+    cart.forEach(item => {
+      const prod = allProducts.find(p => p.id === item.id);
+      if (!prod) return;
+
+      subtotal += prod.price * item.quantity;
+      currency = prod.currency;
+
+      const itemTotal = prod.price * item.quantity;
+      const formattedItemTotal = new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(itemTotal);
+      const formattedPrice = new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(prod.price);
+
+      const row = document.createElement('div');
+      row.className = 'cart-item';
+      row.innerHTML = `
+        <div class="cart-item__product">
+          <div class="cart-item__media">
+            <img src="${prod.image || '/bags.png'}" alt="${prod.title_en || prod.title_tr}" />
+          </div>
+          <div>
+            <h4 class="cart-item__title">${prod.title_en || prod.title_tr}</h4>
+            <span class="cart-item__price">${formattedPrice}</span>
+            <button class="cart-item__remove" data-id="${item.id}">Remove</button>
+          </div>
+        </div>
+        <div class="cart-item__qty txt-center">
+          <div class="qty-selector">
+            <button class="qty-btn qty-minus" data-id="${item.id}">-</button>
+            <span class="qty-val">${item.quantity}</span>
+            <button class="qty-btn qty-plus" data-id="${item.id}">+</button>
+          </div>
+        </div>
+        <div class="cart-item__total txt-right">${formattedItemTotal}</div>
+      `;
+      itemsList.appendChild(row);
+    });
+
+    const formattedSubtotal = new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(subtotal);
+    subtotalEl.textContent = formattedSubtotal;
+    totalEl.textContent = formattedSubtotal;
+
+    // Attach listeners
+    document.querySelectorAll('.qty-minus').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const id = btn.getAttribute('data-id');
+        const item = cart.find(x => x.id === id);
+        if (item && item.quantity > 1) {
+          updateCartQuantity(id, item.quantity - 1);
+          renderCart();
+        }
+      });
+    });
+
+    document.querySelectorAll('.qty-plus').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const id = btn.getAttribute('data-id');
+        const item = cart.find(x => x.id === id);
+        if (item) {
+          updateCartQuantity(id, item.quantity + 1);
+          renderCart();
+        }
+      });
+    });
+
+    document.querySelectorAll('.cart-item__remove').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const id = btn.getAttribute('data-id');
+        removeFromCart(id);
+        renderCart();
+      });
+    });
+  }
+
+  // Initial load
+  renderCart();
+  window.addEventListener('cart-updated', renderCart);
+</script>
+
+<style>
+  .cart__heading { font-family: var(--font-display); font-size: 2.2rem; font-weight: 500; margin-bottom: var(--space-6); }
+  .cart__empty { text-align: center; padding: var(--space-8) 0; }
+  .cart__empty p { font-size: 1.1rem; color: var(--muted); margin-bottom: var(--space-4); }
+  
+  .cart__content { display: grid; grid-template-columns: 2fr 1fr; gap: var(--space-7); align-items: start; }
+  .cart__table-header { display: grid; grid-template-columns: 3fr 1fr 1fr; border-bottom: 1.5px solid var(--line); padding-bottom: var(--space-3); font-weight: 600; color: var(--muted); font-size: 0.88rem; text-transform: uppercase; letter-spacing: 0.05em; }
+  .cart__items-list { display: flex; flex-direction: column; }
+  
+  .cart-item { display: grid; grid-template-columns: 3fr 1fr 1fr; align-items: center; border-bottom: 1px solid var(--line); padding: var(--space-4) 0; }
+  .cart-item__product { display: flex; gap: var(--space-4); align-items: center; }
+  .cart-item__media { width: 70px; height: 70px; border-radius: var(--radius); overflow: hidden; background: var(--section); border: 1px solid var(--line); }
+  .cart-item__media img { width: 100%; height: 100%; object-fit: cover; }
+  .cart-item__title { font-size: 1rem; font-weight: 600; margin: 0; line-height: 1.3; }
+  .cart-item__price { display: block; font-size: 0.9rem; color: var(--muted); margin-top: 2px; }
+  .cart-item__remove { background: none; border: none; color: var(--accent); cursor: pointer; font-size: 0.82rem; font-weight: 500; text-decoration: underline; margin-top: 6px; padding: 0; }
+  
+  .qty-selector { display: inline-flex; align-items: center; border: 1px solid var(--line); border-radius: var(--radius-pill); background: var(--bg); overflow: hidden; }
+  .qty-btn { background: none; border: none; width: 30px; height: 30px; cursor: pointer; font-weight: bold; transition: background 150ms ease; }
+  .qty-btn:hover { background: var(--line); }
+  .qty-val { width: 30px; text-align: center; font-size: 0.88rem; font-weight: 600; }
+  
+  .cart-item__total { font-family: var(--font-body); font-weight: 600; color: var(--accent-ink); }
+  
+  .summary-card { background: #FAF9F5; border: 1px solid var(--line); border-radius: var(--radius); padding: var(--space-5); }
+  .summary-card h3 { font-family: var(--font-display); font-size: 1.3rem; margin-top: 0; margin-bottom: var(--space-4); border-bottom: 1.5px solid var(--line); padding-bottom: var(--space-2); }
+  .summary-row { display: flex; justify-content: space-between; font-size: 0.95rem; margin-bottom: var(--space-3); }
+  .summary-row--total { font-size: 1.15rem; font-weight: 700; color: var(--accent-ink); border-top: 1.5px solid var(--line); padding-top: var(--space-3); margin-top: var(--space-3); margin-bottom: 0; }
+  
+  .w-100 { width: 100%; }
+  .txt-center { text-align: center; }
+  .txt-right { text-align: right; }
+  .txt-success { color: #16a34a; font-weight: 600; }
+  
+  @media (max-width: 900px) {
+    .cart__content { grid-template-columns: 1fr; }
+    .cart-item { grid-template-columns: 1fr; gap: var(--space-4); position: relative; }
+    .cart__table-header { display: none; }
+    .cart-item__total { text-align: left; font-size: 1.1rem; }
+    .qty-selector { margin-top: 4px; }
+    .txt-right { text-align: left; }
+    .txt-center { text-align: left; }
+  }
+</style>

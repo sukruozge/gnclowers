@@ -58,11 +58,11 @@ const collections = [...new Set(products.map((x) => x.category))]
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
         </button>
 
-        <!-- Cart icon (Mock) -->
-        <button class="nav__icon-btn cart-btn" aria-label="Sepet">
+        <!-- Cart Icon -->
+        <a class="nav__icon-btn cart-btn" href={locale === 'tr' ? '/tr/sepet' : '/en/cart'} aria-label={locale === 'tr' ? 'Sepet' : 'Cart'}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-          <span class="cart-badge">0</span>
-        </button>
+          <span class="cart-badge" id="nav-cart-badge">0</span>
+        </a>
 
         <!-- Lang toggle -->
         <a class="nav__lang" href={other} aria-label={locale === 'tr' ? 'English' : 'Türkçe'}>
@@ -549,6 +549,19 @@ const collections = [...new Set(products.map((x) => x.category))]
 </style>
 
 <script>
+  import { getCartCount } from '@lib/cart';
+
+  const badge = document.getElementById('nav-cart-badge');
+  function updateBadge() {
+    if (badge) {
+      badge.textContent = String(getCartCount());
+    }
+  }
+  
+  // Initial count
+  updateBadge();
+  window.addEventListener('cart-updated', updateBadge);
+
   const burger = document.querySelector('[data-burger]') as HTMLButtonElement | null;
   const overlay = document.querySelector('[data-overlay]') as HTMLElement | null;
   

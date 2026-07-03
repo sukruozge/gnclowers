@@ -1,0 +1,24 @@
+---
+import Base from '../../layouts/Base.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+---
+<Base locale="tr" title="Ödeme Başarısız — Aselovers" description="Ödeme işlemi gerçekleştirilemedi. Lütfen tekrar deneyin." pathSelf="odeme-basarisiz" pathsAlt={{ tr: 'odeme-basarisiz', en: 'payment-failed' }}>
+  <Nav locale="tr" />
+  <main>
+    <section class="section text-center" style="padding: var(--space-8) 0;">
+      <div class="container" style="max-width: 600px; display: flex; flex-direction: column; align-items: center; gap: var(--space-4);">
+        <div class="error-icon" style="width: 80px; height: 80px; border-radius: 50%; background: #fee2e2; color: #dc2626; display: grid; place-items: center;">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </div>
+        <h1 style="font-family: var(--font-display); font-size: 2.2rem; font-weight: 500; margin: 0;">Ödeme Başarısız</h1>
+        <p style="font-size: 1.1rem; color: var(--muted); line-height: 1.5; margin: 0;">Ödeme işleminiz banka veya POS tarafından onaylanmadı. Kart bilgilerinizi kontrol ederek tekrar deneyebilirsiniz.</p>
+        <div style="display: flex; gap: var(--space-3); margin-top: var(--space-4);">
+          <a href="/tr/odeme" class="btn btn--primary">Tekrar Dene</a>
+          <a href="/tr/sepet" class="btn btn--outline">Sepete Dön</a>
+        </div>
+      </div>
+    </section>
+  </main>
+  <Footer locale="tr" />
+</Base>

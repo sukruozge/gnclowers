@@ -1,0 +1,27 @@
+---
+import Base from '../../layouts/Base.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+---
+<Base locale="en" title="Order Received — Aselovers" description="Your payment has been successfully completed. Your order will be prepared." pathSelf="payment-success" pathsAlt={{ tr: 'odeme-basarili', en: 'payment-success' }}>
+  <Nav locale="en" />
+  <main>
+    <section class="section text-center" style="padding: var(--space-8) 0;">
+      <div class="container" style="max-width: 600px; display: flex; flex-direction: column; align-items: center; gap: var(--space-4);">
+        <div class="success-icon" style="width: 80px; height: 80px; border-radius: 50%; background: #dcfce7; color: #16a34a; display: grid; place-items: center;">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+        </div>
+        <h1 style="font-family: var(--font-display); font-size: 2.2rem; font-weight: 500; margin: 0;">Thank You!</h1>
+        <p style="font-size: 1.1rem; color: var(--muted); line-height: 1.5; margin: 0;">Your payment was successfully received and your order is confirmed. Your items will be carefully handcrafted soon.</p>
+        <p style="font-size: 0.95rem; color: var(--muted); margin: 0;">Order details will be sent to your email address.</p>
+        <a href="/en/products" class="btn btn--primary" style="margin-top: var(--space-4);">Continue Shopping</a>
+      </div>
+    </section>
+  </main>
+  <Footer locale="en" />
+</Base>
+
+<script>
+  import { clearCart } from '@lib/cart';
+  clearCart();
+</script>
