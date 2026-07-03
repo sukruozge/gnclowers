@@ -25,6 +25,9 @@ const price = new Intl.NumberFormat('tr-TR', { style: 'currency', currency: prod
 const related = loadProducts().filter((x) => x.category === product.category && x.id !== product.id).slice(0, 4);
 const ld = productJsonLd(product, 'tr', `${site}/tr/${selfPath}`);
 const shop = loadReviews().shop;
+const buyText = product.url && product.url.includes('shopier.com')
+  ? 'Satın Al'
+  : 'Etsy\'de Satın Al';
 ---
 <Base locale="tr" title={`${title} — Aselovers`} description={product.description_tr || title}
   pathSelf={selfPath} pathsAlt={{ tr: selfPath, en: `product/${enSlug}` }} ogImage={product.image ?? undefined}>
@@ -40,7 +43,7 @@ const shop = loadReviews().shop;
           <RatingBadge rating={shop.rating} count={shop.count} locale="tr" />
           <p class="detail__price">{price}</p>
           <p class="prose" style="white-space: pre-line">{product.description_tr}</p>
-          <Button href={product.url} variant="primary" external>Etsy'de Satın Al</Button>
+          <Button href={product.url} variant="primary" external>{buyText}</Button>
           <TrustPoints locale="tr" />
         </div>
       </div>
