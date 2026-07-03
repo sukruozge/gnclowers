@@ -48,20 +48,7 @@ const JWT_SECRET = (() => {
 
 const ADMIN_USER = process.env.ADMIN_USERNAME || 'admin';
 
-// Password: prefer ADMIN_PASSWORD_HASH (bcrypt), else hash ADMIN_PASSWORD at startup
-let ADMIN_HASH = process.env.ADMIN_PASSWORD_HASH || null;
-
-(async () => {
-  if (!ADMIN_HASH && process.env.ADMIN_PASSWORD) {
-    ADMIN_HASH = await bcrypt.hash(process.env.ADMIN_PASSWORD, 12);
-    console.warn('[WARN] ADMIN_PASSWORD kullanılıyor — ADMIN_PASSWORD_HASH kullanmanız önerilir');
-  }
-  if (!ADMIN_HASH) {
-    // Fallback default — logs loud warning
-    ADMIN_HASH = await bcrypt.hash('Aselovers2024!', 12);
-    console.warn('[WARN] Admin şifresi .env dosyasında YOK — varsayılan "Aselovers2024!" kullanılıyor. HEMEN DEĞİŞTİRİN!');
-  }
-})();
+// ADMIN_HASH is initialized synchronously below after path and helper definitions
 
 // ── Paths ─────────────────────────────────────────────
 const DATA_DIR = path.join(DIR, 'data');
@@ -90,10 +77,21 @@ function logActivity(action, detail = '') {
   writeJSON(ACTIVITY_F, log.slice(0, 500));
 }
 
-// Load persisted password hash if admin previously changed it
+// Read settings first to get any persisted admin password hash
 const savedSettings = readJSON(SETTINGS_F, {});
-if (savedSettings.adminPasswordHash) {
-  ADMIN_HASH = savedSettings.adminPasswordHash;
+
+// Prefer process.env.ADMIN_PASSWORD_HASH, fall back to savedSettings.adminPasswordHash
+let ADMIN_HASH = process.env.ADMIN_PASSWORD_HASH || savedSettings.adminPasswordHash || null;
+
+// Fallbacks if no hash is available yet
+if (!ADMIN_HASH && process.env.ADMIN_PASSWORD) {
+  ADMIN_HASH = bcrypt.hashSync(process.env.ADMIN_PASSWORD, 12);
+  console.warn('[WARN] ADMIN_PASSWORD kullanılıyor — ADMIN_PASSWORD_HASH kullanmanız önerilir');
+}
+
+if (!ADMIN_HASH) {
+  ADMIN_HASH = bcrypt.hashSync('Aselovers2024!', 12);
+  console.warn('[WARN] Admin şifresi .env dosyasında/ayarlarda YOK — varsayılan "Aselovers2024!" kullanılıyor. HEMEN DEĞİŞTİRİN!');
 }
 
 // ── Auth ──────────────────────────────────────────────
@@ -425,6 +423,24 @@ app.get('/api/status', (req, res) => {
 // ADMIN — Auth
 // ═════════════════════════════════════════════════════
 
+function verifyPbkdf2(password, stored) {
+  try {
+    const parts = stored.split('$');
+    if (parts.length !== 4) return false;
+    const [scheme, iterationsRaw, saltB64, hashB64] = parts;
+    if (scheme !== 'pbkdf2') return false;
+    const iterations = parseInt(iterationsRaw, 10);
+
+    const salt = Buffer.from(saltB64.replace(/-/g, '+').replace(/_/g, '/'), 'base64');
+    const expected = Buffer.from(hashB64.replace(/-/g, '+').replace(/_/g, '/'), 'base64');
+
+    const actual = crypto.pbkdf2Sync(password, salt, iterations, expected.length, 'sha256');
+    return crypto.timingSafeEqual(actual, expected);
+  } catch {
+    return false;
+  }
+}
+
 app.post('/api/admin/login',
   loginLimiter,
   requireAdminHeader,
@@ -450,7 +466,12 @@ app.post('/api/admin/login',
     Buffer.from(ADMIN_USER).copy(u2, 0, 0, Math.min(ADMIN_USER.length, 64));
     const userOk = crypto.timingSafeEqual(u1, u2);
 
-    const passOk = await bcrypt.compare(password, ADMIN_HASH);
+    let passOk = false;
+    if (ADMIN_HASH.startsWith('pbkdf2$')) {
+      passOk = verifyPbkdf2(password, ADMIN_HASH);
+    } else {
+      passOk = await bcrypt.compare(password, ADMIN_HASH);
+    }
 
     if (!userOk || !passOk) {
       recordFailedLogin(ip);
@@ -724,7 +745,12 @@ app.post('/api/admin/settings/password',
     }
 
     const { currentPassword, newPassword } = req.body;
-    const valid = await bcrypt.compare(currentPassword, ADMIN_HASH);
+    let valid = false;
+    if (ADMIN_HASH.startsWith('pbkdf2$')) {
+      valid = verifyPbkdf2(currentPassword, ADMIN_HASH);
+    } else {
+      valid = await bcrypt.compare(currentPassword, ADMIN_HASH);
+    }
     if (!valid) {
       logActivity('ŞİFRE_DEĞİŞİKLİĞİ_BAŞARISIZ', `IP: ${req.ip}`);
       return res.status(401).json({ error: 'Mevcut şifre hatalı.' });

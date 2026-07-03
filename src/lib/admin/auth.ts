@@ -5,6 +5,9 @@
  * both Cloudflare Workers and Node 20 (Vitest) — no `node:crypto` import.
  */
 
+// @ts-ignore
+import bcrypt from 'bcryptjs';
+
 const textEncoder = new TextEncoder();
 const textDecoder = new TextDecoder();
 
@@ -92,12 +95,23 @@ export async function hashPassword(pw: string, iterations = 100000): Promise<str
 }
 
 /**
- * Verifies a password against a stored `pbkdf2$<iter>$<salt>$<hash>` string.
+ * Verifies a password against a stored `pbkdf2$<iter>$<salt>$<hash>` or `bcrypt` string.
  * Never throws — malformed input simply returns false.
  */
 export async function verifyPassword(pw: string, stored: string): Promise<boolean> {
   try {
     if (typeof stored !== 'string' || stored.length === 0) return false;
+
+    // Bcrypt fallback check
+    if (stored.startsWith('$2a$') || stored.startsWith('$2b$') || stored.startsWith('$2y$')) {
+      return new Promise<boolean>((resolve) => {
+        bcrypt.compare(pw, stored, (err: any, res: boolean) => {
+          if (err) resolve(false);
+          else resolve(!!res);
+        });
+      });
+    }
+
     const parts = stored.split('$');
     if (parts.length !== 4) return false;
     const [scheme, iterationsRaw, saltB64, hashB64] = parts;
@@ -112,7 +126,8 @@ export async function verifyPassword(pw: string, stored: string): Promise<boolea
     const actual = await pbkdf2DeriveBits(pw, salt, iterations, expected.length * 8 || 256);
 
     return await constantTimeEqual(actual, expected);
-  } catch {
+  } catch (e) {
+    console.error('VERIFY ERROR:', e);
     return false;
   }
 }
