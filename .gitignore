@@ -8,3 +8,5 @@ dist/
 .astro/
 .wrangler/
 .claude/
+public/products.json
+.dev.vars
