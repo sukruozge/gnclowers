@@ -1,34 +1,37 @@
 :root {
-  --bg: #FBFAF7;
+  --bg: #FAF9F5;
   --surface: #FFFFFF;
-  --section: #F3EEE6;
-  --ink: #22201E;
-  --muted: #6B655E;
-  --line: #E3DACE;
-  --accent: #B85C38;
-  --accent-ink: #8F4426;
-  --star-gold: #E0A43B;
-  --footer-bg: #2A2622;
-  --footer-fg: #EFE9E0;
+  --section: #F5EFEB;
+  --ink: #1C1A18;
+  --muted: #6B6259;
+  --line: #E8E0D5;
+  --accent: #B0532E;
+  --accent-ink: #853A1B;
+  --star-gold: #DCA037;
+  --footer-bg: #211E1C;
+  --footer-fg: #F5EFEB;
   --on-accent: #FFFFFF;
-  --blush: #C6ABA1;
+  --blush: #C9B2A6;
 
   --font-display: 'Playfair Display', Georgia, 'Times New Roman', serif;
   --font-body: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  --font-signature: 'Dancing Script', cursive;
 
-  --step-h1: clamp(2.4rem, 5vw, 4rem);
-  --step-h2: clamp(1.8rem, 3vw, 2.6rem);
-  --step-h3: 1.35rem;
-  --step-body: 1rem;
-  --step-small: 0.85rem;
+  --step-h1: clamp(2.8rem, 6.5vw, 4.6rem);
+  --step-h2: clamp(1.9rem, 3.5vw, 2.8rem);
+  --step-h3: 1.45rem;
+  --step-body: 1.02rem;
+  --step-small: 0.88rem;
 
   --space-1: 4px;  --space-2: 8px;  --space-3: 12px; --space-4: 16px;
   --space-5: 24px; --space-6: 40px; --space-7: 64px; --space-8: 96px;
 
-  --radius: 14px;
+  --radius: 16px;
+  --radius-lg: 24px;
   --radius-pill: 999px;
-  --ease: cubic-bezier(.4, 0, .2, 1);
-  --dur: 220ms;
-  --maxw: 1200px;
-  --shadow-hover: 0 10px 30px rgba(34, 32, 30, .10);
+  --ease: cubic-bezier(.16, 1, .3, 1);
+  --dur: 280ms;
+  --maxw: 1240px;
+  --shadow-hover: 0 20px 40px rgba(28, 26, 24, .08);
+  --shadow-glass: 0 8px 32px rgba(28, 26, 24, .03);
 }

@@ -24,7 +24,7 @@ describe('i18n', () => {
     expect(t('footer.shop', 'en')).toBe('Shop');
   });
   it('has home strings', () => {
-    expect(t('home.heroTitle', 'en')).toBe('Handmade amigurumi, made to be loved');
+    expect(t('home.heroTitle', 'en')).toBe('Every child deserves a healthy, natural companion');
     expect(t('home.featured', 'tr')).toBe('Öne Çıkanlar');
     expect(t('home.newsletterCta', 'en')).toBe('Join the list');
   });

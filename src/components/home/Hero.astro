@@ -1,73 +1,433 @@
 ---
 import { t, type Locale } from '@lib/i18n';
-import { loadProducts, localizedTitle } from '@lib/products';
-import { loadReviews, formatRating } from '@lib/reviews';
 import Button from '../Button.astro';
+
 const { locale } = Astro.props as { locale: Locale };
 const pth = (tr: string, en: string) => (locale === 'tr' ? `/tr/${tr}` : `/en/${en}`);
-const imgs = loadProducts().filter((x) => x.image);
-const colA = imgs.filter((_, i) => i % 2 === 0).slice(0, 6);
-const colB = imgs.filter((_, i) => i % 2 === 1).slice(0, 6);
-const dup = <T,>(a: T[]) => [...a, ...a];
-const { shop } = loadReviews();
-const ratingLine = shop.rating != null
-  ? t('reviews.ratingLine', locale).replace('{rating}', formatRating(shop.rating)).replace('{count}', String(shop.count))
-  : '';
-const words = locale === 'tr'
-  ? ['Sevgiyle', 'örülmüş', 'el yapımı', ['amigurumi', true]]
-  : ['Handmade', 'amigurumi,', 'made to be', ['loved', true]];
+
+const catalog = locale === 'tr' ? '/tr/urunler' : '/en/products';
+
+const catLabels: Record<string, Record<Locale, string>> = {
+  'Crochet Bags': { tr: 'Örgü Çantalar', en: 'Crochet Bags' },
+  'Safari Animals': { tr: 'Safari Hayvanları', en: 'Safari Animals' },
+  'Curtain Tiebacks': { tr: 'Perde Tutacakları', en: 'Curtain Tiebacks' },
+  'Amigurumi Toys': { tr: 'Amigurumi Oyuncaklar', en: 'Amigurumi Toys' },
+  'Baby Gift Sets': { tr: 'Bebek Hediye Setleri', en: 'Baby Gift Sets' },
+  'Crochet Dolls': { tr: 'Örgü Bebekler', en: 'Crochet Dolls' },
+  'Bunny Rabbits Toys': { tr: 'Örgü Tavşanlar', en: 'Bunny Rabbits Toys' },
+  'Crochet Hair Clips': { tr: 'Örgü Saç Tokaları', en: 'Crochet Hair Clips' }
+};
+
+const programs = [
+  {
+    c: 'Amigurumi Toys',
+    label: catLabels['Amigurumi Toys'][locale],
+    image: '/images/categories/toys.png',
+    category: locale === 'tr' ? 'OYUNCAK' : 'TOYS'
+  },
+  {
+    c: 'Crochet Bags',
+    label: catLabels['Crochet Bags'][locale],
+    image: '/images/categories/bags.png',
+    category: locale === 'tr' ? 'MODA' : 'FASHION'
+  },
+  {
+    c: 'Safari Animals',
+    label: catLabels['Safari Animals'][locale],
+    image: '/images/categories/safari.png',
+    category: locale === 'tr' ? 'SAFARİ' : 'SAFARI'
+  },
+  {
+    c: 'Curtain Tiebacks',
+    label: catLabels['Curtain Tiebacks'][locale],
+    image: '/images/categories/tiebacks.png',
+    category: locale === 'tr' ? 'DEKOR' : 'DECOR'
+  },
+  {
+    c: 'Baby Gift Sets',
+    label: catLabels['Baby Gift Sets'][locale],
+    image: '/images/categories/giftsets.png',
+    category: locale === 'tr' ? 'HEDİYE' : 'GIFTS'
+  },
+  {
+    c: 'Crochet Dolls',
+    label: catLabels['Crochet Dolls'][locale],
+    image: '/images/categories/dolls.png',
+    category: locale === 'tr' ? 'BEBEKLER' : 'DOLLS'
+  },
+  {
+    c: 'Bunny Rabbits Toys',
+    label: catLabels['Bunny Rabbits Toys'][locale],
+    image: '/images/categories/bunny.png',
+    category: locale === 'tr' ? 'TAVŞANLAR' : 'BUNNIES'
+  },
+  {
+    c: 'Crochet Hair Clips',
+    label: catLabels['Crochet Hair Clips'][locale],
+    image: '/images/categories/hairclips.png',
+    category: locale === 'tr' ? 'AKSESUAR' : 'ACCESSORIES'
+  }
+];
+
+const avatars = [
+  'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=100&h=100&fit=crop&q=80',
+  'https://images.unsplash.com/photo-1502086223501-7ea6ecd79368?w=100&h=100&fit=crop&q=80',
+  'https://images.unsplash.com/photo-1519689680058-324335c77eba?w=100&h=100&fit=crop&q=80',
+  'https://images.unsplash.com/photo-1554151228-14d9def656e4?w=100&h=100&fit=crop&q=80'
+];
 ---
-<section class="hero">
-  <div class="container hero__inner">
-    <div class="hero__copy">
-      <p class="eyebrow">{t('home.heroEyebrow', locale)}</p>
-      <h1 class="hero__title">
-        {words.map((w, i) => {
-          const [text, accent] = Array.isArray(w) ? w : [w, false];
-          return <span class="hero__w" style={`--i:${i}`}><span class={accent ? 'hero__accent' : ''}>{text}</span>{' '}</span>;
-        })}
-      </h1>
-      <p class="hero__sub">{t('home.heroSub', locale)}</p>
-      {ratingLine && <p class="hero__rating">★ {ratingLine}</p>}
-      <div class="hero__cta">
-        <Button href={pth('urunler', 'products')} variant="primary">{t('home.heroCtaPrimary', locale)}</Button>
-        <Button href={pth('hakkimizda', 'about')} variant="outline">{t('home.heroCtaSecondary', locale)}</Button>
+<section class="hero-pulse">
+  <!-- Glowing subtle lights background -->
+  <div class="hero-pulse__glow animate-glow" aria-hidden="true"></div>
+
+  <!-- Background video -->
+  <video class="hero-pulse__video" autoplay loop muted playsinline aria-hidden="true">
+    <source src="/images/hero-crochet.mp4" type="video/mp4" />
+  </video>
+
+  <!-- Content Centered Top Row -->
+  <div class="container hero-pulse__content-wrapper">
+    <div class="hero-pulse__content">
+      
+      <!-- Eyebrow Badge -->
+      <div class="hero-pulse__eyebrow-wrapper reveal reveal--fade-up">
+        <span class="hero-pulse__eyebrow">{t('home.heroEyebrow', locale)}</span>
       </div>
-      <p class="hero__micro">{t('trust.handmade', locale)} · {t('trust.shipping', locale)}</p>
+
+      <!-- Main Slogan -->
+      <h1 class="hero-pulse__title reveal reveal--fade-up reveal--d1">
+        {t('home.heroTitle', locale)}<span class="title-dot">.</span>
+      </h1>
+
+      <!-- Detailed Description -->
+      <p class="hero-pulse__sub reveal reveal--fade-up reveal--d2">
+        {t('home.heroSub', locale)}
+      </p>
+
+      <!-- Central Buttons -->
+      <div class="hero-pulse__actions reveal reveal--fade-up reveal--d3">
+        <Button href={pth('urunler', 'products')} variant="primary">
+          {locale === 'tr' ? 'Koleksiyonları Gör' : 'Browse Collections'} →
+        </Button>
+        <Button href={pth('hakkimizda', 'about')} variant="outline">
+          {locale === 'tr' ? 'Hikâyemiz' : 'Our Story'}
+        </Button>
+      </div>
+
+      <!-- Etsy Social Proof -->
+      <div class="hero-pulse__social reveal reveal--fade-up reveal--d4">
+        <div class="avatar-group">
+          {avatars.map((url, index) => (
+            <img src={url} alt="Happy baby" class="avatar-item" style={`--idx: ${index}`} />
+          ))}
+        </div>
+        <span class="social-text">
+          {locale === 'tr' 
+            ? 'Etsy’de 500+ mutlu aile ve %100 el emeği' 
+            : '500+ happy families on Etsy & 100% handcrafted'}
+        </span>
+      </div>
+
     </div>
-    <div class="hero__mosaic" aria-hidden="true">
-      <div class="mos mos--down">{dup(colA).map((x) => <div class="mos__cell"><img src={x.image} alt="" loading="lazy" /></div>)}</div>
-      <div class="mos mos--up">{dup(colB).map((x) => <div class="mos__cell"><img src={x.image} alt="" loading="lazy" /></div>)}</div>
+  </div>
+
+  <!-- Category Lookbook Carousel Track -->
+  <div class="hero-pulse__carousel-container reveal reveal--scale-in reveal--d2">
+    <div class="hero-pulse__carousel-track">
+      {programs.map((prog, idx) => (
+        <a class="carousel-card" href={`${catalog}?cat=${encodeURIComponent(prog.c)}`} style={`--idx: ${idx}`}>
+          <div class="card-media">
+            <img src={prog.image} alt={prog.label} loading="lazy" />
+            <div class="card-overlay"></div>
+          </div>
+          <div class="card-info">
+            <span class="card-badge">{prog.category}</span>
+            <h3 class="card-title">{prog.label}</h3>
+            <span class="card-explore">{locale === 'tr' ? 'Koleksiyonu Gör' : 'Explore'} →</span>
+          </div>
+        </a>
+      ))}
     </div>
   </div>
 </section>
+
 <style>
-  .hero { position: relative; overflow: hidden; padding: var(--space-7) 0 var(--space-8); }
-  .hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(60% 50% at 15% 20%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 70%); pointer-events: none; }
-  .hero__inner { position: relative; display: grid; grid-template-columns: 1.05fr .95fr; gap: var(--space-7); align-items: center; min-height: min(88vh, 760px); }
-  .hero__title { font-size: clamp(2.8rem, 6.5vw, 5rem); line-height: 1.04; margin: 0 0 var(--space-4); }
-  .hero__w { display: inline-block; opacity: 0; transform: translateY(18px); animation: heroWord .7s var(--ease) forwards; animation-delay: calc(var(--i) * .09s + .1s); }
-  .hero__accent { color: var(--accent); font-style: italic; }
-  @keyframes heroWord { to { opacity: 1; transform: none; } }
-  .hero__sub { font-size: 1.15rem; color: var(--muted); max-width: 44ch; }
-  .hero__rating { color: var(--accent-ink); font-weight: 500; margin: 0 0 var(--space-4); }
-  .hero__cta { display: flex; gap: var(--space-3); flex-wrap: wrap; }
-  .hero__micro { margin-top: var(--space-4); font-size: var(--step-small); color: var(--muted); letter-spacing: .04em; }
-  .hero__mosaic { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); height: min(88vh, 760px); overflow: hidden; -webkit-mask-image: linear-gradient(180deg, transparent, #000 12%, #000 88%, transparent); mask-image: linear-gradient(180deg, transparent, #000 12%, #000 88%, transparent); }
-  .mos { display: grid; gap: var(--space-3); grid-auto-rows: 1fr; }
-  .mos--down { animation: mosDown 40s linear infinite; }
-  .mos--up { animation: mosUp 40s linear infinite; }
-  .mos__cell { aspect-ratio: 1/1; overflow: hidden; border-radius: var(--radius); background: var(--section); box-shadow: 0 8px 24px rgba(34,32,30,.06); }
-  .mos__cell img { width: 100%; height: 100%; object-fit: cover; }
-  .hero__mosaic:hover .mos { animation-play-state: paused; }
-  @keyframes mosDown { from { transform: translateY(-50%); } to { transform: translateY(0); } }
-  @keyframes mosUp { from { transform: translateY(0); } to { transform: translateY(-50%); } }
-  @media (max-width: 900px) {
-    .hero__inner { grid-template-columns: 1fr; min-height: auto; }
-    .hero__mosaic { height: 420px; }
+  .hero-pulse {
+    position: relative;
+    overflow: hidden;
+    background: #FAF9F5;
+    padding: var(--space-8) 0 var(--space-7);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-7);
   }
+
+  .hero-pulse__glow {
+    position: absolute;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 70vw;
+    height: 70vw;
+    background: radial-gradient(circle, color-mix(in srgb, var(--accent) 6%, transparent) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .hero-pulse__video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.18; /* visible but still elegant and subtle */
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .hero-pulse__content-wrapper {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .hero-pulse__content {
+    max-width: 720px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .hero-pulse__eyebrow-wrapper {
+    margin-bottom: var(--space-4);
+  }
+  
+  .hero-pulse__eyebrow {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(232, 224, 213, 0.6);
+    padding: 6px 16px;
+    border-radius: var(--radius-pill);
+    box-shadow: var(--shadow-glass);
+  }
+
+  .hero-pulse__title {
+    font-size: clamp(2.4rem, 6.2vw, 4.4rem);
+    line-height: 1.08;
+    font-weight: 500;
+    color: var(--ink);
+    margin: 0 0 var(--space-4);
+    letter-spacing: -0.02em;
+  }
+  
+  .title-dot {
+    color: var(--accent);
+  }
+
+  .hero-pulse__sub {
+    font-size: 1.15rem;
+    color: var(--muted);
+    line-height: 1.6;
+    max-width: 580px;
+    margin-bottom: var(--space-5);
+  }
+
+  .hero-pulse__actions {
+    display: flex;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: var(--space-6);
+  }
+
+  /* Social proof area */
+  .hero-pulse__social {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+  }
+
+  .avatar-group {
+    display: flex;
+    align-items: center;
+  }
+
+  .avatar-item {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 2.5px solid var(--surface);
+    object-fit: cover;
+    margin-left: -8px;
+    box-shadow: 0 4px 8px rgba(28,26,24,0.1);
+    z-index: calc(10 - var(--idx));
+    transition: transform var(--dur) var(--ease);
+  }
+  .avatar-item:first-child {
+    margin-left: 0;
+  }
+  .avatar-item:hover {
+    transform: translateY(-4px) scale(1.08);
+    z-index: 15;
+  }
+
+  .social-text {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--muted);
+    letter-spacing: 0.01em;
+  }
+
+  /* Carousel Section */
+  .hero-pulse__carousel-container {
+    position: relative;
+    width: 100%;
+    z-index: 1;
+    overflow-x: auto;
+    scrollbar-width: none; /* Hide scrollbar for Firefox */
+    padding: var(--space-2) 0 var(--space-5);
+    -webkit-overflow-scrolling: touch;
+  }
+  .hero-pulse__carousel-container::-webkit-scrollbar {
+    display: none; /* Hide scrollbar for Chrome/Safari */
+  }
+
+  .hero-pulse__carousel-track {
+    display: flex;
+    gap: var(--space-5);
+    padding: 0 var(--space-6);
+    width: max-content;
+  }
+
+  /* Cards styling */
+  .carousel-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    width: 250px;
+    height: 330px;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background: var(--section);
+    box-shadow: 0 12px 24px rgba(28, 26, 24, 0.05);
+    border: 1px solid var(--line);
+    text-decoration: none;
+    transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease), border-color var(--dur) var(--ease);
+  }
+
+  .carousel-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 25px 50px rgba(28, 26, 24, 0.12);
+    border-color: rgba(176, 83, 46, 0.25);
+  }
+
+  .card-media {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+  .card-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 1.2s var(--ease);
+  }
+  .carousel-card:hover .card-media img {
+    transform: scale(1.06);
+  }
+
+  .card-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(28, 26, 24, 0.85) 0%, rgba(28, 26, 24, 0.2) 60%, transparent 100%);
+    transition: opacity var(--dur) var(--ease);
+  }
+
+  /* Card info text overlay */
+  .card-info {
+    position: relative;
+    z-index: 2;
+    padding: var(--space-5);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    color: var(--surface);
+  }
+
+  .card-badge {
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(8px);
+    color: var(--surface);
+    padding: 3px 10px;
+    border-radius: var(--radius-pill);
+    letter-spacing: 0.05em;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+  }
+
+  .card-title {
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    font-weight: 500;
+    color: var(--surface);
+    margin: var(--space-2) 0;
+    line-height: 1.2;
+  }
+
+  .card-explore {
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    opacity: 0.85;
+    transition: opacity var(--dur) var(--ease), transform var(--dur) var(--ease);
+  }
+  .carousel-card:hover .card-explore {
+    opacity: 1;
+    transform: translateX(4px);
+  }
+
+  @media (max-width: 600px) {
+    .hero-pulse {
+      padding: var(--space-7) 0 var(--space-6);
+    }
+    .hero-pulse__title {
+      font-size: 2.2rem;
+    }
+    .hero-pulse__sub {
+      font-size: 1.05rem;
+    }
+    .hero-pulse__actions {
+      flex-direction: column;
+      width: 100%;
+      max-width: 280px;
+    }
+    .hero-pulse__carousel-track {
+      padding: 0 var(--space-4);
+    }
+    .carousel-card {
+      width: 220px;
+      height: 280px;
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
-    .hero__w { animation: none; opacity: 1; transform: none; }
-    .mos--down, .mos--up { animation: none; }
+    .hero-pulse__glow, .avatar-item, .carousel-card, .card-media img, .card-explore {
+      animation: none;
+      transition: none;
+    }
   }
 </style>

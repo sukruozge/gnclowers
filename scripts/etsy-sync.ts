@@ -203,12 +203,47 @@ async function main(): Promise<void> {
   }
   const listings = await getListings(shopId);
   await attachImages(listings);
-  const products = listings.map((l) => mapListing(l, Date.now(), sections));
+  const prev = loadPrevious();
+  const matchedIds = new Set<string>();
+
+  const syncedProducts = listings.map((l) => {
+    const mapped = mapListing(l, Date.now(), sections);
+    matchedIds.add(mapped.id);
+    const existing = prev.get(mapped.id);
+    if (existing) {
+      // Preserve local manual changes!
+      return {
+        ...mapped,
+        title_tr: existing.title_tr !== undefined ? existing.title_tr : mapped.title_tr,
+        title_en: existing.title_en !== undefined ? existing.title_en : mapped.title_en,
+        description_tr: existing.description_tr !== undefined ? existing.description_tr : mapped.description_tr,
+        description_en: existing.description_en !== undefined ? existing.description_en : mapped.description_en,
+        price: existing.price !== undefined ? existing.price : mapped.price,
+        currency: existing.currency !== undefined ? existing.currency : mapped.currency,
+        image: existing.image !== undefined ? existing.image : mapped.image,
+        category: existing.category !== undefined ? existing.category : mapped.category,
+        isActive: existing.isActive !== undefined ? existing.isActive : mapped.isActive,
+        isNew: existing.isNew !== undefined ? existing.isNew : mapped.isNew,
+      };
+    }
+    return mapped;
+  });
+
+  // Append manual products and any products that exist locally but were not returned by Etsy
+  const localOnlyProducts: Product[] = [];
+  for (const [id, p] of prev.entries()) {
+    if (!matchedIds.has(id)) {
+      localOnlyProducts.push(p);
+    }
+  }
+
+  const products = [...syncedProducts, ...localOnlyProducts];
+
   if (products.length === 0) {
-    console.warn('Etsy returned 0 products — keeping existing products.json (no overwrite).');
+    console.warn('No products to write — keeping existing products.json (no overwrite).');
     process.exit(0);
   }
-  const prev = loadPrevious();
+
   await applyTranslations(products, prev);
   const out = {
     lastSync: new Date().toISOString(),

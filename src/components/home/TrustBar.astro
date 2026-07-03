@@ -3,17 +3,53 @@ import { t, type Locale } from '@lib/i18n';
 import { loadReviews, formatRating } from '@lib/reviews';
 const { locale } = Astro.props as { locale: Locale };
 const { shop } = loadReviews();
-const rated = shop.rating != null ? t('trust.rated', locale).replace('{rating}', formatRating(shop.rating)) : t('trust.rated', locale).replace('{rating}', '5');
-const items = [t('trust.handmade', locale), t('trust.shipping', locale), rated, t('trust.secure', locale)];
+const ratedVal = shop.rating != null ? formatRating(shop.rating) : '5.0';
+const ratedTitle = t('home.trustEtsy', locale);
+const ratedSub = t('home.trustEtsySub', locale);
+
+const points = [
+  {
+    title: t('home.trustHandmade', locale),
+    sub: t('home.trustHandmadeSub', locale),
+    icon: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`,
+    badge: '100%'
+  },
+  {
+    title: t('home.trustShip', locale),
+    sub: t('home.trustShipSub', locale),
+    icon: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="3" width="15" height="13" rx="2"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>`,
+    badge: 'Global'
+  },
+  {
+    title: ratedTitle,
+    sub: `${ratedVal}★ (${shop.count ?? 500}+ reviews)`,
+    icon: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`,
+    badge: 'Etsy'
+  }
+];
 ---
 <section class="section--tint trustbar">
-  <div class="container trustbar__inner reveal">
-    {items.map((label) => <span class="trustbar__item">{label}</span>)}
+  <div class="container trustbar__inner">
+    {points.map((p, i) => (
+      <div class={`trustcard hover-lift reveal reveal--fade-up reveal--d${i + 1}`} style={`--i:${i}`}>
+        <div class="trustcard__badge">{p.badge}</div>
+        <div class="trustcard__icon" set:html={p.icon} />
+        <div class="trustcard__content">
+          <h3 class="trustcard__title">{p.title}</h3>
+          <p class="trustcard__sub">{p.sub}</p>
+        </div>
+      </div>
+    ))}
   </div>
 </section>
 <style>
-  .trustbar { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
-  .trustbar__inner { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-3) var(--space-6); padding: var(--space-4) 0; }
-  .trustbar__item { position: relative; font-size: var(--step-small); letter-spacing: .04em; color: var(--muted); padding-left: var(--space-4); }
-  .trustbar__item::before { content: '✦'; position: absolute; left: 0; color: var(--accent); }
+  .trustbar { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: var(--space-6) 0; }
+  .trustbar__inner { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--space-5); }
+  .trustcard { position: relative; display: flex; align-items: center; gap: var(--space-4); background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(12px); padding: var(--space-5); border-radius: var(--radius); border: 1px solid rgba(232, 224, 213, 0.5); box-shadow: var(--shadow-glass); overflow: hidden; }
+  .trustcard__badge { position: absolute; top: var(--space-3); right: var(--space-3); font-size: 0.7rem; font-weight: 600; text-transform: uppercase; background: color-mix(in srgb, var(--accent) 8%, transparent); color: var(--accent-ink); padding: 2px 8px; border-radius: var(--radius-pill); letter-spacing: 0.05em; }
+  .trustcard__icon { display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 50%; background: color-mix(in srgb, var(--accent) 8%, transparent); color: var(--accent); transition: transform 0.6s var(--ease); }
+  .trustcard:hover .trustcard__icon { transform: rotate(15deg) scale(1.05); }
+  .trustcard__content { display: flex; flex-direction: column; gap: 2px; }
+  .trustcard__title { font-family: var(--font-body); font-size: var(--step-body); font-weight: 600; margin: 0; color: var(--ink); }
+  .trustcard__sub { font-size: var(--step-small); color: var(--muted); margin: 0; }
 </style>

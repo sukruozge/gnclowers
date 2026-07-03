@@ -1,26 +1,65 @@
 ---
 import { t, type Locale } from '@lib/i18n';
-import { loadProducts, localizedTitle } from '@lib/products';
+import { loadProducts } from '@lib/products';
 import SectionHeading from '../SectionHeading.astro';
+
 const { locale } = Astro.props as { locale: Locale };
 const products = loadProducts();
-// Collections are the real Etsy shop-section titles; show up to 8 that have imagery.
+
+const catLabels: Record<string, Record<Locale, string>> = {
+  'Crochet Bags': { tr: 'Örgü Çantalar', en: 'Crochet Bags' },
+  'Safari Animals': { tr: 'Safari Hayvanları', en: 'Safari Animals' },
+  'Curtain Tiebacks': { tr: 'Perde Tutacakları', en: 'Curtain Tiebacks' },
+  'Amigurumi Toys': { tr: 'Amigurumi Oyuncaklar', en: 'Amigurumi Toys' },
+  'Baby Gift Sets': { tr: 'Bebek Hediye Setleri', en: 'Baby Gift Sets' },
+  'Stuffed Animals': { tr: 'Peluş Oyuncaklar', en: 'Stuffed Animals' },
+  'Crochet Dolls': { tr: 'Örgü Bebekler', en: 'Crochet Dolls' },
+  'Bunny Rabbits Toys': { tr: 'Örgü Tavşanlar', en: 'Bunny Rabbits Toys' },
+  'Baby Shower': { tr: 'Bebek Partisi', en: 'Baby Shower' },
+  'Crochet Hair Clips': { tr: 'Örgü Saç Tokaları', en: 'Crochet Hair Clips' },
+  'Wedding Dolls': { tr: 'Düğün Bebekleri', en: 'Wedding Dolls' }
+};
+
+const REPRESENTATIVE_IMAGES: Record<string, string> = {
+  'Crochet Bags': '/images/categories/bags.png',
+  'Safari Animals': '/images/categories/safari.png',
+  'Curtain Tiebacks': '/images/categories/tiebacks.png',
+  'Amigurumi Toys': '/images/categories/toys.png',
+  'Baby Gift Sets': '/images/categories/giftsets.png',
+  'Stuffed Animals': '/images/categories/toys.png',
+  'Crochet Dolls': '/images/categories/dolls.png',
+  'Bunny Rabbits Toys': '/images/categories/bunny.png',
+  'Baby Shower': '/images/categories/giftsets.png',
+  'Crochet Hair Clips': '/images/categories/hairclips.png',
+  'Wedding Dolls': '/images/categories/dolls.png'
+};
+
 const cats = [...new Set(products.map((p) => p.category))]
   .map((c) => {
     const sample = products.find((p) => p.category === c && p.image);
-    return { c, label: c, img: sample?.image, alt: sample ? localizedTitle(sample, locale) : c };
+    const chosenImage = REPRESENTATIVE_IMAGES[c] ?? sample?.image;
+    const label = catLabels[c]?.[locale] ?? c;
+    return { c, label, img: chosenImage, alt: label };
   })
   .filter((cat) => cat.img)
   .slice(0, 8);
+
 const catalog = locale === 'tr' ? '/tr/urunler' : '/en/products';
 ---
 <section class="section">
   <div class="container">
-    <SectionHeading title={t('home.categories', locale)} />
+    <div class="reveal reveal--fade-up">
+      <SectionHeading title={t('home.categories', locale)} />
+    </div>
     <div class="cats">
-      {cats.map((cat) => (
-        <a class="cat" href={`${catalog}?cat=${encodeURIComponent(cat.c)}`}>
-          <div class="cat__media">{cat.img && <img src={cat.img} alt={cat.alt} loading="lazy" />}</div>
+      {cats.map((cat, idx) => (
+        <a class={`cat hover-scale reveal reveal--fade-up reveal--d${(idx % 4) + 1}`} href={`${catalog}?cat=${encodeURIComponent(cat.c)}`}>
+          <div class="cat__media">
+            {cat.img && <img src={cat.img} alt={cat.alt} loading="lazy" />}
+            <div class="cat__overlay">
+              <span class="cat__overlay-btn">{locale === 'tr' ? 'Keşfet' : 'Explore'} →</span>
+            </div>
+          </div>
           <span class="cat__label">{cat.label}</span>
         </a>
       ))}
@@ -28,10 +67,67 @@ const catalog = locale === 'tr' ? '/tr/urunler' : '/en/products';
   </div>
 </section>
 <style>
-  .cats { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: var(--space-5); }
-  .cat { display: block; }
-  .cat__media { aspect-ratio: 1 / 1; overflow: hidden; border-radius: var(--radius); background: var(--section); }
-  .cat__media img { width: 100%; height: 100%; object-fit: cover; transition: transform 600ms var(--ease); }
-  .cat:hover .cat__media img { transform: scale(1.05); }
-  .cat__label { display: block; font-family: var(--font-display); font-size: 1.2rem; margin-top: var(--space-3); }
+  .cats { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); 
+    gap: var(--space-6) var(--space-5); 
+  }
+  .cat { 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .cat__media { 
+    position: relative;
+    width: 100%;
+    aspect-ratio: 9/12; 
+    overflow: hidden; 
+    border-radius: 120px 120px var(--radius) var(--radius); 
+    background: var(--section); 
+    box-shadow: 0 8px 24px rgba(28, 26, 24, 0.04);
+  }
+  .cat__media img { 
+    width: 100%; 
+    height: 100%; 
+    object-fit: cover; 
+    transition: transform 1s var(--ease); 
+  }
+  
+  .cat__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(28, 26, 24, 0.4) 0%, transparent 60%);
+    opacity: 0;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: var(--space-5);
+    transition: opacity var(--dur) var(--ease);
+  }
+  
+  .cat__overlay-btn {
+    color: var(--surface);
+    font-size: var(--step-small);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1.5px solid var(--surface);
+    padding-bottom: 2px;
+  }
+
+  .cat:hover .cat__media img { 
+    transform: scale(1.06); 
+  }
+  .cat:hover .cat__overlay {
+    opacity: 1;
+  }
+  .cat__label { 
+    display: block; 
+    font-family: var(--font-display); 
+    font-size: 1.25rem; 
+    font-weight: 500;
+    margin-top: var(--space-4); 
+    color: var(--ink);
+  }
 </style>

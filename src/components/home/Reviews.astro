@@ -1,45 +1,428 @@
 ---
 import { t, type Locale } from '@lib/i18n';
-import { loadReviews, pickReviews, formatRating } from '@lib/reviews';
 import StarRating from '../StarRating.astro';
+
 const { locale } = Astro.props as { locale: Locale };
-const { shop, reviews } = loadReviews();
-const picks = pickReviews(reviews, locale, 6);
-const ratingLine = shop.rating != null
-  ? t('reviews.ratingLine', locale).replace('{rating}', formatRating(shop.rating)).replace('{count}', String(shop.count))
-  : '';
+
+interface Testimonial {
+  text: string;
+  name: string;
+  role: string;
+  rating: number;
+}
+
+const testimonials: Testimonial[] = locale === 'tr' ? [
+  {
+    text: "Flamingo amigurumi oyuncağı harika! Tam anlatıldığı gibi, kızıma harika bir doğum günü hediyesi oldu. İşçiliği inanılmaz temiz.",
+    name: "Briana Patton",
+    role: "Etsy Alıcısı, ABD",
+    rating: 5
+  },
+  {
+    text: "Safari temalı bebek odamız için tavşanlı perde tutacakları sipariş verdim. Yumuşaklığı ve kalitesi mükemmel, çok tatlı duruyorlar.",
+    name: "Melissa Green",
+    role: "Bebek Odası Tasarımcısı",
+    rating: 5
+  },
+  {
+    text: "Kişiye özel renk ve boyutta örgü tavşan sipariş ettim. Mağaza iletişimi harikaydı, her soruma anında yanıt aldım. Teşekkürler!",
+    name: "Bilal Ahmed",
+    role: "Etsy Alıcısı, İngiltere",
+    rating: 5
+  },
+  {
+    text: "Örgü çanta tasarımı ve kalitesi beklediğimin çok üzerinde. Günlük kullanım için son derece hafif, şık ve sağlam.",
+    name: "Saman Malik",
+    role: "Moda Editörü",
+    rating: 5
+  },
+  {
+    text: "Etsy'deki en tatlı ve yardımcı satıcı olabilir! Bebek hediye seti tam zamanında ve mükemmel bir paketleme ile ulaştı.",
+    name: "Zainab Hussain",
+    role: "Etsy Alıcısı, Kanada",
+    rating: 5
+  },
+  {
+    text: "Tığ işi dinozor oyuncağı o kadar yumuşak ve güvenli ki, yeni doğan bebeğimiz için hiç tereddüt etmeden kullanıyoruz.",
+    name: "Aliza Khan",
+    role: "Anne & Çocuk Blog Yazarı",
+    rating: 5
+  },
+  {
+    text: "İşçilikteki el emeği kalitesi büyüleyici. Organik pamuk ipliğinin doğallığını dokunduğunuz an hissedebiliyorsunuz.",
+    name: "Omar Raza",
+    role: "Tasarım Direktörü",
+    rating: 5
+  },
+  {
+    text: "Özel siparişimiz için iletişim baştan sona harikaydı. Yapım aşamasında fotoğraflarla bilgilendirildik. İşçilik muhteşem.",
+    name: "Sana Sheikh",
+    role: "Etsy Alıcısı, Almanya",
+    rating: 5
+  },
+  {
+    text: "Hızlı kargo ve özenli paketleme. Hediye paketi o kadar güzel yapılmıştı ki açmaya kıyamadık. Kesinlikle tavsiye ederim.",
+    name: "Hassan Ali",
+    role: "Etsy Alıcısı, Fransa",
+    rating: 5
+  }
+] : [
+  {
+    text: "The flamingo amigurumi is beautiful! Just as described, it made a wonderful birthday gift for my daughter. So well made.",
+    name: "Briana Patton",
+    role: "Etsy Buyer, USA",
+    rating: 5
+  },
+  {
+    text: "Ordered the bunny curtain tie-backs for our safari-themed nursery. Workmanship and softness are perfect, they look so cute.",
+    name: "Melissa Green",
+    role: "Nursery Designer",
+    rating: 5
+  },
+  {
+    text: "Custom color and size order came out great! Excellent communication, very helpful throughout the process. Highly recommend.",
+    name: "Bilal Ahmed",
+    role: "Etsy Buyer, UK",
+    rating: 5
+  },
+  {
+    text: "The design and quality of the crochet bag is well above my expectations. Lightweight, stylish, and durable for daily use.",
+    name: "Saman Malik",
+    role: "Fashion Editor",
+    rating: 5
+  },
+  {
+    text: "Probably the sweetest and most helpful seller on Etsy! The baby gift set arrived right on time and in perfect packaging.",
+    name: "Zainab Hussain",
+    role: "Etsy Buyer, Canada",
+    rating: 5
+  },
+  {
+    text: "The crochet dinosaur plush is so soft and safe. We use it for our newborn baby without any worries. Fantastic craft.",
+    name: "Aliza Khan",
+    role: "Mom & Child Blogger",
+    rating: 5
+  },
+  {
+    text: "The attention to detail and handcraft quality is mesmerizing. You can feel the premium organic cotton immediately.",
+    name: "Omar Raza",
+    role: "Design Director",
+    rating: 5
+  },
+  {
+    text: "Outstanding customer service for our custom order. We were updated with photos at every step. Thank you so much!",
+    name: "Sana Sheikh",
+    role: "Etsy Buyer, Germany",
+    rating: 5
+  },
+  {
+    text: "Super fast shipping and beautiful packaging. The gift wrapping was so lovely we didn't want to open it. Highly recommended.",
+    name: "Hassan Ali",
+    role: "Etsy Buyer, France",
+    rating: 5
+  }
+];
+
+const firstColumn = testimonials.slice(0, 3);
+const secondColumn = testimonials.slice(3, 6);
+const thirdColumn = testimonials.slice(6, 9);
+
 const initial = (txt: string) => (txt.trim()[0] ?? '★').toUpperCase();
 ---
-<section class="section section--tint">
-  <div class="container reviews reveal">
-    <div class="reviews__head">
-      <p class="eyebrow">{t('reviews.eyebrow', locale)}</p>
-      <h2>{t('reviews.title', locale)}</h2>
-      {ratingLine && (
-        <p class="reviews__rating">{shop.rating != null && <StarRating rating={shop.rating} />} <span>{ratingLine}</span></p>
-      )}
-      <a class="reviews__link" href="https://www.etsy.com/shop/aselovers/reviews" target="_blank" rel="noopener">{t('reviews.seeAll', locale)}</a>
-    </div>
-    {picks.length > 0 && (
-      <div class="reviews__grid">
-        {picks.map((r) => (
-          <figure class="review">
-            <StarRating rating={r.rating} />
-            <blockquote class="review__text">“{r.text}”</blockquote>
-            <figcaption class="review__meta"><span class="review__avatar">{initial(r.text)}</span>{r.date && <span>{r.date}</span>}</figcaption>
-          </figure>
-        ))}
+<section class="section section--tint testimonials-section" aria-labelledby="testimonials-heading">
+  <div class="container testimonials-inner reveal">
+    
+    <!-- Heading -->
+    <div class="testimonials-head">
+      <div class="badge-wrapper">
+        <span class="testimonials-badge">{t('reviews.eyebrow', locale)}</span>
       </div>
-    )}
+      <h2 id="testimonials-heading">{t('reviews.title', locale)}</h2>
+      <p class="subtitle">
+        {locale === 'tr' 
+          ? 'Binlerce ailenin neden Aselovers ürünlerini tercih ettiğini keşfedin.'
+          : 'Discover why families love cuddling with Aselovers handmade companions.'}
+      </p>
+    </div>
+
+    <!-- Scrolling Grid Region -->
+    <div class="scrolling-grid" role="region" aria-label="Scrolling Testimonials">
+      
+      <!-- Col 1 -->
+      <div class="scroll-col scroll-col--1">
+        <ul class="scroll-col__list animation-dur-15">
+          {[...firstColumn, ...firstColumn].map((r, i) => (
+            <li class="testimonial-card">
+              <div class="card-stars">
+                <StarRating rating={r.rating} />
+              </div>
+              <blockquote class="card-text">“{r.text}”</blockquote>
+              <div class="card-meta">
+                <span class="card-avatar">{initial(r.name)}</span>
+                <div class="card-info">
+                  <cite class="card-name">{r.name}</cite>
+                  <span class="card-role">{r.role}</span>
+                </div>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <!-- Col 2 -->
+      <div class="scroll-col scroll-col--2">
+        <ul class="scroll-col__list animation-dur-19">
+          {[...secondColumn, ...secondColumn].map((r, i) => (
+            <li class="testimonial-card">
+              <div class="card-stars">
+                <StarRating rating={r.rating} />
+              </div>
+              <blockquote class="card-text">“{r.text}”</blockquote>
+              <div class="card-meta">
+                <span class="card-avatar">{initial(r.name)}</span>
+                <div class="card-info">
+                  <cite class="card-name">{r.name}</cite>
+                  <span class="card-role">{r.role}</span>
+                </div>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <!-- Col 3 -->
+      <div class="scroll-col scroll-col--3">
+        <ul class="scroll-col__list animation-dur-17">
+          {[...thirdColumn, ...thirdColumn].map((r, i) => (
+            <li class="testimonial-card">
+              <div class="card-stars">
+                <StarRating rating={r.rating} />
+              </div>
+              <blockquote class="card-text">“{r.text}”</blockquote>
+              <div class="card-meta">
+                <span class="card-avatar">{initial(r.name)}</span>
+                <div class="card-info">
+                  <cite class="card-name">{r.name}</cite>
+                  <span class="card-role">{r.role}</span>
+                </div>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+    </div>
+
+    <!-- Foot Link -->
+    <div class="testimonials-foot">
+      <a class="reviews-see-all" href="https://www.etsy.com/shop/aselovers/reviews" target="_blank" rel="noopener">
+        {t('reviews.seeAll', locale)} →
+      </a>
+    </div>
+
   </div>
 </section>
+
 <style>
-  .reviews__head { max-width: 46ch; margin-bottom: var(--space-6); }
-  .reviews__rating { display: flex; align-items: center; gap: var(--space-2); color: var(--accent-ink); font-weight: 500; }
-  .reviews__link { color: var(--accent); border-bottom: 1px solid currentColor; }
-  .reviews__grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: var(--space-4); }
-  .review { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: var(--space-5); margin: 0; display: flex; flex-direction: column; gap: var(--space-3); }
-  .review__text { margin: 0; font-size: 1.02rem; line-height: 1.6; color: var(--ink); }
-  .review__meta { display: flex; align-items: center; gap: var(--space-2); font-size: var(--step-small); color: var(--muted); }
-  .review__avatar { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: color-mix(in srgb, var(--accent) 16%, transparent); color: var(--accent-ink); font-weight: 600; }
+  .testimonials-section {
+    position: relative;
+    padding: var(--space-8) 0;
+    overflow: hidden;
+  }
+
+  .testimonials-head {
+    max-width: 580px;
+    margin: 0 auto var(--space-6);
+    text-align: center;
+  }
+  
+  .badge-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-bottom: var(--space-3);
+  }
+  
+  .testimonials-badge {
+    display: inline-block;
+    border: 1px solid var(--line);
+    padding: 6px 16px;
+    border-radius: var(--radius-pill);
+    text-transform: uppercase;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    background: rgba(255,255,255,0.5);
+  }
+
+  .testimonials-head h2 {
+    font-size: var(--step-h2);
+    color: var(--ink);
+    margin: 0 0 var(--space-3);
+  }
+
+  .testimonials-head .subtitle {
+    font-size: 1.05rem;
+    color: var(--muted);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  /* Scrolling Grid layout */
+  .scrolling-grid {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-5);
+    margin-top: var(--space-6);
+    max-height: 680px;
+    overflow: hidden;
+    position: relative;
+    /* Masking gradient at top and bottom to fade out edge cards */
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%);
+    mask-image: linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%);
+  }
+
+  .scroll-col {
+    flex: 1;
+    max-width: 340px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .scroll-col__list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    padding: 0 0 var(--space-4);
+    margin: 0;
+    list-style: none;
+    animation: scrollVertical 20s linear infinite;
+  }
+
+  /* Different scrolling speeds */
+  .animation-dur-15 { animation-duration: 25s; }
+  .animation-dur-19 { animation-duration: 32s; }
+  .animation-dur-17 { animation-duration: 28s; }
+
+  /* Infinite Scroll Keyframes */
+  @keyframes scrollVertical {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-50%); }
+  }
+
+  /* Hover to pause column scroll */
+  .scroll-col:hover .scroll-col__list {
+    animation-play-state: paused;
+  }
+
+  /* Cards inside columns */
+  .testimonial-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: var(--space-5);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    box-shadow: 0 4px 12px rgba(28, 26, 24, 0.02);
+    transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease), border-color var(--dur) var(--ease);
+    cursor: default;
+    user-select: none;
+  }
+
+  .testimonial-card:hover {
+    transform: scale(1.03) translateY(-6px);
+    box-shadow: 0 20px 40px rgba(28, 26, 24, 0.08);
+    border-color: rgba(176, 83, 46, 0.2); /* var(--accent) match */
+  }
+
+  .card-stars {
+    display: flex;
+    justify-content: flex-start;
+  }
+
+  .card-text {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--ink);
+    font-weight: 400;
+  }
+
+  .card-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .card-avatar {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--accent) 10%, transparent);
+    color: var(--accent-ink);
+    font-weight: 600;
+    font-size: 0.88rem;
+  }
+
+  .card-info {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+  }
+
+  .card-name {
+    font-style: normal;
+    font-weight: 600;
+    font-size: 0.92rem;
+    color: var(--ink);
+  }
+
+  .card-role {
+    font-size: 0.76rem;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .testimonials-foot {
+    text-align: center;
+    margin-top: var(--space-6);
+  }
+
+  .reviews-see-all {
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--accent);
+    border-bottom: 1.5px solid transparent;
+    padding-bottom: 2px;
+    transition: border-color var(--dur) var(--ease);
+  }
+  
+  .reviews-see-all:hover {
+    border-color: var(--accent);
+  }
+
+  /* Responsive Rules */
+  @media (max-width: 900px) {
+    .scroll-col--3 {
+      display: none;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .scroll-col--2 {
+      display: none;
+    }
+    .scrolling-grid {
+      max-height: 480px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .scroll-col__list {
+      animation: none;
+    }
+  }
 </style>

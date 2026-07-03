@@ -2,32 +2,207 @@
 import Base from '../../layouts/Base.astro';
 import Nav from '../../components/Nav.astro';
 import Footer from '../../components/Footer.astro';
-import { loadProducts, localizedTitle } from '@lib/products';
-const img = loadProducts().find((x) => x.image);
+import Button from '../../components/Button.astro';
+import { t } from '@lib/i18n';
+
+const locale = 'en';
 ---
-<Base locale="en" title="About — Aselovers"
-  description="The Aselovers story: a small studio devoted to handmade amigurumi, crocheted with love."
+<Base locale="en" title="About Us — Aselovers"
+  description="The Aselovers story: a workshop dedicated to handmade amigurumi toys, organic crochet bags, and nursery decor crafted with love."
   pathSelf="about" pathsAlt={{ tr: 'hakkimizda', en: 'about' }}>
   <Nav locale="en" />
-  <main>
-    <section class="section">
-      <div class="container about reveal">
-        <div class="about__copy prose">
-          <p class="eyebrow">Our story</p>
-          <h1>Every stitch by hand, with love</h1>
-          <p>Aselovers is a small studio making personalized, handmade baby gifts. Every amigurumi, toy, and accessory is crocheted one at a time with premium yarn, patience, and love.</p>
-          <p>We make for new parents, baby-shower planners, and anyone looking for a gift that means something. We personalize each piece with a name, colours, and little details, using soft, baby-friendly, safe materials.</p>
-          <p>Every order is crocheted after you place it — so no two pieces are ever quite alike. We ship worldwide, including Turkey and the US, and grow a little prouder with every happy review on Etsy.</p>
+  
+  <main class="about-page">
+    <!-- Hero Section -->
+    <section class="about-hero">
+      <div class="container about-hero__inner">
+        <div class="about-hero__copy reveal reveal--fade-up">
+          <p class="eyebrow">{t('about.heroEyebrow', locale)}</p>
+          <h1>{t('about.heroTitle', locale)}</h1>
+          <p class="lead">{t('about.heroSub', locale)}</p>
         </div>
-        <div class="about__media">{img && <img src={img.image} alt={localizedTitle(img, 'en')} loading="lazy" />}</div>
+        <div class="about-hero__media reveal reveal--scale-in reveal--d2">
+          <div class="asymmetric-grid">
+            <div class="media-frame animate-float frame--1">
+              <img src="/hero.png" alt="Aselovers Amigurumi" loading="eager" />
+              <div class="media-badge">🧶 {t('home.trustHandmade', locale)}</div>
+            </div>
+            <div class="media-frame animate-float frame--2" style="animation-delay: 1s;">
+              <img src="/bags.png" alt="Aselovers Crochet Bags" loading="eager" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Intro Text Grid -->
+    <section class="about-intro section--tint">
+      <div class="container about-intro__inner reveal reveal--fade-up">
+        <div class="about-intro__title">
+          <h2>Crafting Natural Toys</h2>
+          <p class="subtitle">A mother's love behind every toy, shaping a natural future in every stitch.</p>
+        </div>
+        <div class="about-intro__content prose">
+          <p>{t('about.introText1', locale)}</p>
+          <p>{t('about.introText2', locale)}</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Brand Values Grid -->
+    <section class="about-values section">
+      <div class="container">
+        <div class="section-title reveal reveal--fade-up">
+          <p class="eyebrow">How We Knit</p>
+          <h2>Our Core Values</h2>
+        </div>
+        <div class="values-grid">
+          <!-- Value 1 -->
+          <div class="value-card hover-lift reveal reveal--fade-up reveal--d1">
+            <div class="value-card__icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+            </div>
+            <h3>{t('about.value1Title', locale)}</h3>
+            <p>{t('about.value1Body', locale)}</p>
+          </div>
+          <!-- Value 2 -->
+          <div class="value-card hover-lift reveal reveal--fade-up reveal--d2">
+            <div class="value-card__icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2h-1V7a5 5 0 0 0-5-5zM9 7a3 3 0 0 1 6 0v3H9V7z"/></svg>
+            </div>
+            <h3>{t('about.value2Title', locale)}</h3>
+            <p>{t('about.value2Body', locale)}</p>
+          </div>
+          <!-- Value 3 -->
+          <div class="value-card hover-lift reveal reveal--fade-up reveal--d3">
+            <div class="value-card__icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+            </div>
+            <h3>{t('about.value3Title', locale)}</h3>
+            <p>{t('about.value3Body', locale)}</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Timeline Journey -->
+    <section class="about-timeline section--tint section">
+      <div class="container">
+        <div class="section-title reveal reveal--fade-up">
+          <p class="eyebrow">{t('about.timelineTitle', locale)}</p>
+          <h2>Our Journey Timeline</h2>
+        </div>
+        <div class="timeline">
+          <!-- Step 1 -->
+          <div class="timeline-item reveal reveal--fade-up reveal--d1">
+            <div class="timeline-year">{t('about.timelineStep1Year', locale)}</div>
+            <div class="timeline-card hover-lift">
+              <h3>{t('about.timelineStep1Title', locale)}</h3>
+              <p>{t('about.timelineStep1Body', locale)}</p>
+            </div>
+          </div>
+          <!-- Step 2 -->
+          <div class="timeline-item reveal reveal--fade-up reveal--d2">
+            <div class="timeline-year">{t('about.timelineStep2Year', locale)}</div>
+            <div class="timeline-card hover-lift">
+              <h3>{t('about.timelineStep2Title', locale)}</h3>
+              <p>{t('about.timelineStep2Body', locale)}</p>
+            </div>
+          </div>
+          <!-- Step 3 -->
+          <div class="timeline-item reveal reveal--fade-up reveal--d3">
+            <div class="timeline-year">{t('about.timelineStep3Year', locale)}</div>
+            <div class="timeline-card hover-lift">
+              <h3>{t('about.timelineStep3Title', locale)}</h3>
+              <p>{t('about.timelineStep3Body', locale)}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="about-cta section">
+      <div class="container">
+        <div class="cta-banner reveal reveal--scale-in">
+          <div class="cta-banner__content">
+            <h2>{t('about.ctaTitle', locale)}</h2>
+            <p>{t('about.ctaBody', locale)}</p>
+            <div class="cta-actions">
+              <Button href={locale === 'tr' ? '/tr/iletisim' : '/en/contact'} variant="primary">{t('about.ctaButton', locale)}</Button>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   </main>
+
   <Footer locale="en" />
+
   <style>
-    .about { display: grid; grid-template-columns: 1.1fr .9fr; gap: var(--space-7); align-items: start; }
-    .about__media { aspect-ratio: 1/1; overflow: hidden; border-radius: var(--radius); position: sticky; top: 92px; }
-    .about__media img { width: 100%; height: 100%; object-fit: cover; }
-    @media (max-width: 900px) { .about { grid-template-columns: 1fr; } .about__media { position: static; } }
+    /* Hero */
+    .about-hero { padding: var(--space-7) 0 var(--space-8); }
+    .about-hero__inner { display: grid; grid-template-columns: 1.05fr .95fr; gap: var(--space-7); align-items: center; }
+    .about-hero__copy h1 { font-size: clamp(2.4rem, 5vw, 3.8rem); line-height: 1.1; margin-bottom: var(--space-4); }
+    .about-hero__copy .lead { font-size: 1.25rem; color: var(--muted); line-height: 1.6; }
+    
+    /* Asymmetric visual grid */
+    .asymmetric-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: var(--space-4); align-items: flex-end; position: relative; }
+    .media-frame { position: relative; overflow: hidden; border-radius: var(--radius-lg); box-shadow: 0 20px 40px rgba(34,32,30,.08); border: 4px solid var(--surface); }
+    .frame--1 { aspect-ratio: 1/1; z-index: 2; }
+    .frame--2 { aspect-ratio: 9/12; z-index: 1; transform: translateY(-40px); background: var(--section); }
+    
+    .media-frame img { width: 100%; height: 100%; object-fit: cover; transition: transform var(--dur) var(--ease); }
+    .media-frame:hover img { transform: scale(1.04); }
+    .media-badge { position: absolute; bottom: var(--space-4); left: var(--space-4); background: var(--surface); color: var(--ink); padding: var(--space-2) var(--space-4); border-radius: var(--radius-pill); font-size: var(--step-small); font-weight: 600; box-shadow: 0 4px 12px rgba(34,32,30,.1); z-index: 3; }
+
+    /* Intro */
+    .about-intro { padding: var(--space-7) 0; }
+    .about-intro__inner { display: grid; grid-template-columns: 1fr 1.2fr; gap: var(--space-6); align-items: start; }
+    .about-intro__title h2 { font-size: var(--step-h2); color: var(--ink); margin-bottom: var(--space-2); }
+    .about-intro__title .subtitle { color: var(--accent); font-family: var(--font-body); font-weight: 500; font-size: 1.05rem; }
+    .about-intro__content p { font-size: 1.05rem; line-height: 1.8; color: var(--muted); margin-bottom: var(--space-4); }
+
+    /* Section Title */
+    .section-title { text-align: center; margin-bottom: var(--space-6); }
+    .section-title h2 { font-size: var(--step-h2); color: var(--ink); }
+
+    /* Values Grid */
+    .values-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--space-5); margin-bottom: var(--space-6); }
+    .value-card { background: var(--surface); padding: var(--space-6); border-radius: var(--radius); border: 1px solid var(--line); text-align: center; }
+    .value-card__icon { display: inline-flex; align-items: center; justify-content: center; width: 56px; height: 56px; border-radius: 50%; background: color-mix(in srgb, var(--accent) 8%, transparent); color: var(--accent); margin-bottom: var(--space-4); }
+    .value-card h3 { font-family: var(--font-body); font-size: 1.25rem; font-weight: 600; margin-bottom: var(--space-3); color: var(--ink); }
+    .value-card p { font-size: var(--step-small); color: var(--muted); margin: 0; line-height: 1.6; }
+
+    /* Timeline */
+    .timeline { position: relative; max-width: 800px; margin: 0 auto; padding: var(--space-4) 0; }
+    .timeline::before { content: ''; position: absolute; top: 0; bottom: 0; left: 120px; width: 2px; background: var(--line); }
+    .timeline-item { display: flex; gap: var(--space-5); margin-bottom: var(--space-5); align-items: flex-start; }
+    .timeline-year { width: 100px; text-align: right; font-family: var(--font-display); font-size: 1.8rem; font-weight: 600; color: var(--accent); flex-shrink: 0; padding-top: 12px; }
+    .timeline-card { background: var(--surface); padding: var(--space-5); border-radius: var(--radius); border: 1px solid var(--line); flex-grow: 1; box-shadow: 0 4px 12px rgba(34,32,30,.02); position: relative; }
+    .timeline-card::before { content: ''; position: absolute; top: 24px; left: -8px; width: 14px; height: 14px; background: var(--surface); border-left: 1px solid var(--line); border-bottom: 1px solid var(--line); transform: rotate(45deg); }
+    .timeline-card h3 { font-family: var(--font-body); font-size: 1.15rem; font-weight: 600; margin-bottom: 6px; color: var(--ink); }
+    .timeline-card p { font-size: var(--step-small); color: var(--muted); margin: 0; }
+
+    /* CTA Banner */
+    .cta-banner { background: linear-gradient(135deg, var(--footer-bg) 0%, #3e3833 100%); color: var(--footer-fg); padding: var(--space-7) var(--space-6); border-radius: var(--radius); text-align: center; box-shadow: var(--shadow-hover); }
+    .cta-banner__content { max-width: 600px; margin: 0 auto; }
+    .cta-banner h2 { font-size: var(--step-h2); color: var(--footer-fg); margin-bottom: var(--space-3); }
+    .cta-banner p { font-size: 1.1rem; color: color-mix(in srgb, var(--footer-fg) 80%, transparent); margin-bottom: var(--space-5); }
+    .cta-actions { display: flex; justify-content: center; }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .about-hero__inner { grid-template-columns: 1fr; gap: var(--space-5); text-align: center; }
+      .about-hero__copy h1 { font-size: 2.2rem; }
+      .asymmetric-grid { max-width: 450px; margin: 0 auto; padding-bottom: 40px; }
+      .frame--2 { transform: translateY(0); }
+      .about-intro__inner { grid-template-columns: 1fr; gap: var(--space-4); }
+      .timeline::before { left: 24px; }
+      .timeline-item { flex-direction: column; gap: 8px; padding-left: 48px; position: relative; }
+      .timeline-year { text-align: left; width: auto; padding-top: 0; font-size: 1.5rem; position: absolute; left: 0; top: 0; }
+      .timeline-year::after { content: ''; position: absolute; left: 24px; top: 12px; width: 10px; height: 10px; border-radius: 50%; background: var(--accent); transform: translateX(-5px); z-index: 2; }
+      .timeline-card::before { display: none; }
+    }
   </style>
 </Base>

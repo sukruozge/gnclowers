@@ -20,23 +20,23 @@
  *   • Production'da hata detayı yok
  */
 
-const express   = require('express');
-const helmet    = require('helmet');
+const express = require('express');
+const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
-const bcrypt    = require('bcryptjs');
-const jwt       = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const { body, validationResult } = require('express-validator');
-const cookie    = require('cookie-parser');
-const path      = require('path');
-const fs        = require('fs');
-const crypto    = require('crypto');
+const cookie = require('cookie-parser');
+const path = require('path');
+const fs = require('fs');
+const crypto = require('crypto');
 
 require('dotenv').config();
 
 // ── Config ────────────────────────────────────────────
-const PORT    = parseInt(process.env.PORT, 10) || 3000;
+const PORT = parseInt(process.env.PORT, 10) || 3000;
 const IS_PROD = process.env.NODE_ENV === 'production';
-const DIR     = __dirname;
+const DIR = __dirname;
 
 // JWT secret — must be set in .env for production
 const JWT_SECRET = (() => {
@@ -64,9 +64,9 @@ let ADMIN_HASH = process.env.ADMIN_PASSWORD_HASH || null;
 })();
 
 // ── Paths ─────────────────────────────────────────────
-const DATA_DIR   = path.join(DIR, 'data');
-const PRODUCTS_F = path.join(DIR, 'products.json');
-const SUBS_F     = path.join(DATA_DIR, 'subscribers.json');
+const DATA_DIR = path.join(DIR, 'data');
+const PRODUCTS_F = path.join(DIR, 'src', 'data', 'products.json');
+const SUBS_F = path.join(DATA_DIR, 'subscribers.json');
 const ACTIVITY_F = path.join(DATA_DIR, 'activity.json');
 const SETTINGS_F = path.join(DATA_DIR, 'settings.json');
 
@@ -149,20 +149,20 @@ app.disable('x-powered-by');
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {
-      defaultSrc:              ["'self'"],
-      scriptSrc:               ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
-      styleSrc:                ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com', 'https://fonts.gstatic.com'],
-      fontSrc:                 ["'self'", 'https://fonts.gstatic.com'],
-      imgSrc:                  ["'self'", 'data:', 'https://i.etsystatic.com', 'https:'],
-      connectSrc:              ["'self'"],
-      frameSrc:                ["'none'"],
-      objectSrc:               ["'none'"],
-      baseUri:                 ["'self'"],
-      formAction:              ["'self'"],
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
+      styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com', 'https://fonts.gstatic.com'],
+      fontSrc: ["'self'", 'https://fonts.gstatic.com'],
+      imgSrc: ["'self'", 'data:', 'https://i.etsystatic.com', 'https:'],
+      connectSrc: ["'self'"],
+      frameSrc: ["'none'"],
+      objectSrc: ["'none'"],
+      baseUri: ["'self'"],
+      formAction: ["'self'"],
       upgradeInsecureRequests: IS_PROD ? [] : null,
     },
   },
-  hsts:                    IS_PROD ? { maxAge: 31536000, includeSubDomains: true, preload: true } : false,
+  hsts: IS_PROD ? { maxAge: 31536000, includeSubDomains: true, preload: true } : false,
   crossOriginOpenerPolicy: { policy: 'same-origin' },
   crossOriginResourcePolicy: { policy: 'same-origin' },
 }));
@@ -174,21 +174,21 @@ app.use(cookie());
 
 // General rate limit
 app.use(rateLimit({
-  windowMs:        15 * 60 * 1000,
-  max:             300,
+  windowMs: 15 * 60 * 1000,
+  max: 300,
   standardHeaders: 'draft-7',
-  legacyHeaders:   false,
-  message:         { error: 'Çok fazla istek. Lütfen biraz bekleyin.' },
+  legacyHeaders: false,
+  message: { error: 'Çok fazla istek. Lütfen biraz bekleyin.' },
 }));
 
 // Strict login rate limit (10 attempts / 15 min per IP)
 const loginLimiter = rateLimit({
-  windowMs:             15 * 60 * 1000,
-  max:                  10,
-  standardHeaders:      'draft-7',
-  legacyHeaders:        false,
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  standardHeaders: 'draft-7',
+  legacyHeaders: false,
   skipSuccessfulRequests: true,
-  message:              { error: 'Çok fazla giriş denemesi. 15 dakika sonra tekrar deneyin.' },
+  message: { error: 'Çok fazla giriş denemesi. 15 dakika sonra tekrar deneyin.' },
 });
 
 // ── Sensitive file / directory guard ─────────────────
@@ -216,6 +216,11 @@ app.use((req, res, next) => {
   next();
 });
 
+// Serve products.json from src/data
+app.get('/products.json', (req, res) => {
+  res.sendFile(path.join(DIR, 'src', 'data', 'products.json'));
+});
+
 // Static files
 const SAFE_EXTS = new Set([
   '.html', '.css', '.js', '.json', '.jpg', '.jpeg',
@@ -224,7 +229,7 @@ const SAFE_EXTS = new Set([
 
 app.use(express.static(DIR, {
   dotfiles: 'deny',
-  index:    'index.html',
+  index: 'index.html',
   setHeaders(res, fp) {
     const ext = path.extname(fp).toLowerCase();
     if (!SAFE_EXTS.has(ext)) res.setHeader('Content-Type', 'text/plain');
@@ -311,10 +316,10 @@ app.post('/api/admin/login',
 
     res.cookie('ase_adm', token, {
       httpOnly: true,
-      secure:   IS_PROD,
+      secure: IS_PROD,
       sameSite: 'strict',
-      maxAge:   8 * 60 * 60 * 1000,
-      path:     '/',
+      maxAge: 8 * 60 * 60 * 1000,
+      path: '/',
     });
 
     logActivity('LOGIN', `Kullanıcı: ${username}, IP: ${ip}`);
@@ -336,21 +341,21 @@ app.get('/api/admin/me', requireAuth, (req, res) => {
 // ═════════════════════════════════════════════════════
 
 app.get('/api/admin/dashboard', requireAuth, (req, res) => {
-  const pData    = readJSON(PRODUCTS_F, { products: [] });
-  const subs     = readJSON(SUBS_F, []);
+  const pData = readJSON(PRODUCTS_F, { products: [] });
+  const subs = readJSON(SUBS_F, []);
   const activity = readJSON(ACTIVITY_F, []);
   const settings = readJSON(SETTINGS_F, {});
-  const prods    = pData.products || [];
+  const prods = pData.products || [];
 
   res.json({
-    productCount:    prods.length,
-    activeCount:     prods.filter(p => p.isActive !== false).length,
-    newCount:        prods.filter(p => p.isNew).length,
+    productCount: prods.length,
+    activeCount: prods.filter(p => p.isActive !== false).length,
+    newCount: prods.filter(p => p.isNew).length,
     subscriberCount: subs.length,
-    lastSync:        pData.lastSync || null,
-    shopName:        pData.shopName || settings.etsyShop || process.env.ETSY_SHOP || 'aselovers',
-    apiKeySet:       !!(process.env.ETSY_API_KEY || settings.etsyApiKey),
-    recentActivity:  activity.slice(0, 12),
+    lastSync: pData.lastSync || null,
+    shopName: pData.shopName || settings.etsyShop || process.env.ETSY_SHOP || 'aselovers',
+    apiKeySet: !!(process.env.ETSY_API_KEY || settings.etsyApiKey),
+    recentActivity: activity.slice(0, 12),
     syncInProgress,
   });
 });
@@ -370,8 +375,8 @@ app.post('/api/admin/products',
   [
     body('title_en').trim().notEmpty().escape().isLength({ max: 300 }),
     body('title_tr').trim().notEmpty().escape().isLength({ max: 300 }),
-    body('description_en').optional().trim().escape().isLength({ max: 1000 }),
-    body('description_tr').optional().trim().escape().isLength({ max: 1000 }),
+    body('description_en').optional().trim().escape().isLength({ max: 5000 }),
+    body('description_tr').optional().trim().escape().isLength({ max: 5000 }),
     body('price').isFloat({ min: 0 }),
     body('currency').isIn(['TRY', 'EUR', 'USD', 'GBP']),
     body('image').optional({ checkFalsy: true }).trim().isURL({ protocols: ['https'] }),
@@ -384,25 +389,25 @@ app.post('/api/admin/products',
     const errs = validationResult(req);
     if (!errs.isEmpty()) return res.status(400).json({ error: errs.array()[0].msg });
 
-    const d    = readJSON(PRODUCTS_F, { products: [], lastSync: null, total: 0 });
-    const id   = 'manual_' + Date.now();
+    const d = readJSON(PRODUCTS_F, { products: [], lastSync: null, total: 0 });
+    const id = 'manual_' + Date.now();
     const prod = {
       id,
-      title_en:       req.body.title_en,
-      title_tr:       req.body.title_tr,
+      title_en: req.body.title_en,
+      title_tr: req.body.title_tr,
       description_en: req.body.description_en || '',
       description_tr: req.body.description_tr || '',
-      price:          parseFloat(req.body.price),
-      currency:       req.body.currency,
-      image:          req.body.image || null,
-      url:            req.body.url || null,
-      category:       req.body.category,
-      tags:           [],
-      isNew:          req.body.isNew !== false,
-      isActive:       req.body.isActive !== false,
+      price: parseFloat(req.body.price),
+      currency: req.body.currency,
+      image: req.body.image || null,
+      url: req.body.url || null,
+      category: req.body.category,
+      tags: [],
+      isNew: req.body.isNew !== false,
+      isActive: req.body.isActive !== false,
     };
     d.products = [...(d.products || []), prod];
-    d.total    = d.products.length;
+    d.total = d.products.length;
     writeJSON(PRODUCTS_F, d);
     logActivity('ÜRÜN_EKLENDI', `${prod.title_en} (${id})`);
     res.status(201).json(prod);
@@ -415,8 +420,8 @@ app.put('/api/admin/products/:id',
   [
     body('title_en').optional().trim().escape().isLength({ max: 300 }),
     body('title_tr').optional().trim().escape().isLength({ max: 300 }),
-    body('description_en').optional().trim().escape().isLength({ max: 1000 }),
-    body('description_tr').optional().trim().escape().isLength({ max: 1000 }),
+    body('description_en').optional().trim().escape().isLength({ max: 5000 }),
+    body('description_tr').optional().trim().escape().isLength({ max: 5000 }),
     body('price').optional().isFloat({ min: 0 }),
     body('currency').optional().isIn(['TRY', 'EUR', 'USD', 'GBP']),
     body('image').optional({ checkFalsy: true }).trim().isURL({ protocols: ['https'] }),
@@ -432,7 +437,7 @@ app.put('/api/admin/products/:id',
     const { id } = req.params;
     if (!/^[\w-]+$/.test(id)) return res.status(400).json({ error: 'Geçersiz ID.' });
 
-    const d   = readJSON(PRODUCTS_F, { products: [] });
+    const d = readJSON(PRODUCTS_F, { products: [] });
     const idx = (d.products || []).findIndex(p => p.id === id);
     if (idx === -1) return res.status(404).json({ error: 'Ürün bulunamadı.' });
 
@@ -471,8 +476,8 @@ app.get('/api/admin/subscribers', requireAuth, (req, res) => {
 
 app.delete('/api/admin/subscribers/:email', requireAuth, requireAdminHeader, (req, res) => {
   const email = decodeURIComponent(req.params.email).toLowerCase().trim();
-  const subs  = readJSON(SUBS_F, []);
-  const next  = subs.filter(s => s.email !== email);
+  const subs = readJSON(SUBS_F, []);
+  const next = subs.filter(s => s.email !== email);
   if (next.length === subs.length) return res.status(404).json({ error: 'Abone bulunamadı.' });
   writeJSON(SUBS_F, next);
   logActivity('ABONE_SİLİNDİ', `Email: ${email}`);
@@ -489,8 +494,8 @@ app.post('/api/admin/sync', requireAuth, requireAdminHeader, async (req, res) =>
   if (syncInProgress) return res.status(409).json({ error: 'Sync zaten devam ediyor.' });
 
   const settings = readJSON(SETTINGS_F, {});
-  const apiKey   = process.env.ETSY_API_KEY || settings.etsyApiKey || '';
-  const shop     = process.env.ETSY_SHOP    || settings.etsyShop   || 'aselovers';
+  const apiKey = process.env.ETSY_API_KEY || settings.etsyApiKey || '';
+  const shop = process.env.ETSY_SHOP || settings.etsyShop || 'aselovers';
 
   if (!apiKey) return res.status(400).json({ error: 'Etsy API Key tanımlı değil. Ayarlar sayfasından ekleyin.' });
 
@@ -527,9 +532,9 @@ app.get('/api/admin/activity', requireAuth, (req, res) => {
 app.get('/api/admin/settings', requireAuth, (req, res) => {
   const s = readJSON(SETTINGS_F, {});
   res.json({
-    etsyShop:   s.etsyShop  || process.env.ETSY_SHOP || 'aselovers',
+    etsyShop: s.etsyShop || process.env.ETSY_SHOP || 'aselovers',
     etsyApiSet: !!(s.etsyApiKey || process.env.ETSY_API_KEY),
-    adminUser:  ADMIN_USER,
+    adminUser: ADMIN_USER,
   });
 });
 
@@ -546,7 +551,7 @@ app.put('/api/admin/settings',
 
     const s = readJSON(SETTINGS_F, {});
     if (req.body.etsyApiKey) s.etsyApiKey = req.body.etsyApiKey;
-    if (req.body.etsyShop)   s.etsyShop   = req.body.etsyShop;
+    if (req.body.etsyShop) s.etsyShop = req.body.etsyShop;
     writeJSON(SETTINGS_F, s);
     logActivity('AYARLAR_GÜNCELLENDİ', 'Etsy ayarları değiştirildi');
     res.json({ success: true });
@@ -591,7 +596,7 @@ app.post('/api/admin/settings/password',
 // ═════════════════════════════════════════════════════
 
 app.get('/admin', (req, res) => {
-  res.sendFile(path.join(DIR, 'admin.html'));
+  res.sendFile(path.join(DIR, 'public', 'admin', 'dashboard.html'));
 });
 
 // ═════════════════════════════════════════════════════
@@ -653,28 +658,28 @@ async function doEtsySync(apiKey, shopName) {
   const products = all.map(l => {
     const tr = l.translations?.find(t => t.language === 'tr');
     return {
-      id:             String(l.listing_id),
-      title_en:       l.title || '',
-      title_tr:       tr?.title || l.title || '',
+      id: String(l.listing_id),
+      title_en: l.title || '',
+      title_tr: tr?.title || l.title || '',
       description_en: (l.description || '').split('\n')[0].substring(0, 200),
       description_tr: (tr?.description || l.description || '').split('\n')[0].substring(0, 200),
-      price:          parseFloat(l.price?.amount || 0) / (l.price?.divisor || 100),
-      currency:       l.price?.currency_code || 'TRY',
-      image:          l.images?.[0]?.url_570xN || null,
-      url:            l.url || `https://www.etsy.com/listing/${l.listing_id}/`,
-      category:       detectCat(l),
-      tags:           l.tags || [],
-      views:          l.views || 0,
-      isNew:          Date.now() - l.creation_timestamp * 1000 < 30 * 86400000,
-      isActive:       l.state === 'active',
+      price: parseFloat(l.price?.amount || 0) / (l.price?.divisor || 100),
+      currency: l.price?.currency_code || 'TRY',
+      image: l.images?.[0]?.url_570xN || null,
+      url: l.url || `https://www.etsy.com/listing/${l.listing_id}/`,
+      category: detectCat(l),
+      tags: l.tags || [],
+      views: l.views || 0,
+      isNew: Date.now() - l.creation_timestamp * 1000 < 30 * 86400000,
+      isActive: l.state === 'active',
     };
   });
 
   const out = {
-    lastSync:  new Date().toISOString(),
-    shopId:    String(shopId),
+    lastSync: new Date().toISOString(),
+    shopId: String(shopId),
     shopName,
-    total:     products.length,
+    total: products.length,
     products,
   };
   writeJSON(PRODUCTS_F, out);

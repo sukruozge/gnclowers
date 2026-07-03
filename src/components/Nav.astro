@@ -1,52 +1,162 @@
 ---
 import { t, type Locale } from '@lib/i18n';
-import { loadProducts, localizedTitle } from '@lib/products';
+import { loadProducts } from '@lib/products';
 import Logo from './Logo.astro';
+
 const { locale } = Astro.props as { locale: Locale };
 const p = (tr: string, en: string) => (locale === 'tr' ? `/tr/${tr}` : `/en/${en}`);
 const other = locale === 'tr' ? '/en' : '/tr';
 const catalog = locale === 'tr' ? '/tr/urunler' : '/en/products';
+
 const links = [
   { href: `/${locale}`, label: t('nav.home', locale) },
-  { href: p('urunler', 'products'), label: t('nav.products', locale) },
+  { href: p('urunler', 'products'), label: t('nav.products', locale), hasMega: true },
   { href: p('hakkimizda', 'about'), label: t('nav.about', locale) },
   { href: p('blog', 'blog'), label: t('nav.blog', locale) },
   { href: p('iletisim', 'contact'), label: t('nav.contact', locale) },
 ];
+
 const products = loadProducts();
+
+const catLabels: Record<string, Record<Locale, string>> = {
+  'Crochet Bags': { tr: 'Örgü Çantalar', en: 'Crochet Bags' },
+  'Safari Animals': { tr: 'Safari Hayvanları', en: 'Safari Animals' },
+  'Curtain Tiebacks': { tr: 'Perde Tutacakları', en: 'Curtain Tiebacks' },
+  'Amigurumi Toys': { tr: 'Amigurumi Oyuncaklar', en: 'Amigurumi Toys' },
+  'Baby Gift Sets': { tr: 'Bebek Hediye Setleri', en: 'Baby Gift Sets' },
+  'Stuffed Animals': { tr: 'Peluş Oyuncaklar', en: 'Stuffed Animals' },
+  'Crochet Dolls': { tr: 'Örgü Bebekler', en: 'Crochet Dolls' },
+  'Bunny Rabbits Toys': { tr: 'Örgü Tavşanlar', en: 'Bunny Rabbits Toys' },
+  'Baby Shower': { tr: 'Bebek Partisi', en: 'Baby Shower' },
+  'Crochet Hair Clips': { tr: 'Örgü Saç Tokaları', en: 'Crochet Hair Clips' },
+  'Wedding Dolls': { tr: 'Düğün Bebekleri', en: 'Wedding Dolls' }
+};
+
 const collections = [...new Set(products.map((x) => x.category))]
-  .map((c) => {
-    const sample = products.find((x) => x.category === c && x.image);
-    return { c, img: sample?.image, alt: sample ? localizedTitle(sample, locale) : c };
-  })
-  .filter((x) => x.img)
-  .slice(0, 6);
+  .map((c) => ({
+    c,
+    label: catLabels[c]?.[locale] ?? c
+  }))
+  .slice(0, 8);
 ---
 <header class="nav" data-nav>
-  <div class="container nav__inner">
-    <a class="nav__brand" href={`/${locale}`} aria-label="Aselovers"><Logo mode="full" /></a>
-    <nav class="nav__links" aria-label="Primary">
-      <a class="nav__item" href={`/${locale}`}>{t('nav.home', locale)}</a>
-      <div class="nav__item nav__item--mega">
-        <a href={p('urunler', 'products')} aria-haspopup="true">{t('nav.products', locale)}</a>
-        <div class="mega">
-          {collections.map((col) => (
-            <a class="mega__card" href={`${catalog}?cat=${encodeURIComponent(col.c)}`}>
-              <span class="mega__media"><img src={col.img} alt={col.alt} loading="lazy" /></span>
-              <span class="mega__label">{col.c}</span>
-            </a>
-          ))}
+  <!-- Row 1: Branding & Search & Actions -->
+  <div class="nav__top border-bottom">
+    <div class="container nav__top-inner">
+      <!-- Left Logo -->
+      <a class="nav__brand" href={`/${locale}`} aria-label="Aselovers">
+        <Logo mode="full" />
+      </a>
+
+      <!-- Spacer -->
+      <div class="nav__spacer"></div>
+
+      <!-- Right Actions -->
+      <div class="nav__actions">
+        <!-- User profile icon (Mock) -->
+        <button class="nav__icon-btn" aria-label="Profil">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </button>
+
+        <!-- Cart icon (Mock) -->
+        <button class="nav__icon-btn cart-btn" aria-label="Sepet">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+          <span class="cart-badge">0</span>
+        </button>
+
+        <!-- Lang toggle -->
+        <a class="nav__lang" href={other} aria-label={locale === 'tr' ? 'English' : 'Türkçe'}>
+          {locale === 'tr' ? 'EN' : 'TR'}
+        </a>
+
+        <!-- Search Bar on the FAR right -->
+        <div class="nav__search-container">
+          <div class="nav__search-bar">
+            <input type="text" placeholder={t('nav.searchPlaceholder', locale)} readonly />
+            <span class="search-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            </span>
+          </div>
         </div>
+
+        <!-- Hamburger menu for mobile -->
+        <button class="nav__burger" data-burger aria-label="Menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
       </div>
-      <a class="nav__item" href={p('hakkimizda', 'about')}>{t('nav.about', locale)}</a>
-      <a class="nav__item" href={p('blog', 'blog')}>{t('nav.blog', locale)}</a>
-      <a class="nav__item" href={p('iletisim', 'contact')}>{t('nav.contact', locale)}</a>
-    </nav>
-    <div class="nav__actions">
-      <a class="nav__lang" href={other}>{locale === 'tr' ? 'EN' : 'TR'}</a>
-      <button class="nav__burger" data-burger aria-label="Menu" aria-expanded="false"><span></span><span></span><span></span></button>
     </div>
   </div>
+
+  <!-- Row 2: Centered links -->
+  <div class="nav__bottom">
+    <div class="container nav__bottom-inner">
+      <nav class="nav__links" aria-label="Primary">
+        {links.map((link) => (
+          <div class={`nav__item-container ${link.hasMega ? 'nav__item-container--mega' : ''}`}>
+            <a class="nav__item" href={link.href}>
+              {link.label}
+              {link.hasMega && <span class="arrow-down">▼</span>}
+            </a>
+            
+            {link.hasMega && (
+              <div class="mega">
+                <div class="mega__inner">
+                  <!-- Col 1: Categories -->
+                  <div class="mega__col">
+                    <span class="mega__heading">{locale === 'tr' ? 'Kategoriler' : 'Categories'}</span>
+                    <ul class="mega__list">
+                      {collections.map((col) => (
+                        <li>
+                          <a href={`${catalog}?cat=${encodeURIComponent(col.c)}`}>{col.label}</a>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <!-- Col 2: Highlights / Free Patterns style -->
+                  <div class="mega__col">
+                    <span class="mega__heading">{t('home.featuredEyebrow', locale)}</span>
+                    <ul class="mega__list">
+                      <li>
+                        <a href={`${catalog}`}>{t('nav.newArrivals', locale)}</a>
+                      </li>
+                      <li>
+                        <a href={`${catalog}`}>{t('nav.bestSellers', locale)}</a>
+                      </li>
+                      <li>
+                        <a href={locale === 'tr' ? '/tr/iletisim' : '/en/contact'}>{locale === 'tr' ? 'Kişiye Özel Sipariş' : 'Custom Orders'}</a>
+                      </li>
+                      <li>
+                        <a href={p('blog', 'blog')}>{t('blog.eyebrow', locale)}</a>
+                      </li>
+                    </ul>
+                  </div>
+
+                  <!-- Col 3: Visual Featured Card -->
+                  <div class="mega__col mega__col--featured">
+                    <div class="mega__featured-card">
+                      <div class="mega__featured-media">
+                        <img src="/bags.png" alt="Featured Collection" loading="lazy" />
+                      </div>
+                      <div class="mega__featured-info">
+                        <span class="mega__featured-badge">{locale === 'tr' ? 'Popüler' : 'Featured'}</span>
+                        <h4 class="mega__featured-title">{t('nav.featuredCollection', locale)}</h4>
+                        <a class="mega__featured-link" href={p('urunler', 'products')}>
+                          {t('nav.exploreAll', locale)} →
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        ))}
+      </nav>
+    </div>
+  </div>
+
+  <!-- Mobile Overlay nav -->
   <div class="overlay" data-overlay hidden>
     <nav class="overlay__nav" aria-label="Mobile">
       {links.map((l, i) => <a class={`overlay__link overlay__link--${i}`} href={l.href}>{l.label}</a>)}
@@ -54,68 +164,410 @@ const collections = [...new Set(products.map((x) => x.category))]
     </nav>
   </div>
 </header>
+
 <style>
-  .nav { position: sticky; top: 0; z-index: 40; transition: background var(--dur) var(--ease), box-shadow var(--dur) var(--ease), backdrop-filter var(--dur) var(--ease); }
-  .nav__inner { display: flex; align-items: center; gap: var(--space-5); height: 76px; transition: height var(--dur) var(--ease); }
-  :global(body.is-scrolled) .nav { background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); box-shadow: 0 4px 20px rgba(34,32,30,.05); }
-  :global(body.is-scrolled) .nav__inner { height: 62px; }
-  .nav__brand { display: inline-flex; }
-  .nav__links { display: flex; align-items: center; gap: var(--space-5); margin-left: auto; }
-  .nav__item { position: relative; font-size: .95rem; color: var(--muted); transition: color var(--dur) var(--ease); }
-  .nav__item > a, a.nav__item { color: inherit; }
-  .nav__links a { position: relative; }
-  .nav__links a::after { content: ''; position: absolute; left: 0; bottom: -6px; width: 100%; height: 1px; background: var(--accent); transform: scaleX(0); transform-origin: left; transition: transform var(--dur) var(--ease); }
-  .nav__links a:hover { color: var(--ink); }
-  .nav__links a:hover::after { transform: scaleX(1); }
-  .nav__actions { display: flex; align-items: center; gap: var(--space-3); }
-  .nav__lang { font-size: .8rem; letter-spacing: .1em; padding: 6px 12px; border: 1px solid var(--line); border-radius: var(--radius-pill); transition: border-color var(--dur) var(--ease), color var(--dur) var(--ease); }
-  .nav__lang:hover { border-color: var(--accent); color: var(--accent); }
-  .nav__lang::after { display: none; }
-  /* Mega menu */
-  .nav__item--mega .mega { position: absolute; top: calc(100% + 14px); left: 50%; transform: translateX(-50%) translateY(8px); width: min(680px, 90vw); background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow-hover); padding: var(--space-4); display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-3); opacity: 0; visibility: hidden; transition: opacity var(--dur) var(--ease), transform var(--dur) var(--ease); z-index: 50; }
-  .nav__item--mega:hover .mega, .nav__item--mega:focus-within .mega { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
-  .mega__card { display: flex; flex-direction: column; gap: 6px; }
-  .mega__card::after { display: none; }
-  .mega__media { aspect-ratio: 1/1; overflow: hidden; border-radius: 10px; background: var(--section); }
-  .mega__media img { width: 100%; height: 100%; object-fit: cover; transition: transform 500ms var(--ease); }
-  .mega__card:hover .mega__media img { transform: scale(1.06); }
-  .mega__label { font-size: .85rem; color: var(--ink); }
-  /* Burger + overlay */
-  .nav__burger { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 8px; }
-  .nav__burger span { width: 22px; height: 2px; background: var(--ink); transition: transform var(--dur) var(--ease), opacity var(--dur) var(--ease); }
-  .overlay { position: fixed; inset: 0; z-index: 39; background: var(--bg); display: grid; place-items: center; }
-  .overlay[hidden] { display: none; }
-  .overlay__nav { display: flex; flex-direction: column; gap: var(--space-4); text-align: center; }
-  .overlay__link { font-family: var(--font-display); font-size: clamp(1.8rem, 8vw, 2.6rem); color: var(--ink); opacity: 0; transform: translateY(12px); }
-  .overlay.is-open .overlay__link { animation: overlayIn .5s var(--ease) forwards; }
+  .nav { 
+    position: sticky; 
+    top: 0; 
+    z-index: 40; 
+    background: var(--surface);
+    border-bottom: 1px solid var(--line);
+    transition: background var(--dur) var(--ease), box-shadow var(--dur) var(--ease); 
+  }
+  
+  .nav__top {
+    height: 76px;
+    display: flex;
+    align-items: center;
+  }
+  .border-bottom {
+    border-bottom: 1px solid var(--line);
+  }
+  
+  .nav__top-inner {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    width: 100%;
+  }
+
+  /* Mock Search bar */
+  .nav__search-container {
+    display: flex;
+    justify-content: flex-start;
+  }
+  .nav__search-bar {
+    position: relative;
+    width: min(240px, 100%);
+  }
+  .nav__search-bar input {
+    width: 100%;
+    font: inherit;
+    font-size: 0.85rem;
+    padding: 8px 36px 8px 16px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-pill);
+    background: var(--bg);
+    cursor: pointer;
+  }
+  .nav__search-bar .search-icon {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    display: flex;
+  }
+
+  .nav__brand { 
+    justify-self: start;
+    display: inline-flex; 
+  }
+  
+  /* Right actions */
+  .nav__actions { 
+    justify-self: end;
+    display: flex; 
+    align-items: center; 
+    gap: var(--space-4); 
+  }
+  
+  .nav__lang { 
+    font-size: .8rem; 
+    font-weight: 600;
+    letter-spacing: .05em; 
+    padding: 6px 12px; 
+    border: 1.5px solid var(--line); 
+    border-radius: var(--radius-pill); 
+    transition: border-color var(--dur) var(--ease), color var(--dur) var(--ease); 
+  }
+  .nav__lang:hover { 
+    border-color: var(--accent); 
+    color: var(--accent); 
+  }
+  
+  .nav__icon-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--muted);
+    padding: 6px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color var(--dur) var(--ease);
+  }
+  .nav__icon-btn:hover {
+    color: var(--ink);
+  }
+  
+  .cart-btn {
+    position: relative;
+  }
+  .cart-badge {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    background: var(--accent);
+    color: var(--on-accent);
+    font-size: 0.65rem;
+    font-weight: 700;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+  }
+
+  /* Row 2: Bottom centered bar */
+  .nav__bottom {
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .nav__bottom-inner {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .nav__links { 
+    display: flex; 
+    align-items: center; 
+    gap: var(--space-6); 
+  }
+
+  .nav__item-container {
+    position: relative;
+    padding: 10px 0;
+  }
+
+  .nav__item { 
+    font-size: .88rem; 
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--muted); 
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: color var(--dur) var(--ease); 
+  }
+  .nav__item:hover { 
+    color: var(--accent); 
+  }
+  
+  .arrow-down {
+    font-size: 0.55rem;
+    color: var(--muted);
+    transition: transform var(--dur) var(--ease);
+  }
+  
+  .nav__item-container:hover .arrow-down {
+    transform: rotate(180deg);
+  }
+
+  /* Yarnspirations-style Mega Menu */
+  .nav__item-container--mega .mega { 
+    position: fixed; 
+    top: 125px; /* exactly below Row 2 */
+    left: 50%; 
+    transform: translateX(-50%) translateY(12px); 
+    width: 100%;
+    max-width: var(--maxw);
+    background: var(--surface); 
+    border: 1px solid var(--line); 
+    border-radius: 0 0 var(--radius) var(--radius); 
+    box-shadow: 0 20px 40px rgba(28,26,24,.08);
+    opacity: 0; 
+    visibility: hidden; 
+    transition: opacity var(--dur) var(--ease), transform var(--dur) var(--ease); 
+    z-index: 50; 
+    padding: var(--space-6);
+  }
+  
+  .nav__item-container--mega:hover .mega { 
+    opacity: 1; 
+    visibility: visible; 
+    transform: translateX(-50%) translateY(0); 
+  }
+
+  .mega__inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1.2fr;
+    gap: var(--space-6);
+    text-align: left;
+  }
+
+  .mega__col {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .mega__heading {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    border-bottom: 1.5px solid var(--line);
+    padding-bottom: var(--space-2);
+  }
+
+  .mega__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .mega__list a {
+    font-size: 0.92rem;
+    color: var(--muted);
+    font-weight: 500;
+    transition: color var(--dur) var(--ease), padding-left var(--dur) var(--ease);
+  }
+  
+  .mega__list a:hover {
+    color: var(--ink);
+    padding-left: 4px;
+  }
+
+  /* Right column: featured card */
+  .mega__col--featured {
+    background: #FAF9F5;
+    border-radius: var(--radius);
+    overflow: hidden;
+    border: 1px solid var(--line);
+  }
+
+  .mega__featured-card {
+    display: flex;
+    height: 100%;
+  }
+
+  .mega__featured-media {
+    width: 45%;
+    height: 100%;
+    aspect-ratio: 1/1;
+    overflow: hidden;
+  }
+  .mega__featured-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .mega__featured-info {
+    flex-grow: 1;
+    padding: var(--space-5);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .mega__featured-badge {
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    background: color-mix(in srgb, var(--accent) 8%, transparent);
+    color: var(--accent);
+    padding: 2px 8px;
+    border-radius: var(--radius-pill);
+    letter-spacing: 0.05em;
+  }
+
+  .mega__featured-title {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: 500;
+    margin: 0;
+    color: var(--ink);
+    line-height: 1.2;
+  }
+
+  .mega__featured-link {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--accent);
+    border-bottom: 1.5px solid transparent;
+    padding-bottom: 2px;
+    transition: border-color var(--dur) var(--ease);
+  }
+  .mega__featured-link:hover {
+    border-color: var(--accent);
+  }
+
+  /* Mobile style burger & overlays */
+  .nav__burger { 
+    display: none; 
+    flex-direction: column; 
+    gap: 5px; 
+    background: none; 
+    border: none; 
+    cursor: pointer; 
+    padding: 8px; 
+  }
+  .nav__burger span { 
+    width: 22px; 
+    height: 2px; 
+    background: var(--ink); 
+    transition: transform var(--dur) var(--ease), opacity var(--dur) var(--ease); 
+  }
+  
+  .overlay { 
+    position: fixed; 
+    inset: 0; 
+    z-index: 39; 
+    background: var(--bg); 
+    display: grid; 
+    place-items: center; 
+  }
+  .overlay[hidden] { 
+    display: none; 
+  }
+  .overlay__nav { 
+    display: flex; 
+    flex-direction: column; 
+    gap: var(--space-4); 
+    text-align: center; 
+  }
+  .overlay__link { 
+    font-family: var(--font-display); 
+    font-size: clamp(1.8rem, 8vw, 2.6rem); 
+    color: var(--ink); 
+    opacity: 0; 
+    transform: translateY(12px); 
+  }
+  .overlay.is-open .overlay__link { 
+    animation: overlayIn .5s var(--ease) forwards; 
+  }
+  .overlay__link--0 { animation-delay: 0s; }
   .overlay__link--1 { animation-delay: .06s; }
   .overlay__link--2 { animation-delay: .12s; }
   .overlay__link--3 { animation-delay: .18s; }
   .overlay__link--4 { animation-delay: .24s; }
   .overlay__lang { animation-delay: .3s; font-family: var(--font-body); font-size: 1.1rem; color: var(--accent); }
-  @keyframes overlayIn { to { opacity: 1; transform: none; } }
-  @media (max-width: 860px) {
-    .nav__links { display: none; }
-    .nav__burger { display: flex; }
+  
+  @keyframes overlayIn { 
+    to { opacity: 1; transform: none; } 
   }
+
+  @media (max-width: 860px) {
+    .nav__top {
+      height: 64px;
+    }
+    .nav__bottom {
+      display: none;
+    }
+    .nav__search-container {
+      display: none;
+    }
+    .nav__top-inner {
+      grid-template-columns: auto 1fr;
+      width: 100%;
+    }
+    .nav__brand {
+      justify-self: start;
+    }
+    .nav__burger { 
+      display: flex; 
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .overlay.is-open .overlay__link { animation: none; opacity: 1; transform: none; }
-    .nav__links a::after { transition: none; }
   }
 </style>
+
 <script>
   const burger = document.querySelector('[data-burger]') as HTMLButtonElement | null;
   const overlay = document.querySelector('[data-overlay]') as HTMLElement | null;
+  
   function close() {
     if (!overlay || !burger) return;
-    overlay.classList.remove('is-open'); overlay.hidden = true;
-    burger.setAttribute('aria-expanded', 'false'); document.body.style.overflow = '';
+    overlay.classList.remove('is-open'); 
+    overlay.hidden = true;
+    burger.setAttribute('aria-expanded', 'false'); 
+    document.body.style.overflow = '';
   }
+  
   function open() {
     if (!overlay || !burger) return;
-    overlay.hidden = false; requestAnimationFrame(() => overlay.classList.add('is-open'));
-    burger.setAttribute('aria-expanded', 'true'); document.body.style.overflow = 'hidden';
+    overlay.hidden = false; 
+    requestAnimationFrame(() => overlay.classList.add('is-open'));
+    burger.setAttribute('aria-expanded', 'true'); 
+    document.body.style.overflow = 'hidden';
   }
+  
   burger?.addEventListener('click', () => (overlay?.hidden ? open() : close()));
   overlay?.querySelectorAll('a').forEach((a) => a.addEventListener('click', close));
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });

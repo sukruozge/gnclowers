@@ -27,18 +27,44 @@ main { min-height: 50vh; }
 
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
 
-/* Scroll reveal */
-.reveal { opacity: 0; transform: translateY(16px); transition: opacity .6s var(--ease), transform .6s var(--ease); }
+/* Scroll reveal & animations */
+.reveal { opacity: 0; transform: translateY(16px); transition: opacity .8s var(--ease), transform .8s var(--ease); }
 .reveal.is-visible { opacity: 1; transform: none; }
+.reveal--fade-up { opacity: 0; transform: translateY(32px); transition: opacity .9s var(--ease), transform .9s var(--ease); }
+.reveal--fade-up.is-visible { opacity: 1; transform: none; }
+.reveal--scale-in { opacity: 0; transform: scale(0.96) translateY(10px); transition: opacity .9s var(--ease), transform .9s var(--ease); }
+.reveal--scale-in.is-visible { opacity: 1; transform: scale(1) translateY(0); }
+
 .reveal--d1 { transition-delay: .08s; }
 .reveal--d2 { transition-delay: .16s; }
 .reveal--d3 { transition-delay: .24s; }
+.reveal--d4 { transition-delay: .32s; }
+
+/* Hover effects */
+.hover-lift { transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease); }
+.hover-lift:hover { transform: translateY(-6px); box-shadow: var(--shadow-hover); }
+
+.hover-scale { transition: transform var(--dur) var(--ease); }
+.hover-scale:hover { transform: scale(1.03); }
+
+/* Decorative & Keyframe animations */
+@keyframes floating {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-8px) rotate(2deg); }
+}
+.animate-float { animation: floating 6s ease-in-out infinite; }
+
+@keyframes softGlow {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.05); }
+}
+.animate-glow { animation: softGlow 8s ease-in-out infinite; }
 
 /* Stars */
 .stars { --star: var(--star-gold); display: inline-flex; gap: 2px; color: var(--star); line-height: 1; }
 .stars svg { width: 1em; height: 1em; fill: currentColor; }
 
 @media (prefers-reduced-motion: reduce) {
-  .reveal { opacity: 1; transform: none; transition: none; }
+  .reveal, .reveal--fade-up, .reveal--scale-in { opacity: 1; transform: none; transition: none; }
   * { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
 }

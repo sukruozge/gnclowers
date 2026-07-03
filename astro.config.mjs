@@ -14,4 +14,18 @@ export default defineConfig({
   adapter: cloudflare({ imageService: 'passthrough' }),
   trailingSlash: 'ignore',
   build: { format: 'directory' },
+  vite: {
+    server: {
+      proxy: {
+        '/api': {
+          target: 'http://localhost:3000',
+          changeOrigin: true,
+        },
+        '/products.json': {
+          target: 'http://localhost:3000',
+          changeOrigin: true,
+        },
+      },
+    },
+  },
 });
