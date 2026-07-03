@@ -551,6 +551,16 @@
       color: #fff; border-radius: 4px; font-size: 0.72rem; pointer-events: none;
       display: none; box-shadow: var(--shadow-md); z-index: 10;
     }
+    
+    /* CHAT ROOM LISTS */
+    .chat-user-item { padding: 16px; border-bottom: 1px solid var(--border); cursor: pointer; transition: background .15s; display: flex; flex-direction: column; gap: 4px; }
+    .chat-user-item:hover { background: var(--secondary); }
+    .chat-user-item.active { background: rgba(89,105,255,0.08); border-left: 4px solid var(--primary); }
+    .chat-user-meta { display: flex; justify-content: space-between; align-items: center; font-size: .78rem; color: var(--muted-foreground); }
+    .chat-user-unread { background: #ff407b; color: #fff; font-size: .68rem; font-weight: 700; padding: 2px 6px; border-radius: 99px; }
+    .chat-msg-row { display: flex; flex-direction: column; max-width: 80%; padding: 10px 14px; border-radius: 12px; font-size: .86rem; line-height: 1.4; box-shadow: var(--shadow); margin-bottom: 8px; }
+    .chat-msg-row.admin { background: var(--primary); color: var(--primary-foreground); align-self: flex-end; border-bottom-right-radius: 2px; }
+    .chat-msg-row.user { background: var(--card); color: var(--foreground); align-self: flex-start; border-bottom-left-radius: 2px; border: 1px solid var(--border); }
   </style>
 </head>
 <body>
@@ -602,6 +612,19 @@
           <button class="sidebar-submenu-item" onclick="showPage('products'); saveQuickApiKey();">Hızlı API Girişi</button>
         </div>
       </div>
+
+      <button class="sidebar-nav-item" onclick="showPage('orders',this)">
+        <span class="nav-icon">🛍️</span>
+        <span class="nav-label">Siparişler</span>
+      </button>
+      <button class="sidebar-nav-item" onclick="showPage('messages',this)">
+        <span class="nav-icon">💬</span>
+        <span class="nav-label">Mesajlar</span>
+      </button>
+      <button class="sidebar-nav-item" onclick="showPage('analytics',this)">
+        <span class="nav-icon">📈</span>
+        <span class="nav-label">Trafik & Analiz</span>
+      </button>
 
       <button class="sidebar-nav-item" onclick="showPage('content',this)">
         <span class="nav-icon">✏️</span>
@@ -1158,6 +1181,122 @@
       </div>
     </div>
 
+    <!-- ORDERS PAGE -->
+    <div class="page" id="page-orders">
+      <div class="page-title">Siparişler (PayTR)</div>
+      <div class="page-subtitle">PayTR üzerinden gelen kredi kartı siparişleri</div>
+
+      <div class="card">
+        <div class="card-header" style="display:flex; justify-content:space-between; align-items:center;">
+          <div class="card-title">Sipariş Listesi</div>
+          <div id="orders-count" style="font-size:.8rem;color:var(--muted-foreground)">0 sipariş</div>
+        </div>
+        <div class="card-body" style="padding:0">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Sipariş ID</th>
+                  <th>Tutar</th>
+                  <th>Tarih</th>
+                  <th>Durum</th>
+                  <th>Hata Sebebi</th>
+                </tr>
+              </thead>
+              <tbody id="orders-tbody"></tbody>
+            </table>
+          </div>
+          <div id="orders-empty" class="empty-state">
+            <div class="empty-state-icon">🛍️</div>
+            <p>Henüz gelen ödeme/sipariş bulunmuyor.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MESSAGES PAGE -->
+    <div class="page" id="page-messages">
+      <div class="page-title">Müşteri Mesajları</div>
+      <div class="page-subtitle">Ziyaretçilerden gelen sorular ve yanıtlarınız</div>
+
+      <div class="messages-layout" style="display: grid; grid-template-columns: 280px 1fr; gap: 24px; min-height: 500px;">
+        <div class="card" style="display: flex; flex-direction: column; overflow: hidden;">
+          <div class="card-header"><div class="card-title">Görüşmeler</div></div>
+          <div class="card-body" style="padding: 0; overflow-y: auto; flex: 1;" id="chat-users-list"></div>
+        </div>
+        
+        <div class="card" style="display: flex; flex-direction: column; overflow: hidden;" id="chat-box-card">
+          <div class="card-header" id="chat-box-header" style="border-bottom: 1px solid var(--border);">
+            <div class="card-title" id="chat-active-user-name">Görüşme Seçin</div>
+          </div>
+          <div class="card-body" id="chat-box-messages" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding: 20px; background: var(--secondary); min-height: 300px;">
+            <div class="empty-state" style="margin: auto;">
+              <div class="empty-state-icon">💬</div>
+              <p>Lütfen sol taraftan bir görüşme seçin.</p>
+            </div>
+          </div>
+          <div class="card-footer" id="chat-box-footer" style="padding: 16px; border-top: 1px solid var(--border); display: none;">
+            <div style="display: flex; gap: 12px; align-items: flex-end;">
+              <textarea id="chat-reply-text" rows="2" placeholder="Yanıtınızı yazın..." style="flex: 1; min-height: auto;"></textarea>
+              <button class="btn btn-primary" onclick="sendAdminReply()">Gönder</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ANALYTICS PAGE -->
+    <div class="page" id="page-analytics">
+      <div class="page-title">Trafik & Analiz</div>
+      <div class="page-subtitle">Mağazanızı ziyaret eden kullanıcıların analizi</div>
+
+      <div class="stats-grid" id="analytics-stats-grid" style="margin-bottom: 24px;">
+        <div class="stat-card">
+          <div class="stat-header">
+            <span class="stat-label">Toplam Sayfa Görüntüleme</span>
+            <span class="stat-icon">👁️</span>
+          </div>
+          <div class="stat-val" id="analytics-total-views">0</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header"><div class="card-title">Trafik Kaynakları (Referrer)</div></div>
+          <div class="card-body" style="padding: 0;">
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Kaynak</th>
+                    <th>Ziyaret Sayısı</th>
+                  </tr>
+                </thead>
+                <tbody id="analytics-referrers-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="card-header"><div class="card-title">En Çok Ziyaret Edilen Ürünler</div></div>
+          <div class="card-body" style="padding: 0;">
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Ürün</th>
+                    <th>Görüntülenme</th>
+                  </tr>
+                </thead>
+                <tbody id="analytics-products-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- SETTINGS PAGE -->
     <div class="page" id="page-settings">
       <div class="page-title">Ayarlar</div>
@@ -1526,11 +1665,24 @@ async function initApp() {
 // ── NAVIGATION ────────────────────────────────────────────
 function showPage(pageId, btn) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.sidebar-nav-item').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.sidebar-nav-item, .sidebar-submenu-item').forEach(b => b.classList.remove('active'));
   document.getElementById('page-' + pageId)?.classList.add('active');
   if (btn) btn.classList.add('active');
-  const titles = { dashboard:'Dashboard', products:'Ürün Yönetimi', content:'İçerik Yönetimi', blog:'Blog Yönetimi', settings:'Ayarlar' };
+  const titles = {
+    dashboard: 'Dashboard',
+    products: 'Ürün Yönetimi',
+    content: 'İçerik Yönetimi',
+    blog: 'Blog Yönetimi',
+    settings: 'Ayarlar',
+    orders: 'Siparişler (PayTR)',
+    messages: 'Müşteri Mesajları',
+    analytics: 'Trafik & Analiz'
+  };
   document.getElementById('topbar-title').textContent = titles[pageId] || pageId;
+
+  if (pageId === 'orders') loadOrdersPage();
+  else if (pageId === 'messages') loadMessagesPage();
+  else if (pageId === 'analytics') loadAnalyticsPage();
 }
 
 // ── DASHBOARD ─────────────────────────────────────────────
@@ -2352,6 +2504,209 @@ function changeChartFilter(type) {
   }
 }
 
+
+// ── ORDERS PAGE LOADER ──────────────────────────────────────
+async function loadOrdersPage() {
+  const tbody = document.getElementById('orders-tbody');
+  const empty = document.getElementById('orders-empty');
+  const countEl = document.getElementById('orders-count');
+  
+  tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Yükleniyor...</td></tr>';
+  empty.style.display = 'none';
+
+  try {
+    const res = await fetch('/api/admin/orders', { headers: ADM_HDR, credentials: 'include' });
+    if (!res.ok) throw new Error();
+    const orders = await res.json();
+    
+    tbody.innerHTML = '';
+    if (!orders.length) {
+      empty.style.display = 'block';
+      countEl.textContent = '0 sipariş';
+      return;
+    }
+
+    countEl.textContent = orders.length + ' sipariş';
+    orders.reverse().forEach(o => {
+      const row = document.createElement('tr');
+      const dateStr = new Date(o.createdAt).toLocaleString('tr-TR');
+      const statusBadge = o.status === 'completed' 
+        ? '<span class="badge badge-green">Başarılı</span>'
+        : '<span class="badge badge-red">Başarısız</span>';
+      
+      row.innerHTML = `
+        <td><strong>${o.orderId}</strong></td>
+        <td>${o.amount} TRY</td>
+        <td>${dateStr}</td>
+        <td>${statusBadge}</td>
+        <td style="color:var(--muted-foreground)">${o.failedReason || '-'}</td>
+      `;
+      tbody.appendChild(row);
+    });
+  } catch {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--destructive);">Siparişler yüklenemedi.</td></tr>';
+  }
+}
+
+// ── MESSAGES PAGE LOADER ────────────────────────────────────
+let activeChatUserId = null;
+
+async function loadMessagesPage() {
+  const listEl = document.getElementById('chat-users-list');
+  listEl.innerHTML = '<div style="padding:20px;text-align:center;color:var(--muted-foreground)">Yükleniyor...</div>';
+  
+  try {
+    const res = await fetch('/api/admin/messages', { headers: ADM_HDR, credentials: 'include' });
+    if (!res.ok) throw new Error();
+    const users = await res.json();
+    
+    listEl.innerHTML = '';
+    if (!users.length) {
+      listEl.innerHTML = '<div style="padding:20px;text-align:center;color:var(--muted-foreground)">Görüşme bulunmuyor.</div>';
+      return;
+    }
+
+    users.forEach(u => {
+      const item = document.createElement('div');
+      item.className = `chat-user-item ${activeChatUserId === u.userId ? 'active' : ''}`;
+      item.onclick = (e) => {
+        document.querySelectorAll('.chat-user-item').forEach(el => el.classList.remove('active'));
+        item.classList.add('active');
+        selectChatRoom(u.userId, u.name);
+      };
+      
+      const unreadBadge = u.unreadCount > 0 
+        ? `<span class="chat-user-unread">${u.unreadCount}</span>` 
+        : '';
+      const dateStr = new Date(u.lastActiveAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      
+      item.innerHTML = `
+        <div class="chat-user-meta">
+          <strong>${u.name}</strong>
+          <span>${dateStr}</span>
+        </div>
+        <div style="font-size:.82rem;color:var(--muted-foreground);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;justify-content:space-between;align-items:center;">
+          <span>${u.lastMessageText}</span>
+          ${unreadBadge}
+        </div>
+      `;
+      listEl.appendChild(item);
+    });
+  } catch {
+    listEl.innerHTML = '<div style="padding:20px;text-align:center;color:var(--destructive)">Yüklenemedi.</div>';
+  }
+}
+
+async function selectChatRoom(userId, userName) {
+  activeChatUserId = userId;
+  document.getElementById('chat-active-user-name').textContent = userName;
+  const messagesEl = document.getElementById('chat-box-messages');
+  const footerEl = document.getElementById('chat-box-footer');
+  
+  messagesEl.innerHTML = '<div style="margin:auto;color:var(--muted-foreground)">Yükleniyor...</div>';
+  footerEl.style.display = 'none';
+
+  try {
+    const res = await fetch(`/api/admin/messages/${encodeURIComponent(userId)}`, { headers: ADM_HDR, credentials: 'include' });
+    if (!res.ok) throw new Error();
+    const data = await res.json();
+    
+    messagesEl.innerHTML = '';
+    footerEl.style.display = 'block';
+    
+    const messages = data.messages || [];
+    if (!messages.length) {
+      messagesEl.innerHTML = '<div style="margin:auto;color:var(--muted-foreground)">Mesaj bulunmuyor.</div>';
+      return;
+    }
+
+    messages.forEach(m => {
+      const bubble = document.createElement('div');
+      bubble.className = `chat-msg-row ${m.sender}`;
+      const timeStr = new Date(m.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      bubble.innerHTML = `
+        <div>${m.text}</div>
+        <span style="font-size:0.65rem;opacity:0.7;align-self:flex-end;margin-top:4px;">${timeStr}</span>
+      `;
+      messagesEl.appendChild(bubble);
+    });
+    
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+  } catch {
+    messagesEl.innerHTML = '<div style="margin:auto;color:var(--destructive)">Görüşme yüklenemedi.</div>';
+  }
+}
+
+async function sendAdminReply() {
+  const textEl = document.getElementById('chat-reply-text');
+  const text = textEl.value.trim();
+  if (!text || !activeChatUserId) return;
+
+  try {
+    const res = await fetch('/api/admin/messages-reply', {
+      method: 'POST',
+      headers: ADM_HDR,
+      credentials: 'include',
+      body: JSON.stringify({ userId: activeChatUserId, text })
+    });
+    if (res.ok) {
+      textEl.value = '';
+      selectChatRoom(activeChatUserId, document.getElementById('chat-active-user-name').textContent);
+      loadMessagesPage();
+    } else {
+      toast('Yanıt gönderilemedi.', 'err');
+    }
+  } catch {
+    toast('Sunucu hatası.', 'err');
+  }
+}
+
+// ── ANALYTICS PAGE LOADER ───────────────────────────────────
+async function loadAnalyticsPage() {
+  const viewsEl = document.getElementById('analytics-total-views');
+  const refTbody = document.getElementById('analytics-referrers-tbody');
+  const prodTbody = document.getElementById('analytics-products-tbody');
+  
+  viewsEl.textContent = '...';
+  refTbody.innerHTML = '<tr><td colspan="2" style="text-align:center;">Yükleniyor...</td></tr>';
+  prodTbody.innerHTML = '<tr><td colspan="2" style="text-align:center;">Yükleniyor...</td></tr>';
+
+  try {
+    const res = await fetch('/api/admin/analytics', { headers: ADM_HDR, credentials: 'include' });
+    if (!res.ok) throw new Error();
+    const data = await res.json();
+    
+    viewsEl.textContent = data.totalViews || 0;
+    
+    refTbody.innerHTML = '';
+    const referrers = Object.entries(data.referrers || {}).sort((a,b) => b[1] - a[1]);
+    if (!referrers.length) {
+      refTbody.innerHTML = '<tr><td colspan="2" style="text-align:center;color:var(--muted-foreground)">Veri yok</td></tr>';
+    } else {
+      referrers.forEach(([ref, val]) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `<td><strong>${ref}</strong></td><td>${val}</td>`;
+        refTbody.appendChild(row);
+      });
+    }
+    
+    prodTbody.innerHTML = '';
+    const products = Object.entries(data.products || {}).sort((a,b) => b[1].views - a[1].views);
+    if (!products.length) {
+      prodTbody.innerHTML = '<tr><td colspan="2" style="text-align:center;color:var(--muted-foreground)">Veri yok</td></tr>';
+    } else {
+      products.forEach(([id, info]) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `<td><strong>${info.title || id}</strong></td><td>${info.views}</td>`;
+        prodTbody.appendChild(row);
+      });
+    }
+  } catch {
+    viewsEl.textContent = 'Hata';
+    refTbody.innerHTML = '<tr><td colspan="2" style="text-align:center;color:var(--destructive);">Yüklenemedi.</td></tr>';
+    prodTbody.innerHTML = '<tr><td colspan="2" style="text-align:center;color:var(--destructive);">Yüklenemedi.</td></tr>';
+  }
+}
 
 // ── BOOT ──────────────────────────────────────────────────
 checkAuth();

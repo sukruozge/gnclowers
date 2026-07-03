@@ -2,6 +2,7 @@
 import { type Locale } from '@lib/i18n';
 import { canonical, alternates } from '@lib/seo';
 import WhatsAppFab from '../components/WhatsAppFab.astro';
+import ChatWidget from '../components/ChatWidget.astro';
 import '../styles/tokens.css';
 import '../styles/global.css';
 
@@ -42,6 +43,7 @@ const alts = alternates(site, pathsAlt);
   <body>
     <slot />
     <WhatsAppFab locale={locale} />
+    <ChatWidget locale={locale} />
     <script>
       // Scroll-reveal
       const io = new IntersectionObserver((entries) => {
@@ -54,6 +56,24 @@ const alts = alternates(site, pathsAlt);
       const setScrolled = () => document.body.classList.toggle('is-scrolled', window.scrollY > 24);
       setScrolled();
       window.addEventListener('scroll', setScrolled, { passive: true });
+
+      // Traffic Analytics Tracking
+      try {
+        const path = window.location.pathname;
+        const isProductPage = path.includes('/urun/') || path.includes('/product/');
+        const title = document.title.split('—')[0].trim();
+        const pageId = isProductPage ? path.split('/').filter(Boolean).pop() : 'home';
+
+        fetch('/api/analytics/track', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            productId: pageId,
+            productName: isProductPage ? title : 'Ana Sayfa',
+            referrer: document.referrer || 'direct'
+          })
+        }).catch(() => {});
+      } catch {}
     </script>
   </body>
 </html>

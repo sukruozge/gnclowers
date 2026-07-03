@@ -311,6 +311,77 @@ async function router(method: string, context: APIContext): Promise<Response> {
     if (method === 'POST' && action === 'sync') return await handleSync(request, env);
     if (method === 'PUT' && action === 'settings') return await handleSettings(request, env);
 
+    if (action === 'messages') {
+      if (!(await isAuthed(request, env))) return json({ error: 'invalid' }, 401);
+      const kv = env.ADMIN_KV;
+      if (!kv) return json([], 200);
+      if (method === 'GET') {
+        const raw = await kv.get('chat_users');
+        return json(raw ? JSON.parse(raw) : [], 200);
+      }
+    }
+    if (action.startsWith('messages/')) {
+      if (!(await isAuthed(request, env))) return json({ error: 'invalid' }, 401);
+      const kv = env.ADMIN_KV;
+      if (!kv) return json({ error: 'no-kv' }, 500);
+      
+      const userId = decodeURIComponent(action.slice('messages/'.length));
+      if (method === 'GET') {
+        const raw = await kv.get(`chat_user:${userId}`);
+        return json(raw ? JSON.parse(raw) : { userId, messages: [] }, 200);
+      }
+    }
+    if (method === 'POST' && action === 'messages-reply') {
+      if (!(await isAuthed(request, env))) return json({ error: 'invalid' }, 401);
+      const kv = env.ADMIN_KV;
+      if (!kv) return json({ error: 'no-kv' }, 500);
+      
+      const body = await readBody(request);
+      const { userId, text } = body;
+      if (!userId || !text) return json({ error: 'missing fields' }, 400);
+
+      const rawHistory = await kv.get(`chat_user:${userId}`);
+      if (!rawHistory) return json({ error: 'not-found' }, 404);
+      const history = JSON.parse(rawHistory);
+      const newReply = {
+        id: 'reply-' + Date.now(),
+        sender: 'admin',
+        text,
+        createdAt: new Date().toISOString()
+      };
+      history.messages.push(newReply);
+      await kv.put(`chat_user:${userId}`, JSON.stringify(history));
+
+      const rawIndex = await kv.get('chat_users');
+      if (rawIndex) {
+        const index = JSON.parse(rawIndex);
+        const idx = index.findIndex((u: any) => u.userId === userId);
+        if (idx !== -1) {
+          index[idx].unreadCount = 0;
+          index[idx].lastMessageText = text;
+          index[idx].lastActiveAt = new Date().toISOString();
+          await kv.put('chat_users', JSON.stringify(index));
+        }
+      }
+      return json({ ok: true, message: newReply }, 200);
+    }
+
+    if (method === 'GET' && action === 'analytics') {
+      if (!(await isAuthed(request, env))) return json({ error: 'invalid' }, 401);
+      const kv = env.ADMIN_KV;
+      if (!kv) return json({ totalViews: 0, referrers: {}, products: {} }, 200);
+      const raw = await kv.get('analytics_traffic');
+      return json(raw ? JSON.parse(raw) : { totalViews: 0, referrers: {}, products: {} }, 200);
+    }
+
+    if (method === 'GET' && action === 'orders') {
+      if (!(await isAuthed(request, env))) return json({ error: 'invalid' }, 401);
+      const kv = env.ADMIN_KV;
+      if (!kv) return json([], 200);
+      const raw = await kv.get('orders');
+      return json(raw ? JSON.parse(raw) : [], 200);
+    }
+
     if (method === 'POST' && action === 'products') return await handleProductCreate(request, env);
     if (action.startsWith('products/')) {
       const id = decodeURIComponent(action.slice('products/'.length));
