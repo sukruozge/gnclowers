@@ -1,7 +1,7 @@
 # Cloudflare Pages configuration (read automatically by the Pages Git build).
 # Ships the nodejs_compat flag the @astrojs/cloudflare adapter requires so the
 # `/` country-redirect worker boots — no manual dashboard flag needed.
-name = "aselovers-webpage2"
+name = "gnc-lowers"
 pages_build_output_dir = "dist"
 compatibility_date = "2024-11-01"
 compatibility_flags = ["nodejs_compat"]
