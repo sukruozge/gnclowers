@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro';
 import { createHmac } from 'node:crypto';
-import productsData from '../../../../data/products.json';
+import productsData from '../../../data/products.json';
 
 export const prerender = false;
 
