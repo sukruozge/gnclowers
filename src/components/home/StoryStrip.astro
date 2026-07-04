@@ -1,49 +1,25 @@
 ---
 import { t, type Locale } from '@lib/i18n';
-import { loadProducts, localizedTitle } from '@lib/products';
-import Button from '../Button.astro';
+import { StorySection } from '../ui/story-section';
+
 const { locale } = Astro.props as { locale: Locale };
 const pth = (tr: string, en: string) => (locale === 'tr' ? `/tr/${tr}` : `/en/${en}`);
-const img = '/bags.png';
-const steps = [1, 2, 3].map((n) => ({ t: t(`process.step${n}Title`, locale), b: t(`process.step${n}Body`, locale), n }));
+
+const steps = [1, 2, 3].map((n) => ({
+  n,
+  t: t(`process.step${n}Title`, locale),
+  b: t(`process.step${n}Body`, locale)
+}));
 ---
-<section class="section">
-  <div class="container story">
-    <div class="story__media reveal reveal--scale-in">
-      <img class="hover-scale" src={img} alt={locale === 'tr' ? 'Aselovers Hasır Örgü Çanta ve Organik Pamuk İplikleri' : 'Aselovers Straw Crochet Clutch Bag & Organic Cotton Yarns'} loading="lazy" />
-    </div>
-    <div class="story__copy reveal reveal--fade-up reveal--d1">
-      <p class="eyebrow">{t('process.eyebrow', locale)}</p>
-      <h2>{t('process.title', locale)}</h2>
-      <ol class="story__steps">
-        {steps.map((s, idx) => (
-          <li class={`story__step reveal reveal--fade-up reveal--d${idx + 2}`}>
-            <span class="story__num">{s.n}</span>
-            <div class="story__step-content">
-              <h3>{s.t}</h3>
-              <p>{s.b}</p>
-            </div>
-          </li>
-        ))}
-      </ol>
-      <div class="reveal reveal--fade-up reveal--d5">
-        <Button href={pth('hakkimizda', 'about')} variant="outline">{t('home.storyCta', locale)}</Button>
-      </div>
-    </div>
-  </div>
-</section>
-<style>
-  .story { display: grid; grid-template-columns: 1fr 1.05fr; gap: var(--space-7); align-items: center; }
-  .story__media { aspect-ratio: 1/1; overflow: hidden; border-radius: var(--radius); box-shadow: 0 10px 30px rgba(34,32,30,.06); }
-  .story__media img { width: 100%; height: 100%; object-fit: cover; }
-  .story__steps { list-style: none; padding: 0; margin: 0 0 var(--space-5); display: grid; gap: var(--space-5); }
-  .story__step { display: flex; gap: var(--space-4); align-items: flex-start; }
-  .story__num { flex: none; display: grid; place-items: center; width: 42px; height: 42px; border-radius: 50%; background: color-mix(in srgb, var(--accent) 8%, transparent); color: var(--accent); font-family: var(--font-display); font-weight: 600; font-size: 1.15rem; transition: background var(--dur) var(--ease), color var(--dur) var(--ease); }
-  .story__step:hover .story__num { background: var(--accent); color: var(--on-accent); }
-  .story__step-content h3 { font-size: 1.2rem; margin: 0 0 6px; color: var(--ink); }
-  .story__step-content p { color: var(--muted); margin: 0; line-height: 1.6; }
-  @media (max-width: 900px) {
-    .story { grid-template-columns: 1fr; gap: var(--space-6); }
-    .story__media { aspect-ratio: 16/10; }
-  }
-</style>
+
+<StorySection
+  client:visible
+  locale={locale}
+  eyebrow={t('process.eyebrow', locale)}
+  title={t('process.title', locale)}
+  steps={steps}
+  buttonText={t('home.storyCta', locale)}
+  buttonLink={pth('hakkimizda', 'about')}
+  imageUrl1="/images/categories/bags.png"
+  imageUrl2="/images/categories/bunny.png"
+/>

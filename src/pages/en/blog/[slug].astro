@@ -4,14 +4,27 @@ import Nav from '../../../components/Nav.astro';
 import Footer from '../../../components/Footer.astro';
 import { t } from '@lib/i18n';
 import { loadPosts, postSlug, type Post } from '@lib/blog';
+import { articleJsonLd, breadcrumbJsonLd } from '@lib/jsonld';
 export function getStaticPaths() {
   return loadPosts().map((post) => ({ params: { slug: postSlug(post) }, props: { post } }));
 }
 const { post } = Astro.props as { post: Post };
 const selfPath = `blog/${post.slug}`;
+const site = Astro.site!.toString().replace(/\/+$/, '');
+const url = `${site}/en/${selfPath}`;
+const article = articleJsonLd(post, 'en', url, site);
+const breadcrumb = breadcrumbJsonLd([
+  { name: 'Home', url: `${site}/en` },
+  { name: 'Blog', url: `${site}/en/blog` },
+  { name: post.title_en, url },
+]);
 ---
 <Base locale="en" title={`${post.title_en} — Aselovers`} description={post.excerpt_en}
   pathSelf={selfPath} pathsAlt={{ tr: selfPath, en: selfPath }}>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={article} />
+    <script type="application/ld+json" set:html={breadcrumb} />
+  </Fragment>
   <Nav locale="en" />
   <main>
     <article class="section">

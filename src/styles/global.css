@@ -1,3 +1,16 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: var(--accent);
+  --color-primary-foreground: var(--on-accent);
+  --color-background: var(--bg);
+  --color-foreground: var(--ink);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted);
+  --color-border: var(--line);
+  --color-card: var(--surface);
+}
+
 *, *::before, *::after { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 body {
