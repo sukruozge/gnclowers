@@ -1374,6 +1374,43 @@
               <label>Favicon URL</label>
               <input type="url" id="s-favicon" placeholder="https://.../favicon.ico">
             </div>
+            
+            <div class="form-section-title" style="margin-top: 24px; margin-bottom: 12px; font-weight: 600;">Kategori Kapak Görselleri</div>
+            <div class="form-row" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin-bottom: 16px;">
+              <div class="form-group">
+                <label>Örgü Çantalar (Bags)</label>
+                <input type="url" id="s-cat-bags" placeholder="https://...">
+              </div>
+              <div class="form-group">
+                <label>Safari Hayvanları (Safari)</label>
+                <input type="url" id="s-cat-safari" placeholder="https://...">
+              </div>
+              <div class="form-group">
+                <label>Perde Tutacakları (Tiebacks)</label>
+                <input type="url" id="s-cat-tiebacks" placeholder="https://...">
+              </div>
+              <div class="form-group">
+                <label>Amigurumi Oyuncaklar (Toys)</label>
+                <input type="url" id="s-cat-toys" placeholder="https://...">
+              </div>
+              <div class="form-group">
+                <label>Bebek Hediye Setleri (Gift Sets)</label>
+                <input type="url" id="s-cat-giftsets" placeholder="https://...">
+              </div>
+              <div class="form-group">
+                <label>Örgü Bebekler (Dolls)</label>
+                <input type="url" id="s-cat-dolls" placeholder="https://...">
+              </div>
+              <div class="form-group">
+                <label>Örgü Tavşanlar (Bunny)</label>
+                <input type="url" id="s-cat-bunny" placeholder="https://...">
+              </div>
+              <div class="form-group">
+                <label>Saç Tokaları (Hair Clips)</label>
+                <input type="url" id="s-cat-hairclips" placeholder="https://...">
+              </div>
+            </div>
+            
             <button class="btn btn-primary" onclick="saveSettings('appearance')">💾 Kaydet</button>
           </div>
         </div>
@@ -1554,15 +1591,9 @@ function getLocalContent() {
 }
 function saveLocalContent(c) { localStorage.setItem('ase_content', JSON.stringify(c)); }
 function getBlogPosts() {
-  // Merge: content.json posts overridden by localStorage
-  const local = getLocalContent();
-  return (local.blog && local.blog.posts) ? local.blog.posts : (_content.blog && _content.blog.posts) || [];
+  return _blogPosts || [];
 }
 function saveBlogPosts(posts) {
-  const local = getLocalContent();
-  local.blog = local.blog || {};
-  local.blog.posts = posts;
-  saveLocalContent(local);
   _blogPosts = posts;
 }
 function getSettings() {
@@ -1638,10 +1669,16 @@ async function doLogout() {
 async function initApp() {
   document.getElementById('topbar-date').textContent = new Date().toLocaleDateString('tr-TR', {day:'numeric',month:'long',year:'numeric'});
 
-  // Load content.json
+  // Load settings.json as _content
   try {
-    const res = await fetch('/content.json?v=' + Date.now());
-    _content = await res.json();
+    const res = await fetch('/api/admin/settings?v=' + Date.now(), {
+      headers: { 'X-Ase-Admin': '1' }
+    });
+    if (res.ok) {
+      _content = await res.json();
+    } else {
+      _content = {};
+    }
   } catch { _content = {}; }
 
   // Load products
@@ -1651,7 +1688,26 @@ async function initApp() {
     _products = (data.products || []);
   } catch { _products = []; }
 
-  _blogPosts = getBlogPosts();
+  // Load blog posts from server
+  try {
+    const res = await fetch('/api/admin/blog?v=' + Date.now(), {
+      headers: { 'X-Ase-Admin': '1' }
+    });
+    if (res.ok) {
+      const data = await res.json();
+      _blogPosts = data.map(p => ({
+        ...p,
+        title: p.title_tr || p.title_en || p.title,
+        excerpt: p.excerpt_tr || p.excerpt_en || p.excerpt,
+        content: p.bodyHtml_tr || p.bodyHtml_en || p.content,
+        published: p.published !== false
+      }));
+    } else {
+      _blogPosts = [];
+    }
+  } catch {
+    _blogPosts = [];
+  }
 
   renderDashboard();
   renderProducts();
@@ -1765,9 +1821,11 @@ function renderDashboard() {
 }
 
 function renderSyncStatus() {
+  const el = document.getElementById('sync-status-panel');
+  if (!el) return;
   const lastSync = localStorage.getItem('ase_last_sync');
   const cfg = getEtsyConfig();
-  document.getElementById('sync-status-panel').innerHTML = `
+  el.innerHTML = `
     <div class="sync-status">
       <div class="sync-dot ${cfg.apiKey ? 'green' : 'gray'}"></div>
       <div>
@@ -2292,44 +2350,84 @@ function autoSlug() {
   }
 }
 
-function saveBlogPost() {
+async function saveBlogPost() {
   const title = getVal('b-title').trim();
-  if (!title) { toast('Başlık zorunludur', 'err'); return; }
-
-  const posts = getBlogPosts();
+  if (!title) { toast('Lütfen başlık girin', 'err'); return; }
+  
   const editId = document.getElementById('blog-edit-id').value;
-  const post = {
-    id: editId !== '' ? (posts[parseInt(editId)]?.id || 'b' + Date.now()) : 'b' + Date.now(),
-    slug: getVal('b-slug') || slugify(title),
-    title, category: getVal('b-category'),
-    cover: getVal('b-cover'),
-    excerpt: getVal('b-excerpt'),
-    content: getVal('b-content'),
-    metaTitle: getVal('b-meta-title') || title + ' | Aselovers',
-    metaDesc: getVal('b-meta-desc'),
-    readTime: getVal('b-readtime') || '5 min',
+  const originalPost = editId !== '' ? _blogPosts[parseInt(editId)] : null;
+  const slug = getVal('b-slug').trim() || slugify(title);
+
+  const payload = {
+    slug,
     date: document.getElementById('b-date').value || new Date().toISOString().split('T')[0],
+    title_tr: title,
+    title_en: title,
+    excerpt_tr: getVal('b-excerpt'),
+    excerpt_en: getVal('b-excerpt'),
+    bodyHtml_tr: getVal('b-content'),
+    bodyHtml_en: getVal('b-content'),
+    category: getVal('b-category') || 'General',
+    cover: getVal('b-cover'),
     published: document.getElementById('b-published').checked
   };
 
-  if (editId !== '') {
-    posts[parseInt(editId)] = post;
-  } else {
-    posts.unshift(post);
+  const url = originalPost ? `/api/admin/blog/${encodeURIComponent(originalPost.slug)}` : '/api/admin/blog';
+  const method = originalPost ? 'PUT' : 'POST';
+
+  try {
+    const res = await fetch(url, {
+      method,
+      headers: ADM_HDR,
+      credentials: 'include',
+      body: JSON.stringify(payload)
+    });
+    if (res.ok) {
+      toast('✅ Blog yazısı kaydedildi (GitHub güncellendi)', 'ok');
+      
+      const localPost = {
+        ...payload,
+        title: payload.title_tr,
+        excerpt: payload.excerpt_tr,
+        content: payload.bodyHtml_tr,
+      };
+      if (originalPost) {
+        _blogPosts[parseInt(editId)] = localPost;
+      } else {
+        _blogPosts.unshift(localPost);
+      }
+
+      renderBlogList();
+      showBlogList();
+    } else {
+      const err = await res.json().catch(() => ({}));
+      toast('Kaydedilemedi: ' + (err.error || 'sunucu hatası'), 'err');
+    }
+  } catch {
+    toast('Sunucuyla iletişim kurulamadı.', 'err');
   }
-  saveBlogPosts(posts);
-  renderBlogList();
-  showBlogList();
-  toast('✅ Blog yazısı kaydedildi', 'ok');
 }
 
 function confirmDeletePost(idx) {
-  openModal('Yazıyı Sil', 'Bu blog yazısını silmek istediğinizden emin misiniz?', () => {
-    const posts = getBlogPosts();
-    posts.splice(idx, 1);
-    saveBlogPosts(posts);
-    renderBlogList();
-    toast('Yazı silindi', 'ok');
+  const p = _blogPosts[idx];
+  if (!p) return;
+  openModal('Yazıyı Sil', 'Bu blog yazısını silmek istediğinizden emin misiniz?', async () => {
+    try {
+      const res = await fetch(`/api/admin/blog/${encodeURIComponent(p.slug)}`, {
+        method: 'DELETE',
+        headers: ADM_HDR,
+        credentials: 'include'
+      });
+      if (res.ok) {
+        toast('Yazı silindi (GitHub güncellendi)', 'ok');
+        _blogPosts.splice(idx, 1);
+        renderBlogList();
+      } else {
+        toast('Silinemedi.', 'err');
+      }
+    } catch {
+      toast('Sunucu hatası.', 'err');
+    }
   });
 }
 
@@ -2337,7 +2435,8 @@ function confirmDeletePost(idx) {
 function renderSettings() {
   const s = getSettings();
   const local = getLocalContent();
-  const merged = deepMerge(_content.site || {}, s);
+  // Settings are at the root level of settings.json, not under .site anymore
+  const merged = deepMerge(_content || {}, s || {});
 
   setVal('s-site-name', merged.name || 'Aselovers');
   setVal('s-site-desc', merged.description || '');
@@ -2349,27 +2448,86 @@ function renderSettings() {
   setVal('s-etsy', merged.etsy || '');
   setVal('s-logo', merged.logo || '');
   setVal('s-favicon', merged.favicon || '');
+
+  // Populate category covers
+  setVal('s-cat-bags', merged.categoryCovers?.['Crochet Bags'] || '');
+  setVal('s-cat-safari', merged.categoryCovers?.['Safari Animals'] || '');
+  setVal('s-cat-tiebacks', merged.categoryCovers?.['Curtain Tiebacks'] || '');
+  setVal('s-cat-toys', merged.categoryCovers?.['Amigurumi Toys'] || '');
+  setVal('s-cat-giftsets', merged.categoryCovers?.['Baby Gift Sets'] || '');
+  setVal('s-cat-dolls', merged.categoryCovers?.['Crochet Dolls'] || '');
+  setVal('s-cat-bunny', merged.categoryCovers?.['Bunny Rabbits Toys'] || '');
+  setVal('s-cat-hairclips', merged.categoryCovers?.['Crochet Hair Clips'] || '');
 }
 
-function saveSettings(section) {
+async function saveSettings(section) {
   const local = getLocalContent();
   local.site = local.site || {};
-  if (section === 'site') {
-    local.site.name = getVal('s-site-name');
-    local.site.description = getVal('s-site-desc');
-    local.site.email = getVal('s-site-email');
-    local.site.analytics = getVal('s-analytics');
-    local.site.currency = getVal('s-currency');
-  } else if (section === 'social') {
-    local.site.instagram = getVal('s-instagram');
-    local.site.pinterest = getVal('s-pinterest');
-    local.site.etsy = getVal('s-etsy');
-  } else if (section === 'appearance') {
-    local.site.logo = getVal('s-logo');
-    local.site.favicon = getVal('s-favicon');
+  
+  // Merge loaded _content as base to not overwrite other settings
+  const base = _content || {};
+  const siteName = section === 'site' ? getVal('s-site-name') : (base.name || 'Aselovers');
+  const siteDesc = section === 'site' ? getVal('s-site-desc') : (base.description || '');
+  const siteEmail = section === 'site' ? getVal('s-site-email') : (base.email || '');
+  const siteAnalytics = section === 'site' ? getVal('s-analytics') : (base.analytics || '');
+  const siteCurrency = section === 'site' ? getVal('s-currency') : (base.currency || 'TRY');
+  
+  const siteInstagram = section === 'social' ? getVal('s-instagram') : (base.instagram || '');
+  const sitePinterest = section === 'social' ? getVal('s-pinterest') : (base.pinterest || '');
+  const siteEtsy = section === 'social' ? getVal('s-etsy') : (base.etsy || '');
+  
+  const siteLogo = section === 'appearance' ? getVal('s-logo') : (base.logo || '');
+  const siteFavicon = section === 'appearance' ? getVal('s-favicon') : (base.favicon || '');
+
+  const categoryCovers = base.categoryCovers || {};
+  if (section === 'appearance') {
+    categoryCovers['Crochet Bags'] = getVal('s-cat-bags');
+    categoryCovers['Safari Animals'] = getVal('s-cat-safari');
+    categoryCovers['Curtain Tiebacks'] = getVal('s-cat-tiebacks');
+    categoryCovers['Amigurumi Toys'] = getVal('s-cat-toys');
+    categoryCovers['Baby Gift Sets'] = getVal('s-cat-giftsets');
+    categoryCovers['Crochet Dolls'] = getVal('s-cat-dolls');
+    categoryCovers['Bunny Rabbits Toys'] = getVal('s-cat-bunny');
+    categoryCovers['Crochet Hair Clips'] = getVal('s-cat-hairclips');
+    categoryCovers['Stuffed Animals'] = getVal('s-cat-toys');
+    categoryCovers['Baby Shower'] = getVal('s-cat-giftsets');
+    categoryCovers['Wedding Dolls'] = getVal('s-cat-dolls');
   }
+
+  const payload = {
+    name: siteName,
+    description: siteDesc,
+    email: siteEmail,
+    analytics: siteAnalytics,
+    currency: siteCurrency,
+    instagram: siteInstagram,
+    pinterest: sitePinterest,
+    etsy: siteEtsy,
+    logo: siteLogo,
+    favicon: siteFavicon,
+    categoryCovers: categoryCovers
+  };
+
+  // Local fallback save
+  local.site = payload;
   saveLocalContent(local);
-  toast('✅ Ayarlar kaydedildi', 'ok');
+
+  try {
+    const res = await fetch('/api/admin/settings', {
+      method: 'PUT',
+      headers: ADM_HDR,
+      credentials: 'include',
+      body: JSON.stringify(payload)
+    });
+    if (res.ok) {
+      toast('✅ Ayarlar sunucuya kaydedildi (GitHub güncellendi)', 'ok');
+      _content = payload; // Update memory
+    } else {
+      toast('Ayarlar yerel kaydedildi ancak sunucuya gönderilemedi.', 'warn');
+    }
+  } catch (err) {
+    toast('Ayarlar yerel kaydedildi (sunucu bağlantısı yok)', 'ok');
+  }
 }
 
 function changePassword() {

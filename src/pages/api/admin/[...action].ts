@@ -198,13 +198,165 @@ async function handleSync(request: Request, env: Record<string, any>): Promise<R
   }
 }
 
-async function handleSettings(request: Request, env: Record<string, any>): Promise<Response> {
+const SETTINGS_PATH = 'src/data/settings.json';
+const BLOG_PATH = 'src/data/blog.json';
+
+async function loadSettings(gh: Gh): Promise<{ data: any; sha: string }> {
+  const { content, sha } = await ghGetFile(gh, SETTINGS_PATH);
+  return { data: JSON.parse(content), sha };
+}
+
+async function saveSettingsFile(gh: Gh, data: any, sha: string, message: string): Promise<void> {
+  await ghPutFile(gh, SETTINGS_PATH, JSON.stringify(data, null, 2) + '\n', message, sha);
+}
+
+async function loadBlog(gh: Gh): Promise<{ data: any[]; sha: string }> {
+  const { content, sha } = await ghGetFile(gh, BLOG_PATH);
+  const parsed = JSON.parse(content);
+  return { data: Array.isArray(parsed) ? parsed : [], sha };
+}
+
+async function saveBlogFile(gh: Gh, data: any[], sha: string, message: string): Promise<void> {
+  await ghPutFile(gh, BLOG_PATH, JSON.stringify(data, null, 2) + '\n', message, sha);
+}
+
+async function handleSettingsGet(request: Request, env: Record<string, any>): Promise<Response> {
   if (!(await isAuthed(request, env))) return json({ error: 'invalid' }, 401);
-  // The Etsy API key lives in the Cloudflare ETSY_API_KEY secret — we never
-  // commit it to the repo. Accept the request so the UI's local save succeeds.
+  if (!env.GITHUB_TOKEN) return json({ error: 'GITHUB_TOKEN ayarlı değil.' }, 501);
+  try {
+    const gh = ghClient(env);
+    const { data } = await loadSettings(gh);
+    return json(data, 200);
+  } catch (err) {
+    console.error('admin get settings error', err);
+    return json({ error: 'Ayarlar okunamadı.' }, 502);
+  }
+}
+
+async function handleSettingsPut(request: Request, env: Record<string, any>): Promise<Response> {
+  if (!(await isAuthed(request, env))) return json({ error: 'invalid' }, 401);
+  if (!env.GITHUB_TOKEN) return json({ error: 'GITHUB_TOKEN ayarlı değil.' }, 501);
   const body = await readBody(request);
   if (body === null) return json({ error: 'invalid-body' }, 400);
-  return json({ ok: true }, 200);
+  try {
+    const gh = ghClient(env);
+    const { data, sha } = await loadSettings(gh);
+    
+    if (typeof body.name === 'string') data.name = body.name;
+    if (typeof body.description === 'string') data.description = body.description;
+    if (typeof body.email === 'string') data.email = body.email;
+    if (typeof body.analytics === 'string') data.analytics = body.analytics;
+    if (typeof body.currency === 'string') data.currency = body.currency;
+    if (typeof body.instagram === 'string') data.instagram = body.instagram;
+    if (typeof body.pinterest === 'string') data.pinterest = body.pinterest;
+    if (typeof body.etsy === 'string') data.etsy = body.etsy;
+    if (typeof body.logo === 'string') data.logo = body.logo;
+    if (typeof body.favicon === 'string') data.favicon = body.favicon;
+    if (body.categoryCovers && typeof body.categoryCovers === 'object') {
+      data.categoryCovers = { ...data.categoryCovers, ...body.categoryCovers };
+    }
+
+    await saveSettingsFile(gh, data, sha, 'admin: update settings');
+    return json({ ok: true }, 200);
+  } catch (err) {
+    console.error('admin save settings error', err);
+    return json({ error: 'Ayarlar kaydedilemedi.' }, 502);
+  }
+}
+
+async function handleBlogGet(request: Request, env: Record<string, any>): Promise<Response> {
+  if (!(await isAuthed(request, env))) return json({ error: 'invalid' }, 401);
+  if (!env.GITHUB_TOKEN) return json({ error: 'GITHUB_TOKEN ayarlı değil.' }, 501);
+  try {
+    const gh = ghClient(env);
+    const { data } = await loadBlog(gh);
+    return json(data, 200);
+  } catch (err) {
+    console.error('admin get blog error', err);
+    return json({ error: 'Blog okunamadı.' }, 502);
+  }
+}
+
+async function handleBlogCreate(request: Request, env: Record<string, any>): Promise<Response> {
+  if (!(await isAuthed(request, env))) return json({ error: 'invalid' }, 401);
+  if (!env.GITHUB_TOKEN) return json({ error: 'GITHUB_TOKEN ayarlı değil.' }, 501);
+  const body = await readBody(request);
+  if (body === null) return json({ error: 'invalid-body' }, 400);
+  
+  const post = {
+    slug: typeof body.slug === 'string' && body.slug ? body.slug : 'post-' + Date.now(),
+    date: typeof body.date === 'string' && body.date ? body.date : new Date().toISOString().split('T')[0],
+    title_tr: typeof body.title_tr === 'string' ? body.title_tr : (body.title || ''),
+    title_en: typeof body.title_en === 'string' ? body.title_en : (body.title || ''),
+    excerpt_tr: typeof body.excerpt_tr === 'string' ? body.excerpt_tr : (body.excerpt || ''),
+    excerpt_en: typeof body.excerpt_en === 'string' ? body.excerpt_en : (body.excerpt || ''),
+    bodyHtml_tr: typeof body.bodyHtml_tr === 'string' ? body.bodyHtml_tr : (body.content || ''),
+    bodyHtml_en: typeof body.bodyHtml_en === 'string' ? body.bodyHtml_en : (body.content || ''),
+    category: typeof body.category === 'string' ? body.category : 'General',
+    cover: typeof body.cover === 'string' ? body.cover : '',
+    published: body.published !== false
+  };
+
+  try {
+    const gh = ghClient(env);
+    const { data, sha } = await loadBlog(gh);
+    data.unshift(post);
+    await saveBlogFile(gh, data, sha, `admin: create blog post ${post.slug}`);
+    return json({ ok: true }, 200);
+  } catch (err) {
+    console.error('admin create blog error', err);
+    return json({ error: 'Kaydedilemedi.' }, 502);
+  }
+}
+
+async function handleBlogUpdate(slug: string, request: Request, env: Record<string, any>): Promise<Response> {
+  if (!(await isAuthed(request, env))) return json({ error: 'invalid' }, 401);
+  if (!env.GITHUB_TOKEN) return json({ error: 'GITHUB_TOKEN ayarlı değil.' }, 501);
+  const body = await readBody(request);
+  if (body === null) return json({ error: 'invalid-body' }, 400);
+
+  try {
+    const gh = ghClient(env);
+    const { data, sha } = await loadBlog(gh);
+    const idx = data.findIndex((p) => p.slug === slug);
+    if (idx === -1) return json({ error: 'Yazı bulunamadı.' }, 404);
+
+    data[idx] = {
+      slug: typeof body.slug === 'string' && body.slug ? body.slug : data[idx].slug,
+      date: typeof body.date === 'string' && body.date ? body.date : data[idx].date,
+      title_tr: typeof body.title_tr === 'string' ? body.title_tr : (body.title || data[idx].title_tr),
+      title_en: typeof body.title_en === 'string' ? body.title_en : (body.title || data[idx].title_en),
+      excerpt_tr: typeof body.excerpt_tr === 'string' ? body.excerpt_tr : (body.excerpt || data[idx].excerpt_tr),
+      excerpt_en: typeof body.excerpt_en === 'string' ? body.excerpt_en : (body.excerpt || data[idx].excerpt_en),
+      bodyHtml_tr: typeof body.bodyHtml_tr === 'string' ? body.bodyHtml_tr : (body.content || data[idx].bodyHtml_tr),
+      bodyHtml_en: typeof body.bodyHtml_en === 'string' ? body.bodyHtml_en : (body.content || data[idx].bodyHtml_en),
+      category: typeof body.category === 'string' ? body.category : (data[idx].category || 'General'),
+      cover: typeof body.cover === 'string' ? body.cover : (data[idx].cover || ''),
+      published: body.published !== false
+    };
+
+    await saveBlogFile(gh, data, sha, `admin: update blog post ${slug}`);
+    return json({ ok: true }, 200);
+  } catch (err) {
+    console.error('admin update blog error', err);
+    return json({ error: 'Güncellenemedi.' }, 502);
+  }
+}
+
+async function handleBlogDelete(slug: string, request: Request, env: Record<string, any>): Promise<Response> {
+  if (!(await isAuthed(request, env))) return json({ error: 'invalid' }, 401);
+  if (!env.GITHUB_TOKEN) return json({ error: 'GITHUB_TOKEN ayarlı değil.' }, 501);
+  try {
+    const gh = ghClient(env);
+    const { data, sha } = await loadBlog(gh);
+    const next = data.filter((p) => p.slug !== slug);
+    if (next.length === data.length) return json({ error: 'Yazı bulunamadı.' }, 404);
+    await saveBlogFile(gh, next, sha, `admin: delete blog post ${slug}`);
+    return json({ ok: true }, 200);
+  } catch (err) {
+    console.error('admin delete blog error', err);
+    return json({ error: 'Silinemedi.' }, 502);
+  }
 }
 
 function normalizeProduct(input: ProductInput, id: string): Product | null {
@@ -309,7 +461,16 @@ async function router(method: string, context: APIContext): Promise<Response> {
     if (method === 'POST' && action === 'logout') return handleLogout();
     if (method === 'GET' && action === 'me') return await handleMe(request, env);
     if (method === 'POST' && action === 'sync') return await handleSync(request, env);
-    if (method === 'PUT' && action === 'settings') return await handleSettings(request, env);
+    if (method === 'GET' && action === 'settings') return await handleSettingsGet(request, env);
+    if (method === 'PUT' && action === 'settings') return await handleSettingsPut(request, env);
+
+    if (method === 'GET' && action === 'blog') return await handleBlogGet(request, env);
+    if (method === 'POST' && action === 'blog') return await handleBlogCreate(request, env);
+    if (action.startsWith('blog/')) {
+      const slug = decodeURIComponent(action.slice('blog/'.length));
+      if (method === 'PUT') return await handleBlogUpdate(slug, request, env);
+      if (method === 'DELETE') return await handleBlogDelete(slug, request, env);
+    }
 
     if (action === 'messages') {
       if (!(await isAuthed(request, env))) return json({ error: 'invalid' }, 401);

@@ -1,11 +1,16 @@
 ---
 import { t, type Locale } from '@lib/i18n';
 import Button from '../Button.astro';
+import settings from '../../data/settings.json';
 
 const { locale } = Astro.props as { locale: Locale };
 const pth = (tr: string, en: string) => (locale === 'tr' ? `/tr/${tr}` : `/en/${en}`);
 
 const catalog = locale === 'tr' ? '/tr/urunler' : '/en/products';
+
+const getCatImage = (c: string, def: string) => {
+  return settings.categoryCovers?.[c] || def;
+};
 
 const catLabels: Record<string, Record<Locale, string>> = {
   'Crochet Bags': { tr: 'Örgü Çantalar', en: 'Crochet Bags' },
@@ -22,49 +27,49 @@ const programs = [
   {
     c: 'Amigurumi Toys',
     label: catLabels['Amigurumi Toys'][locale],
-    image: '/images/categories/toys.png',
+    image: getCatImage('Amigurumi Toys', '/images/categories/toys.png'),
     category: locale === 'tr' ? 'OYUNCAK' : 'TOYS'
   },
   {
     c: 'Crochet Bags',
     label: catLabels['Crochet Bags'][locale],
-    image: '/images/categories/bags.png',
+    image: getCatImage('Crochet Bags', '/images/categories/bags.png'),
     category: locale === 'tr' ? 'MODA' : 'FASHION'
   },
   {
     c: 'Safari Animals',
     label: catLabels['Safari Animals'][locale],
-    image: '/images/categories/safari.png',
+    image: getCatImage('Safari Animals', '/images/categories/safari.png'),
     category: locale === 'tr' ? 'SAFARİ' : 'SAFARI'
   },
   {
     c: 'Curtain Tiebacks',
     label: catLabels['Curtain Tiebacks'][locale],
-    image: '/images/categories/tiebacks.png',
+    image: getCatImage('Curtain Tiebacks', '/images/categories/tiebacks.png'),
     category: locale === 'tr' ? 'DEKOR' : 'DECOR'
   },
   {
     c: 'Baby Gift Sets',
     label: catLabels['Baby Gift Sets'][locale],
-    image: '/images/categories/giftsets.png',
+    image: getCatImage('Baby Gift Sets', '/images/categories/giftsets.png'),
     category: locale === 'tr' ? 'HEDİYE' : 'GIFTS'
   },
   {
     c: 'Crochet Dolls',
     label: catLabels['Crochet Dolls'][locale],
-    image: '/images/categories/dolls.png',
+    image: getCatImage('Crochet Dolls', '/images/categories/dolls.png'),
     category: locale === 'tr' ? 'BEBEKLER' : 'DOLLS'
   },
   {
     c: 'Bunny Rabbits Toys',
     label: catLabels['Bunny Rabbits Toys'][locale],
-    image: '/images/categories/bunny.png',
+    image: getCatImage('Bunny Rabbits Toys', '/images/categories/bunny.png'),
     category: locale === 'tr' ? 'TAVŞANLAR' : 'BUNNIES'
   },
   {
     c: 'Crochet Hair Clips',
     label: catLabels['Crochet Hair Clips'][locale],
-    image: '/images/categories/hairclips.png',
+    image: getCatImage('Crochet Hair Clips', '/images/categories/hairclips.png'),
     category: locale === 'tr' ? 'AKSESUAR' : 'ACCESSORIES'
   }
 ];

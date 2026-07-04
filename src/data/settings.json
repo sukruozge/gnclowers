@@ -1,0 +1,25 @@
+{
+  "name": "Aselovers",
+  "description": "Lovingly crocheted, premium handmade amigurumi toys and accessories.",
+  "email": "info@aselovers.com",
+  "analytics": "",
+  "currency": "TRY",
+  "instagram": "https://instagram.com/aselovers",
+  "pinterest": "https://pinterest.com/aselovers",
+  "etsy": "https://aselovers.etsy.com",
+  "logo": "",
+  "favicon": "/favicon.svg",
+  "categoryCovers": {
+    "Crochet Bags": "/images/categories/bags.png",
+    "Safari Animals": "/images/categories/safari.png",
+    "Curtain Tiebacks": "/images/categories/tiebacks.png",
+    "Amigurumi Toys": "/images/categories/toys.png",
+    "Baby Gift Sets": "/images/categories/giftsets.png",
+    "Stuffed Animals": "/images/categories/toys.png",
+    "Crochet Dolls": "/images/categories/dolls.png",
+    "Bunny Rabbits Toys": "/images/categories/bunny.png",
+    "Baby Shower": "/images/categories/giftsets.png",
+    "Crochet Hair Clips": "/images/categories/hairclips.png",
+    "Wedding Dolls": "/images/categories/dolls.png"
+  }
+}

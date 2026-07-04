@@ -2,6 +2,7 @@
 import { t, type Locale } from '@lib/i18n';
 import { loadProducts } from '@lib/products';
 import SectionHeading from '../SectionHeading.astro';
+import settings from '../../data/settings.json';
 
 const { locale } = Astro.props as { locale: Locale };
 const products = loadProducts();
@@ -21,17 +22,17 @@ const catLabels: Record<string, Record<Locale, string>> = {
 };
 
 const REPRESENTATIVE_IMAGES: Record<string, string> = {
-  'Crochet Bags': '/images/categories/bags.png',
-  'Safari Animals': '/images/categories/safari.png',
-  'Curtain Tiebacks': '/images/categories/tiebacks.png',
-  'Amigurumi Toys': '/images/categories/toys.png',
-  'Baby Gift Sets': '/images/categories/giftsets.png',
-  'Stuffed Animals': '/images/categories/toys.png',
-  'Crochet Dolls': '/images/categories/dolls.png',
-  'Bunny Rabbits Toys': '/images/categories/bunny.png',
-  'Baby Shower': '/images/categories/giftsets.png',
-  'Crochet Hair Clips': '/images/categories/hairclips.png',
-  'Wedding Dolls': '/images/categories/dolls.png'
+  'Crochet Bags': settings.categoryCovers?.['Crochet Bags'] || '/images/categories/bags.png',
+  'Safari Animals': settings.categoryCovers?.['Safari Animals'] || '/images/categories/safari.png',
+  'Curtain Tiebacks': settings.categoryCovers?.['Curtain Tiebacks'] || '/images/categories/tiebacks.png',
+  'Amigurumi Toys': settings.categoryCovers?.['Amigurumi Toys'] || '/images/categories/toys.png',
+  'Baby Gift Sets': settings.categoryCovers?.['Baby Gift Sets'] || '/images/categories/giftsets.png',
+  'Stuffed Animals': settings.categoryCovers?.['Stuffed Animals'] || settings.categoryCovers?.['Amigurumi Toys'] || '/images/categories/toys.png',
+  'Crochet Dolls': settings.categoryCovers?.['Crochet Dolls'] || '/images/categories/dolls.png',
+  'Bunny Rabbits Toys': settings.categoryCovers?.['Bunny Rabbits Toys'] || '/images/categories/bunny.png',
+  'Baby Shower': settings.categoryCovers?.['Baby Shower'] || settings.categoryCovers?.['Baby Gift Sets'] || '/images/categories/giftsets.png',
+  'Crochet Hair Clips': settings.categoryCovers?.['Crochet Hair Clips'] || '/images/categories/hairclips.png',
+  'Wedding Dolls': settings.categoryCovers?.['Wedding Dolls'] || settings.categoryCovers?.['Crochet Dolls'] || '/images/categories/dolls.png'
 };
 
 const cats = [...new Set(products.map((p) => p.category))]
