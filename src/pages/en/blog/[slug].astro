@@ -2,7 +2,7 @@
 import Base from '../../../layouts/Base.astro';
 import Nav from '../../../components/Nav.astro';
 import Footer from '../../../components/Footer.astro';
-import { t } from '@lib/i18n';
+import BlogArticle from '../../../components/BlogArticle.astro';
 import { loadPosts, postSlug, type Post } from '@lib/blog';
 import { articleJsonLd, breadcrumbJsonLd } from '@lib/jsonld';
 export function getStaticPaths() {
@@ -27,15 +27,7 @@ const breadcrumb = breadcrumbJsonLd([
   </Fragment>
   <Nav locale="en" />
   <main>
-    <article class="section">
-      <div class="container prose reveal">
-        <a class="blogback" href="/en/blog">{t('blog.back', 'en')}</a>
-        <p class="eyebrow">{post.date}</p>
-        <h1>{post.title_en}</h1>
-        <div set:html={post.bodyHtml_en} />
-      </div>
-    </article>
+    <BlogArticle locale="en" post={post} />
   </main>
   <Footer locale="en" />
-  <style>.blogback { display: inline-block; color: var(--accent); margin-bottom: var(--space-4); } .prose :global(p) { color: var(--muted); }</style>
 </Base>

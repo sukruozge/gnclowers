@@ -21,6 +21,11 @@ export default defineConfig({
   build: { format: 'directory' },
 
   vite: {
+    resolve: {
+      alias: {
+        'react-dom/server': 'react-dom/server.edge',
+      },
+    },
     server: {
       proxy: {
         '/api': {
