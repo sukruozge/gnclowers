@@ -13,8 +13,12 @@ const title = isTr ? post.title_tr : post.title_en;
 const lede = isTr ? post.excerpt_tr : post.excerpt_en;
 const rawBody = isTr ? post.bodyHtml_tr : post.bodyHtml_en;
 
-const { cover, body: bodyNoCover } = splitCover(rawBody);
-const { html: body, toc } = buildToc(bodyNoCover);
+// Banner: use the admin-managed cover when set; otherwise pull the first body
+// image as the cover and drop it from the body so it is not shown twice.
+const derived = splitCover(rawBody);
+const cover = post.cover || derived.cover;
+const bodySource = post.cover ? rawBody : derived.body;
+const { html: body, toc } = buildToc(bodySource);
 const minutes = readingTimeMin(rawBody);
 
 const dateFmt = new Intl.DateTimeFormat(isTr ? 'tr-TR' : 'en-US', {
@@ -39,6 +43,8 @@ const L = isTr
       more: 'Keep reading', stamp: { e: '🧶', a: 'Handmade', b: 'with love' },
     };
 
+const eyebrow = post.category || L.note;
+const readLabel = post.readTime || L.read;
 const titleWords = title.split(' ');
 
 const related = loadPosts()
@@ -66,7 +72,7 @@ const related = loadPosts()
       <span class="stamp__b">{L.stamp.b}</span>
     </span>
     <div class="banner__content">
-      <p class="banner__note anim">{L.note}</p>
+      <p class="banner__note anim">{eyebrow}</p>
       <h1 class="banner__title">
         {titleWords.map((w, i) => (
           <><span class="w" style={`--i:${i}`}>{w}</span>{' '}</>
@@ -76,7 +82,7 @@ const related = loadPosts()
       <div class="banner__meta anim">
         <time datetime={post.date}>{dateFmt}</time>
         <span class="banner__stitch" aria-hidden="true"></span>
-        <span>{L.read}</span>
+        <span>{readLabel}</span>
       </div>
     </div>
   </header>

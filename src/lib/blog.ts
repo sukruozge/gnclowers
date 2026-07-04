@@ -7,6 +7,18 @@
   excerpt_en: string;
   bodyHtml_tr: string;
   bodyHtml_en: string;
+  /** Banner/cover image URL, managed in the admin. Falls back to the first body image. */
+  cover?: string;
+  /** Category label shown on the banner. Falls back to a locale default. */
+  category?: string;
+  /** SEO <title> override. Falls back to the post title. */
+  metaTitle?: string;
+  /** SEO meta description override. Falls back to the excerpt. */
+  metaDesc?: string;
+  /** Reading-time label override (e.g. "5 min"). Falls back to a computed estimate. */
+  readTime?: string;
+  /** When false, the post is a draft. Absent/true means published. */
+  published?: boolean;
 }
 
 import blogData from "../data/blog.json";

@@ -353,6 +353,9 @@ async function handleBlogCreate(request: Request, env: Record<string, any>): Pro
     bodyHtml_en: typeof body.bodyHtml_en === 'string' ? body.bodyHtml_en : (body.content || ''),
     category: typeof body.category === 'string' ? body.category : 'General',
     cover: typeof body.cover === 'string' ? body.cover : '',
+    metaTitle: typeof body.metaTitle === 'string' ? body.metaTitle : '',
+    metaDesc: typeof body.metaDesc === 'string' ? body.metaDesc : '',
+    readTime: typeof body.readTime === 'string' ? body.readTime : '',
     published: body.published !== false
   };
 
@@ -391,6 +394,9 @@ async function handleBlogUpdate(slug: string, request: Request, env: Record<stri
       bodyHtml_en: typeof body.bodyHtml_en === 'string' ? body.bodyHtml_en : (body.content || data[idx].bodyHtml_en),
       category: typeof body.category === 'string' ? body.category : (data[idx].category || 'General'),
       cover: typeof body.cover === 'string' ? body.cover : (data[idx].cover || ''),
+      metaTitle: typeof body.metaTitle === 'string' ? body.metaTitle : (data[idx].metaTitle || ''),
+      metaDesc: typeof body.metaDesc === 'string' ? body.metaDesc : (data[idx].metaDesc || ''),
+      readTime: typeof body.readTime === 'string' ? body.readTime : (data[idx].readTime || ''),
       published: body.published !== false
     };
 

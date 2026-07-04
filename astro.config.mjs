@@ -4,8 +4,10 @@ import cloudflare from '@astrojs/cloudflare';
 import tailwindcss from '@tailwindcss/vite';
 import react from '@astrojs/react';
 
-// SITE_URL is the production domain (Cloudflare-managed). Override per-env if needed.
-const SITE_URL = process.env.SITE_URL || 'https://aselovers.pages.dev';
+// SITE_URL is the production domain (custom domain served by Cloudflare Pages).
+// Drives canonical URLs, hreflang, sitemap and JSON-LD, so it must be the real
+// public domain. Override per-env with SITE_URL if a preview host is needed.
+const SITE_URL = process.env.SITE_URL || 'https://aseloves.com';
 
 export default defineConfig({
   site: SITE_URL,

@@ -2313,12 +2313,12 @@ function editBlogPost(idx) {
   if (!p) return;
   document.getElementById('blog-editor-title').textContent = 'Yazıyı Düzenle';
   document.getElementById('blog-edit-id').value = idx;
-  setVal('b-title', p.title || '');
+  setVal('b-title', p.title_tr || p.title_en || p.title || '');
   setVal('b-slug', p.slug || '');
   setVal('b-category', p.category || '');
   setVal('b-cover', p.cover || '');
-  setVal('b-excerpt', p.excerpt || '');
-  setVal('b-content', p.content || '');
+  setVal('b-excerpt', p.excerpt_tr || p.excerpt_en || p.excerpt || '');
+  setVal('b-content', p.bodyHtml_tr || p.bodyHtml_en || p.content || '');
   setVal('b-meta-title', p.metaTitle || '');
   setVal('b-meta-desc', p.metaDesc || '');
   setVal('b-readtime', p.readTime || '');
@@ -2363,6 +2363,9 @@ async function saveBlogPost() {
     bodyHtml_en: getVal('b-content'),
     category: getVal('b-category') || 'General',
     cover: getVal('b-cover'),
+    metaTitle: getVal('b-meta-title'),
+    metaDesc: getVal('b-meta-desc'),
+    readTime: getVal('b-readtime'),
     published: document.getElementById('b-published').checked
   };
 
