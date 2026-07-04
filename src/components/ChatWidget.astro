@@ -474,6 +474,8 @@ const welcomeText = locale === 'en'
     msgInput.value = '';
     msgInput.style.height = 'auto';
 
+    const isEn = window.location.pathname.startsWith('/en');
+
     try {
       const res = await fetch('/api/messages', {
         method: 'POST',
@@ -483,8 +485,18 @@ const welcomeText = locale === 'en'
       if (res.ok) {
         // Reload from server to get correct message IDs
         loadMessages();
+      } else {
+        chatHistory = chatHistory.filter(m => m.id !== tempMsg.id);
+        renderMessages();
+        msgInput.value = text;
+        alert(isEn ? 'Message could not be sent. Please contact us via WhatsApp or Etsy.' : 'Mesajınız iletilemedi. Lütfen WhatsApp veya Etsy üzerinden iletişime geçin.');
       }
-    } catch {}
+    } catch {
+      chatHistory = chatHistory.filter(m => m.id !== tempMsg.id);
+      renderMessages();
+      msgInput.value = text;
+      alert(isEn ? 'Connection error. Please contact us via WhatsApp or Etsy.' : 'Bağlantı hatası. Lütfen WhatsApp veya Etsy üzerinden iletişime geçin.');
+    }
   }
 
   sendBtn.addEventListener('click', sendMessage);

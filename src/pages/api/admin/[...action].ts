@@ -17,7 +17,7 @@
  */
 import type { APIContext, APIRoute } from 'astro';
 import { verifyPassword, signJwt, verifyJwt } from '@lib/admin/auth';
-import { ghGetFile, ghPutFile, ghDispatchWorkflow, type Gh } from '@lib/admin/github';
+import { ghGetFile, ghPutFile, ghDispatchWorkflow, ghGetFileSha, ghPutBinaryFile, type Gh } from '@lib/admin/github';
 
 export const prerender = false;
 
@@ -256,11 +256,70 @@ async function handleSettingsPut(request: Request, env: Record<string, any>): Pr
       data.categoryCovers = { ...data.categoryCovers, ...body.categoryCovers };
     }
 
+    // Rename category globally across covers & products if requested
+    if (body.renameCategory && typeof body.renameCategory === 'object') {
+      const { oldName, newName } = body.renameCategory;
+      if (typeof oldName === 'string' && typeof newName === 'string' && oldName && newName && oldName !== newName) {
+        // 1. Rename cover key
+        if (data.categoryCovers && data.categoryCovers[oldName] !== undefined) {
+          data.categoryCovers[newName] = data.categoryCovers[oldName];
+          delete data.categoryCovers[oldName];
+        }
+        // 2. Load and update products
+        try {
+          const { data: prodData, sha: prodSha } = await loadProducts(gh);
+          let updatedCount = 0;
+          prodData.products = (prodData.products || []).map(p => {
+            if (p.category === oldName) {
+              updatedCount++;
+              return { ...p, category: newName };
+            }
+            return p;
+          });
+          if (updatedCount > 0) {
+            await saveProducts(gh, prodData, prodSha, `admin: rename category ${oldName} to ${newName}`);
+          }
+        } catch (pe) {
+          console.error('Failed to update products for category rename', pe);
+        }
+      }
+    }
+
     await saveSettingsFile(gh, data, sha, 'admin: update settings');
     return json({ ok: true }, 200);
   } catch (err) {
     console.error('admin save settings error', err);
     return json({ error: 'Ayarlar kaydedilemedi.' }, 502);
+  }
+}
+
+async function handleUpload(request: Request, env: Record<string, any>): Promise<Response> {
+  if (!(await isAuthed(request, env))) return json({ error: 'invalid' }, 401);
+  if (!env.GITHUB_TOKEN) return json({ error: 'GITHUB_TOKEN ayarlı değil.' }, 501);
+
+  const body = await readBody(request);
+  if (body === null) return json({ error: 'invalid-body' }, 400);
+
+  let { path: filePath, base64 } = body;
+  if (typeof filePath !== 'string' || typeof base64 !== 'string') {
+    return json({ error: 'path ve base64 alanları zorunludur.' }, 400);
+  }
+
+  // Strip base64 metadata prefix if exists
+  const commaIdx = base64.indexOf(',');
+  if (commaIdx !== -1) {
+    base64 = base64.slice(commaIdx + 1);
+  }
+
+  try {
+    const gh = ghClient(env);
+    const sha = await ghGetFileSha(gh, filePath);
+    await ghPutBinaryFile(gh, filePath, base64, `admin: upload ${filePath}`, sha);
+    const url = '/' + filePath.replace(/^public\//, '');
+    return json({ ok: true, url }, 200);
+  } catch (err) {
+    console.error('admin upload error', err);
+    return json({ error: 'Yükleme başarısız.' }, 502);
   }
 }
 
@@ -463,6 +522,7 @@ async function router(method: string, context: APIContext): Promise<Response> {
     if (method === 'POST' && action === 'sync') return await handleSync(request, env);
     if (method === 'GET' && action === 'settings') return await handleSettingsGet(request, env);
     if (method === 'PUT' && action === 'settings') return await handleSettingsPut(request, env);
+    if (method === 'POST' && action === 'upload') return await handleUpload(request, env);
 
     if (method === 'GET' && action === 'blog') return await handleBlogGet(request, env);
     if (method === 'POST' && action === 'blog') return await handleBlogCreate(request, env);
@@ -475,7 +535,7 @@ async function router(method: string, context: APIContext): Promise<Response> {
     if (action === 'messages') {
       if (!(await isAuthed(request, env))) return json({ error: 'invalid' }, 401);
       const kv = env.ADMIN_KV;
-      if (!kv) return json([], 200);
+      if (!kv) return json({ error: 'kv-missing', message: 'Cloudflare ADMIN_KV veritabanı tanımlanmamış. Mesajlar çalışmayacaktır.' }, 200);
       if (method === 'GET') {
         const raw = await kv.get('chat_users');
         return json(raw ? JSON.parse(raw) : [], 200);

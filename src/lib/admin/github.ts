@@ -126,3 +126,44 @@ export async function ghRecentCommits(
     date: item.commit.committer.date,
   }));
 }
+
+export async function ghGetFileSha(gh: Gh, path: string): Promise<string | undefined> {
+  const fetchFn = gh.fetchImpl ?? fetch;
+  try {
+    const res = await fetchFn(`${baseUrl(gh)}/contents/${path}?ref=main`, {
+      method: 'GET',
+      headers: baseHeaders(gh, false),
+    });
+    if (res.status === 404) return undefined;
+    if (!res.ok) return undefined;
+    const data = (await res.json()) as { sha: string };
+    return data.sha;
+  } catch {
+    return undefined;
+  }
+}
+
+export async function ghPutBinaryFile(
+  gh: Gh,
+  path: string,
+  base64Content: string,
+  message: string,
+  sha?: string
+): Promise<void> {
+  const fetchFn = gh.fetchImpl ?? fetch;
+  const body: Record<string, unknown> = {
+    message,
+    content: base64Content,
+    branch: 'main',
+    committer: { name: 'aselovers-admin', email: 'admin@aseloves.com' },
+  };
+  if (sha !== undefined) {
+    body.sha = sha;
+  }
+  const res = await fetchFn(`${baseUrl(gh)}/contents/${path}`, {
+    method: 'PUT',
+    headers: baseHeaders(gh, true),
+    body: JSON.stringify(body),
+  });
+  await assertOk(res);
+}

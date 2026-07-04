@@ -1073,8 +1073,12 @@
       <div class="page-title">Blog Yönetimi</div>
       <div class="page-subtitle">Blog yazılarınızı oluşturun ve yönetin</div>
 
+
       <!-- BLOG LIST VIEW -->
       <div id="blog-list-view">
+        <div id="blog-token-warning" class="sync-status" style="display: none; background: rgba(239, 68, 68, 0.1); border-color: #ef4444; color: #ef4444; margin-bottom: 16px;">
+          ⚠️ <strong>GitHub Entegrasyonu Pasif:</strong> Blog yazılarını okumak/düzenlemek için GITHUB_TOKEN ortam değişkeni ayarlanmalıdır. (Yerel ortamda otomatik çalışır).
+        </div>
         <div style="display:flex;justify-content:flex-end;margin-bottom:16px">
           <button class="btn btn-gold" onclick="newBlogPost()">+ Yeni Yazı Ekle</button>
         </div>
@@ -1219,6 +1223,9 @@
       <div class="page-title">Müşteri Mesajları</div>
       <div class="page-subtitle">Ziyaretçilerden gelen sorular ve yanıtlarınız</div>
 
+      <div id="messages-kv-warning" class="sync-status" style="display: none; background: rgba(239, 68, 68, 0.1); border-color: #ef4444; color: #ef4444; margin-bottom: 16px;">
+        ⚠️ <strong>Cloudflare KV Veritabanı Eksik:</strong> Canlı destek mesajlarının kaydedilebilmesi için Cloudflare Pages projenizde <code>ADMIN_KV</code> isimli bir KV Namespace bağlı olmalıdır. (Yerel ortamda otomatik çalışır).
+      </div>
       <div class="messages-layout" style="display: grid; grid-template-columns: 280px 1fr; gap: 24px; min-height: 500px;">
         <div class="card" style="display: flex; flex-direction: column; overflow: hidden;">
           <div class="card-header"><div class="card-title">Görüşmeler</div></div>
@@ -1362,53 +1369,30 @@
           </div>
         </div>
       </div>
-
       <div class="tab-panel" id="stab-appearance">
         <div class="card">
           <div class="card-body">
             <div class="form-group">
               <label>Logo URL</label>
-              <input type="url" id="s-logo" placeholder="https://... (boş bırakırsanız metin logo kullanılır)">
+              <div style="display: flex; gap: 8px;">
+                <input type="text" id="s-logo" placeholder="https://... (boş bırakırsanız metin logo kullanılır)" style="flex: 1;">
+                <button class="btn btn-outline btn-sm" onclick="triggerFileUpload('s-logo', 'public/images/logo.png')" style="white-space: nowrap;">📁 Yükle</button>
+              </div>
             </div>
             <div class="form-group">
               <label>Favicon URL</label>
-              <input type="url" id="s-favicon" placeholder="https://.../favicon.ico">
+              <div style="display: flex; gap: 8px;">
+                <input type="text" id="s-favicon" placeholder="https://.../favicon.ico" style="flex: 1;">
+                <button class="btn btn-outline btn-sm" onclick="triggerFileUpload('s-favicon', 'public/favicon.svg')" style="white-space: nowrap;">📁 Yükle</button>
+              </div>
             </div>
             
-            <div class="form-section-title" style="margin-top: 24px; margin-bottom: 12px; font-weight: 600;">Kategori Kapak Görselleri</div>
-            <div class="form-row" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin-bottom: 16px;">
-              <div class="form-group">
-                <label>Örgü Çantalar (Bags)</label>
-                <input type="url" id="s-cat-bags" placeholder="https://...">
-              </div>
-              <div class="form-group">
-                <label>Safari Hayvanları (Safari)</label>
-                <input type="url" id="s-cat-safari" placeholder="https://...">
-              </div>
-              <div class="form-group">
-                <label>Perde Tutacakları (Tiebacks)</label>
-                <input type="url" id="s-cat-tiebacks" placeholder="https://...">
-              </div>
-              <div class="form-group">
-                <label>Amigurumi Oyuncaklar (Toys)</label>
-                <input type="url" id="s-cat-toys" placeholder="https://...">
-              </div>
-              <div class="form-group">
-                <label>Bebek Hediye Setleri (Gift Sets)</label>
-                <input type="url" id="s-cat-giftsets" placeholder="https://...">
-              </div>
-              <div class="form-group">
-                <label>Örgü Bebekler (Dolls)</label>
-                <input type="url" id="s-cat-dolls" placeholder="https://...">
-              </div>
-              <div class="form-group">
-                <label>Örgü Tavşanlar (Bunny)</label>
-                <input type="url" id="s-cat-bunny" placeholder="https://...">
-              </div>
-              <div class="form-group">
-                <label>Saç Tokaları (Hair Clips)</label>
-                <input type="url" id="s-cat-hairclips" placeholder="https://...">
-              </div>
+            <div class="form-section-title" style="margin-top: 24px; margin-bottom: 12px; font-weight: 600; display: flex; justify-content: space-between; align-items: center;">
+              <span>Kategori Kapak Görselleri & Yönetimi</span>
+              <button class="btn btn-gold btn-sm" onclick="promptAddCategory()">+ Yeni Kategori</button>
+            </div>
+            <div id="settings-categories-list" style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px;">
+              <!-- Will be populated dynamically -->
             </div>
             
             <button class="btn btn-primary" onclick="saveSettings('appearance')">💾 Kaydet</button>
@@ -1693,7 +1677,11 @@ async function initApp() {
     const res = await fetch('/api/admin/blog?v=' + Date.now(), {
       headers: { 'X-Ase-Admin': '1' }
     });
-    if (res.ok) {
+    if (res.status === 501) {
+      document.getElementById('blog-token-warning').style.display = 'block';
+      _blogPosts = [];
+    } else if (res.ok) {
+      document.getElementById('blog-token-warning').style.display = 'none';
       const data = await res.json();
       _blogPosts = data.map(p => ({
         ...p,
@@ -1888,6 +1876,10 @@ function renderProducts() {
   empty.style.display = 'none';
   count.textContent = _products.length + ' ürün';
 
+  const categoriesFromProducts = [...new Set(_products.map(p => p.category))].filter(Boolean);
+  const categoriesFromCovers = Object.keys(_content.categoryCovers || {});
+  const allCategories = [...new Set(['amigurumi', 'bag', 'decor', 'accessory', ...categoriesFromProducts, ...categoriesFromCovers])];
+
   tbody.innerHTML = _products.map((p, i) => {
     const isFeatured = (overrides.featured || []).includes(p.id);
     const name = p.title_tr || p.title_en || '(isimsiz)';
@@ -1896,7 +1888,7 @@ function renderProducts() {
       <td><div style="font-weight:500;font-size:.84rem">${name}</div></td>
       <td>
         <select class="cat-select" onchange="updateProductCat('${p.id}',this.value)">
-          ${['amigurumi','decor','bag','accessory'].map(c => `<option value="${c}" ${p.category===c?'selected':''}>${c}</option>`).join('')}
+          ${allCategories.map(c => `<option value="${c}" ${p.category===c?'selected':''}>${c}</option>`).join('')}
         </select>
       </td>
       <td style="font-weight:600;font-size:.84rem">${p.price ? p.price + ' ₺' : '—'}</td>
@@ -1916,6 +1908,7 @@ function renderProducts() {
 }
 
 function showAddProduct() {
+  populateProductCategories();
   document.getElementById('product-modal-title').textContent = 'Yeni Ürün Ekle';
   document.getElementById('p-id').value = '';
   document.getElementById('p-title-tr').value = '';
@@ -1939,6 +1932,7 @@ function closeProductModal() {
 function editProduct(id) {
   const p = _products.find(x => x.id === id);
   if (!p) return;
+  populateProductCategories();
   document.getElementById('product-modal-title').textContent = 'Ürünü Düzenle';
   document.getElementById('p-id').value = p.id;
   document.getElementById('p-title-tr').value = p.title_tr || '';
@@ -2434,8 +2428,6 @@ function confirmDeletePost(idx) {
 // ── SETTINGS ─────────────────────────────────────────────
 function renderSettings() {
   const s = getSettings();
-  const local = getLocalContent();
-  // Settings are at the root level of settings.json, not under .site anymore
   const merged = deepMerge(_content || {}, s || {});
 
   setVal('s-site-name', merged.name || 'Aselovers');
@@ -2449,15 +2441,31 @@ function renderSettings() {
   setVal('s-logo', merged.logo || '');
   setVal('s-favicon', merged.favicon || '');
 
-  // Populate category covers
-  setVal('s-cat-bags', merged.categoryCovers?.['Crochet Bags'] || '');
-  setVal('s-cat-safari', merged.categoryCovers?.['Safari Animals'] || '');
-  setVal('s-cat-tiebacks', merged.categoryCovers?.['Curtain Tiebacks'] || '');
-  setVal('s-cat-toys', merged.categoryCovers?.['Amigurumi Toys'] || '');
-  setVal('s-cat-giftsets', merged.categoryCovers?.['Baby Gift Sets'] || '');
-  setVal('s-cat-dolls', merged.categoryCovers?.['Crochet Dolls'] || '');
-  setVal('s-cat-bunny', merged.categoryCovers?.['Bunny Rabbits Toys'] || '');
-  setVal('s-cat-hairclips', merged.categoryCovers?.['Crochet Hair Clips'] || '');
+  // Render category covers & management dynamically
+  const catListEl = document.getElementById('settings-categories-list');
+  if (catListEl) {
+    const categoriesFromProducts = [...new Set(_products.map(p => p.category))].filter(Boolean);
+    const categoriesFromCovers = Object.keys(merged.categoryCovers || {});
+    const allCategories = [...new Set(['amigurumi', 'bag', 'decor', 'accessory', ...categoriesFromProducts, ...categoriesFromCovers])];
+    
+    catListEl.innerHTML = allCategories.map(cat => {
+      const coverUrl = merged.categoryCovers?.[cat] || '';
+      const catSlug = slugify(cat);
+      return `
+        <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center; padding: 12px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--card);">
+          <div style="flex: 1; min-width: 150px; font-weight: 600;">${cat}</div>
+          <div style="flex: 2; min-width: 250px; display: flex; gap: 8px;">
+            <input type="text" id="cat-cover-${catSlug}" value="${coverUrl}" placeholder="Kapak Görsel URL" class="cat-cover-input" data-cat="${cat}" style="flex:1;">
+            <button class="btn btn-outline btn-sm" onclick="triggerFileUpload('cat-cover-${catSlug}', 'public/images/categories/${catSlug}[ext]', true)" style="white-space: nowrap;">📁 Yükle</button>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button class="btn btn-outline btn-sm" onclick="promptRenameCategory('${cat}')" title="Yeniden Adlandır">✏️</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteCategory('${cat}')" title="Sil">🗑️</button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
 }
 
 async function saveSettings(section) {
@@ -2481,17 +2489,10 @@ async function saveSettings(section) {
 
   const categoryCovers = base.categoryCovers || {};
   if (section === 'appearance') {
-    categoryCovers['Crochet Bags'] = getVal('s-cat-bags');
-    categoryCovers['Safari Animals'] = getVal('s-cat-safari');
-    categoryCovers['Curtain Tiebacks'] = getVal('s-cat-tiebacks');
-    categoryCovers['Amigurumi Toys'] = getVal('s-cat-toys');
-    categoryCovers['Baby Gift Sets'] = getVal('s-cat-giftsets');
-    categoryCovers['Crochet Dolls'] = getVal('s-cat-dolls');
-    categoryCovers['Bunny Rabbits Toys'] = getVal('s-cat-bunny');
-    categoryCovers['Crochet Hair Clips'] = getVal('s-cat-hairclips');
-    categoryCovers['Stuffed Animals'] = getVal('s-cat-toys');
-    categoryCovers['Baby Shower'] = getVal('s-cat-giftsets');
-    categoryCovers['Wedding Dolls'] = getVal('s-cat-dolls');
+    document.querySelectorAll('.cat-cover-input').forEach(input => {
+      const cat = input.getAttribute('data-cat');
+      categoryCovers[cat] = input.value.trim();
+    });
   }
 
   const payload = {
@@ -2522,6 +2523,7 @@ async function saveSettings(section) {
     if (res.ok) {
       toast('✅ Ayarlar sunucuya kaydedildi (GitHub güncellendi)', 'ok');
       _content = payload; // Update memory
+      renderSettings();
     } else {
       toast('Ayarlar yerel kaydedildi ancak sunucuya gönderilemedi.', 'warn');
     }
@@ -2589,6 +2591,129 @@ function deepMerge(target, source) {
     }
   }
   return result;
+}
+
+function triggerFileUpload(targetInputId, defaultPath, isCategory = false) {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'image/*';
+  input.onchange = async () => {
+    const file = input.files[0];
+    if (!file) return;
+    
+    const ext = file.name.slice(file.name.lastIndexOf('.'));
+    let finalPath = defaultPath.replace('[ext]', ext);
+    
+    toast('Resim yükleniyor...');
+    const reader = new FileReader();
+    reader.onload = async () => {
+      const base64 = reader.result;
+      try {
+        const res = await fetch('/api/admin/upload', {
+          method: 'POST',
+          headers: ADM_HDR,
+          credentials: 'include',
+          body: JSON.stringify({ path: finalPath, base64 })
+        });
+        if (res.ok) {
+          const d = await res.json();
+          setVal(targetInputId, d.url);
+          toast('✅ Resim başarıyla yüklendi ve URL güncellendi.', 'ok');
+          if (isCategory) {
+            saveSettings('appearance');
+          }
+        } else {
+          const err = await res.json().catch(() => ({}));
+          toast('Yükleme hatası: ' + (err.error || res.statusText), 'err');
+        }
+      } catch {
+        toast('Sunucuyla iletişim kurulamadı.', 'err');
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+  input.click();
+}
+
+function promptAddCategory() {
+  const name = prompt('Yeni kategori adı:');
+  if (!name) return;
+  const trimmed = name.trim();
+  if (!trimmed) return;
+  
+  _content.categoryCovers = _content.categoryCovers || {};
+  if (_content.categoryCovers[trimmed] !== undefined) {
+    toast('Bu kategori zaten mevcut.', 'err');
+    return;
+  }
+  
+  _content.categoryCovers[trimmed] = '';
+  renderSettings();
+  toast('Kategori eklendi. Kaydetmek için sayfanın altındaki Kaydet butonuna basın.', 'ok');
+}
+
+function promptRenameCategory(oldName) {
+  const newName = prompt(`"${oldName}" kategorisinin yeni adı:`, oldName);
+  if (!newName) return;
+  const trimmed = newName.trim();
+  if (!trimmed || trimmed === oldName) return;
+
+  toast('Kategori yeniden adlandırılıyor...');
+  
+  const payload = {
+    renameCategory: { oldName, newName: trimmed }
+  };
+  
+  fetch('/api/admin/settings', {
+    method: 'PUT',
+    headers: ADM_HDR,
+    credentials: 'include',
+    body: JSON.stringify(payload)
+  })
+  .then(async res => {
+    if (res.ok) {
+      toast('✅ Kategori başarıyla yeniden adlandırıldı.', 'ok');
+      
+      if (_content.categoryCovers) {
+        _content.categoryCovers[trimmed] = _content.categoryCovers[oldName] || '';
+        delete _content.categoryCovers[oldName];
+      }
+      _products.forEach(p => {
+        if (p.category === oldName) p.category = trimmed;
+      });
+      
+      renderSettings();
+      renderProducts();
+      renderDashboard();
+    } else {
+      const err = await res.json().catch(() => ({}));
+      toast('Hata: ' + (err.error || 'Güncellenemedi'), 'err');
+    }
+  })
+  .catch(() => {
+    toast('Sunucu hatası.', 'err');
+  });
+}
+
+function deleteCategory(catName) {
+  openModal('Kategoriyi Sil', `"${catName}" kategorisini kapak listesinden silmek istediğinizden emin misiniz? (Ürünlerdeki kategoriler etkilenmez)`, () => {
+    if (_content.categoryCovers) {
+      delete _content.categoryCovers[catName];
+    }
+    renderSettings();
+    toast('Kategori silindi. Değişiklikleri kaydetmek için sayfanın altındaki Kaydet butonuna basın.', 'ok');
+  });
+}
+
+function populateProductCategories() {
+  const select = document.getElementById('p-category');
+  if (!select) return;
+  
+  const categoriesFromProducts = [...new Set(_products.map(p => p.category))].filter(Boolean);
+  const categoriesFromCovers = Object.keys(_content.categoryCovers || {});
+  const allCategories = [...new Set(['amigurumi', 'bag', 'decor', 'accessory', ...categoriesFromProducts, ...categoriesFromCovers])];
+  
+  select.innerHTML = allCategories.map(cat => `<option value="${cat}">${cat}</option>`).join('');
 }
 
 
@@ -2718,6 +2843,13 @@ async function loadMessagesPage() {
     if (!res.ok) throw new Error();
     const users = await res.json();
     
+    if (users && users.error === 'kv-missing') {
+      document.getElementById('messages-kv-warning').style.display = 'block';
+      listEl.innerHTML = '<div style="padding:20px;text-align:center;color:var(--muted-foreground)">Görüşme bulunmuyor (KV eksik).</div>';
+      return;
+    }
+    
+    document.getElementById('messages-kv-warning').style.display = 'none';
     listEl.innerHTML = '';
     if (!users.length) {
       listEl.innerHTML = '<div style="padding:20px;text-align:center;color:var(--muted-foreground)">Görüşme bulunmuyor.</div>';

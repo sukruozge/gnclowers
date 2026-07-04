@@ -55,7 +55,9 @@ const DATA_DIR = path.join(DIR, 'data');
 const PRODUCTS_F = path.join(DIR, 'src', 'data', 'products.json');
 const SUBS_F = path.join(DATA_DIR, 'subscribers.json');
 const ACTIVITY_F = path.join(DATA_DIR, 'activity.json');
-const SETTINGS_F = path.join(DATA_DIR, 'settings.json');
+const SETTINGS_F = path.join(DIR, 'src', 'data', 'settings.json');
+const BLOG_F = path.join(DIR, 'src', 'data', 'blog.json');
+const CHATS_F = path.join(DATA_DIR, 'chats.json');
 
 if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
 
@@ -701,6 +703,7 @@ app.get('/api/admin/activity', requireAuth, (req, res) => {
 app.get('/api/admin/settings', requireAuth, (req, res) => {
   const s = readJSON(SETTINGS_F, {});
   res.json({
+    ...s,
     etsyShop: s.etsyShop || process.env.ETSY_SHOP || 'aselovers',
     etsyApiSet: !!(s.etsyApiKey || process.env.ETSY_API_KEY),
     adminUser: ADMIN_USER,
@@ -710,19 +713,60 @@ app.get('/api/admin/settings', requireAuth, (req, res) => {
 app.put('/api/admin/settings',
   requireAuth,
   requireAdminHeader,
-  [
-    body('etsyApiKey').optional({ checkFalsy: true }).trim().isLength({ max: 500 }),
-    body('etsyShop').optional({ checkFalsy: true }).trim().isLength({ max: 100 }),
-  ],
   (req, res) => {
-    const errs = validationResult(req);
-    if (!errs.isEmpty()) return res.status(400).json({ error: errs.array()[0].msg });
-
     const s = readJSON(SETTINGS_F, {});
-    if (req.body.etsyApiKey) s.etsyApiKey = req.body.etsyApiKey;
-    if (req.body.etsyShop) s.etsyShop = req.body.etsyShop;
+    const body = req.body;
+    
+    // Core fields
+    if (typeof body.name === 'string') s.name = body.name;
+    if (typeof body.description === 'string') s.description = body.description;
+    if (typeof body.email === 'string') s.email = body.email;
+    if (typeof body.analytics === 'string') s.analytics = body.analytics;
+    if (typeof body.currency === 'string') s.currency = body.currency;
+    if (typeof body.instagram === 'string') s.instagram = body.instagram;
+    if (typeof body.pinterest === 'string') s.pinterest = body.pinterest;
+    if (typeof body.etsy === 'string') s.etsy = body.etsy;
+    if (typeof body.logo === 'string') s.logo = body.logo;
+    if (typeof body.favicon === 'string') s.favicon = body.favicon;
+    if (body.categoryCovers && typeof body.categoryCovers === 'object') {
+      s.categoryCovers = { ...s.categoryCovers, ...body.categoryCovers };
+    }
+    
+    // Etsy fields (legacy compatibility)
+    if (body.etsyApiKey) s.etsyApiKey = body.etsyApiKey;
+    if (body.etsyShop) s.etsyShop = body.etsyShop;
+
+    // Rename category globally across covers & products if requested
+    if (body.renameCategory && typeof body.renameCategory === 'object') {
+      const { oldName, newName } = body.renameCategory;
+      if (typeof oldName === 'string' && typeof newName === 'string' && oldName && newName && oldName !== newName) {
+        // 1. Rename cover key
+        if (s.categoryCovers && s.categoryCovers[oldName] !== undefined) {
+          s.categoryCovers[newName] = s.categoryCovers[oldName];
+          delete s.categoryCovers[oldName];
+        }
+        // 2. Update products
+        try {
+          const prodData = readJSON(PRODUCTS_F, { products: [] });
+          let updatedCount = 0;
+          prodData.products = (prodData.products || []).map(p => {
+            if (p.category === oldName) {
+              updatedCount++;
+              return { ...p, category: newName };
+            }
+            return p;
+          });
+          if (updatedCount > 0) {
+            writeJSON(PRODUCTS_F, prodData);
+          }
+        } catch (pe) {
+          console.error('Failed to update products category name locally:', pe.message);
+        }
+      }
+    }
+
     writeJSON(SETTINGS_F, s);
-    logActivity('AYARLAR_GÜNCELLENDİ', 'Etsy ayarları değiştirildi');
+    logActivity('AYARLAR_GÜNCELLENDİ', 'Site ayarları güncellendi');
     res.json({ success: true });
   }
 );
@@ -764,6 +808,184 @@ app.post('/api/admin/settings/password',
     res.json({ success: true, message: 'Şifre başarıyla değiştirildi.' });
   }
 );
+
+
+// ═════════════════════════════════════════════════════
+// ADMIN — Blog, Messages, Upload
+// ═════════════════════════════════════════════════════
+
+// BLOG — GET
+app.get('/api/admin/blog', requireAuth, (req, res) => {
+  const posts = readJSON(BLOG_F, []);
+  res.json(posts);
+});
+
+// BLOG — CREATE
+app.post('/api/admin/blog', requireAuth, requireAdminHeader, (req, res) => {
+  const body = req.body;
+  const posts = readJSON(BLOG_F, []);
+  const post = {
+    slug: body.slug || 'post-' + Date.now(),
+    date: body.date || new Date().toISOString().split('T')[0],
+    title_tr: body.title_tr || '',
+    title_en: body.title_en || '',
+    excerpt_tr: body.excerpt_tr || '',
+    excerpt_en: body.excerpt_en || '',
+    bodyHtml_tr: body.bodyHtml_tr || '',
+    bodyHtml_en: body.bodyHtml_en || '',
+    category: body.category || 'General',
+    cover: body.cover || '',
+    published: body.published !== false
+  };
+  posts.unshift(post);
+  writeJSON(BLOG_F, posts);
+  logActivity('BLOG_YAZISI_EKLENDİ', post.title_tr || post.slug);
+  res.json({ success: true });
+});
+
+// BLOG — UPDATE
+app.put('/api/admin/blog/:slug', requireAuth, requireAdminHeader, (req, res) => {
+  const { slug } = req.params;
+  const body = req.body;
+  const posts = readJSON(BLOG_F, []);
+  const idx = posts.findIndex(p => p.slug === slug);
+  if (idx === -1) return res.status(404).json({ error: 'Yazı bulunamadı.' });
+
+  posts[idx] = {
+    slug: body.slug || posts[idx].slug,
+    date: body.date || posts[idx].date,
+    title_tr: body.title_tr !== undefined ? body.title_tr : posts[idx].title_tr,
+    title_en: body.title_en !== undefined ? body.title_en : posts[idx].title_en,
+    excerpt_tr: body.excerpt_tr !== undefined ? body.excerpt_tr : posts[idx].excerpt_tr,
+    excerpt_en: body.excerpt_en !== undefined ? body.excerpt_en : posts[idx].excerpt_en,
+    bodyHtml_tr: body.bodyHtml_tr !== undefined ? body.bodyHtml_tr : posts[idx].bodyHtml_tr,
+    bodyHtml_en: body.bodyHtml_en !== undefined ? body.bodyHtml_en : posts[idx].bodyHtml_en,
+    category: body.category !== undefined ? body.category : posts[idx].category,
+    cover: body.cover !== undefined ? body.cover : posts[idx].cover,
+    published: body.published !== undefined ? body.published : posts[idx].published
+  };
+  writeJSON(BLOG_F, posts);
+  logActivity('BLOG_YAZISI_GÜNCELLENDİ', slug);
+  res.json({ success: true });
+});
+
+// BLOG — DELETE
+app.delete('/api/admin/blog/:slug', requireAuth, requireAdminHeader, (req, res) => {
+  const { slug } = req.params;
+  const posts = readJSON(BLOG_F, []);
+  const next = posts.filter(p => p.slug !== slug);
+  if (next.length === posts.length) return res.status(404).json({ error: 'Yazı bulunamadı.' });
+  writeJSON(BLOG_F, next);
+  logActivity('BLOG_YAZISI_SİLİNDİ', slug);
+  res.json({ success: true });
+});
+
+// MESSAGES (Client sending / reading)
+app.get('/api/messages', (req, res) => {
+  const { userId } = req.query;
+  if (!userId) return res.status(400).json({ error: 'userId is required' });
+  const chats = readJSON(CHATS_F, {});
+  const userChat = chats[userId] || { userId, messages: [], unreadCount: 0 };
+  res.json(userChat);
+});
+
+app.post('/api/messages', (req, res) => {
+  const { userId, name, email, text } = req.body;
+  if (!userId || !text) return res.status(400).json({ error: 'userId and text are required' });
+
+  const chats = readJSON(CHATS_F, {});
+  const userChat = chats[userId] || { userId, messages: [], unreadCount: 0 };
+  if (name) userChat.name = name;
+  if (email) userChat.email = email;
+
+  const newMsg = {
+    id: 'msg-' + Date.now(),
+    sender: 'user',
+    text,
+    createdAt: new Date().toISOString()
+  };
+  userChat.messages.push(newMsg);
+  userChat.unreadCount = (userChat.unreadCount || 0) + 1;
+  chats[userId] = userChat;
+  writeJSON(CHATS_F, chats);
+  res.json({ ok: true, message: newMsg });
+});
+
+// MESSAGES (Admin listing)
+app.get('/api/admin/messages', requireAuth, (req, res) => {
+  const chats = readJSON(CHATS_F, {});
+  const list = Object.values(chats).map(c => {
+    const lastMsg = c.messages[c.messages.length - 1];
+    return {
+      userId: c.userId,
+      name: c.name || 'Misafir',
+      email: c.email || '',
+      lastMessageText: lastMsg ? lastMsg.text : '',
+      lastActiveAt: lastMsg ? lastMsg.createdAt : new Date().toISOString(),
+      unreadCount: c.unreadCount || 0
+    };
+  }).sort((a, b) => new Date(b.lastActiveAt) - new Date(a.lastActiveAt));
+  res.json(list);
+});
+
+// MESSAGES (Admin chat detail)
+app.get('/api/admin/messages/:userId', requireAuth, (req, res) => {
+  const { userId } = req.params;
+  const chats = readJSON(CHATS_F, {});
+  const userChat = chats[userId] || { userId, messages: [], unreadCount: 0 };
+  userChat.unreadCount = 0; // mark as read
+  chats[userId] = userChat;
+  writeJSON(CHATS_F, chats);
+  res.json(userChat);
+});
+
+// MESSAGES (Admin reply)
+app.post('/api/admin/messages-reply', requireAuth, requireAdminHeader, (req, res) => {
+  const { userId, text } = req.body;
+  if (!userId || !text) return res.status(400).json({ error: 'missing fields' });
+
+  const chats = readJSON(CHATS_F, {});
+  const userChat = chats[userId];
+  if (!userChat) return res.status(404).json({ error: 'user not found' });
+
+  const newReply = {
+    id: 'reply-' + Date.now(),
+    sender: 'admin',
+    text,
+    createdAt: new Date().toISOString()
+  };
+  userChat.messages.push(newReply);
+  userChat.unreadCount = 0; // mark as read
+  chats[userId] = userChat;
+  writeJSON(CHATS_F, chats);
+  res.json({ ok: true, message: newReply });
+});
+
+// UPLOAD — POST
+app.post('/api/admin/upload', requireAuth, requireAdminHeader, (req, res) => {
+  let { path: filePath, base64 } = req.body;
+  if (!filePath || !base64) return res.status(400).json({ error: 'path ve base64 alanları zorunludur.' });
+
+  const commaIdx = base64.indexOf(',');
+  if (commaIdx !== -1) {
+    base64 = base64.slice(commaIdx + 1);
+  }
+
+  try {
+    const buffer = Buffer.from(base64, 'base64');
+    const fullPath = path.join(DIR, filePath);
+    const dir = path.dirname(fullPath);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    fs.writeFileSync(fullPath, buffer);
+    const url = '/' + filePath.replace(/^public\//, '');
+    res.json({ ok: true, url });
+  } catch (err) {
+    console.error('Local upload error', err.message);
+    res.status(500).json({ error: 'Resim kaydedilemedi.' });
+  }
+});
 
 // ═════════════════════════════════════════════════════
 // Admin panel page
