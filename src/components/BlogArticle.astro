@@ -136,6 +136,7 @@ const related = loadPosts()
 <style>
   .art {
     --measure: 43rem; --wide: 60rem;
+    --nav: 140px;              /* sticky site header clearance (header is ~125px) */
     --read: #43392f;           /* warm reading ink */
     --chain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='46' height='14' viewBox='0 0 46 14'%3E%3Cpath d='M2 7c3-6 8-6 11 0s8 6 11 0 8-6 11 0' fill='none' stroke='%23B0532E' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E");
     --chain-light: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='46' height='14' viewBox='0 0 46 14'%3E%3Cpath d='M2 7c3-6 8-6 11 0s8 6 11 0 8-6 11 0' fill='none' stroke='%23F0E0C0' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E");
@@ -253,7 +254,7 @@ const related = loadPosts()
   .col { min-width: 0; }
 
   /* ── TOC as a vertical thread ─────────────────────── */
-  .toc__inner { position: sticky; top: 104px; }
+  .toc__inner { position: sticky; top: var(--nav); }
   .toc__title {
     font-family: var(--font-signature); font-size: 1.25rem; color: var(--accent);
     margin: 0 0 var(--space-3);
@@ -286,7 +287,7 @@ const related = loadPosts()
   .body :global(h2) {
     font-family: var(--font-display); font-weight: 600;
     font-size: clamp(1.55rem, 3vw, 2.05rem); line-height: 1.2; color: var(--ink);
-    margin: var(--space-8) 0 var(--space-4); scroll-margin-top: 104px;
+    margin: var(--space-8) 0 var(--space-4); scroll-margin-top: var(--nav);
   }
   .body :global(h2)::before {
     content: ""; display: block; width: 46px; height: 14px;

@@ -531,8 +531,13 @@ const collections = [...new Set(products.map((x) => x.category))]
     .nav__search-container {
       display: none;
     }
+    .nav__spacer {
+      display: none;
+    }
     .nav__top-inner {
-      grid-template-columns: auto 1fr;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       width: 100%;
     }
     .nav__brand {
