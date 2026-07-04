@@ -141,7 +141,7 @@ const categories = [...new Set(items.map((i) => i.category))];
   .fbtn.is-active { color: var(--on-accent); background: var(--cat, var(--accent)); border-color: transparent; }
 
   /* Grid cards */
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(288px, 1fr)); gap: var(--space-5); }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(288px, 1fr)); gap: var(--space-5); perspective: 1200px; }
   .card { display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--line);
     border-radius: var(--radius-lg); overflow: hidden; text-decoration: none;
     transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease), border-color var(--dur) var(--ease); }
@@ -169,4 +169,19 @@ const categories = [...new Set(items.map((i) => i.category))];
     const cat = b.dataset.cat;
     cards.forEach((c) => { c.style.display = cat === '*' || c.dataset.cat === cat ? '' : 'none'; });
   }));
+
+  // Mouse-follow 3D tilt on cards (desktop, motion-safe)
+  const bigScreen = window.matchMedia('(min-width: 781px)').matches;
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (bigScreen && !reduce) {
+    document.querySelectorAll<HTMLElement>('.card').forEach((card) => {
+      card.addEventListener('mousemove', (e) => {
+        const r = card.getBoundingClientRect();
+        const x = (e.clientX - r.left) / r.width - 0.5;
+        const y = (e.clientY - r.top) / r.height - 0.5;
+        card.style.transform = `translateY(-6px) rotateX(${y * -5}deg) rotateY(${x * 6}deg)`;
+      }, { passive: true });
+      card.addEventListener('mouseleave', () => { card.style.transform = ''; });
+    });
+  }
 </script>
