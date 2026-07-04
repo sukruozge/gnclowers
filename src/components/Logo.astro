@@ -107,4 +107,16 @@ const { mode = 'full', class: cls = '' } = Astro.props;
     text-transform: uppercase; 
     color: var(--muted); 
   }
+
+  @media (max-width: 860px) {
+    .logo__tag-container {
+      display: none;
+    }
+    .logo__decor {
+      display: none;
+    }
+    .logo__word {
+      font-size: 1.65rem;
+    }
+  }
 </style>

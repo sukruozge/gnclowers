@@ -33,6 +33,9 @@ img { max-width: 100%; display: block; }
 main { min-height: 50vh; }
 
 .container { width: 100%; max-width: var(--maxw); margin: 0 auto; padding: 0 var(--space-5); }
+@media (max-width: 600px) {
+  .container { padding: 0 var(--space-4); }
+}
 .eyebrow { font-family: var(--font-body); font-size: var(--step-small); letter-spacing: .18em; text-transform: uppercase; color: var(--accent); margin: 0 0 var(--space-3); }
 .section { padding: var(--space-8) 0; }
 .section--tint { background: var(--section); }

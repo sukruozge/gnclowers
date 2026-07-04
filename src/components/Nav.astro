@@ -54,7 +54,7 @@ const collections = [...new Set(products.map((x) => x.category))]
       <!-- Right Actions -->
       <div class="nav__actions">
         <!-- User profile icon (Mock) -->
-        <button class="nav__icon-btn" aria-label="Profil">
+        <button class="nav__icon-btn nav__profile-btn" aria-label="Profil">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
         </button>
 
@@ -550,6 +550,12 @@ const collections = [...new Set(products.map((x) => x.category))]
     }
     .nav__spacer {
       display: none;
+    }
+    .nav__profile-btn {
+      display: none;
+    }
+    .nav__actions {
+      gap: var(--space-2);
     }
     .nav__top-inner {
       display: flex;
