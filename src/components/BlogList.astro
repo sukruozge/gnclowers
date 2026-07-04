@@ -36,16 +36,16 @@ const [featured, ...rest] = items;
 const categories = [...new Set(items.map((i) => i.category))];
 ---
 <section class="bloglist">
-  <!-- Animated hero: floating yarn stickers + self-stitching chain -->
+  <!-- Full-width animated hero: two kids + floating stickers + self-stitching chain -->
   <header class="bl__hero">
+    <img class="kid kid--girl" src="/images/kid-girl.png" alt="" width="896" height="1200" fetchpriority="high" />
+    <img class="kid kid--boy" src="/images/kid-boy.png" alt="" width="896" height="1200" fetchpriority="high" />
+
     <div class="bl__stickers" aria-hidden="true">
-      <span class="fl" style="--x:7%;  --y:24%; --d:6s;   --r:-12deg; --depth:26">🧶</span>
-      <span class="fl" style="--x:89%; --y:20%; --d:7.2s; --r:10deg;  --depth:38">🧸</span>
-      <span class="fl" style="--x:17%; --y:68%; --d:5.6s; --r:8deg;   --depth:30">🐰</span>
-      <span class="fl" style="--x:82%; --y:64%; --d:6.6s; --r:-9deg;  --depth:22">⭐</span>
-      <span class="fl" style="--x:49%; --y:9%;  --d:8s;   --r:6deg;   --depth:16">🎀</span>
-      <span class="fl" style="--x:32%; --y:34%; --d:7.5s; --r:-7deg;  --depth:20">🧵</span>
-      <span class="fl" style="--x:67%; --y:38%; --d:6.1s; --r:13deg;  --depth:34">💛</span>
+      <span class="fl" style="--x:26%; --y:16%; --d:6s;   --r:-12deg; --depth:24">🧶</span>
+      <span class="fl" style="--x:72%; --y:14%; --d:7.2s; --r:10deg;  --depth:32">⭐</span>
+      <span class="fl" style="--x:49%; --y:7%;  --d:8s;   --r:6deg;   --depth:16">🎀</span>
+      <span class="fl" style="--x:63%; --y:30%; --d:6.4s; --r:13deg;  --depth:28">💛</span>
     </div>
 
     <div class="bl__inner">
@@ -112,13 +112,25 @@ const categories = [...new Set(items.map((i) => i.category))];
 </section>
 
 <style>
-  .bloglist { max-width: var(--maxw); margin: 0 auto; padding: var(--space-8) var(--space-5) var(--space-8); }
+  .bloglist { max-width: var(--maxw); margin: 0 auto; padding: 0 var(--space-5) var(--space-8); }
 
-  /* Animated hero */
-  .bl__hero { position: relative; overflow: hidden; border-radius: var(--radius-lg);
-    min-height: clamp(370px, 50vh, 500px); margin-bottom: var(--space-7);
+  /* Full-width animated hero */
+  .bl__hero { position: relative; overflow: hidden;
+    width: 100vw; margin-left: calc(50% - 50vw); border-radius: 0;
+    min-height: clamp(440px, 60vh, 600px); margin-bottom: var(--space-7);
     display: grid; place-items: center; isolation: isolate;
-    background: radial-gradient(125% 100% at 50% -10%, #FCEBDD 0%, #FBF3EA 45%, var(--bg) 100%); }
+    background: radial-gradient(115% 100% at 50% -10%, #FCEBDD 0%, #FBF3EA 45%, var(--bg) 100%); }
+
+  /* Children illustrations */
+  .kid { position: absolute; bottom: 0; z-index: 0; height: clamp(240px, 40vw, 500px); width: auto;
+    filter: drop-shadow(0 14px 22px rgba(28,26,24,.18));
+    translate: var(--kx, 0) var(--ky, 0); will-change: transform, translate; }
+  .kid--girl { left: clamp(-16px, 3vw, 70px); animation: swayL 5s ease-in-out infinite; }
+  .kid--boy { right: clamp(-16px, 3vw, 70px); animation: swayR 5.6s ease-in-out infinite; }
+  @keyframes swayL { 0%, 100% { transform: rotate(-1.6deg); } 50% { transform: rotate(1.4deg) translateY(-6px); } }
+  @keyframes swayR { 0%, 100% { transform: rotate(1.6deg); } 50% { transform: rotate(-1.4deg) translateY(-6px); } }
+  @media (max-width: 920px) { .kid { height: clamp(180px, 30vw, 300px); opacity: .5; } }
+  @media (max-width: 680px) { .kid { display: none; } }
   .bl__hero::before { content: ""; position: absolute; inset: -20%; z-index: -2;
     background: radial-gradient(38% 38% at 28% 30%, rgba(220,160,55,.16), transparent 70%),
                 radial-gradient(44% 44% at 76% 62%, rgba(176,83,46,.13), transparent 70%);
@@ -152,7 +164,7 @@ const categories = [...new Set(items.map((i) => i.category))];
   .tab[aria-current="page"] { background: var(--accent); color: var(--on-accent); }
 
   @media (prefers-reduced-motion: reduce) {
-    .bl__hero::before, .fl { animation: none; }
+    .bl__hero::before, .fl, .kid { animation: none; }
     .bl__eyebrow, .bl__title .ltr, .bl__sub, .tabs { opacity: 1; animation: none; }
     .bl__stitch path { stroke-dashoffset: 0; animation: none; }
   }
@@ -231,10 +243,11 @@ const categories = [...new Set(items.map((i) => i.category))];
       card.addEventListener('mouseleave', () => { card.style.transform = ''; });
     });
 
-    // Floating-sticker mouse parallax in the hero
+    // Hero mouse parallax: floating stickers + the two kids
     const hero = document.querySelector<HTMLElement>('.bl__hero');
     const stickers = document.querySelectorAll<HTMLElement>('.fl');
-    if (hero && stickers.length) {
+    const kids = document.querySelectorAll<HTMLElement>('.kid');
+    if (hero && (stickers.length || kids.length)) {
       hero.addEventListener('mousemove', (e) => {
         const r = hero.getBoundingClientRect();
         const x = (e.clientX - r.left) / r.width - 0.5;
@@ -244,9 +257,14 @@ const categories = [...new Set(items.map((i) => i.category))];
           s.style.setProperty('--px', (x * depth).toFixed(1) + 'px');
           s.style.setProperty('--py', (y * depth).toFixed(1) + 'px');
         });
+        kids.forEach((k) => {
+          k.style.setProperty('--kx', (x * 16).toFixed(1) + 'px');
+          k.style.setProperty('--ky', (y * 9).toFixed(1) + 'px');
+        });
       }, { passive: true });
       hero.addEventListener('mouseleave', () => {
         stickers.forEach((s) => { s.style.setProperty('--px', '0px'); s.style.setProperty('--py', '0px'); });
+        kids.forEach((k) => { k.style.setProperty('--kx', '0px'); k.style.setProperty('--ky', '0px'); });
       });
     }
   }
