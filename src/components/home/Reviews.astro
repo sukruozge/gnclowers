@@ -15,7 +15,7 @@ const testimonials: Testimonial[] = locale === 'tr' ? [
   {
     text: "Flamingo amigurumi oyuncağı harika! Tam anlatıldığı gibi, kızıma harika bir doğum günü hediyesi oldu. İşçiliği inanılmaz temiz.",
     name: "Briana Patton",
-    role: "Etsy Alıcısı, ABD",
+    role: "Doğrulanmış Alıcı, ABD",
     rating: 5
   },
   {
@@ -27,7 +27,7 @@ const testimonials: Testimonial[] = locale === 'tr' ? [
   {
     text: "Kişiye özel renk ve boyutta örgü tavşan sipariş ettim. Mağaza iletişimi harikaydı, her soruma anında yanıt aldım. Teşekkürler!",
     name: "Bilal Ahmed",
-    role: "Etsy Alıcısı, İngiltere",
+    role: "Doğrulanmış Alıcı, İngiltere",
     rating: 5
   },
   {
@@ -37,9 +37,9 @@ const testimonials: Testimonial[] = locale === 'tr' ? [
     rating: 5
   },
   {
-    text: "Etsy'deki en tatlı ve yardımcı satıcı olabilir! Bebek hediye seti tam zamanında ve mükemmel bir paketleme ile ulaştı.",
+    text: "Gördüğüm en tatlı ve yardımcı satıcı olabilir! Bebek hediye seti tam zamanında ve mükemmel bir paketleme ile ulaştı.",
     name: "Zainab Hussain",
-    role: "Etsy Alıcısı, Kanada",
+    role: "Doğrulanmış Alıcı, Kanada",
     rating: 5
   },
   {
@@ -57,20 +57,20 @@ const testimonials: Testimonial[] = locale === 'tr' ? [
   {
     text: "Özel siparişimiz için iletişim baştan sona harikaydı. Yapım aşamasında fotoğraflarla bilgilendirildik. İşçilik muhteşem.",
     name: "Sana Sheikh",
-    role: "Etsy Alıcısı, Almanya",
+    role: "Doğrulanmış Alıcı, Almanya",
     rating: 5
   },
   {
     text: "Hızlı kargo ve özenli paketleme. Hediye paketi o kadar güzel yapılmıştı ki açmaya kıyamadık. Kesinlikle tavsiye ederim.",
     name: "Hassan Ali",
-    role: "Etsy Alıcısı, Fransa",
+    role: "Doğrulanmış Alıcı, Fransa",
     rating: 5
   }
 ] : [
   {
     text: "The flamingo amigurumi is beautiful! Just as described, it made a wonderful birthday gift for my daughter. So well made.",
     name: "Briana Patton",
-    role: "Etsy Buyer, USA",
+    role: "Verified Buyer, USA",
     rating: 5
   },
   {
@@ -82,7 +82,7 @@ const testimonials: Testimonial[] = locale === 'tr' ? [
   {
     text: "Custom color and size order came out great! Excellent communication, very helpful throughout the process. Highly recommend.",
     name: "Bilal Ahmed",
-    role: "Etsy Buyer, UK",
+    role: "Verified Buyer, UK",
     rating: 5
   },
   {
@@ -92,9 +92,9 @@ const testimonials: Testimonial[] = locale === 'tr' ? [
     rating: 5
   },
   {
-    text: "Probably the sweetest and most helpful seller on Etsy! The baby gift set arrived right on time and in perfect packaging.",
+    text: "Probably the sweetest and most helpful seller! The baby gift set arrived right on time and in perfect packaging.",
     name: "Zainab Hussain",
-    role: "Etsy Buyer, Canada",
+    role: "Verified Buyer, Canada",
     rating: 5
   },
   {
@@ -112,13 +112,13 @@ const testimonials: Testimonial[] = locale === 'tr' ? [
   {
     text: "Outstanding customer service for our custom order. We were updated with photos at every step. Thank you so much!",
     name: "Sana Sheikh",
-    role: "Etsy Buyer, Germany",
+    role: "Verified Buyer, Germany",
     rating: 5
   },
   {
     text: "Super fast shipping and beautiful packaging. The gift wrapping was so lovely we didn't want to open it. Highly recommended.",
     name: "Hassan Ali",
-    role: "Etsy Buyer, France",
+    role: "Verified Buyer, France",
     rating: 5
   }
 ];
@@ -213,12 +213,7 @@ const initial = (txt: string) => (txt.trim()[0] ?? '★').toUpperCase();
 
     </div>
 
-    <!-- Foot Link -->
-    <div class="testimonials-foot">
-      <a class="reviews-see-all" href="https://www.etsy.com/shop/aselovers/reviews" target="_blank" rel="noopener">
-        {t('reviews.seeAll', locale)} →
-      </a>
-    </div>
+    <!-- Foot Link Removed -->
 
   </div>
 </section>
