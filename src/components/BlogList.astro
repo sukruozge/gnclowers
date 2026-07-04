@@ -1,0 +1,172 @@
+---
+import { loadPosts, splitCover, type Post } from '@lib/blog';
+import type { Locale } from '@lib/i18n';
+
+interface Props { locale: Locale }
+const { locale } = Astro.props as Props;
+const isTr = locale === 'tr';
+
+const L = isTr
+  ? { eyebrow: 'atölye günlüğü', title: 'Blog', sub: 'Amigurumi, güvenli oyuncaklar, organik iplik ve atölyemizden hikâyeler.',
+      readMore: 'Devamını oku', all: 'Tümü', featured: 'Öne çıkan' }
+  : { eyebrow: 'the workshop journal', title: 'Journal', sub: 'Amigurumi, safe toys, organic yarn and stories from our workshop.',
+      readMore: 'Read more', all: 'All', featured: 'Featured' };
+
+// Warm, brand-harmonious category colors (muted, professional — not garish).
+const CAT_COLORS = ['#B0532E', '#C4892E', '#6E7B57', '#B5677A', '#5B7C8A', '#8A6BA0'];
+function catColor(cat: string): string {
+  let h = 0;
+  for (let i = 0; i < cat.length; i++) h = (h * 31 + cat.charCodeAt(i)) >>> 0;
+  return CAT_COLORS[h % CAT_COLORS.length];
+}
+
+const fmt = (d: string) =>
+  new Intl.DateTimeFormat(isTr ? 'tr-TR' : 'en-US', { year: 'numeric', month: 'long', day: 'numeric' }).format(new Date(d));
+
+const items = loadPosts().map((p: Post) => ({
+  href: `/${locale}/blog/${p.slug}`,
+  title: isTr ? p.title_tr : p.title_en,
+  excerpt: isTr ? p.excerpt_tr : p.excerpt_en,
+  cover: p.cover || splitCover(isTr ? p.bodyHtml_tr : p.bodyHtml_en).cover || '/hero.png',
+  category: p.category || (isTr ? 'Günlük' : 'Journal'),
+  date: fmt(p.date),
+}));
+
+const [featured, ...rest] = items;
+const categories = [...new Set(items.map((i) => i.category))];
+---
+<section class="bloglist">
+  <!-- Header -->
+  <header class="bl__head">
+    <p class="bl__eyebrow">{L.eyebrow}</p>
+    <h1 class="bl__title">{L.title}</h1>
+    <p class="bl__sub">{L.sub}</p>
+    <span class="bl__chain" aria-hidden="true"></span>
+
+    <!-- Language tabs -->
+    <div class="tabs" role="tablist" aria-label="Dil / Language">
+      <a class="tab" href="/tr/blog" aria-current={isTr ? 'page' : undefined}>🇹🇷 Türkçe</a>
+      <a class="tab" href="/en/blog" aria-current={!isTr ? 'page' : undefined}>🇬🇧 English</a>
+    </div>
+  </header>
+
+  {featured && (
+    <a class="feat" href={featured.href} style={`--cat:${catColor(featured.category)}`}>
+      <span class="feat__img"><img src={featured.cover} alt={featured.title} fetchpriority="high" /></span>
+      <span class="feat__panel">
+        <span class="feat__tag">★ {L.featured}</span>
+        <span class="row">
+          <span class="chip">{featured.category}</span>
+          <span class="date">{featured.date}</span>
+        </span>
+        <h2 class="feat__title">{featured.title}</h2>
+        <p class="feat__ex">{featured.excerpt}</p>
+        <span class="feat__more">{L.readMore} →</span>
+      </span>
+    </a>
+  )}
+
+  {categories.length > 1 && (
+    <div class="filters" role="group" aria-label="Kategori">
+      <button class="fbtn is-active" data-cat="*">{L.all}</button>
+      {categories.map((c) => (
+        <button class="fbtn" data-cat={c} style={`--cat:${catColor(c)}`}>{c}</button>
+      ))}
+    </div>
+  )}
+
+  <div class="grid">
+    {rest.map((p) => (
+      <a class="card" href={p.href} data-cat={p.category} style={`--cat:${catColor(p.category)}`}>
+        <span class="card__img"><img src={p.cover} alt={p.title} loading="lazy" /></span>
+        <span class="card__body">
+          <span class="row">
+            <span class="chip">{p.category}</span>
+            <span class="date">{p.date}</span>
+          </span>
+          <span class="card__title">{p.title}</span>
+          <span class="card__ex">{p.excerpt}</span>
+          <span class="card__more">{L.readMore} →</span>
+        </span>
+      </a>
+    ))}
+  </div>
+</section>
+
+<style>
+  .bloglist { max-width: var(--maxw); margin: 0 auto; padding: var(--space-8) var(--space-5) var(--space-8); }
+
+  /* Header */
+  .bl__head { text-align: center; max-width: 44rem; margin: 0 auto var(--space-7); }
+  .bl__eyebrow { font-family: var(--font-signature); font-size: 1.6rem; color: var(--accent); margin: 0 0 var(--space-1); transform: rotate(-2deg); }
+  .bl__title { font-family: var(--font-display); font-weight: 600; font-size: clamp(2.6rem, 6vw, 4rem); line-height: 1; color: var(--ink); margin: 0 0 var(--space-3); }
+  .bl__sub { color: var(--muted); font-size: 1.12rem; line-height: 1.6; margin: 0 auto var(--space-4); max-width: 34rem; }
+  .bl__chain { display: block; width: 60px; height: 14px; margin: 0 auto var(--space-5);
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='14' viewBox='0 0 60 14'%3E%3Cpath d='M2 7c3-6 8-6 11 0s8 6 11 0 8-6 11 0 8 6 11 0 8-6 11 0' fill='none' stroke='%23B0532E' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat center; }
+
+  /* Language tabs */
+  .tabs { display: inline-flex; gap: 4px; padding: 5px; background: var(--section); border: 1px solid var(--line); border-radius: var(--radius-pill); }
+  .tab { padding: 8px 20px; border-radius: var(--radius-pill); font-size: .92rem; font-weight: 600; color: var(--muted); text-decoration: none; transition: all var(--dur) var(--ease); }
+  .tab:hover { color: var(--accent-ink); }
+  .tab[aria-current="page"] { background: var(--accent); color: var(--on-accent); box-shadow: var(--shadow-glass); }
+
+  /* Shared chip + date */
+  .row { display: flex; align-items: center; gap: var(--space-3); }
+  .chip { font-family: var(--font-body); font-size: .72rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--cat, var(--accent)); background: color-mix(in srgb, var(--cat, var(--accent)) 14%, transparent);
+    padding: 4px 11px; border-radius: var(--radius-pill); white-space: nowrap; }
+  .date { font-size: var(--step-small); color: var(--muted); letter-spacing: .02em; }
+
+  /* Featured */
+  .feat { display: grid; grid-template-columns: 1.15fr 1fr; gap: 0; margin-bottom: var(--space-7);
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); overflow: hidden;
+    text-decoration: none; transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease); }
+  .feat:hover { transform: translateY(-4px); box-shadow: var(--shadow-hover); }
+  .feat__img { position: relative; overflow: hidden; min-height: 320px; background: var(--section); }
+  .feat__img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 700ms var(--ease); }
+  .feat:hover .feat__img img { transform: scale(1.04); }
+  .feat__panel { padding: var(--space-7) var(--space-6); display: flex; flex-direction: column; gap: var(--space-3); align-self: center; }
+  .feat__tag { font-family: var(--font-body); font-size: .74rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--star-gold); }
+  .feat__title { font-family: var(--font-display); font-weight: 600; font-size: clamp(1.5rem, 2.6vw, 2.1rem); line-height: 1.15; color: var(--ink); margin: 0; }
+  .feat__ex { color: var(--muted); line-height: 1.6; margin: 0; }
+  .feat__more { color: var(--accent-ink); font-weight: 600; margin-top: var(--space-2); }
+  @media (max-width: 780px) { .feat { grid-template-columns: 1fr; } .feat__img { min-height: 220px; } .feat__panel { padding: var(--space-6) var(--space-5); } }
+
+  /* Filters */
+  .filters { display: flex; flex-wrap: wrap; gap: var(--space-2); justify-content: center; margin-bottom: var(--space-6); }
+  .fbtn { font-family: var(--font-body); font-size: .82rem; font-weight: 600; cursor: pointer;
+    color: var(--muted); background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-pill);
+    padding: 8px 16px; transition: all var(--dur) var(--ease); }
+  .fbtn:hover { border-color: var(--cat, var(--accent)); color: var(--cat, var(--accent-ink)); }
+  .fbtn.is-active { color: var(--on-accent); background: var(--cat, var(--accent)); border-color: transparent; }
+
+  /* Grid cards */
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(288px, 1fr)); gap: var(--space-5); }
+  .card { display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--line);
+    border-radius: var(--radius-lg); overflow: hidden; text-decoration: none;
+    transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease), border-color var(--dur) var(--ease); }
+  .card:hover { transform: translateY(-6px); box-shadow: var(--shadow-hover); border-color: color-mix(in srgb, var(--cat, var(--accent)) 40%, var(--line)); }
+  .card__img { display: block; aspect-ratio: 3 / 2; overflow: hidden; background: var(--section); border-bottom: 3px solid var(--cat, var(--accent)); }
+  .card__img img { width: 100%; height: 100%; object-fit: cover; transition: transform 600ms var(--ease); }
+  .card:hover .card__img img { transform: scale(1.06); }
+  .card__body { padding: var(--space-5); display: flex; flex-direction: column; gap: var(--space-3); flex: 1; }
+  .card__title { font-family: var(--font-display); font-weight: 600; font-size: 1.28rem; line-height: 1.22; color: var(--ink); text-wrap: pretty; }
+  .card__ex { color: var(--muted); font-size: .96rem; line-height: 1.55; margin: 0; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .card__more { color: var(--accent-ink); font-weight: 600; font-size: .92rem; margin-top: auto; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .feat:hover, .card:hover { transform: none; }
+    .feat:hover .feat__img img, .card:hover .card__img img { transform: none; }
+  }
+</style>
+
+<script>
+  const btns = document.querySelectorAll<HTMLElement>('.fbtn');
+  const cards = document.querySelectorAll<HTMLElement>('.card[data-cat]');
+  btns.forEach((b) => b.addEventListener('click', () => {
+    btns.forEach((x) => x.classList.remove('is-active'));
+    b.classList.add('is-active');
+    const cat = b.dataset.cat;
+    cards.forEach((c) => { c.style.display = cat === '*' || c.dataset.cat === cat ? '' : 'none'; });
+  }));
+</script>
