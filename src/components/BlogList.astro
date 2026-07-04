@@ -36,17 +36,35 @@ const [featured, ...rest] = items;
 const categories = [...new Set(items.map((i) => i.category))];
 ---
 <section class="bloglist">
-  <!-- Header -->
-  <header class="bl__head">
-    <p class="bl__eyebrow">{L.eyebrow}</p>
-    <h1 class="bl__title">{L.title}</h1>
-    <p class="bl__sub">{L.sub}</p>
-    <span class="bl__chain" aria-hidden="true"></span>
+  <!-- Animated hero: floating yarn stickers + self-stitching chain -->
+  <header class="bl__hero">
+    <div class="bl__stickers" aria-hidden="true">
+      <span class="fl" style="--x:7%;  --y:24%; --d:6s;   --r:-12deg; --depth:26">🧶</span>
+      <span class="fl" style="--x:89%; --y:20%; --d:7.2s; --r:10deg;  --depth:38">🧸</span>
+      <span class="fl" style="--x:17%; --y:68%; --d:5.6s; --r:8deg;   --depth:30">🐰</span>
+      <span class="fl" style="--x:82%; --y:64%; --d:6.6s; --r:-9deg;  --depth:22">⭐</span>
+      <span class="fl" style="--x:49%; --y:9%;  --d:8s;   --r:6deg;   --depth:16">🎀</span>
+      <span class="fl" style="--x:32%; --y:34%; --d:7.5s; --r:-7deg;  --depth:20">🧵</span>
+      <span class="fl" style="--x:67%; --y:38%; --d:6.1s; --r:13deg;  --depth:34">💛</span>
+    </div>
 
-    <!-- Language tabs -->
-    <div class="tabs" role="tablist" aria-label="Dil / Language">
-      <a class="tab" href="/tr/blog" aria-current={isTr ? 'page' : undefined}>🇹🇷 Türkçe</a>
-      <a class="tab" href="/en/blog" aria-current={!isTr ? 'page' : undefined}>🇬🇧 English</a>
+    <div class="bl__inner">
+      <p class="bl__eyebrow">{L.eyebrow}</p>
+      <h1 class="bl__title">
+        {L.title.split('').map((ch, i) => (
+          <span class="ltr" style={`--i:${i}`}>{ch}</span>
+        ))}
+      </h1>
+      <svg class="bl__stitch" viewBox="0 0 240 16" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M4 8c8-9 18-9 26 0s18 9 26 0 18-9 26 0 18 9 26 0 18-9 26 0 18 9 26 0 18-9 26 0" />
+      </svg>
+      <p class="bl__sub">{L.sub}</p>
+
+      <!-- Language tabs -->
+      <div class="tabs" role="tablist" aria-label="Dil / Language">
+        <a class="tab" href="/tr/blog" aria-current={isTr ? 'page' : undefined}>🇹🇷 Türkçe</a>
+        <a class="tab" href="/en/blog" aria-current={!isTr ? 'page' : undefined}>🇬🇧 English</a>
+      </div>
     </div>
   </header>
 
@@ -96,19 +114,48 @@ const categories = [...new Set(items.map((i) => i.category))];
 <style>
   .bloglist { max-width: var(--maxw); margin: 0 auto; padding: var(--space-8) var(--space-5) var(--space-8); }
 
-  /* Header */
-  .bl__head { text-align: center; max-width: 44rem; margin: 0 auto var(--space-7); }
-  .bl__eyebrow { font-family: var(--font-signature); font-size: 1.6rem; color: var(--accent); margin: 0 0 var(--space-1); transform: rotate(-2deg); }
-  .bl__title { font-family: var(--font-display); font-weight: 600; font-size: clamp(2.6rem, 6vw, 4rem); line-height: 1; color: var(--ink); margin: 0 0 var(--space-3); }
-  .bl__sub { color: var(--muted); font-size: 1.12rem; line-height: 1.6; margin: 0 auto var(--space-4); max-width: 34rem; }
-  .bl__chain { display: block; width: 60px; height: 14px; margin: 0 auto var(--space-5);
-    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='14' viewBox='0 0 60 14'%3E%3Cpath d='M2 7c3-6 8-6 11 0s8 6 11 0 8-6 11 0 8 6 11 0 8-6 11 0' fill='none' stroke='%23B0532E' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat center; }
+  /* Animated hero */
+  .bl__hero { position: relative; overflow: hidden; border-radius: var(--radius-lg);
+    min-height: clamp(370px, 50vh, 500px); margin-bottom: var(--space-7);
+    display: grid; place-items: center; isolation: isolate;
+    background: radial-gradient(125% 100% at 50% -10%, #FCEBDD 0%, #FBF3EA 45%, var(--bg) 100%); }
+  .bl__hero::before { content: ""; position: absolute; inset: -20%; z-index: -2;
+    background: radial-gradient(38% 38% at 28% 30%, rgba(220,160,55,.16), transparent 70%),
+                radial-gradient(44% 44% at 76% 62%, rgba(176,83,46,.13), transparent 70%);
+    animation: drift 16s ease-in-out infinite alternate; }
+  @keyframes drift { from { transform: translate(-3%, -2%) scale(1); } to { transform: translate(3%, 2%) scale(1.08); } }
+
+  .bl__stickers { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+  .fl { position: absolute; left: var(--x); top: var(--y); font-size: clamp(1.7rem, 3.6vw, 3rem);
+    transform: translate(var(--px, 0), var(--py, 0)) rotate(var(--r));
+    animation: floaty var(--d) ease-in-out infinite; filter: drop-shadow(0 8px 12px rgba(28,26,24,.14));
+    transition: transform 300ms ease-out; will-change: transform; }
+  @keyframes floaty { 0%, 100% { translate: 0 0; } 50% { translate: 0 -16px; } }
+
+  .bl__inner { position: relative; z-index: 1; text-align: center; max-width: 42rem; padding: var(--space-7) var(--space-5); }
+  .bl__eyebrow { font-family: var(--font-signature); font-size: 1.85rem; color: var(--accent); margin: 0 0 var(--space-1); transform: rotate(-2deg); opacity: 0; animation: rise .6s var(--ease) .1s forwards; }
+  .bl__title { font-family: var(--font-display); font-weight: 600; font-size: clamp(3rem, 7vw, 4.6rem); line-height: 1; color: var(--ink); margin: 0 0 var(--space-2); }
+  .bl__title .ltr { display: inline-block; opacity: 0; animation: pop .5s var(--ease) both; animation-delay: calc(var(--i) * 70ms + 300ms); }
+  .bl__stitch { display: block; width: 132px; height: 16px; margin: 0 auto var(--space-4); overflow: visible; }
+  .bl__stitch path { fill: none; stroke: var(--accent); stroke-width: 3; stroke-linecap: round;
+    stroke-dasharray: 600; stroke-dashoffset: 600; animation: stitch 2.2s ease-in-out .9s forwards; }
+  .bl__sub { color: var(--muted); font-size: 1.12rem; line-height: 1.6; margin: 0 auto var(--space-4); max-width: 34rem; opacity: 0; animation: rise .6s var(--ease) .5s forwards; }
+
+  @keyframes rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+  @keyframes pop { 0% { opacity: 0; transform: translateY(22px) scale(.8) rotate(-6deg); } 100% { opacity: 1; transform: none; } }
+  @keyframes stitch { to { stroke-dashoffset: 0; } }
 
   /* Language tabs */
-  .tabs { display: inline-flex; gap: 4px; padding: 5px; background: var(--section); border: 1px solid var(--line); border-radius: var(--radius-pill); }
+  .tabs { display: inline-flex; gap: 4px; padding: 5px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-pill); box-shadow: var(--shadow-glass); opacity: 0; animation: rise .6s var(--ease) .7s forwards; }
   .tab { padding: 8px 20px; border-radius: var(--radius-pill); font-size: .92rem; font-weight: 600; color: var(--muted); text-decoration: none; transition: all var(--dur) var(--ease); }
   .tab:hover { color: var(--accent-ink); }
-  .tab[aria-current="page"] { background: var(--accent); color: var(--on-accent); box-shadow: var(--shadow-glass); }
+  .tab[aria-current="page"] { background: var(--accent); color: var(--on-accent); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bl__hero::before, .fl { animation: none; }
+    .bl__eyebrow, .bl__title .ltr, .bl__sub, .tabs { opacity: 1; animation: none; }
+    .bl__stitch path { stroke-dashoffset: 0; animation: none; }
+  }
 
   /* Shared chip + date */
   .row { display: flex; align-items: center; gap: var(--space-3); }
@@ -183,5 +230,24 @@ const categories = [...new Set(items.map((i) => i.category))];
       }, { passive: true });
       card.addEventListener('mouseleave', () => { card.style.transform = ''; });
     });
+
+    // Floating-sticker mouse parallax in the hero
+    const hero = document.querySelector<HTMLElement>('.bl__hero');
+    const stickers = document.querySelectorAll<HTMLElement>('.fl');
+    if (hero && stickers.length) {
+      hero.addEventListener('mousemove', (e) => {
+        const r = hero.getBoundingClientRect();
+        const x = (e.clientX - r.left) / r.width - 0.5;
+        const y = (e.clientY - r.top) / r.height - 0.5;
+        stickers.forEach((s) => {
+          const depth = parseFloat(s.style.getPropertyValue('--depth')) || 20;
+          s.style.setProperty('--px', (x * depth).toFixed(1) + 'px');
+          s.style.setProperty('--py', (y * depth).toFixed(1) + 'px');
+        });
+      }, { passive: true });
+      hero.addEventListener('mouseleave', () => {
+        stickers.forEach((s) => { s.style.setProperty('--px', '0px'); s.style.setProperty('--py', '0px'); });
+      });
+    }
   }
 </script>
