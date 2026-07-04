@@ -1,5 +1,5 @@
 ---
-import { loadPosts, postSlug, readingTimeMin, splitCover, firstImageSrc, buildToc, type Post } from '@lib/blog';
+import { loadPosts, postSlug, readingTimeMin, splitCover, firstImageSrc, buildToc, categoryLabel, type Post } from '@lib/blog';
 import type { Locale } from '@lib/i18n';
 
 interface Props {
@@ -43,7 +43,7 @@ const L = isTr
       more: 'Keep reading', stamp: { e: '🧶', a: 'Handmade', b: 'with love' },
     };
 
-const eyebrow = post.category || L.note;
+const eyebrow = post.category ? categoryLabel(post.category, locale) : L.note;
 const readLabel = post.readTime || L.read;
 const titleWords = title.split(' ');
 

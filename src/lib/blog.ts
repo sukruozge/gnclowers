@@ -33,6 +33,20 @@ export function postSlug(post: Post): string {
   return post.slug;
 }
 
+/** Localized display labels for the (language-neutral) category keys. */
+const CATEGORY_LABELS: Record<string, { tr: string; en: string }> = {
+  Safety: { tr: 'Güvenlik', en: 'Safety' },
+  'Gift Guide': { tr: 'Hediye Rehberi', en: 'Gift Guide' },
+  'Care & Sleep': { tr: 'Bakım & Uyku', en: 'Care & Sleep' },
+  'Home & Style': { tr: 'Ev & Tarz', en: 'Home & Style' },
+  Stories: { tr: 'Hikâyeler', en: 'Stories' },
+  Journal: { tr: 'Günlük', en: 'Journal' },
+};
+
+export function categoryLabel(cat: string, locale: 'tr' | 'en'): string {
+  return CATEGORY_LABELS[cat]?.[locale] ?? cat;
+}
+
 const TR_MAP: Record<string, string> = {
   ç: 'c', ğ: 'g', ı: 'i', ö: 'o', ş: 's', ü: 'u',
   Ç: 'c', Ğ: 'g', İ: 'i', Ö: 'o', Ş: 's', Ü: 'u',

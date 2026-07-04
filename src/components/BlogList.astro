@@ -1,5 +1,5 @@
 ---
-import { loadPosts, splitCover, type Post } from '@lib/blog';
+import { loadPosts, splitCover, categoryLabel, type Post } from '@lib/blog';
 import type { Locale } from '@lib/i18n';
 
 interface Props { locale: Locale }
@@ -56,7 +56,7 @@ const categories = [...new Set(items.map((i) => i.category))];
       <span class="feat__panel">
         <span class="feat__tag">★ {L.featured}</span>
         <span class="row">
-          <span class="chip">{featured.category}</span>
+          <span class="chip">{categoryLabel(featured.category, locale)}</span>
           <span class="date">{featured.date}</span>
         </span>
         <h2 class="feat__title">{featured.title}</h2>
@@ -70,7 +70,7 @@ const categories = [...new Set(items.map((i) => i.category))];
     <div class="filters" role="group" aria-label="Kategori">
       <button class="fbtn is-active" data-cat="*">{L.all}</button>
       {categories.map((c) => (
-        <button class="fbtn" data-cat={c} style={`--cat:${catColor(c)}`}>{c}</button>
+        <button class="fbtn" data-cat={c} style={`--cat:${catColor(c)}`}>{categoryLabel(c, locale)}</button>
       ))}
     </div>
   )}
@@ -81,7 +81,7 @@ const categories = [...new Set(items.map((i) => i.category))];
         <span class="card__img"><img src={p.cover} alt={p.title} loading="lazy" /></span>
         <span class="card__body">
           <span class="row">
-            <span class="chip">{p.category}</span>
+            <span class="chip">{categoryLabel(p.category, locale)}</span>
             <span class="date">{p.date}</span>
           </span>
           <span class="card__title">{p.title}</span>
