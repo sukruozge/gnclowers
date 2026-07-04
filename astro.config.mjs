@@ -22,9 +22,13 @@ export default defineConfig({
 
   vite: {
     resolve: {
-      alias: {
+      // The react-dom/server → server.edge alias is required for the Cloudflare
+      // edge build in production, but it breaks `astro dev`: server.edge.js uses
+      // `require`, which is undefined in the dev SSR runtime, so every page 500s
+      // with "require is not defined". Apply the alias only for `astro build`.
+      alias: process.env.NODE_ENV === 'production' ? {
         'react-dom/server': 'react-dom/server.edge',
-      },
+      } : {},
     },
     server: {
       proxy: {
