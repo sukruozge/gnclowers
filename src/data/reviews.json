@@ -1,9 +1,15 @@
 {
   "shop": {
     "rating": 5,
-    "count": 4
+    "count": 5
   },
   "reviews": [
+    {
+      "rating": 5,
+      "text": "Beautiful item, well crafted. The shipping is very slow!",
+      "language": "en",
+      "date": "2026-07-04"
+    },
     {
       "rating": 5,
       "text": "The flamingo is beautiful! Just as described. Will make a wonderful gift.",
