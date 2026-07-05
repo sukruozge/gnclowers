@@ -3,20 +3,14 @@ import Base from '../../layouts/Base.astro';
 import Nav from '../../components/Nav.astro';
 import Footer from '../../components/Footer.astro';
 import ContactHero from '../../components/ContactHero.astro';
-import { t } from '@lib/i18n';
+import ContactBody from '../../components/ContactBody.astro';
 ---
-<Base locale="tr" title="İletişim — Aselovers" description="Aselovers ile WhatsApp, Etsy ve sosyal medyadan iletişime geçin."
+<Base locale="tr" title="İletişim — Aselovers" description="Aselovers ile canlı sohbet, WhatsApp ve Etsy’den iletişime geçin. Özel siparişler ve sıkça sorulan sorular."
   pathSelf="iletisim" pathsAlt={{ tr: 'iletisim', en: 'contact' }}>
   <Nav locale="tr" />
   <main>
-    <!-- Animated contact banner -->
     <ContactHero locale="tr" />
-
-    <section class="section">
-      <div class="container prose reveal">
-        <p>{t('contact.body', 'tr')}</p>
-      </div>
-    </section>
+    <ContactBody locale="tr" />
   </main>
   <Footer locale="tr" />
 </Base>

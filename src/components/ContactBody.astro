@@ -1,0 +1,273 @@
+---
+import type { Locale } from '@lib/i18n';
+import { t } from '@lib/i18n';
+
+interface Props { locale: Locale }
+const { locale } = Astro.props as Props;
+const isTr = locale === 'tr';
+
+const wa = `https://wa.me/905067927685?text=${encodeURIComponent(t('wa.msg', locale))}`;
+const waCustom = `https://wa.me/905067927685?text=${encodeURIComponent(
+  isTr ? 'Merhaba! Özel bir sipariş vermek istiyorum. Aklımdaki fikir: ' : "Hi! I'd like to place a custom order. My idea: "
+)}`;
+const etsy = 'https://www.etsy.com/shop/aselovers';
+const instagram = 'https://www.instagram.com/';
+
+const L = isTr
+  ? {
+      channelsEyebrow: 'nasıl ulaşırsınız',
+      channelsTitle: 'Size en uygun yol hangisi?',
+      channelsSub: 'Sorularınız, özel siparişleriniz ve her türlü fikir için buradayız. Dilediğiniz kanaldan yazın — genelde birkaç saat içinde dönüyoruz.',
+      channels: [
+        { key: 'chat', icon: '💬', title: 'Canlı Sohbet', desc: 'En hızlı yanıt burada. Sorunuzu yazın, birkaç saat içinde dönelim.', cta: 'Sohbeti başlat', accent: '#B0532E' },
+        { key: 'wa', icon: 'wa', title: 'WhatsApp', desc: 'Özel siparişler ve hızlı sorular için doğrudan bize yazın.', cta: 'WhatsApp’tan yaz', href: wa, accent: '#25D366' },
+        { key: 'etsy', icon: 'etsy', title: 'Etsy Mağazası', desc: 'Güvenli ödeme ve dünya geneline takipli kargo.', cta: 'Mağazayı gör', href: etsy, accent: '#F1641E' },
+        { key: 'ig', icon: 'ig', title: 'Instagram', desc: 'Yeni tasarımlar ve atölyemizden minik kareler.', cta: 'Takip et', href: instagram, accent: '#C13584' },
+      ],
+      stepsEyebrow: 'özel sipariş',
+      stepsTitle: 'Hayalinizdeki oyuncağı birlikte örelim',
+      stepsSub: 'Renk, boyut, isim, tema… Aklınızdaki her detayı elde, size özel örüyoruz. Süreç çok basit:',
+      steps: [
+        { n: '01', title: 'Fikrinizi paylaşın', body: 'WhatsApp ya da canlı sohbetten hayalinizdeki oyuncağı anlatın: renk, boyut, tema, isim… İlham veren bir görsel de gönderebilirsiniz.' },
+        { n: '02', title: 'Birlikte tasarlayalım', body: 'Size renk ve boyut önerileri, net bir fiyat ve hazırlık süresi sunalım. Onayınızla birlikte üretime başlarız.' },
+        { n: '03', title: 'Elde örüp gönderelim', body: 'Siparişinizi tek tek, sevgiyle örüyoruz; özenle paketleyip adresinize gönderiyor, kargo takibini sizinle paylaşıyoruz.' },
+      ],
+      stepsCta: 'Özel sipariş için yazın',
+      faqEyebrow: 'aklınızda soru mu var?',
+      faqTitle: 'Sıkça sorulan sorular',
+      faqs: [
+        { q: 'Özel sipariş verebilir miyim?', a: 'Evet! İstediğiniz renk, boyut, isim/etiket ve temaya göre örüyoruz. WhatsApp veya canlı sohbetten fikrinizi (ya da bir ilham görselini) paylaşın; birlikte netleştirip size özel fiyat ve süre verelim.' },
+        { q: 'Ürünleriniz bebekler için güvenli mi?', a: 'Evet. OEKO-TEX® ve GOTS® sertifikalı %100 organik pamuk iplik kullanıyoruz. Gözler ve tüm küçük parçalar güvenli şekilde sıkıca dikilir; çıkabilen plastik parça kullanmayız. Yeni doğanlar için uygundur.' },
+        { q: 'Siparişim ne kadar sürede hazır olur?', a: 'Hazır ürünler 1–3 iş günü içinde kargoya verilir. Özel siparişler tamamen elde örüldüğü için genellikle 3–7 gün içinde hazırlanır; yoğunluğa göre net süreyi baştan bildiririz.' },
+        { q: 'Nereye kargo gönderiyorsunuz?', a: 'Türkiye ve dünya geneline gönderim yapıyoruz. Yurt dışı siparişlerde Etsy mağazamız üzerinden güvenli ödeme ve kargo takibi sağlanır.' },
+        { q: 'Oyuncaklar nasıl yıkanır?', a: '30°C’de elde, yumuşak bir deterjanla yıkayın; sıkmadan, düz bir zeminde kurutun. Organik pamuk olduğu için doğru bakımla uzun yıllar dayanır.' },
+        { q: 'İade veya değişim yapabilir miyim?', a: 'Hazır ürünlerde, kullanılmamış olmak kaydıyla iade ve değişim mümkündür. Kişiye özel örülen siparişler kişiselleştirildiği için iade alınmaz; yine de bir sorun olursa bize yazın, mutlaka bir çözüm buluruz.' },
+      ],
+    }
+  : {
+      channelsEyebrow: 'how to reach us',
+      channelsTitle: 'Which way suits you best?',
+      channelsSub: 'We’re here for your questions, custom orders, and every idea in between. Reach out on any channel — we usually reply within a few hours.',
+      channels: [
+        { key: 'chat', icon: '💬', title: 'Live Chat', desc: 'The fastest reply is right here. Type your question and we’ll get back within hours.', cta: 'Start chatting', accent: '#B0532E' },
+        { key: 'wa', icon: 'wa', title: 'WhatsApp', desc: 'Message us directly for custom orders and quick questions.', cta: 'Message on WhatsApp', href: wa, accent: '#25D366' },
+        { key: 'etsy', icon: 'etsy', title: 'Etsy Shop', desc: 'Secure checkout and tracked worldwide shipping.', cta: 'Visit the shop', href: etsy, accent: '#F1641E' },
+        { key: 'ig', icon: 'ig', title: 'Instagram', desc: 'New designs and little moments from our workshop.', cta: 'Follow along', href: instagram, accent: '#C13584' },
+      ],
+      stepsEyebrow: 'custom orders',
+      stepsTitle: 'Let’s crochet the toy you’re dreaming of',
+      stepsSub: 'Color, size, name, theme… we make every detail by hand, just for you. The process is simple:',
+      steps: [
+        { n: '01', title: 'Share your idea', body: 'Tell us about your dream toy on WhatsApp or live chat: color, size, theme, name… You can send an inspiration photo too.' },
+        { n: '02', title: 'Let’s design it together', body: 'We’ll suggest colors and sizes, and give you a clear price and timeline. Once you approve, we start making it.' },
+        { n: '03', title: 'We crochet & ship it', body: 'We crochet your order one stitch at a time, with love, then pack it carefully and ship it with tracking to your door.' },
+      ],
+      stepsCta: 'Start a custom order',
+      faqEyebrow: 'still wondering?',
+      faqTitle: 'Frequently asked questions',
+      faqs: [
+        { q: 'Can I place a custom order?', a: 'Yes! We crochet to your chosen color, size, name/tag, and theme. Share your idea (or an inspiration photo) on WhatsApp or live chat, and we’ll confirm the details, price, and timeline together.' },
+        { q: 'Are your products safe for babies?', a: 'Yes. We use OEKO-TEX® and GOTS® certified 100% organic cotton yarn. Eyes and all small parts are stitched on securely — no removable plastic parts. They’re suitable for newborns.' },
+        { q: 'How long until my order is ready?', a: 'Ready-made items ship within 1–3 business days. Custom orders are made entirely by hand, usually within 3–7 days; we always confirm the exact timeline upfront.' },
+        { q: 'Where do you ship?', a: 'We ship across Türkiye and worldwide. International orders go through our Etsy shop with secure payment and tracked delivery.' },
+        { q: 'How do I wash the toys?', a: 'Hand wash at 30°C with a gentle detergent; reshape and dry flat without wringing. Made from organic cotton, they last for years with the right care.' },
+        { q: 'Can I return or exchange an item?', a: 'Ready-made items can be returned or exchanged if unused. Personalized custom orders can’t be returned, but if anything is wrong, please write to us and we’ll always find a solution.' },
+      ],
+    };
+
+// FAQPage structured data — helps Google rich results & AI answer engines.
+const faqLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: L.faqs.map((f) => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+};
+---
+<!-- Contact channels -->
+<section class="cb-channels section">
+  <div class="container">
+    <div class="section-title reveal reveal--fade-up">
+      <p class="eyebrow">{L.channelsEyebrow}</p>
+      <h2>{L.channelsTitle}</h2>
+      <p class="section-title__sub">{L.channelsSub}</p>
+    </div>
+    <div class="cb-grid">
+      {L.channels.map((c, i) => {
+        const inner = (
+          <>
+            <span class="cb-card__icon" style={`--c:${c.accent}`}>
+              {c.icon === 'wa' && (
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor" aria-hidden="true"><path d="M12.04 2c-5.46 0-9.9 4.44-9.9 9.9 0 1.75.46 3.45 1.32 4.95L2 22l5.3-1.38a9.86 9.86 0 0 0 4.73 1.2h.01c5.46 0 9.9-4.44 9.9-9.9 0-2.64-1.03-5.13-2.9-7A9.82 9.82 0 0 0 12.04 2Zm3.47 12.02c-.2.56-1.17 1.08-1.64 1.15-.42.06-.95.08-1.53-.1-.35-.11-.8-.26-1.38-.51-2.44-1.04-4.02-3.48-4.14-3.64-.12-.16-.99-1.31-.99-2.51 0-1.19.63-1.78.85-2.02.22-.24.48-.3.64-.3h.46c.17.01.36.01.54.43.22.48.7 1.68.76 1.8.06.12.1.26.02.42-.08.16-.12.26-.24.4-.12.14-.25.31-.36.42-.12.12-.25.25-.11.49.15.24.63 1.04 1.35 1.68.93.82 1.71 1.08 1.95 1.2.24.12.38.1.52-.06.14-.16.61-.71.77-.95.17-.24.33-.2.55-.12.22.08 1.42.67 1.66.79.24.12.4.18.46.28.06.1.06.58-.14 1.15Z"/></svg>
+              )}
+              {c.icon === 'etsy' && (
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true"><path d="M8.7 6.03v4.5s1.6.03 2.46-.04c.68-.09.85-.16 1-1.05l.28-1.13h.9l-.15 2.6.07 2.65h-.88l-.23-1c-.2-.86-.36-.95-1.06-1.02-.85-.07-2.39-.04-2.39-.04v3.77c0 .74.33 1.06 1.14 1.06h2.5c.9 0 1.32-.13 1.86-.72.42-.47.86-1.4 1.1-2h.78c-.08.5-.42 3.02-.48 3.5 0 0-2.94-.06-4.2-.06H7.02l-2.8.06v-.83l.93-.2c.68-.15.86-.34.88-.9 0 0 .06-1.9.06-4.99 0-3.1-.06-4.98-.06-4.98-.02-.63-.2-.77-.88-.92l-.93-.2v-.83l2.75.06h5.68c1.12 0 3.02-.19 3.02-.19s-.06 1.15-.14 3.86h-.8l-.28-.98c-.28-.98-.68-1.47-1.28-1.6-.6-.13-3.66-.1-4.34-.1-.02 0-.03.01-.03.04Z"/></svg>
+              )}
+              {c.icon === 'ig' && (
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1.2" fill="currentColor" stroke="none"/></svg>
+              )}
+              {(c.icon !== 'wa' && c.icon !== 'etsy' && c.icon !== 'ig') && <span class="cb-emoji">{c.icon}</span>}
+            </span>
+            <h3 class="cb-card__title">{c.title}</h3>
+            <p class="cb-card__desc">{c.desc}</p>
+            <span class="cb-card__cta">{c.cta}<span class="cb-arrow" aria-hidden="true">→</span></span>
+          </>
+        );
+        return c.key === 'chat'
+          ? <button type="button" class={`cb-card cb-card--chat hover-lift reveal reveal--fade-up reveal--d${i}`} data-open-chat style={`--c:${c.accent}`}>{inner}</button>
+          : <a href={c.href} target="_blank" rel="noopener" class={`cb-card hover-lift reveal reveal--fade-up reveal--d${i}`} style={`--c:${c.accent}`}>{inner}</a>;
+      })}
+    </div>
+  </div>
+</section>
+
+<!-- Custom order: how it works -->
+<section class="cb-steps section--tint section">
+  <div class="container">
+    <div class="section-title reveal reveal--fade-up">
+      <p class="eyebrow">{L.stepsEyebrow}</p>
+      <h2>{L.stepsTitle}</h2>
+      <p class="section-title__sub">{L.stepsSub}</p>
+    </div>
+    <ol class="cb-steps__list">
+      {L.steps.map((s, i) => (
+        <li class={`cb-step reveal reveal--fade-up reveal--d${i}`}>
+          <span class="cb-step__n">{s.n}</span>
+          <div class="cb-step__body">
+            <h3>{s.title}</h3>
+            <p>{s.body}</p>
+          </div>
+        </li>
+      ))}
+    </ol>
+    <div class="cb-steps__cta reveal reveal--fade-up">
+      <a class="cb-btn" href={waCustom} target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M12.04 2c-5.46 0-9.9 4.44-9.9 9.9 0 1.75.46 3.45 1.32 4.95L2 22l5.3-1.38a9.86 9.86 0 0 0 4.73 1.2h.01c5.46 0 9.9-4.44 9.9-9.9 0-2.64-1.03-5.13-2.9-7A9.82 9.82 0 0 0 12.04 2Zm0 1.8c2.17 0 4.2.85 5.74 2.38a8.06 8.06 0 0 1 2.38 5.73c0 4.48-3.65 8.12-8.13 8.12a8.1 8.1 0 0 1-4.13-1.13l-.3-.18-3.14.82.84-3.06-.2-.31a8.04 8.04 0 0 1-1.24-4.28c0-4.48 3.65-8.12 8.13-8.12Z"/></svg>
+        {L.stepsCta}
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="cb-faq section">
+  <div class="container cb-faq__inner">
+    <div class="section-title reveal reveal--fade-up">
+      <p class="eyebrow">{L.faqEyebrow}</p>
+      <h2>{L.faqTitle}</h2>
+    </div>
+    <div class="cb-faq__list">
+      {L.faqs.map((f, i) => (
+        <details class={`cb-faq__item reveal reveal--fade-up reveal--d${Math.min(i, 3)}`}>
+          <summary>
+            <span class="cb-faq__q">{f.q}</span>
+            <span class="cb-faq__mark" aria-hidden="true"></span>
+          </summary>
+          <div class="cb-faq__a"><p>{f.a}</p></div>
+        </details>
+      ))}
+    </div>
+  </div>
+</section>
+
+<script type="application/ld+json" set:html={JSON.stringify(faqLd)} />
+
+<style>
+  .section-title__sub { max-width: 46rem; margin: var(--space-3) auto 0; color: var(--muted); font-size: 1.08rem; line-height: 1.65; }
+
+  /* Channels grid */
+  .cb-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: var(--space-4); }
+  .cb-card {
+    display: flex; flex-direction: column; align-items: flex-start; text-align: left;
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: var(--space-5); text-decoration: none; color: inherit; cursor: pointer;
+    position: relative; overflow: hidden; font: inherit; width: 100%;
+    transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease), border-color var(--dur) var(--ease);
+  }
+  .cb-card::before {
+    content: ""; position: absolute; inset: 0 0 auto 0; height: 3px;
+    background: var(--c); transform: scaleX(0); transform-origin: left; transition: transform var(--dur) var(--ease);
+  }
+  .cb-card:hover { border-color: color-mix(in srgb, var(--c) 45%, var(--line)); box-shadow: 0 14px 30px rgba(34,32,30,.09); }
+  .cb-card:hover::before { transform: scaleX(1); }
+  .cb-card:focus-visible { outline: 3px solid var(--c); outline-offset: 2px; }
+  .cb-card--chat { background: linear-gradient(180deg, color-mix(in srgb, var(--c) 7%, var(--surface)), var(--surface)); }
+
+  .cb-card__icon {
+    display: inline-flex; align-items: center; justify-content: center; width: 52px; height: 52px;
+    border-radius: 15px; margin-bottom: var(--space-4);
+    background: color-mix(in srgb, var(--c) 13%, transparent); color: var(--c);
+  }
+  .cb-emoji { font-size: 1.6rem; line-height: 1; }
+  .cb-card__title { font-family: var(--font-body); font-size: 1.16rem; font-weight: 600; color: var(--ink); margin: 0 0 var(--space-2); }
+  .cb-card__desc { font-size: var(--step-small); color: var(--muted); line-height: 1.6; margin: 0 0 var(--space-4); }
+  .cb-card__cta { margin-top: auto; display: inline-flex; align-items: center; gap: 6px; font-weight: 600; font-size: .95rem; color: var(--c); }
+  .cb-arrow { transition: transform var(--dur) var(--ease); }
+  .cb-card:hover .cb-arrow { transform: translateX(4px); }
+
+  /* Steps */
+  .cb-steps__list { list-style: none; margin: 0 auto; padding: 0; max-width: 900px; display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-5); counter-reset: none; }
+  .cb-step { position: relative; padding: var(--space-2) 0; }
+  .cb-step__n {
+    display: inline-flex; font-family: var(--font-display); font-size: 2.4rem; font-weight: 700;
+    color: color-mix(in srgb, var(--accent) 32%, transparent); line-height: 1; margin-bottom: var(--space-2);
+  }
+  .cb-step__body h3 { font-family: var(--font-body); font-size: 1.18rem; font-weight: 600; color: var(--ink); margin: 0 0 var(--space-2); }
+  .cb-step__body p { font-size: var(--step-small); color: var(--muted); line-height: 1.65; margin: 0; }
+  .cb-steps__cta { text-align: center; margin-top: var(--space-6); }
+  .cb-btn {
+    display: inline-flex; align-items: center; gap: 9px; font-family: var(--font-body); font-weight: 600;
+    font-size: 1rem; padding: 13px 26px; border-radius: var(--radius-pill); text-decoration: none;
+    background: var(--accent); color: #fff; box-shadow: 0 10px 24px color-mix(in srgb, var(--accent) 38%, transparent);
+    transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+  }
+  .cb-btn:hover { transform: translateY(-2px); box-shadow: 0 16px 32px color-mix(in srgb, var(--accent) 46%, transparent); }
+  .cb-btn:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+
+  /* FAQ */
+  .cb-faq__inner { max-width: 780px; }
+  .cb-faq__list { display: flex; flex-direction: column; gap: var(--space-3); }
+  .cb-faq__item { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; transition: border-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease); }
+  .cb-faq__item[open] { border-color: color-mix(in srgb, var(--accent) 35%, var(--line)); box-shadow: 0 8px 22px rgba(34,32,30,.06); }
+  .cb-faq__item summary {
+    display: flex; align-items: center; justify-content: space-between; gap: var(--space-3);
+    padding: var(--space-4) var(--space-5); cursor: pointer; list-style: none; user-select: none;
+  }
+  .cb-faq__item summary::-webkit-details-marker { display: none; }
+  .cb-faq__q { font-family: var(--font-body); font-weight: 600; font-size: 1.05rem; color: var(--ink); }
+  .cb-faq__mark { position: relative; flex-shrink: 0; width: 20px; height: 20px; }
+  .cb-faq__mark::before, .cb-faq__mark::after {
+    content: ""; position: absolute; top: 50%; left: 50%; width: 13px; height: 2.5px; border-radius: 2px;
+    background: var(--accent); transform: translate(-50%, -50%); transition: transform var(--dur) var(--ease);
+  }
+  .cb-faq__mark::after { transform: translate(-50%, -50%) rotate(90deg); }
+  .cb-faq__item[open] .cb-faq__mark::after { transform: translate(-50%, -50%) rotate(0); }
+  .cb-faq__a { padding: 0 var(--space-5) var(--space-5); }
+  .cb-faq__a p { margin: 0; color: var(--muted); font-size: 1rem; line-height: 1.72; }
+  .cb-faq__item[open] .cb-faq__a { animation: cbReveal .32s var(--ease); }
+  @keyframes cbReveal { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+
+  @media (max-width: 720px) {
+    .cb-steps__list { grid-template-columns: 1fr; gap: var(--space-4); max-width: 460px; }
+    .cb-step { display: flex; gap: var(--space-4); align-items: flex-start; }
+    .cb-step__n { margin-bottom: 0; font-size: 2rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cb-arrow, .cb-card, .cb-card::before, .cb-btn, .cb-faq__mark::before, .cb-faq__mark::after { transition: none; }
+    .cb-faq__item[open] .cb-faq__a { animation: none; }
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-open-chat]').forEach((el) => {
+    el.addEventListener('click', () => {
+      const panel = document.getElementById('chat-panel');
+      const trigger = document.getElementById('chat-trigger-btn');
+      if (panel && trigger && !panel.classList.contains('open')) trigger.click();
+      panel?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    });
+  });
+</script>
