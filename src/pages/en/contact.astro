@@ -2,26 +2,21 @@
 import Base from '../../layouts/Base.astro';
 import Nav from '../../components/Nav.astro';
 import Footer from '../../components/Footer.astro';
-import Button from '../../components/Button.astro';
+import ContactHero from '../../components/ContactHero.astro';
 import { t } from '@lib/i18n';
-const wa = `https://wa.me/905067927685?text=${encodeURIComponent(t('wa.msg', 'en'))}`;
 ---
 <Base locale="en" title="Contact — Aselovers" description="Get in touch with Aselovers via WhatsApp, Etsy, and social media."
   pathSelf="contact" pathsAlt={{ tr: 'iletisim', en: 'contact' }}>
   <Nav locale="en" />
   <main>
+    <!-- Animated contact banner -->
+    <ContactHero locale="en" />
+
     <section class="section">
       <div class="container prose reveal">
-        <p class="eyebrow">{t('contact.eyebrow', 'en')}</p>
-        <h1>{t('contact.title', 'en')}</h1>
         <p>{t('contact.body', 'en')}</p>
-        <p class="contact__cta">
-          <Button href={wa} variant="primary" external>{t('contact.whatsapp', 'en')}</Button>
-          <Button href="https://www.etsy.com/shop/aselovers" variant="outline" external>{t('contact.etsy', 'en')}</Button>
-        </p>
       </div>
     </section>
   </main>
   <Footer locale="en" />
-  <style>.contact__cta { display: flex; gap: var(--space-3); flex-wrap: wrap; margin-top: var(--space-5); }</style>
 </Base>
