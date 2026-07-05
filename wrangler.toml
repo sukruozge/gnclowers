@@ -5,3 +5,7 @@ name = "gnclowers"
 pages_build_output_dir = "dist"
 compatibility_date = "2024-11-01"
 compatibility_flags = ["nodejs_compat"]
+
+[[kv_namespaces]]
+binding = "ADMIN_KV"
+id = "1cddf58babc04fc79efbceb3544481ab"

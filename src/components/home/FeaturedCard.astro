@@ -1,0 +1,94 @@
+---
+import { type Locale } from '@lib/i18n';
+import { localizedTitle, productSlug, type Product } from '@lib/products';
+
+const { product, locale } = Astro.props as { product: Product; locale: Locale };
+const title = localizedTitle(product, locale);
+const href = locale === 'tr'
+  ? `/tr/urun/${productSlug(product, 'tr')}`
+  : `/en/product/${productSlug(product, 'en')}`;
+const price = new Intl.NumberFormat(locale === 'tr' ? 'tr-TR' : 'en-US', { style: 'currency', currency: product.currency }).format(product.price);
+
+// Pick 3 representative photos (first / middle / last for variety), padded if fewer.
+const pool = (product.images && product.images.length ? product.images : (product.image ? [product.image] : []))
+  .filter(Boolean);
+function pick3(imgs: string[]): string[] {
+  if (imgs.length === 0) return [];
+  // First images are the real product shots; later ones may be promo/size banners.
+  return [imgs[0], imgs[1] ?? imgs[0], imgs[2] ?? imgs[1] ?? imgs[0]];
+}
+const photos = pick3(pool);
+// Render order back→front so the center photo sits on top; slot class gives the fan position.
+const slots = ['fc__ph--l', 'fc__ph--r', 'fc__ph--c'];
+const order = [photos[1], photos[2], photos[0]]; // left, right, center
+---
+<a class="fc" href={href} aria-label={title}>
+  <div class="fc__frame">
+    {product.isNew && <span class="fc__new">{locale === 'tr' ? 'Yeni' : 'New'}</span>}
+    <span class="fc__count" aria-hidden="true">{photos.length} 📷</span>
+    {order.map((src, i) => (
+      <span class={`fc__ph ${slots[i]}`}>
+        <img src={src} alt={i === 2 ? title : ''} loading="lazy" decoding="async" aria-hidden={i === 2 ? undefined : 'true'} />
+      </span>
+    ))}
+  </div>
+  <h3 class="fc__title">{title}</h3>
+  <span class="fc__price">{price}</span>
+</a>
+
+<style>
+  .fc { display: block; position: relative; z-index: 1; text-decoration: none; color: inherit; }
+  .fc:hover { z-index: 6; }
+
+  .fc__frame {
+    position: relative; aspect-ratio: 3 / 4; margin-bottom: var(--space-4);
+  }
+
+  .fc__ph {
+    position: absolute; inset: 0; border-radius: var(--radius-lg); overflow: hidden;
+    border: 6px solid #fff; background: var(--section); transform-origin: 50% 92%;
+    box-shadow: 0 10px 22px rgba(28,26,24,.16);
+    /* springy, slightly bouncy open */
+    transition: transform 640ms cubic-bezier(.34,1.4,.5,1), box-shadow 420ms var(--ease);
+    will-change: transform;
+  }
+  .fc__ph img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  /* Rest: a tidy closed fan — three prints stacked with a small tilt so the shape reads. */
+  .fc__ph--c { z-index: 3; transform: rotate(0deg); }
+  .fc__ph--l { z-index: 2; transform: rotate(-6deg) translateY(6px); }
+  .fc__ph--r { z-index: 1; transform: rotate(6deg)  translateY(6px); }
+
+  /* Hover: bloom wide into a fan, sides cascading out with a stagger. */
+  .fc:hover .fc__ph--c { transform: translateY(-10%) scale(1.05) rotate(0deg); box-shadow: 0 26px 44px rgba(28,26,24,.24); }
+  .fc:hover .fc__ph--l { transform: rotate(-26deg) translateY(-4%); box-shadow: 0 20px 36px rgba(28,26,24,.20); transition-delay: 55ms; }
+  .fc:hover .fc__ph--r { transform: rotate(26deg)  translateY(-4%); box-shadow: 0 20px 36px rgba(28,26,24,.20); transition-delay: 110ms; }
+
+  .fc__new {
+    position: absolute; top: 10px; left: 10px; z-index: 7; font-size: .66rem; letter-spacing: .08em;
+    text-transform: uppercase; font-weight: 600; background: var(--surface); color: var(--ink);
+    padding: 4px 10px; border-radius: var(--radius-pill); box-shadow: 0 3px 10px rgba(28,26,24,.14);
+  }
+  .fc__count {
+    position: absolute; bottom: 10px; right: 10px; z-index: 7; font-size: .7rem; font-weight: 600;
+    color: var(--ink); background: color-mix(in srgb, var(--surface) 88%, transparent); backdrop-filter: blur(4px);
+    padding: 3px 9px; border-radius: var(--radius-pill); box-shadow: 0 3px 10px rgba(28,26,24,.12);
+    opacity: 1; transition: opacity var(--dur) var(--ease);
+  }
+  .fc:hover .fc__count { opacity: 0; }
+
+  .fc__title { font-size: 1.05rem; margin: 0 0 var(--space-1); line-height: 1.3; color: var(--ink); }
+  .fc__price { font-family: var(--font-body); color: var(--accent-ink); font-weight: 600; font-size: 1.05rem; }
+
+  /* Touch devices can't hover: show the fan already open so all three photos read. */
+  @media (hover: none) {
+    .fc__ph--c { transform: translateY(-6%) scale(1.03); }
+    .fc__ph--l { transform: rotate(-18deg) translateY(-2%); }
+    .fc__ph--r { transform: rotate(18deg) translateY(-2%); }
+    .fc__count { display: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .fc__ph { transition: none; }
+  }
+</style>

@@ -1,19 +1,89 @@
 ---
 import { t, type Locale } from '@lib/i18n';
 import { loadProducts } from '@lib/products';
-import SectionHeading from '../SectionHeading.astro';
-import ProductCard from '../ProductCard.astro';
+import FeaturedCard from './FeaturedCard.astro';
 const { locale } = Astro.props as { locale: Locale };
-const products = loadProducts().slice(0, 8);
+const products = loadProducts().slice(0, 6);
+
+const eyebrow = t('home.featuredEyebrow', locale);
+const title = t('home.featured', locale);
+const sub = locale === 'tr'
+  ? 'Atölyemizden elde örülmüş, en çok sevilen parçalar.'
+  : 'Hand-crocheted favourites, straight from our workshop.';
+const titleChars = [...title];
 ---
-<section class="section">
+<section class="section fsec">
   <div class="container">
-    <SectionHeading eyebrow={t('home.featuredEyebrow', locale)} title={t('home.featured', locale)} />
-    <div class="grid">
-      {products.map((p) => <ProductCard product={p} locale={locale} />)}
+    <header class="fhead reveal-head">
+      <p class="fhead__eyebrow">{eyebrow}</p>
+      <h2 class="fhead__title" aria-label={title}>
+        {titleChars.map((ch, i) => (
+          <span class="fhead__ltr" style={`--i:${i}`} aria-hidden="true">{ch === ' ' ? ' ' : ch}</span>
+        ))}
+      </h2>
+      <svg class="fhead__stitch" viewBox="0 0 240 16" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M4 8c8-9 18-9 26 0s18 9 26 0 18-9 26 0 18 9 26 0 18-9 26 0 18 9 26 0 18-9 26 0" />
+      </svg>
+      <p class="fhead__sub">{sub}</p>
+    </header>
+
+    <div class="fgrid">
+      {products.map((p) => <FeaturedCard product={p} locale={locale} />)}
     </div>
   </div>
 </section>
+
 <style>
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: var(--space-6) var(--space-5); }
+  .fhead { text-align: center; max-width: 42rem; margin: 0 auto var(--space-6); }
+  .fhead__eyebrow {
+    font-family: var(--font-signature); font-size: 1.9rem; color: var(--accent);
+    margin: 0 0 var(--space-1); transform: rotate(-2deg);
+    opacity: 0; translate: 0 10px; transition: opacity .6s var(--ease), translate .6s var(--ease);
+  }
+  .fhead__title {
+    font-family: var(--font-display); font-weight: 600; font-size: clamp(2.4rem, 5.2vw, 4rem);
+    line-height: 1.05; letter-spacing: -.01em; color: var(--ink); margin: 0; text-wrap: balance;
+  }
+  .fhead__ltr {
+    display: inline-block; opacity: 0; transform: translateY(24px) rotate(-6deg) scale(.8);
+    transition: opacity .5s var(--ease), transform .55s cubic-bezier(.34,1.5,.5,1);
+    transition-delay: calc(var(--i) * 45ms);
+  }
+  .fhead__stitch { display: block; width: 150px; height: 15px; margin: var(--space-2) auto var(--space-3); overflow: visible; }
+  .fhead__stitch path {
+    fill: none; stroke: var(--accent); stroke-width: 3; stroke-linecap: round;
+    stroke-dasharray: 600; stroke-dashoffset: 600; transition: stroke-dashoffset 1.6s var(--ease) .3s;
+  }
+  .fhead__sub {
+    color: var(--muted); font-size: 1.1rem; line-height: 1.6; margin: 0;
+    opacity: 0; translate: 0 10px; transition: opacity .6s var(--ease) .2s, translate .6s var(--ease) .2s;
+  }
+
+  /* In-view reveal (class toggled by IntersectionObserver) */
+  .reveal-head.in .fhead__eyebrow { opacity: 1; translate: 0 0; }
+  .reveal-head.in .fhead__ltr { opacity: 1; transform: none; }
+  .reveal-head.in .fhead__stitch path { stroke-dashoffset: 0; }
+  .reveal-head.in .fhead__sub { opacity: 1; translate: 0 0; }
+
+  /* 3 across, 2 rows. Big row gap + top pad give the upward fan room to bloom. */
+  .fgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-8) var(--space-6); padding-top: var(--space-6); }
+  @media (max-width: 860px) { .fgrid { grid-template-columns: repeat(2, 1fr); gap: var(--space-8) var(--space-5); } }
+  @media (max-width: 520px) { .fgrid { grid-template-columns: 1fr; gap: var(--space-7); } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .fhead__eyebrow, .fhead__ltr, .fhead__sub { opacity: 1 !important; translate: 0 !important; transform: none !important; transition: none; }
+    .fhead__stitch path { stroke-dashoffset: 0; transition: none; }
+  }
 </style>
+
+<script>
+  const head = document.querySelector('.reveal-head');
+  if (head) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.4 });
+    io.observe(head);
+  }
+</script>
