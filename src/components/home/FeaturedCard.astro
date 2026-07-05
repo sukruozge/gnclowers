@@ -80,12 +80,12 @@ const order = [photos[1], photos[2], photos[0]]; // left, right, center
   .fc__title { font-size: 1.05rem; margin: 0 0 var(--space-1); line-height: 1.3; color: var(--ink); }
   .fc__price { font-family: var(--font-body); color: var(--accent-ink); font-weight: 600; font-size: 1.05rem; }
 
-  /* Touch devices can't hover: show the fan already open so all three photos read. */
+  /* Touch devices can't hover: keep an elegant closed-fan stack — the peeking
+     corners still signal three photos, and the counter badge invites a tap. */
   @media (hover: none) {
-    .fc__ph--c { transform: translateY(-6%) scale(1.03); }
-    .fc__ph--l { transform: rotate(-18deg) translateY(-2%); }
-    .fc__ph--r { transform: rotate(18deg) translateY(-2%); }
-    .fc__count { display: none; }
+    .fc__ph--c { transform: rotate(0deg); }
+    .fc__ph--l { transform: rotate(-7deg) translateY(5px); }
+    .fc__ph--r { transform: rotate(7deg)  translateY(5px); }
   }
 
   @media (prefers-reduced-motion: reduce) {
