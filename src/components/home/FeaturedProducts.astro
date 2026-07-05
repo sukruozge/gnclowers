@@ -10,15 +10,24 @@ const title = t('home.featured', locale);
 const sub = locale === 'tr'
   ? 'Atölyemizden elde örülmüş, en çok sevilen parçalar.'
   : 'Hand-crocheted favourites, straight from our workshop.';
-const titleChars = [...title];
+// Split into words (unbreakable) while animating per-letter.
+let _li = 0;
+const titleWords = title.split(' ').map((w) => [...w].map((ch) => ({ ch, i: _li++ })));
 ---
 <section class="section fsec">
   <div class="container">
     <header class="fhead reveal">
       <p class="fhead__eyebrow">{eyebrow}</p>
       <h2 class="fhead__title" aria-label={title}>
-        {titleChars.map((ch, i) => (
-          <span class="fhead__ltr" style={`--i:${i}`} aria-hidden="true">{ch === ' ' ? ' ' : ch}</span>
+        {titleWords.map((word, wi) => (
+          <>
+            <span class="fhead__word">
+              {word.map(({ ch, i }) => (
+                <span class="fhead__ltr" style={`--i:${i}`} aria-hidden="true">{ch}</span>
+              ))}
+            </span>
+            {wi < titleWords.length - 1 ? ' ' : ''}
+          </>
         ))}
       </h2>
       <svg class="fhead__stitch" viewBox="0 0 240 16" preserveAspectRatio="none" aria-hidden="true">
@@ -44,6 +53,7 @@ const titleChars = [...title];
     font-family: var(--font-display); font-weight: 600; font-size: clamp(2.4rem, 5.2vw, 4rem);
     line-height: 1.05; letter-spacing: -.01em; color: var(--ink); margin: 0; text-wrap: balance;
   }
+  .fhead__word { display: inline-block; white-space: nowrap; }
   .fhead__ltr {
     display: inline-block; opacity: 0; transform: translateY(24px) rotate(-6deg) scale(.8);
     transition: opacity .5s var(--ease), transform .55s cubic-bezier(.34,1.5,.5,1);
