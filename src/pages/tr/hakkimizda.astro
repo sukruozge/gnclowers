@@ -3,6 +3,7 @@ import Base from '../../layouts/Base.astro';
 import Nav from '../../components/Nav.astro';
 import Footer from '../../components/Footer.astro';
 import Button from '../../components/Button.astro';
+import AboutHero from '../../components/AboutHero.astro';
 import { t } from '@lib/i18n';
 
 const locale = 'tr';
@@ -13,27 +14,8 @@ const locale = 'tr';
   <Nav locale="tr" />
   
   <main class="about-page">
-    <!-- Hero Section -->
-    <section class="about-hero">
-      <div class="container about-hero__inner">
-        <div class="about-hero__copy reveal reveal--fade-up">
-          <p class="eyebrow">{t('about.heroEyebrow', locale)}</p>
-          <h1>{t('about.heroTitle', locale)}</h1>
-          <p class="lead">{t('about.heroSub', locale)}</p>
-        </div>
-        <div class="about-hero__media reveal reveal--scale-in reveal--d2">
-          <div class="asymmetric-grid">
-            <div class="media-frame animate-float frame--1">
-              <img src="/hero.png" alt="Aselovers Amigurumi" loading="eager" />
-              <div class="media-badge">🧶 {t('home.trustHandmade', locale)}</div>
-            </div>
-            <div class="media-frame animate-float frame--2" style="animation-delay: 1s;">
-              <img src="/bags.png" alt="Aselovers Crochet Bags" loading="eager" />
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+    <!-- Animated story banner -->
+    <AboutHero locale="tr" />
 
     <!-- Intro Text Grid -->
     <section class="about-intro section--tint">

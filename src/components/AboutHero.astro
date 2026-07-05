@@ -1,0 +1,156 @@
+---
+import type { Locale } from '@lib/i18n';
+
+interface Props { locale: Locale }
+const { locale } = Astro.props as Props;
+const isTr = locale === 'tr';
+
+const L = isTr
+  ? {
+      eyebrow: 'hikayemiz',
+      title: 'Bir annenin ellerinde başladı',
+      story:
+        'Aselovers, küçük bir atölyede, bir annenin bebeğine ördüğü ilk tavşanla doğdu. Bugün İstanbul’daki atölyemizde, OEKO-TEX® ve GOTS® sertifikalı organik pamukla her oyuncağı hâlâ tek tek elde örüyoruz — çünkü her bebek, sevgiyle örülmüş bir şeyi hak eder.',
+      tag: 'İstanbul’da · elde · sevgiyle',
+    }
+  : {
+      eyebrow: 'our story',
+      title: 'It began in a mother’s hands',
+      story:
+        'Aselovers was born in a small workshop, with the very first bunny a mother crocheted for her baby. Today, in our Istanbul studio, we still make every toy by hand from OEKO-TEX® and GOTS® certified organic cotton — because every child deserves something made with love.',
+      tag: 'Handmade in Istanbul · with love',
+    };
+
+const titleWords = L.title.split(' ');
+---
+<section class="ahero">
+  <img class="ahero__maker" src="/images/maker.png" alt="" width="1024" height="1024" fetchpriority="high" />
+
+  <div class="ahero__stickers" aria-hidden="true">
+    <span class="fl" style="--x:52%; --y:14%; --d:7.4s; --r:9deg;   --depth:18">💛</span>
+    <span class="fl" style="--x:58%; --y:30%; --d:5.6s; --r:8deg;   --depth:30">🐰</span>
+    <span class="fl" style="--x:49%; --y:64%; --d:6.6s; --r:-8deg;  --depth:22">🧵</span>
+    <span class="fl" style="--x:62%; --y:74%; --d:6s;   --r:-12deg; --depth:26">🧶</span>
+  </div>
+
+  <div class="ahero__inner">
+    <div class="ahero__copy">
+      <p class="ahero__eyebrow">{L.eyebrow}</p>
+      <h1 class="ahero__title">
+        {titleWords.map((w, i) => (
+          <><span class="w" style={`--i:${i}`}>{w}</span>{' '}</>
+        ))}
+      </h1>
+      <svg class="ahero__stitch" viewBox="0 0 240 16" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M4 8c8-9 18-9 26 0s18 9 26 0 18-9 26 0 18 9 26 0 18-9 26 0 18 9 26 0 18-9 26 0" />
+      </svg>
+      <p class="ahero__story">{L.story}</p>
+      <span class="ahero__tag">🧶 {L.tag}</span>
+    </div>
+    <div class="ahero__art" aria-hidden="true"></div>
+  </div>
+</section>
+
+<style>
+  .ahero {
+    position: relative; overflow: hidden; isolation: isolate;
+    min-height: clamp(460px, 62vh, 620px); display: grid; align-items: center;
+    background: radial-gradient(115% 100% at 30% -10%, #FCEBDD 0%, #FBF3EA 45%, var(--bg) 100%);
+  }
+  .ahero::before {
+    content: ""; position: absolute; inset: -20%; z-index: -2;
+    background: radial-gradient(38% 38% at 24% 30%, rgba(220,160,55,.16), transparent 70%),
+                radial-gradient(44% 44% at 80% 66%, rgba(176,83,46,.13), transparent 70%);
+    animation: adrift 16s ease-in-out infinite alternate;
+  }
+  @keyframes adrift { from { transform: translate(-3%, -2%) scale(1); } to { transform: translate(3%, 2%) scale(1.08); } }
+
+  /* Maker illustration, anchored bottom-right */
+  .ahero__maker {
+    position: absolute; right: clamp(-20px, 3vw, 60px); bottom: 0; z-index: 0;
+    width: clamp(300px, 40vw, 560px); height: auto;
+    filter: drop-shadow(0 16px 26px rgba(28,26,24,.18));
+    translate: var(--kx, 0) var(--ky, 0); animation: asway 6s ease-in-out infinite; will-change: transform, translate;
+  }
+  @keyframes asway { 0%, 100% { transform: rotate(-1.2deg); } 50% { transform: rotate(1.2deg) translateY(-6px); } }
+
+  .ahero__stickers { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+  .fl {
+    position: absolute; left: var(--x); top: var(--y); font-size: clamp(1.5rem, 3vw, 2.6rem);
+    transform: translate(var(--px, 0), var(--py, 0)) rotate(var(--r));
+    animation: afloaty var(--d) ease-in-out infinite; filter: drop-shadow(0 8px 12px rgba(28,26,24,.14));
+    transition: transform 300ms ease-out; will-change: transform;
+  }
+  @keyframes afloaty { 0%, 100% { translate: 0 0; } 50% { translate: 0 -15px; } }
+
+  .ahero__inner {
+    position: relative; z-index: 1; width: 100%; max-width: var(--maxw); margin: 0 auto;
+    padding: var(--space-7) var(--space-5);
+    display: grid; grid-template-columns: 1.15fr .85fr; gap: var(--space-6); align-items: center;
+  }
+  .ahero__copy { max-width: 38rem; }
+  .ahero__eyebrow {
+    font-family: var(--font-signature); font-size: 1.9rem; color: var(--accent);
+    margin: 0 0 var(--space-1); transform: rotate(-2deg); opacity: 0; animation: arise .6s var(--ease) .1s forwards;
+  }
+  .ahero__title {
+    font-family: var(--font-display); font-weight: 600; font-size: clamp(2.3rem, 4.6vw, 3.7rem);
+    line-height: 1.08; letter-spacing: -.01em; color: var(--ink); margin: 0 0 var(--space-3); text-wrap: balance;
+  }
+  .ahero__title .w { display: inline-block; opacity: 0; animation: apop .55s var(--ease) both; animation-delay: calc(var(--i) * 60ms + 250ms); }
+  .ahero__stitch { display: block; width: 120px; height: 15px; margin: 0 0 var(--space-4); overflow: visible; }
+  .ahero__stitch path { fill: none; stroke: var(--accent); stroke-width: 3; stroke-linecap: round;
+    stroke-dasharray: 600; stroke-dashoffset: 600; animation: astitch 2.2s ease-in-out .9s forwards; }
+  .ahero__story { color: var(--muted); font-size: 1.14rem; line-height: 1.7; margin: 0 0 var(--space-5); opacity: 0; animation: arise .6s var(--ease) .55s forwards; }
+  .ahero__tag {
+    display: inline-block; font-family: var(--font-body); font-size: .82rem; font-weight: 600;
+    letter-spacing: .04em; color: var(--accent-ink); background: color-mix(in srgb, var(--accent) 12%, transparent);
+    padding: 7px 16px; border-radius: var(--radius-pill); opacity: 0; animation: arise .6s var(--ease) .8s forwards;
+  }
+
+  @keyframes arise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+  @keyframes apop { 0% { opacity: 0; transform: translateY(20px) scale(.82) rotate(-5deg); } 100% { opacity: 1; transform: none; } }
+  @keyframes astitch { to { stroke-dashoffset: 0; } }
+
+  @media (max-width: 900px) {
+    .ahero { min-height: auto; }
+    .ahero__inner { grid-template-columns: 1fr; padding-bottom: clamp(220px, 42vw, 320px); }
+    .ahero__copy { max-width: none; text-align: center; margin: 0 auto; }
+    .ahero__stitch { margin-left: auto; margin-right: auto; }
+    .ahero__maker { width: clamp(220px, 52vw, 360px); right: 50%; transform: translateX(50%); }
+    @keyframes asway { 0%,100% { transform: translateX(50%) rotate(-1.2deg); } 50% { transform: translateX(50%) rotate(1.2deg) translateY(-6px); } }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ahero::before, .ahero__maker, .fl { animation: none; }
+    .ahero__eyebrow, .ahero__title .w, .ahero__story, .ahero__tag { opacity: 1; animation: none; }
+    .ahero__stitch path { stroke-dashoffset: 0; animation: none; }
+  }
+</style>
+
+<script>
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const big = window.matchMedia('(min-width: 901px)').matches;
+  if (!reduce && big) {
+    const hero = document.querySelector<HTMLElement>('.ahero');
+    const maker = document.querySelector<HTMLElement>('.ahero__maker');
+    const stickers = document.querySelectorAll<HTMLElement>('.ahero .fl');
+    if (hero) {
+      hero.addEventListener('mousemove', (e) => {
+        const r = hero.getBoundingClientRect();
+        const x = (e.clientX - r.left) / r.width - 0.5;
+        const y = (e.clientY - r.top) / r.height - 0.5;
+        stickers.forEach((s) => {
+          const depth = parseFloat(s.style.getPropertyValue('--depth')) || 20;
+          s.style.setProperty('--px', (x * depth).toFixed(1) + 'px');
+          s.style.setProperty('--py', (y * depth).toFixed(1) + 'px');
+        });
+        if (maker) { maker.style.setProperty('--kx', (x * 16).toFixed(1) + 'px'); maker.style.setProperty('--ky', (y * 9).toFixed(1) + 'px'); }
+      }, { passive: true });
+      hero.addEventListener('mouseleave', () => {
+        stickers.forEach((s) => { s.style.setProperty('--px', '0px'); s.style.setProperty('--py', '0px'); });
+        if (maker) { maker.style.setProperty('--kx', '0px'); maker.style.setProperty('--ky', '0px'); }
+      });
+    }
+  }
+</script>
