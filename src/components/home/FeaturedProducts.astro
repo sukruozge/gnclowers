@@ -14,7 +14,7 @@ const titleChars = [...title];
 ---
 <section class="section fsec">
   <div class="container">
-    <header class="fhead reveal-head">
+    <header class="fhead reveal">
       <p class="fhead__eyebrow">{eyebrow}</p>
       <h2 class="fhead__title" aria-label={title}>
         {titleChars.map((ch, i) => (
@@ -59,11 +59,11 @@ const titleChars = [...title];
     opacity: 0; translate: 0 10px; transition: opacity .6s var(--ease) .2s, translate .6s var(--ease) .2s;
   }
 
-  /* In-view reveal (class toggled by IntersectionObserver) */
-  .reveal-head.in .fhead__eyebrow { opacity: 1; translate: 0 0; }
-  .reveal-head.in .fhead__ltr { opacity: 1; transform: none; }
-  .reveal-head.in .fhead__stitch path { stroke-dashoffset: 0; }
-  .reveal-head.in .fhead__sub { opacity: 1; translate: 0 0; }
+  /* Driven by the site-wide scroll-reveal (Base.astro adds .is-visible). */
+  .fhead.is-visible .fhead__eyebrow { opacity: 1; translate: 0 0; }
+  .fhead.is-visible .fhead__ltr { opacity: 1; transform: none; }
+  .fhead.is-visible .fhead__stitch path { stroke-dashoffset: 0; }
+  .fhead.is-visible .fhead__sub { opacity: 1; translate: 0 0; }
 
   /* 3 across, 2 rows. Big row gap + top pad give the upward fan room to bloom. */
   .fgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-8) var(--space-6); padding-top: var(--space-6); }
@@ -73,17 +73,4 @@ const titleChars = [...title];
   @media (prefers-reduced-motion: reduce) {
     .fhead__eyebrow, .fhead__ltr, .fhead__sub { opacity: 1 !important; translate: 0 !important; transform: none !important; transition: none; }
     .fhead__stitch path { stroke-dashoffset: 0; transition: none; }
-  }
-</style>
-
-<script>
-  const head = document.querySelector('.reveal-head');
-  if (head) {
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach((e) => {
-        if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
-      });
-    }, { threshold: 0.4 });
-    io.observe(head);
-  }
-</script>
+  }</style>
