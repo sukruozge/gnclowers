@@ -1,9 +1,15 @@
 {
   "shop": {
     "rating": 5,
-    "count": 6
+    "count": 7
   },
   "reviews": [
+    {
+      "rating": 5,
+      "text": "Exactly as described. Beautiful. Well crafted",
+      "language": "en",
+      "date": "2026-07-11"
+    },
     {
       "rating": 5,
       "text": "Melissa was great at communicating and provided updates while my bears got crafted! They’re beautifully made and super cute!! They’ll be a great addition to my baby shower gift baskets 🥰",
