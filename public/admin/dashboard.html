@@ -1201,6 +1201,8 @@
               <thead>
                 <tr>
                   <th>Sipariş ID</th>
+                  <th>Müşteri</th>
+                  <th>Ürünler</th>
                   <th>Tutar</th>
                   <th>Tarih</th>
                   <th>Durum</th>
@@ -2808,7 +2810,7 @@ async function loadOrdersPage() {
   const empty = document.getElementById('orders-empty');
   const countEl = document.getElementById('orders-count');
   
-  tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Yükleniyor...</td></tr>';
+  tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">Yükleniyor...</td></tr>';
   empty.style.display = 'none';
 
   try {
@@ -2831,17 +2833,28 @@ async function loadOrdersPage() {
         ? '<span class="badge badge-green">Başarılı</span>'
         : '<span class="badge badge-red">Başarısız</span>';
       
+      const c = o.customer || null;
+      const custHtml = c
+        ? `${c.name || ''}${c.city ? ' · ' + c.city : ''}${c.country && c.country !== 'TR' ? ' (' + c.country + ')' : ''}` +
+          (c.phone ? `<br><span style="color:var(--muted-foreground);font-size:.76rem">${c.phone}</span>` : '')
+        : '<span style="color:var(--muted-foreground)">—</span>';
+      const addr = c ? `${c.address || ''} ${c.city || ''} ${c.country || ''} · ${c.email || ''}`.trim() : '';
+      const itemsHtml = (o.items && o.items.length)
+        ? o.items.map(it => `${it.title} <strong>×${it.qty}</strong>`).join('<br>')
+        : '<span style="color:var(--muted-foreground)">—</span>';
       row.innerHTML = `
-        <td><strong>${o.orderId}</strong></td>
-        <td>${o.amount} TRY</td>
-        <td>${dateStr}</td>
+        <td><strong style="font-size:.78rem">${o.orderId}</strong></td>
+        <td title="${addr.replace(/"/g, '&quot;')}">${custHtml}</td>
+        <td style="font-size:.8rem;max-width:260px">${itemsHtml}</td>
+        <td>${o.amount} ${o.currency || 'TRY'}</td>
+        <td style="white-space:nowrap">${dateStr}</td>
         <td>${statusBadge}</td>
         <td style="color:var(--muted-foreground)">${o.failedReason || '-'}</td>
       `;
       tbody.appendChild(row);
     });
   } catch {
-    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--destructive);">Siparişler yüklenemedi.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--destructive);">Siparişler yüklenemedi.</td></tr>';
   }
 }
 

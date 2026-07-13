@@ -33,27 +33,53 @@ export const POST: APIRoute = async (context) => {
 
     const kv = env.ADMIN_KV;
     if (kv) {
-      const order = {
-        orderId: merchant_oid,
-        amount: (Number(total_amount) / 100).toFixed(2),
-        status: status === 'success' ? 'completed' : 'failed',
-        failedReason: status === 'success' ? '' : (failed_reason_msg || 'Bilinmeyen hata'),
-        createdAt: new Date().toISOString(),
-      };
+      const isSuccess = status === 'success';
+
+      // Pull the pending order stored at payment init (customer + line items).
+      let pending: any = null;
+      try {
+        const rawPending = await kv.get(`pending_order:${merchant_oid}`);
+        pending = rawPending ? JSON.parse(rawPending) : null;
+      } catch { /* ignore */ }
 
       const rawOrders = await kv.get('orders');
       const orders = rawOrders ? JSON.parse(rawOrders) : [];
-      orders.push(order);
+
+      // Idempotency: PayTR retries the callback until it gets "OK". If this order
+      // is already recorded as completed, acknowledge without duplicating it.
+      const existing = orders.find((o: any) => o.orderId === merchant_oid);
+      if (existing && existing.status === 'completed') {
+        return new Response('OK');
+      }
+
+      const order = {
+        orderId: merchant_oid,
+        amount: (Number(total_amount) / 100).toFixed(2),
+        currency: pending?.currency || 'TRY',
+        status: isSuccess ? 'completed' : 'failed',
+        failedReason: isSuccess ? '' : (failed_reason_msg || 'Bilinmeyen hata'),
+        customer: pending?.customer || null,
+        items: pending?.items || [],
+        shipping: pending?.shipping ?? null,
+        createdAt: pending?.createdAt || new Date().toISOString(),
+        paidAt: isSuccess ? new Date().toISOString() : null,
+      };
+
+      if (existing) Object.assign(existing, order);
+      else orders.push(order);
       await kv.put('orders', JSON.stringify(orders));
 
       const rawActivity = await kv.get('activity');
       const activity = rawActivity ? JSON.parse(rawActivity) : [];
       activity.unshift({
         ts: new Date().toISOString(),
-        action: status === 'success' ? 'ÖDEME_BAŞARILI' : 'ÖDEME_BAŞARISIZ',
-        detail: `Sipariş: ${merchant_oid}, Tutar: ${order.amount}` + (status === 'success' ? '' : `, Sebep: ${order.failedReason}`),
+        action: isSuccess ? 'ÖDEME_BAŞARILI' : 'ÖDEME_BAŞARISIZ',
+        detail: `Sipariş: ${merchant_oid}, Tutar: ${order.amount}` + (isSuccess ? '' : `, Sebep: ${order.failedReason}`),
       });
       await kv.put('activity', JSON.stringify(activity.slice(0, 500)));
+
+      // On success the pending record is consumed; drop it.
+      if (isSuccess) { try { await kv.delete(`pending_order:${merchant_oid}`); } catch { /* ignore */ } }
     }
 
     return new Response('OK');

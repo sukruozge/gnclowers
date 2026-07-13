@@ -29,7 +29,7 @@ export const POST: APIRoute = async (context) => {
     const body = await request.json().catch(() => null);
     if (!body) return json({ error: 'Geçersiz istek gövdesi.' }, 400);
 
-    const { email, name, phone, address, city, cart, currency = 'TRY', lang = 'tr' } = body;
+    const { email, name, phone, address, city, cart, currency = 'TRY', lang = 'tr', country = 'TR' } = body;
 
     if (!email || !name || !phone || !address || !city || !Array.isArray(cart) || cart.length === 0) {
       return json({ error: 'Lütfen bilgilerinizi kontrol edin.' }, 400);
@@ -38,6 +38,7 @@ export const POST: APIRoute = async (context) => {
     const products = productsData.products || [];
     let totalAmount = 0;
     const basket: [string, string, number][] = [];
+    const items: { id: string; title: string; qty: number; price: number }[] = [];
 
     for (const item of cart) {
       const prod = products.find((p: any) => String(p.id) === String(item.id));
@@ -46,12 +47,37 @@ export const POST: APIRoute = async (context) => {
       const price = prod.price;
       const qty = parseInt(item.quantity, 10) || 1;
       totalAmount += price * qty;
-      basket.push([prod.title_tr || prod.title_en, String(price), qty]);
+      const title = prod.title_tr || prod.title_en;
+      basket.push([title, String(price), qty]);
+      items.push({ id: String(prod.id), title, qty, price });
     }
 
     const paytrAmount = Math.round(totalAmount * 100);
     const merchant_oid = 'oid_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7);
     const user_ip = request.headers.get('CF-Connecting-IP') || request.headers.get('x-real-ip') || '127.0.0.1';
+
+    // Persist a pending order so the async callback can attach customer + line items.
+    // Best-effort: skipped if ADMIN_KV isn't bound; self-expires so orphans clean up.
+    try {
+      const kv = env.ADMIN_KV;
+      if (kv) {
+        await kv.put(
+          `pending_order:${merchant_oid}`,
+          JSON.stringify({
+            orderId: merchant_oid,
+            customer: { name, email, phone, address, city, country },
+            items,
+            amount: totalAmount,
+            currency,
+            lang,
+            createdAt: new Date().toISOString(),
+          }),
+          { expirationTtl: 60 * 60 * 24 }
+        );
+      }
+    } catch (e) {
+      console.error('pending_order write failed', e);
+    }
 
     const siteUrl = env.SITE_URL || 'http://localhost:4321';
     const merchant_ok_url = lang === 'en' ? `${siteUrl}/en/payment-success` : `${siteUrl}/tr/odeme-basarili`;
