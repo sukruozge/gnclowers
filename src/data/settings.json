@@ -10,6 +10,7 @@
   "logo": "",
   "favicon": "/favicon.svg",
   "featured": [],
+  "shipping": { "tr": { "fee": 0, "freeOver": 0 }, "intl": { "fee": 0 } },
   "categoryCovers": {
     "Crochet Bags": "/images/categories/bags.png",
     "Safari Animals": "/images/categories/safari.png",

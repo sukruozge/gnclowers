@@ -3,8 +3,10 @@ import Base from '../../layouts/Base.astro';
 import Nav from '../../components/Nav.astro';
 import Footer from '../../components/Footer.astro';
 import { loadProducts } from '@lib/products';
+import settings from '../../data/settings.json';
 
 const allProducts = loadProducts();
+const shippingCfg = (settings as any).shipping || {};
 ---
 <Base locale="tr" title="Ödeme Yap — Aselovers" description="Fatura ve teslimat bilgilerinizi girerek ödemenizi güvenle tamamlayın." pathSelf="odeme" pathsAlt={{ tr: 'odeme', en: 'checkout' }}>
   <Nav locale="tr" />
@@ -41,9 +43,18 @@ const allProducts = loadProducts();
                 <textarea id="c-address" required rows="3" placeholder="Mahalle, Cadde, Sokak, Kapı No, Daire"></textarea>
               </div>
 
-              <div class="form-group">
-                <label for="c-city">Şehir / Eyalet</label>
-                <input type="text" id="c-city" required placeholder="Örn: İstanbul / Kadıköy" />
+              <div class="form-row">
+                <div class="form-group flex-1">
+                  <label for="c-city">Şehir / Eyalet</label>
+                  <input type="text" id="c-city" required placeholder="Örn: İstanbul / Kadıköy" />
+                </div>
+                <div class="form-group flex-1">
+                  <label for="c-country">Ülke / Bölge</label>
+                  <select id="c-country">
+                    <option value="TR" selected>Türkiye</option>
+                    <option value="INTL">Yurt dışı</option>
+                  </select>
+                </div>
               </div>
 
               <div id="checkout-error" class="txt-danger" style="display: none; margin-bottom: var(--space-3);"></div>
@@ -75,7 +86,7 @@ const allProducts = loadProducts();
               </div>
               <div class="summary-row">
                 <span>Kargo</span>
-                <span class="txt-success">Ücretsiz</span>
+                <span id="summary-shipping" class="txt-success">Ücretsiz</span>
               </div>
               <div class="summary-row summary-row--total">
                 <span>Toplam</span>
@@ -87,7 +98,7 @@ const allProducts = loadProducts();
       </div>
     </section>
   </main>
-  <div id="cart-data" data-products={JSON.stringify(allProducts)} style="display: none;"></div>
+  <div id="cart-data" data-products={JSON.stringify(allProducts)} data-shipping={JSON.stringify(shippingCfg)} style="display: none;"></div>
   <Footer locale="tr" />
 </Base>
 
@@ -95,6 +106,7 @@ const allProducts = loadProducts();
   import { getCart } from '@lib/cart';
 
   const allProducts = JSON.parse(document.getElementById('cart-data')?.getAttribute('data-products') || '[]');
+  const shippingCfg = JSON.parse(document.getElementById('cart-data')?.getAttribute('data-shipping') || '{}');
   const cart = getCart();
 
   // Redirect if cart is empty
@@ -130,9 +142,32 @@ const allProducts = loadProducts();
     summaryList?.appendChild(row);
   });
 
-  const formattedSubtotal = new Intl.NumberFormat('tr-TR', { style: 'currency', currency }).format(totalAmount);
-  if (subtotalEl) subtotalEl.textContent = formattedSubtotal;
-  if (totalEl) totalEl.textContent = formattedSubtotal;
+  const shippingEl = document.getElementById('summary-shipping');
+  const countrySelect = document.getElementById('c-country') as HTMLSelectElement | null;
+  const fmt = (n: number) => new Intl.NumberFormat('tr-TR', { style: 'currency', currency }).format(n);
+
+  function calcShipping(country: string): number {
+    const isTr = (country || 'TR') === 'TR';
+    if (isTr) {
+      const fee = Number(shippingCfg?.tr?.fee ?? 0) || 0;
+      const freeOver = Number(shippingCfg?.tr?.freeOver ?? 0) || 0;
+      if (freeOver > 0 && totalAmount >= freeOver) return 0;
+      return fee;
+    }
+    return Number(shippingCfg?.intl?.fee ?? 0) || 0;
+  }
+
+  function updateTotals() {
+    const shipping = calcShipping(countrySelect?.value || 'TR');
+    if (subtotalEl) subtotalEl.textContent = fmt(totalAmount);
+    if (shippingEl) {
+      if (shipping > 0) { shippingEl.textContent = fmt(shipping); shippingEl.classList.remove('txt-success'); }
+      else { shippingEl.textContent = 'Ücretsiz'; shippingEl.classList.add('txt-success'); }
+    }
+    if (totalEl) totalEl.textContent = fmt(totalAmount + shipping);
+  }
+  updateTotals();
+  countrySelect?.addEventListener('change', updateTotals);
 
   // Form submit -> Get PayTR Token -> Load iFrame
   const form = document.getElementById('checkout-form') as HTMLFormElement | null;
@@ -155,6 +190,7 @@ const allProducts = loadProducts();
       phone: (document.getElementById('c-phone') as HTMLInputElement).value,
       address: (document.getElementById('c-address') as HTMLTextAreaElement).value,
       city: (document.getElementById('c-city') as HTMLInputElement).value,
+      country: (document.getElementById('c-country') as HTMLSelectElement).value,
       cart: cart.map(x => ({ id: x.id, quantity: x.quantity })),
       currency: currency,
       lang: 'tr'
@@ -201,8 +237,8 @@ const allProducts = loadProducts();
   
   .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: var(--space-4); }
   .form-group label { font-size: 0.88rem; font-weight: 600; color: var(--ink); }
-  .form-group input, .form-group textarea { font-family: inherit; font-size: 0.95rem; padding: 10px 14px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); color: var(--ink); }
-  .form-group input:focus, .form-group textarea:focus { outline: none; border-color: var(--accent); }
+  .form-group input, .form-group textarea, .form-group select { font-family: inherit; font-size: 0.95rem; padding: 10px 14px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); color: var(--ink); }
+  .form-group input:focus, .form-group textarea:focus, .form-group select:focus { outline: none; border-color: var(--accent); }
   .form-row { display: flex; gap: var(--space-4); }
   
   #paytr-container { background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius); padding: var(--space-5); }

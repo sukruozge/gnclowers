@@ -1,6 +1,8 @@
 import type { APIRoute } from 'astro';
 import { createHmac } from 'node:crypto';
 import productsData from '../../../data/products.json';
+import settings from '../../../data/settings.json';
+import { shippingFee } from '@lib/shipping';
 
 export const prerender = false;
 
@@ -52,7 +54,13 @@ export const POST: APIRoute = async (context) => {
       items.push({ id: String(prod.id), title, qty, price });
     }
 
-    const paytrAmount = Math.round(totalAmount * 100);
+    // Region-based shipping, computed server-side (never trust the client).
+    const subtotal = totalAmount;
+    const shipping = shippingFee((settings as any).shipping, country, subtotal);
+    if (shipping > 0) basket.push(['Kargo', String(shipping), 1]);
+    const grandTotal = subtotal + shipping;
+
+    const paytrAmount = Math.round(grandTotal * 100);
     const merchant_oid = 'oid_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7);
     const user_ip = request.headers.get('CF-Connecting-IP') || request.headers.get('x-real-ip') || '127.0.0.1';
 
@@ -67,7 +75,9 @@ export const POST: APIRoute = async (context) => {
             orderId: merchant_oid,
             customer: { name, email, phone, address, city, country },
             items,
-            amount: totalAmount,
+            subtotal,
+            shipping,
+            amount: grandTotal,
             currency,
             lang,
             createdAt: new Date().toISOString(),
