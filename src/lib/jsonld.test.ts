@@ -19,7 +19,8 @@ describe('productJsonLd', () => {
     expect(obj.offers.price).toBe('1912.50');
     expect(obj.offers.priceCurrency).toBe('TRY');
     expect(obj.offers.availability).toBe('https://schema.org/InStock');
-    expect(obj.offers.url).toBe('https://etsy/9');
+    // Offer URL points to the on-site canonical product page (not an external marketplace).
+    expect(obj.offers.url).toBe('https://aseloves.com/en/product/bunny-9');
   });
   it('omits image when the product has no image', () => {
     const noImg = { ...p, image: null, images: [] };

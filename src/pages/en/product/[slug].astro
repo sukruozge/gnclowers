@@ -2,12 +2,10 @@
 import Base from '../../../layouts/Base.astro';
 import Nav from '../../../components/Nav.astro';
 import Footer from '../../../components/Footer.astro';
-import Button from '../../../components/Button.astro';
 import Badge from '../../../components/Badge.astro';
 import ProductCard from '../../../components/ProductCard.astro';
 import ProductGallery from '../../../components/ProductGallery.astro';
 import RatingBadge from '../../../components/RatingBadge.astro';
-import TrustPoints from '../../../components/TrustPoints.astro';
 import { loadProducts, localizedTitle, productSlug, type Product } from '@lib/products';
 import { productJsonLd } from '@lib/jsonld';
 import { loadReviews } from '@lib/reviews';
@@ -31,90 +29,170 @@ const shop = loadReviews().shop;
   <Fragment slot="head"><script type="application/ld+json" set:html={ld} /></Fragment>
   <Nav locale="en" />
   <main>
-    <section class="section">
-      <div class="container detail">
-        <ProductGallery images={gallery} alt={title} />
-        <div class="detail__info">
-          {product.isNew && <Badge>New</Badge>}
-          <h1>{title}</h1>
-          <RatingBadge rating={shop.rating} count={shop.count} locale="en" />
-          <p class="detail__price">{price}</p>
-          <p class="prose" style="white-space: pre-line">{product.description_en}</p>
-          <div class="detail__actions" style="display: flex; gap: var(--space-3); margin: var(--space-4) 0;">
-            <Button id="add-to-cart" variant="primary" class="w-100" data-product={JSON.stringify(product)}>Add to Cart</Button>
-          </div>
-          <TrustPoints locale="en" />
-        </div>
-      </div>
+    <section class="section detail-section">
+      <div class="container">
+        <nav class="crumbs" aria-label="Breadcrumb">
+          <a href="/en">Home</a><span aria-hidden="true">/</span>
+          <a href="/en/products">Products</a><span aria-hidden="true">/</span>
+          <span class="crumbs__current">{title}</span>
+        </nav>
 
-<script>
-  import { addToCart } from '@lib/cart';
-  
-  const btn = document.getElementById('add-to-cart');
-  btn?.addEventListener('click', () => {
-    const raw = btn.getAttribute('data-product');
-    if (raw) {
-      const prod = JSON.parse(raw);
-      addToCart(prod);
-      
-      const toast = document.createElement('div');
-      toast.className = 'cart-toast';
-      toast.textContent = 'Product successfully added to cart!';
-      
-      document.body.appendChild(toast);
-      setTimeout(() => {
-        toast.classList.add('fade-out');
-        setTimeout(() => toast.remove(), 500);
-      }, 2500);
-    }
-  });
-</script>
-      {related.length > 0 && (
-        <div class="container detail__related">
-          <h2>You may also like</h2>
-          <div class="grid">{related.map((r) => <ProductCard product={r} locale="en" />)}</div>
+        <div class="detail">
+          <div class="detail__gallery">
+            <ProductGallery images={gallery} alt={title} />
+          </div>
+
+          <div class="detail__info">
+            {product.category && <p class="detail__eyebrow">{product.category}</p>}
+            <h1 class="detail__title">{title}</h1>
+            <div class="detail__meta">
+              <RatingBadge rating={shop.rating} count={shop.count} locale="en" />
+              {product.isNew && <Badge>New</Badge>}
+            </div>
+
+            <div class="detail__pricerow">
+              <span class="detail__price">{price}</span>
+              <span class="detail__vat">VAT included</span>
+            </div>
+
+            <div class="detail__buy">
+              <div class="qtystep" role="group" aria-label="Quantity">
+                <button type="button" class="qtystep__btn" id="qty-minus" aria-label="Decrease quantity">−</button>
+                <span class="qtystep__val" id="qty-val" aria-live="polite">1</span>
+                <button type="button" class="qtystep__btn" id="qty-plus" aria-label="Increase quantity">+</button>
+              </div>
+              <button id="add-to-cart" type="button" class="btn btn--primary detail__cta" data-product={JSON.stringify(product)}>
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                Add to Cart
+              </button>
+            </div>
+
+            <ul class="assure">
+              <li class="assure__item">
+                <span class="assure__ic"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 21s-8-4.5-8-10a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 11c0 5.5-8 10-8 10z"/></svg></span>
+                <div><strong>Handmade, just for you</strong><span>Each piece is crocheted to order, one at a time</span></div>
+              </li>
+              <li class="assure__item">
+                <span class="assure__ic"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 2l8 3v6c0 5-3.4 9-8 11-4.6-2-8-6-8-11V5z"/><path d="M9 12l2 2 4-4"/></svg></span>
+                <div><strong>Secure payment</strong><span>Powered by PayTR — your card details are never stored by us</span></div>
+              </li>
+              <li class="assure__item">
+                <span class="assure__ic"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 3v5h-7z"/><circle cx="5.5" cy="18.5" r="2"/><circle cx="18.5" cy="18.5" r="2"/></svg></span>
+                <div><strong>Careful shipping</strong><span>Tracked delivery across Türkiye and worldwide</span></div>
+              </li>
+            </ul>
+          </div>
         </div>
-      )}
+
+        {product.description_en && (
+          <section class="pdesc">
+            <h2 class="pdesc__h">Product Details</h2>
+            <div class="pdesc__body prose" style="white-space: pre-line">{product.description_en}</div>
+          </section>
+        )}
+
+        {related.length > 0 && (
+          <div class="detail__related">
+            <h2 class="detail__related-h">You may also like</h2>
+            <div class="detail__related-grid">{related.map((r) => <ProductCard product={r} locale="en" />)}</div>
+          </div>
+        )}
+      </div>
     </section>
   </main>
   <Footer locale="en" />
+
+<script>
+  import { addToCart } from '@lib/cart';
+
+  let qty = 1;
+  const valEl = document.getElementById('qty-val');
+  const minus = document.getElementById('qty-minus');
+  const plus = document.getElementById('qty-plus');
+  const btn = document.getElementById('add-to-cart');
+
+  function render() { if (valEl) valEl.textContent = String(qty); if (minus) (minus as HTMLButtonElement).disabled = qty <= 1; }
+  minus?.addEventListener('click', () => { if (qty > 1) { qty--; render(); } });
+  plus?.addEventListener('click', () => { if (qty < 99) { qty++; render(); } });
+  render();
+
+  btn?.addEventListener('click', () => {
+    const raw = btn.getAttribute('data-product');
+    if (!raw) return;
+    const prod = JSON.parse(raw);
+    addToCart(prod, qty);
+
+    const toast = document.createElement('div');
+    toast.className = 'cart-toast';
+    toast.setAttribute('role', 'status');
+    toast.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg> Added to cart';
+    document.body.appendChild(toast);
+    setTimeout(() => { toast.classList.add('fade-out'); setTimeout(() => toast.remove(), 400); }, 2400);
+  });
+</script>
+
   <style>
-    .detail { display: grid; grid-template-columns: 1.1fr 1fr; gap: var(--space-7); align-items: start; }
-    .detail__media { aspect-ratio: 4 / 5; overflow: hidden; border-radius: var(--radius); background: var(--section); position: sticky; top: 92px; }
-    .detail__media img { width: 100%; height: 100%; object-fit: cover; }
-    .detail__price { font-family: var(--font-display); font-size: 1.6rem; color: var(--accent-ink); margin: var(--space-3) 0 var(--space-4); }
-    .detail__ship { border-top: 1px solid var(--line); margin-top: var(--space-6); padding-top: var(--space-4); }
-    .detail__ship h4 { font-family: var(--font-body); font-size: var(--step-small); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: var(--space-2); }
-    .detail__ship p { color: var(--muted); margin: 0; }
+    .detail-section { padding-top: var(--space-6); }
+    .crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: var(--step-small); color: var(--muted); margin-bottom: var(--space-5); }
+    .crumbs a { color: var(--muted); transition: color var(--dur) var(--ease); }
+    .crumbs a:hover { color: var(--accent); }
+    .crumbs span[aria-hidden] { opacity: .5; }
+    .crumbs__current { color: var(--ink); font-weight: 500; max-width: 46ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    .detail { display: grid; grid-template-columns: 1.05fr 1fr; gap: var(--space-7); align-items: start; }
+    .detail__info { position: sticky; top: 96px; }
+    .detail__eyebrow { font-family: var(--font-body); font-size: var(--step-small); letter-spacing: .16em; text-transform: uppercase; color: var(--accent); margin: 0 0 var(--space-2); }
+    .detail__title { font-family: var(--font-display); font-size: clamp(1.8rem, 3.2vw, 2.6rem); line-height: 1.12; margin: 0 0 var(--space-3); }
+    .detail__meta { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; margin-bottom: var(--space-4); }
+
+    .detail__pricerow { display: flex; align-items: baseline; gap: var(--space-3); padding: var(--space-4) 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+    .detail__price { font-family: var(--font-display); font-size: 2rem; color: var(--accent-ink); font-feature-settings: "tnum"; }
+    .detail__vat { font-size: var(--step-small); color: var(--muted); }
+    .detail__desc { margin: var(--space-4) 0 var(--space-5); }
+
+    .detail__buy { display: flex; gap: var(--space-3); align-items: stretch; margin-bottom: var(--space-5); }
+    .qtystep { display: inline-flex; align-items: center; border: 1.5px solid var(--line); border-radius: var(--radius-pill); background: var(--surface); overflow: hidden; flex-shrink: 0; }
+    .qtystep__btn { width: 46px; height: 52px; border: none; background: none; font-size: 1.3rem; color: var(--ink); cursor: pointer; transition: background var(--dur) var(--ease), color var(--dur) var(--ease); }
+    .qtystep__btn:hover { background: var(--section); color: var(--accent); }
+    .qtystep__btn:disabled { opacity: .35; cursor: not-allowed; }
+    .qtystep__val { min-width: 34px; text-align: center; font-weight: 600; font-feature-settings: "tnum"; }
+    .detail__cta { flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 10px; height: 52px; border-radius: var(--radius-pill); font-size: 1rem; font-weight: 600; }
+    .detail__cta svg { flex-shrink: 0; }
+
+    .assure { list-style: none; margin: 0; padding: var(--space-4) var(--space-5); display: grid; gap: var(--space-4); background: var(--section); border: 1px solid var(--line); border-radius: var(--radius-lg); }
+    .assure__item { display: flex; align-items: flex-start; gap: var(--space-3); }
+    .assure__ic { flex-shrink: 0; width: 40px; height: 40px; display: grid; place-items: center; border-radius: 50%; background: color-mix(in srgb, var(--accent) 10%, var(--surface)); color: var(--accent); }
+    .assure__item div { display: flex; flex-direction: column; gap: 1px; }
+    .assure__item strong { font-size: .95rem; color: var(--ink); font-weight: 600; }
+    .assure__item span { font-size: .86rem; color: var(--muted); line-height: 1.4; }
+
+    .pdesc { margin-top: var(--space-7); padding-top: var(--space-6); border-top: 1px solid var(--line); }
+    .pdesc__h { font-family: var(--font-display); font-size: var(--step-h3); margin-bottom: var(--space-4); }
+    .pdesc__body { max-width: 70ch; color: var(--muted); }
+
     .detail__related { margin-top: var(--space-8); }
-    .detail__related .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: var(--space-5); }
-    @media (max-width: 900px) { .detail { grid-template-columns: 1fr; } .detail__media { position: static; } }
-    .w-100 { width: 100%; }
-    
+    .detail__related-h { font-family: var(--font-display); font-size: var(--step-h2); margin-bottom: var(--space-5); }
+    .detail__related-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: var(--space-5); }
+
+    @media (max-width: 900px) {
+      .detail { grid-template-columns: 1fr; gap: var(--space-6); }
+      .detail__info { position: static; }
+    }
+    @media (max-width: 480px) {
+      .detail__buy { flex-wrap: wrap; }
+      .detail__cta { width: 100%; flex: 1 1 100%; }
+    }
+
     :global(.cart-toast) {
-      position: fixed;
-      bottom: 24px;
-      right: 24px;
-      background: var(--accent-ink);
-      color: var(--on-accent);
-      padding: 12px 24px;
-      border-radius: var(--radius);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-      z-index: 1000;
-      font-size: 0.92rem;
-      font-weight: 600;
-      animation: toastIn 300ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      position: fixed; bottom: 24px; right: 24px; display: inline-flex; align-items: center; gap: 8px;
+      background: var(--accent-ink); color: var(--on-accent); padding: 13px 20px; border-radius: var(--radius-pill);
+      box-shadow: 0 12px 30px rgba(28,26,24,.22); z-index: 1000; font-size: .92rem; font-weight: 600;
+      animation: toastIn 320ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
-    :global(.cart-toast.fade-out) {
-      animation: toastOut 300ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    }
-    @keyframes toastIn {
-      from { opacity: 0; transform: translateY(12px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes toastOut {
-      from { opacity: 1; transform: translateY(0); }
-      to { opacity: 0; transform: translateY(12px); }
-    }
+    :global(.cart-toast svg) { stroke: var(--on-accent); }
+    :global(.cart-toast.fade-out) { animation: toastOut 300ms cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    @keyframes toastIn { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes toastOut { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(14px); } }
+    @media (prefers-reduced-motion: reduce) { :global(.cart-toast) { animation: none; } }
   </style>
 </Base>
