@@ -44,6 +44,15 @@ main { min-height: 50vh; }
 
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
 
+/* Buttons — global so raw `.btn` usage and JS-injected markup are styled everywhere */
+.btn { display: inline-block; font-size: .95rem; font-weight: 500; letter-spacing: .02em; padding: 13px 26px; border-radius: var(--radius-pill); border: none; cursor: pointer; font-family: inherit; line-height: 1.2; transition: transform var(--dur) var(--ease), background var(--dur) var(--ease), color var(--dur) var(--ease), box-shadow var(--dur) var(--ease); text-align: center; }
+.btn:hover { transform: translateY(-2px); }
+.btn--primary { background: var(--accent); color: var(--on-accent); }
+.btn--primary:hover { background: var(--accent-ink); }
+.btn--outline { border: 1px solid var(--ink); color: var(--ink); background: transparent; }
+.btn--outline:hover { background: var(--ink); color: var(--bg); }
+.btn:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+
 /* Scroll reveal & animations */
 .reveal { opacity: 0; transform: translateY(16px); transition: opacity .8s var(--ease), transform .8s var(--ease); }
 .reveal.is-visible { opacity: 1; transform: none; }

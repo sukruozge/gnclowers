@@ -3,18 +3,27 @@ import Base from '../../layouts/Base.astro';
 import Nav from '../../components/Nav.astro';
 import Footer from '../../components/Footer.astro';
 import { loadProducts } from '@lib/products';
+import settings from '../../data/settings.json';
 
 const allProducts = loadProducts();
+const shippingCfg = (settings as any).shipping || {};
 ---
-<Base locale="tr" title="Sepetim — Aselovers" description="Alışveriş sepetinizdeki ürünleri kontrol edin ve ödeme adımına geçin." pathSelf="sepet" pathsAlt={{ tr: 'sepet', en: 'cart' }}>
+<Base locale="tr" title="Sepetim — Aselovers" description="Sepetinizdeki ürünleri kontrol edin ve ödeme adımına geçin." pathSelf="sepet" pathsAlt={{ tr: 'sepet', en: 'cart' }}>
   <Nav locale="tr" />
   <main>
-    <section class="section">
+    <section class="section cart-section">
       <div class="container">
-        <h1 class="cart__heading">Alışveriş Sepetim</h1>
-        
+        <h1 class="cart__heading">Sepetim</h1>
+        <div class="head-stitch" aria-hidden="true">
+          <svg viewBox="0 0 200 8" preserveAspectRatio="none" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-dasharray="7 5"><path d="M2 4 Q10 -1 20 4 T40 4 T60 4 T80 4 T100 4 T120 4 T140 4 T160 4 T180 4 T198 4"/></svg>
+        </div>
+
         <div id="cart-empty" class="cart__empty" style="display: none;">
-          <p>Sepetiniz şu anda boş.</p>
+          <span class="cart__empty-ic">
+            <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+          </span>
+          <h2 class="cart__empty-h">Sepetiniz henüz boş</h2>
+          <p>El emeğiyle örülmüş minik dostlarımıza göz atın — favorinizi bulmanız an meselesi.</p>
           <a class="btn btn--primary" href="/tr/urunler">Alışverişe Başla</a>
         </div>
 
@@ -25,182 +34,207 @@ const allProducts = loadProducts();
               <span class="txt-center">Adet</span>
               <span class="txt-right">Toplam</span>
             </div>
-            <div id="cart-items-list" class="cart__items-list">
-              <!-- JS ile doldurulacak -->
-            </div>
+            <div id="cart-items-list" class="cart__items-list"></div>
+            <a class="cart__continue" href="/tr/urunler">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+              Alışverişe devam et
+            </a>
           </div>
 
-          <div class="cart__summary-col">
+          <aside class="cart__summary-col">
             <div class="summary-card">
-              <h3>Sipariş Özeti</h3>
+              <h2 class="summary-card__h">Sipariş Özeti</h2>
               <div class="summary-row">
                 <span>Ara Toplam</span>
                 <span id="cart-subtotal">₺0,00</span>
               </div>
               <div class="summary-row">
                 <span>Kargo</span>
-                <span class="txt-success">Ücretsiz</span>
+                <span id="cart-shipping" class="txt-success">Ücretsiz</span>
+              </div>
+              <div class="stitch" aria-hidden="true">
+                <svg viewBox="0 0 240 8" preserveAspectRatio="none" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-dasharray="7 5"><path d="M2 4 Q10 -1 20 4 T40 4 T60 4 T80 4 T100 4 T120 4 T140 4 T160 4 T180 4 T200 4 T220 4 T238 4"/></svg>
               </div>
               <div class="summary-row summary-row--total">
                 <span>Toplam</span>
                 <span id="cart-total">₺0,00</span>
               </div>
-              <a href="/tr/odeme" class="btn btn--primary w-100" style="margin-top: var(--space-4); text-align: center;">Ödemeye Geç</a>
+              <a href="/tr/odeme" class="btn btn--primary cart__checkout">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                Ödemeye Geç
+              </a>
+              <p class="cart__secure">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 2l8 3v6c0 5-3.4 9-8 11-4.6-2-8-6-8-11V5z"/><path d="M9 12l2 2 4-4"/></svg>
+                Güvenli ödeme · Kart bilgileriniz bizde saklanmaz
+              </p>
             </div>
-          </div>
+          </aside>
         </div>
       </div>
     </section>
   </main>
-  <div id="cart-data" data-products={JSON.stringify(allProducts)} style="display: none;"></div>
+  <div id="cart-data" data-products={JSON.stringify(allProducts)} data-shipping={JSON.stringify(shippingCfg)} style="display: none;"></div>
   <Footer locale="tr" />
 </Base>
 
 <script>
-  // Client-side cart logic
   import { getCart, updateCartQuantity, removeFromCart } from '@lib/cart';
 
   const allProducts = JSON.parse(document.getElementById('cart-data')?.getAttribute('data-products') || '[]');
+  const shippingCfg = JSON.parse(document.getElementById('cart-data')?.getAttribute('data-shipping') || '{}');
 
   const emptyDiv = document.getElementById('cart-empty');
   const contentDiv = document.getElementById('cart-content');
   const itemsList = document.getElementById('cart-items-list');
   const subtotalEl = document.getElementById('cart-subtotal');
+  const shippingEl = document.getElementById('cart-shipping');
   const totalEl = document.getElementById('cart-total');
+
+  function calcShipping(subtotal: number): number {
+    const fee = Number(shippingCfg?.tr?.fee ?? 0) || 0;
+    const freeOver = Number(shippingCfg?.tr?.freeOver ?? 0) || 0;
+    if (freeOver > 0 && subtotal >= freeOver) return 0;
+    return fee;
+  }
 
   function renderCart() {
     const cart = getCart();
     if (cart.length === 0) {
-      emptyDiv.style.display = 'block';
-      contentDiv.style.display = 'none';
+      if (emptyDiv) emptyDiv.style.display = 'block';
+      if (contentDiv) contentDiv.style.display = 'none';
       return;
     }
-
-    emptyDiv.style.display = 'none';
-    contentDiv.style.display = 'grid';
-    itemsList.innerHTML = '';
+    if (emptyDiv) emptyDiv.style.display = 'none';
+    if (contentDiv) contentDiv.style.display = 'grid';
+    if (itemsList) itemsList.innerHTML = '';
 
     let subtotal = 0;
     let currency = 'TRY';
+    const fmt = (n: number) => new Intl.NumberFormat('tr-TR', { style: 'currency', currency }).format(n);
 
     cart.forEach(item => {
       const prod = allProducts.find(p => p.id === item.id);
       if (!prod) return;
-
       subtotal += prod.price * item.quantity;
       currency = prod.currency;
 
-      const itemTotal = prod.price * item.quantity;
-      const formattedItemTotal = new Intl.NumberFormat('tr-TR', { style: 'currency', currency }).format(itemTotal);
-      const formattedPrice = new Intl.NumberFormat('tr-TR', { style: 'currency', currency }).format(prod.price);
-
       const row = document.createElement('div');
-      row.className = 'cart-item';
+      row.className = 'citem';
       row.innerHTML = `
-        <div class="cart-item__product">
-          <div class="cart-item__media">
-            <img src="${prod.image || '/bags.png'}" alt="${prod.title_tr || prod.title_en}" />
-          </div>
-          <div>
-            <h4 class="cart-item__title">${prod.title_tr || prod.title_en}</h4>
-            <span class="cart-item__price">${formattedPrice}</span>
-            <button class="cart-item__remove" data-id="${item.id}">Kaldır</button>
-          </div>
-        </div>
-        <div class="cart-item__qty txt-center">
-          <div class="qty-selector">
-            <button class="qty-btn qty-minus" data-id="${item.id}">-</button>
-            <span class="qty-val">${item.quantity}</span>
-            <button class="qty-btn qty-plus" data-id="${item.id}">+</button>
+        <div class="citem__product">
+          <div class="citem__media"><img src="${prod.image || '/bags.png'}" alt="${prod.title_tr || prod.title_en}" loading="lazy" /></div>
+          <div class="citem__info">
+            <h3 class="citem__title">${prod.title_tr || prod.title_en}</h3>
+            <span class="citem__unit">${fmt(prod.price)}</span>
+            <button class="citem__remove" data-id="${item.id}">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>
+              Kaldır
+            </button>
           </div>
         </div>
-        <div class="cart-item__total txt-right">${formattedItemTotal}</div>
+        <div class="citem__qty">
+          <div class="cstep" role="group" aria-label="Adet">
+            <button class="cstep__btn cstep__minus" data-id="${item.id}" aria-label="Azalt">−</button>
+            <span class="cstep__val">${item.quantity}</span>
+            <button class="cstep__btn cstep__plus" data-id="${item.id}" aria-label="Artır">+</button>
+          </div>
+        </div>
+        <div class="citem__total">${fmt(prod.price * item.quantity)}</div>
       `;
-      itemsList.appendChild(row);
+      itemsList?.appendChild(row);
     });
 
-    const formattedSubtotal = new Intl.NumberFormat('tr-TR', { style: 'currency', currency }).format(subtotal);
-    subtotalEl.textContent = formattedSubtotal;
-    totalEl.textContent = formattedSubtotal;
+    const shipping = calcShipping(subtotal);
+    if (subtotalEl) subtotalEl.textContent = fmt(subtotal);
+    if (shippingEl) {
+      if (shipping > 0) { shippingEl.textContent = fmt(shipping); shippingEl.classList.remove('txt-success'); }
+      else { shippingEl.textContent = 'Ücretsiz'; shippingEl.classList.add('txt-success'); }
+    }
+    if (totalEl) totalEl.textContent = fmt(subtotal + shipping);
 
-    // Attach listeners
-    document.querySelectorAll('.qty-minus').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        const id = btn.getAttribute('data-id');
-        const item = cart.find(x => x.id === id);
-        if (item && item.quantity > 1) {
-          updateCartQuantity(id, item.quantity - 1);
-          renderCart();
-        }
-      });
-    });
-
-    document.querySelectorAll('.qty-plus').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        const id = btn.getAttribute('data-id');
-        const item = cart.find(x => x.id === id);
-        if (item) {
-          updateCartQuantity(id, item.quantity + 1);
-          renderCart();
-        }
-      });
-    });
-
-    document.querySelectorAll('.cart-item__remove').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        const id = btn.getAttribute('data-id');
-        removeFromCart(id);
-        renderCart();
-      });
-    });
+    document.querySelectorAll('.cstep__minus').forEach(btn => btn.addEventListener('click', () => {
+      const id = btn.getAttribute('data-id'); const cart = getCart(); const it = cart.find(x => x.id === id);
+      if (id && it && it.quantity > 1) { updateCartQuantity(id, it.quantity - 1); renderCart(); }
+    }));
+    document.querySelectorAll('.cstep__plus').forEach(btn => btn.addEventListener('click', () => {
+      const id = btn.getAttribute('data-id'); const cart = getCart(); const it = cart.find(x => x.id === id);
+      if (id && it) { updateCartQuantity(id, it.quantity + 1); renderCart(); }
+    }));
+    document.querySelectorAll('.citem__remove').forEach(btn => btn.addEventListener('click', () => {
+      const id = btn.getAttribute('data-id'); if (id) { removeFromCart(id); renderCart(); }
+    }));
   }
 
-  // Initial load
   renderCart();
   window.addEventListener('cart-updated', renderCart);
 </script>
 
 <style>
-  .cart__heading { font-family: var(--font-display); font-size: 2.2rem; font-weight: 500; margin-bottom: var(--space-6); }
-  .cart__empty { text-align: center; padding: var(--space-8) 0; }
-  .cart__empty p { font-size: 1.1rem; color: var(--muted); margin-bottom: var(--space-4); }
-  
-  .cart__content { display: grid; grid-template-columns: 2fr 1fr; gap: var(--space-7); align-items: start; }
-  .cart__table-header { display: grid; grid-template-columns: 3fr 1fr 1fr; border-bottom: 1.5px solid var(--line); padding-bottom: var(--space-3); font-weight: 600; color: var(--muted); font-size: 0.88rem; text-transform: uppercase; letter-spacing: 0.05em; }
+  .cart-section { padding-top: var(--space-6); }
+  .cart__heading { font-family: var(--font-display); font-size: clamp(1.9rem, 3vw, 2.4rem); margin-bottom: var(--space-2); }
+  .head-stitch { color: color-mix(in srgb, var(--accent) 55%, var(--line)); width: 190px; max-width: 55%; margin: 0 0 var(--space-6); }
+  .head-stitch svg { display: block; width: 100%; height: 8px; }
+
+  .cart__empty { text-align: center; max-width: 420px; margin: 0 auto; padding: var(--space-8) 0; }
+  .cart__empty-ic { display: inline-grid; place-items: center; width: 76px; height: 76px; border-radius: 50%; background: var(--section); color: var(--accent); margin-bottom: var(--space-4); }
+  .cart__empty-h { font-family: var(--font-display); font-size: 1.5rem; margin-bottom: var(--space-2); }
+  .cart__empty p { color: var(--muted); margin-bottom: var(--space-5); }
+
+  .cart__content { display: grid; grid-template-columns: 1.6fr 1fr; gap: var(--space-6); align-items: start; }
+  .cart__table-header { display: grid; grid-template-columns: 1fr 150px 120px; padding-bottom: var(--space-3); border-bottom: 1.5px dashed color-mix(in srgb, var(--accent) 30%, var(--line)); font-weight: 600; color: var(--muted); font-size: .78rem; text-transform: uppercase; letter-spacing: .08em; }
+  .cart__table-header .txt-center { text-align: center; }
+  .cart__table-header .txt-right { text-align: right; }
   .cart__items-list { display: flex; flex-direction: column; }
-  
-  .cart-item { display: grid; grid-template-columns: 3fr 1fr 1fr; align-items: center; border-bottom: 1px solid var(--line); padding: var(--space-4) 0; }
-  .cart-item__product { display: flex; gap: var(--space-4); align-items: center; }
-  .cart-item__media { width: 70px; height: 70px; border-radius: var(--radius); overflow: hidden; background: var(--section); border: 1px solid var(--line); }
-  .cart-item__media img { width: 100%; height: 100%; object-fit: cover; }
-  .cart-item__title { font-size: 1rem; font-weight: 600; margin: 0; line-height: 1.3; }
-  .cart-item__price { display: block; font-size: 0.9rem; color: var(--muted); margin-top: 2px; }
-  .cart-item__remove { background: none; border: none; color: var(--accent); cursor: pointer; font-size: 0.82rem; font-weight: 500; text-decoration: underline; margin-top: 6px; padding: 0; }
-  
-  .qty-selector { display: inline-flex; align-items: center; border: 1px solid var(--line); border-radius: var(--radius-pill); background: var(--bg); overflow: hidden; }
-  .qty-btn { background: none; border: none; width: 30px; height: 30px; cursor: pointer; font-weight: bold; transition: background 150ms ease; }
-  .qty-btn:hover { background: var(--line); }
-  .qty-val { width: 30px; text-align: center; font-size: 0.88rem; font-weight: 600; }
-  
-  .cart-item__total { font-family: var(--font-body); font-weight: 600; color: var(--accent-ink); }
-  
-  .summary-card { background: #FAF9F5; border: 1px solid var(--line); border-radius: var(--radius); padding: var(--space-5); }
-  .summary-card h3 { font-family: var(--font-display); font-size: 1.3rem; margin-top: 0; margin-bottom: var(--space-4); border-bottom: 1.5px solid var(--line); padding-bottom: var(--space-2); }
-  .summary-row { display: flex; justify-content: space-between; font-size: 0.95rem; margin-bottom: var(--space-3); }
-  .summary-row--total { font-size: 1.15rem; font-weight: 700; color: var(--accent-ink); border-top: 1.5px solid var(--line); padding-top: var(--space-3); margin-top: var(--space-3); margin-bottom: 0; }
-  
-  .w-100 { width: 100%; }
-  .txt-center { text-align: center; }
-  .txt-right { text-align: right; }
+
+  .cart__continue { display: inline-flex; align-items: center; gap: 6px; margin-top: var(--space-5); font-size: .9rem; font-weight: 600; color: var(--muted); transition: color var(--dur) var(--ease); }
+  .cart__continue:hover { color: var(--accent); }
+
+  /* Cart items are injected via innerHTML at runtime, so their styles MUST be global
+     (Astro's scoped styles never reach dynamically-created DOM). */
+  :global(.citem) { display: grid; grid-template-columns: 1fr 150px 120px; align-items: center; gap: var(--space-3); padding: var(--space-4) 0; border-bottom: 1px solid var(--line); }
+  :global(.citem__product) { display: flex; gap: var(--space-4); align-items: center; min-width: 0; }
+  :global(.citem__media) { flex-shrink: 0; width: 76px; height: 76px; border-radius: var(--radius); overflow: hidden; background: var(--section); border: 1px solid var(--line); }
+  :global(.citem__media img) { width: 100%; height: 100%; object-fit: cover; }
+  :global(.citem__info) { min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+  :global(.citem__title) { font-family: var(--font-body); font-size: .96rem; font-weight: 600; margin: 0; line-height: 1.35; color: var(--ink); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  :global(.citem__unit) { font-size: .85rem; color: var(--muted); }
+  :global(.citem__remove) { display: inline-flex; align-items: center; gap: 5px; align-self: flex-start; background: none; border: none; color: var(--muted); cursor: pointer; font-size: .8rem; font-weight: 500; padding: 2px 0; margin-top: 2px; transition: color var(--dur) var(--ease); }
+  :global(.citem__remove:hover) { color: var(--accent); }
+  :global(.citem__remove svg) { pointer-events: none; }
+
+  :global(.citem__qty) { display: flex; justify-content: center; }
+  :global(.cstep) { display: inline-flex; align-items: center; border: 1.5px solid var(--line); border-radius: var(--radius-pill); background: var(--surface); overflow: hidden; }
+  :global(.cstep__btn) { width: 38px; height: 42px; border: none; background: none; font-size: 1.15rem; color: var(--ink); cursor: pointer; transition: background var(--dur) var(--ease), color var(--dur) var(--ease); }
+  :global(.cstep__btn:hover) { background: var(--section); color: var(--accent); }
+  :global(.cstep__val) { min-width: 30px; text-align: center; font-weight: 600; font-feature-settings: "tnum"; }
+  :global(.citem__total) { text-align: right; font-weight: 700; color: var(--accent-ink); font-feature-settings: "tnum"; }
+
+  .stitch { color: color-mix(in srgb, var(--accent) 55%, var(--line)); margin: var(--space-4) 0; }
+  .stitch svg { display: block; width: 100%; height: 8px; }
+
+  .summary-card { background: var(--section); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: var(--space-5); position: sticky; top: 96px; }
+  .summary-card__h { font-family: var(--font-display); font-size: 1.3rem; margin: 0 0 var(--space-4); padding-bottom: var(--space-3); border-bottom: 1px solid var(--line); }
+  .summary-row { display: flex; justify-content: space-between; font-size: .95rem; margin-bottom: var(--space-3); color: var(--muted); }
+  .summary-row span:last-child { color: var(--ink); font-feature-settings: "tnum"; }
+  .summary-row--total { font-size: 1.2rem; font-weight: 700; color: var(--accent-ink); margin-bottom: 0; }
+  .summary-row--total span:last-child { color: var(--accent-ink); }
+
+  .cart__checkout { width: 100%; display: inline-flex; align-items: center; justify-content: center; gap: 10px; height: 52px; margin-top: var(--space-4); font-size: 1rem; font-weight: 600; }
+  .cart__secure { display: flex; align-items: center; justify-content: center; gap: 7px; text-align: center; font-size: .78rem; color: var(--muted); margin: var(--space-3) 0 0; }
+  .cart__secure svg { color: var(--accent); flex-shrink: 0; }
+
   .txt-success { color: #16a34a; font-weight: 600; }
-  
+
   @media (max-width: 900px) {
     .cart__content { grid-template-columns: 1fr; }
-    .cart-item { grid-template-columns: 1fr; gap: var(--space-4); position: relative; }
+    .summary-card { position: static; }
     .cart__table-header { display: none; }
-    .cart-item__total { text-align: left; font-size: 1.1rem; }
-    .qty-selector { margin-top: 4px; }
-    .txt-right { text-align: left; }
-    .txt-center { text-align: left; }
+    :global(.citem) { grid-template-columns: 1fr auto; grid-template-areas: "product total" "qty qty"; row-gap: var(--space-3); }
+    :global(.citem__product) { grid-area: product; }
+    :global(.citem__total) { grid-area: total; align-self: start; }
+    :global(.citem__qty) { grid-area: qty; justify-content: flex-start; }
+  }
+  @media (max-width: 420px) {
+    :global(.citem__media) { width: 64px; height: 64px; }
   }
 </style>
