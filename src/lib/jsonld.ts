@@ -20,8 +20,7 @@ export function organizationJsonLd(site: string): string {
     url: site,
     logo: `${site}/favicon.svg`,
     description: BRAND_DESC,
-    // TODO: add real social profiles once known, e.g. Etsy, Instagram, Pinterest.
-    // sameAs: ['https://www.etsy.com/shop/...', 'https://instagram.com/...'],
+    sameAs: ['https://www.instagram.com/aselovers/'],
   });
 }
 

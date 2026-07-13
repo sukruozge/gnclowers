@@ -2,65 +2,117 @@
 import Base from '../../layouts/Base.astro';
 import Nav from '../../components/Nav.astro';
 import Footer from '../../components/Footer.astro';
-import SectionHeading from '../../components/SectionHeading.astro';
 import ProductCard from '../../components/ProductCard.astro';
 import { loadProducts } from '@lib/products';
-import { t } from '@lib/i18n';
 const products = loadProducts();
 const cats = ['all', ...new Set(products.map((p) => p.category))];
 // Categories come from Etsy shop sections (real seller titles), shown as-is; only "all" is localized.
 const catLabel: Record<string, string> = { all: 'All' };
-const countLabel = t('catalog.count', 'en').replace('{n}', String(products.length));
+const catCount = (c: string) => (c === 'all' ? products.length : products.filter((p) => p.category === c).length);
 ---
 <Base locale="en" title="Products — Aselovers"
   description="The handmade amigurumi collection — toys, bags, and accessories."
   pathSelf="products" pathsAlt={{ tr: 'urunler', en: 'products' }}>
   <Nav locale="en" />
   <main>
-    <section class="section">
+    <section class="section catalog">
       <div class="container">
-        <SectionHeading eyebrow="Collection" title="Products" />
-        <div class="toolbar">
-          <div class="filters">
-            {cats.map((c) => <button class="filter" data-cat={c}>{catLabel[c] ?? c}</button>)}
+        <header class="collh">
+          <p class="eyebrow">Collection</p>
+          <h1 class="collh__title">Products</h1>
+          <div class="head-stitch" aria-hidden="true">
+            <svg viewBox="0 0 200 8" preserveAspectRatio="none" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-dasharray="7 5"><path d="M2 4 Q10 -1 20 4 T40 4 T60 4 T80 4 T100 4 T120 4 T140 4 T160 4 T180 4 T198 4"/></svg>
           </div>
-          <div class="toolbar__right">
-            <span class="toolbar__count">{countLabel}</span>
-            <select class="sort" id="sort" aria-label={t('catalog.sort', 'en')}>
-              <option value="new">{t('catalog.sortNew', 'en')}</option>
-              <option value="price-asc">{t('catalog.sortPriceAsc', 'en')}</option>
-              <option value="price-desc">{t('catalog.sortPriceDesc', 'en')}</option>
-            </select>
+          <p class="collh__sub">Little friends, each crocheted by hand with love. Pick your favorite — we'll take care of the rest.</p>
+        </header>
+
+        <div class="filterbar">
+          <div class="filters" role="tablist" aria-label="Categories">
+            {cats.map((c) => (
+              <button class="chip" role="tab" data-cat={c}>
+                <span class="chip__label">{catLabel[c] ?? c}</span>
+                <span class="chip__n">{catCount(c)}</span>
+              </button>
+            ))}
           </div>
         </div>
+
+        <div class="toolbar">
+          <span class="toolbar__count" id="result-count">{products.length} products</span>
+          <div class="select-wrap">
+            <select class="sort" id="sort" aria-label="Sort">
+              <option value="new">Newest</option>
+              <option value="price-asc">Price: Low to High</option>
+              <option value="price-desc">Price: High to Low</option>
+            </select>
+            <svg class="select-wrap__caret" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+        </div>
+
         <div class="grid" id="grid">
-          {products.map((p) => <div class="grid__item" data-cat={p.category} data-price={p.price}><ProductCard product={p} locale="en" /></div>)}
+          {products.map((p) => <div class="grid__item" data-cat={p.category} data-price={p.price}><ProductCard product={p} locale="en" quickAdd /></div>)}
+        </div>
+
+        <div class="noresults" id="noresults" hidden>
+          <p>No products in this category yet.</p>
         </div>
       </div>
     </section>
   </main>
   <Footer locale="en" />
+
   <style>
-    .toolbar { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: center; justify-content: space-between; margin-bottom: var(--space-6); }
-    .toolbar__right { display: flex; align-items: center; gap: var(--space-3); }
-    .toolbar__count { font-size: var(--step-small); color: var(--muted); }
-    .sort { font: inherit; font-size: .9rem; padding: 8px 14px; border: 1px solid var(--line); border-radius: var(--radius-pill); background: var(--surface); cursor: pointer; }
-    .filters { display: flex; flex-wrap: nowrap; gap: var(--space-2); overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; margin-bottom: 0; }
+    .collh { margin-bottom: var(--space-6); }
+    .collh__title { font-family: var(--font-display); font-size: clamp(2rem, 4vw, 3rem); margin: 0 0 var(--space-2); }
+    .head-stitch { color: color-mix(in srgb, var(--accent) 55%, var(--line)); width: 190px; max-width: 55%; margin: 0 0 var(--space-3); }
+    .head-stitch svg { display: block; width: 100%; height: 8px; }
+    .collh__sub { color: var(--muted); max-width: 52ch; margin: 0; }
+
+    .filterbar { position: relative; }
+    .filters { display: flex; gap: var(--space-2); overflow-x: auto; scrollbar-width: none; padding-bottom: var(--space-4); border-bottom: 1.5px dashed color-mix(in srgb, var(--accent) 30%, var(--line)); }
     .filters::-webkit-scrollbar { display: none; }
-    .filter { flex: none; font: inherit; font-size: .9rem; padding: 9px 18px; border: 1px solid transparent; background: color-mix(in srgb, var(--blush) 22%, transparent); color: var(--ink); border-radius: var(--radius-pill); cursor: pointer; white-space: nowrap; transition: background var(--dur) var(--ease), color var(--dur) var(--ease), transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease); }
-    .filter:hover { transform: translateY(-1px); background: color-mix(in srgb, var(--blush) 34%, transparent); }
-    .filter[aria-selected="true"] { background: var(--accent); color: var(--on-accent); box-shadow: 0 6px 16px color-mix(in srgb, var(--accent) 32%, transparent); }
+    .filterbar::after { content: ''; position: absolute; top: 0; right: 0; bottom: 18px; width: 44px; background: linear-gradient(to right, transparent, var(--bg)); pointer-events: none; }
+
+    .chip { flex: none; display: inline-flex; align-items: center; gap: 8px; font: inherit; font-size: .9rem; font-weight: 500; padding: 9px 15px; border: 1.5px solid var(--line); background: var(--surface); color: var(--ink); border-radius: var(--radius-pill); cursor: pointer; white-space: nowrap; transition: background var(--dur) var(--ease), color var(--dur) var(--ease), border-color var(--dur) var(--ease), transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease); }
+    .chip:hover { transform: translateY(-1px); border-color: color-mix(in srgb, var(--accent) 45%, var(--line)); color: var(--accent); }
+    .chip__n { font-size: .7rem; font-weight: 700; color: var(--muted); background: var(--section); padding: 1px 7px; border-radius: var(--radius-pill); transition: background var(--dur) var(--ease), color var(--dur) var(--ease); }
+    .chip[aria-selected="true"] { background: var(--accent); border-color: var(--accent); color: var(--on-accent); box-shadow: 0 8px 18px color-mix(in srgb, var(--accent) 30%, transparent); }
+    .chip[aria-selected="true"] .chip__n { background: rgba(255,255,255,.22); color: var(--on-accent); }
+
+    .toolbar { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); flex-wrap: wrap; margin: var(--space-4) 0 var(--space-6); }
+    .toolbar__count { font-size: var(--step-small); color: var(--muted); font-feature-settings: "tnum"; }
+    .select-wrap { position: relative; display: inline-flex; }
+    .sort { appearance: none; -webkit-appearance: none; font: inherit; font-size: .9rem; padding: 9px 40px 9px 16px; border: 1.5px solid var(--line); border-radius: var(--radius-pill); background: var(--surface); color: var(--ink); cursor: pointer; transition: border-color var(--dur) var(--ease); }
+    .sort:focus { outline: none; border-color: var(--accent); }
+    .select-wrap__caret { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; }
+
     .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: var(--space-6) var(--space-5); }
     .grid__item[hidden] { display: none; }
+
+    .noresults { text-align: center; padding: var(--space-8) 0; color: var(--muted); }
   </style>
+
   <script>
+    import { addToCart } from '@lib/cart';
+    import type { Product } from '@lib/products';
+
     const params = new URLSearchParams(location.search);
     const initial = params.get('cat') || 'all';
-    const filters = Array.from(document.querySelectorAll<HTMLButtonElement>('.filter'));
+    const filters = Array.from(document.querySelectorAll<HTMLButtonElement>('.chip'));
     const items = Array.from(document.querySelectorAll<HTMLElement>('.grid__item'));
+    const countEl = document.getElementById('result-count');
+    const noResults = document.getElementById('noresults');
+
     function apply(cat: string) {
       filters.forEach((f) => f.setAttribute('aria-selected', String(f.dataset.cat === cat)));
-      items.forEach((it) => { it.hidden = !(cat === 'all' || it.dataset.cat === cat); });
+      let visible = 0;
+      items.forEach((it) => {
+        const show = cat === 'all' || it.dataset.cat === cat;
+        it.hidden = !show;
+        if (show) visible++;
+      });
+      if (countEl) countEl.textContent = `${visible} products`;
+      if (noResults) noResults.hidden = visible > 0;
     }
     filters.forEach((f) => f.addEventListener('click', () => apply(f.dataset.cat!)));
     apply(initial);
@@ -78,5 +130,21 @@ const countLabel = t('catalog.count', 'en').replace('{n}', String(products.lengt
       nodes.forEach((n) => grid.appendChild(n));
     }
     sortSel?.addEventListener('change', () => sortItems(sortSel.value));
+
+    // Quick add-to-cart from the grid.
+    grid.addEventListener('click', (e) => {
+      const btn = (e.target as HTMLElement).closest('.card__add') as HTMLButtonElement | null;
+      if (!btn) return;
+      e.preventDefault();
+      const id = btn.getAttribute('data-id');
+      if (!id) return;
+      addToCart({ id } as Product, 1);
+      const toast = document.createElement('div');
+      toast.className = 'cart-toast';
+      toast.setAttribute('role', 'status');
+      toast.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg> Added to cart';
+      document.body.appendChild(toast);
+      setTimeout(() => { toast.classList.add('fade-out'); setTimeout(() => toast.remove(), 400); }, 2200);
+    });
   </script>
 </Base>

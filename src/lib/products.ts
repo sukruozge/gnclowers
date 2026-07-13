@@ -32,6 +32,9 @@ export function localizedTitle(p: Product, l: Locale): string {
   return l === 'tr' ? p.title_tr : p.title_en;
 }
 
+// Keep URLs short: use only the first few words of the (often very long) title,
+// with the id appended to guarantee uniqueness and stable routing.
 export function productSlug(p: Product, l: Locale): string {
-  return slugify(localizedTitle(p, l), p.id);
+  const short = localizedTitle(p, l).split(/\s+/).slice(0, 4).join(' ');
+  return slugify(short, p.id);
 }
