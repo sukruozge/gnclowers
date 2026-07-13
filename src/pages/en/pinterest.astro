@@ -1,0 +1,6 @@
+---
+import LegalLayout from '../../components/LegalLayout.astro';
+import { LEGAL } from '@lib/legal';
+const c = LEGAL.pinterest.en;
+---
+<LegalLayout locale="en" title={c.title} updated={c.updated} html={c.html} pathSelf="pinterest" pathsAlt={{ tr: 'pinterest', en: 'pinterest' }} />

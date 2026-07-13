@@ -25,9 +25,6 @@ const price = new Intl.NumberFormat('en-US', { style: 'currency', currency: prod
 const related = loadProducts().filter((x) => x.category === product.category && x.id !== product.id).slice(0, 4);
 const ld = productJsonLd(product, 'en', `${site}/en/${selfPath}`);
 const shop = loadReviews().shop;
-const buyText = product.url && product.url.includes('shopier.com')
-  ? 'Buy Now'
-  : 'Buy on Etsy';
 ---
 <Base locale="en" title={`${title} — Aselovers`} description={product.description_en || title}
   pathSelf={selfPath} pathsAlt={{ tr: `urun/${trSlug}`, en: selfPath }} ogImage={product.image ?? undefined}>
@@ -45,9 +42,6 @@ const buyText = product.url && product.url.includes('shopier.com')
           <p class="prose" style="white-space: pre-line">{product.description_en}</p>
           <div class="detail__actions" style="display: flex; gap: var(--space-3); margin: var(--space-4) 0;">
             <Button id="add-to-cart" variant="primary" class="w-100" data-product={JSON.stringify(product)}>Add to Cart</Button>
-            {product.url && (
-              <Button href={product.url} variant="outline" class="w-100" external>View on Etsy</Button>
-            )}
           </div>
           <TrustPoints locale="en" />
         </div>

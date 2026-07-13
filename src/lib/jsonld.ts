@@ -91,7 +91,7 @@ export function productJsonLd(product: Product, locale: Locale, url: string): st
       '@type': 'Offer',
       price: product.price.toFixed(2),
       priceCurrency: product.currency,
-      url: product.url,
+      url,
       availability: 'https://schema.org/InStock',
     },
   };

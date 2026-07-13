@@ -54,6 +54,61 @@ const sellerBlockEn = `
 </p>`;
 
 export const LEGAL: Record<string, { tr: LegalDoc; en: LegalDoc }> = {
+  // ── PINTEREST PLATFORM DISCLOSURE ───────────────────────
+  // Public compliance page for the Pinterest Developer Platform / API application.
+  // Not listed in the footer (LEGAL_ROUTES) — it is a developer-facing disclosure
+  // reachable directly at /tr/pinterest and /en/pinterest.
+  pinterest: {
+    tr: { title: 'Pinterest Platform Bildirimi', updated: UPDATED_TR, html: `
+<p class="legal-note">Bu sayfa, ${SELLER.brand} (${SELLER.site}) tarafından <strong>Pinterest Geliştirici Platformu / Pinterest API</strong> kullanımına ilişkin veri uygulamalarını açıklar ve <strong>Pinterest Developer Terms</strong>, <strong>Pinterest Platform Terms</strong> ve <strong>Pinterest Developer Guidelines</strong> ile uyumludur.</p>
+<h2>1. Uygulamamız ve kullanım amacı</h2>
+<p>${SELLER.brand}, kendi el yapımı ürünlerimizi tanıtmak amacıyla Pinterest Platformu'nu kullanır: kendi hesabımıza ait Pin'lerin ve panoların yayınlanması, düzenlenmesi ve ürün içeriğimizin görüntülenmesi. Pinterest API'sini yalnızca izin verilen bu amaçlarla kullanırız.</p>
+<h2>2. Eriştiğimiz veriler</h2>
+<ul>
+  <li>Yalnızca özelliğin çalışması için gerekli olan asgari veriye erişiriz: kendi hesabımıza ait pano/Pin bilgileri (başlık, açıklama, görsel, bağlantı).</li>
+  <li>Bir kullanıcı kendi Pinterest hesabını bağlarsa, yalnızca kendisinin açıkça onayladığı yetki (scope) kapsamındaki verilere erişiriz.</li>
+</ul>
+<h2>3. Verileri nasıl kullanırız</h2>
+<p>Pinterest'ten elde edilen verileri yalnızca kullanıcının talep ettiği özelliği sağlamak için kullanırız. Bu verileri <strong>reklam profillemesi, yeniden satış veya talep edilen özellik dışında herhangi bir amaç</strong> için kullanmayız.</p>
+<h2>4. Paylaşım</h2>
+<p>Pinterest verilerini üçüncü taraflara <strong>satmayız ve pazarlamayız</strong>. Verilere yalnızca siteyi çalıştırmak için gerekli, gizlilik yükümlülüğü altındaki hizmet sağlayıcılarımız (örn. barındırma) erişebilir.</p>
+<h2>5. Saklama ve güvenlik</h2>
+<p>Verileri asgari süreyle saklarız. Tüm veri aktarımı HTTPS ile şifrelenir; erişim yetkileri ve API erişim jetonları (token) güvenli şekilde korunur.</p>
+<h2>6. Silme ve erişim iptali</h2>
+<p>Kullanıcı, Pinterest hesap ayarlarından uygulamamızın erişimini istediği zaman iptal edebilir. Erişim iptal edildiğinde veya talep edildiğinde, ilgili Pinterest verilerini sileriz. Silme talepleri için <a href="mailto:${SELLER.email}">${SELLER.email}</a> adresine yazabilirsiniz.</p>
+<h2>7. Kullanıcı rızası</h2>
+<p>Bir kullanıcının kendi hesabını bağladığı durumlarda açık rızasını alır ve yalnızca gerekli asgari yetkileri talep ederiz.</p>
+<h2>8. Ticari markalar</h2>
+<p>Pinterest, Pinterest logosu ve ilgili markalar Pinterest, Inc.'e aittir. Bu markaları yalnızca Pinterest marka kurallarına uygun olarak kullanırız; Pinterest ile herhangi bir ortaklık veya onay ilişkisi iddia etmeyiz.</p>
+<h2>9. İletişim</h2>
+<p>Bu bildirim veya veri uygulamalarımızla ilgili sorularınız için: <a href="mailto:${SELLER.email}">${SELLER.email}</a>. Genel veri işleme uygulamalarımız için <a href="/tr/gizlilik">Gizlilik Politikası</a> ve <a href="/tr/kullanim-kosullari">Kullanım Koşulları</a> sayfalarımıza bakın.</p>
+` },
+    en: { title: 'Pinterest Platform Disclosure', updated: UPDATED_EN, html: `
+<p class="legal-note">This page describes how ${SELLER.brand} (${SELLER.site}) accesses, uses, stores and protects data obtained through the <strong>Pinterest Developer Platform / Pinterest API</strong>, in accordance with the <strong>Pinterest Developer Terms</strong>, <strong>Pinterest Platform Terms</strong> and <strong>Pinterest Developer Guidelines</strong>.</p>
+<h2>1. Our app and purpose</h2>
+<p>${SELLER.brand} uses the Pinterest Platform to promote our own handmade products: publishing and organizing Pins and boards on our own account and displaying our product content. We use the Pinterest API only for these permitted purposes.</p>
+<h2>2. Data we access</h2>
+<ul>
+  <li>We access only the minimum data necessary for the feature to work: metadata for our own boards/Pins (title, description, image, link).</li>
+  <li>If a user connects their own Pinterest account, we access only data within the scopes they explicitly authorize.</li>
+</ul>
+<h2>3. How we use it</h2>
+<p>We use data obtained from Pinterest solely to provide the feature the user requested. We do <strong>not</strong> use it for advertising profiling, resale, or any purpose beyond the requested feature.</p>
+<h2>4. Sharing</h2>
+<p>We do <strong>not sell or share</strong> Pinterest data with third parties. Only the service providers required to run the site (e.g. hosting), bound by confidentiality, may access it.</p>
+<h2>5. Storage &amp; security</h2>
+<p>We retain data for the minimum time needed. All data is encrypted in transit via HTTPS; access controls and API access tokens are stored securely.</p>
+<h2>6. Deletion &amp; revocation</h2>
+<p>A user may revoke our access at any time from their Pinterest account settings. Upon revocation or request, we delete the related Pinterest data. For deletion requests, contact <a href="mailto:${SELLER.email}">${SELLER.email}</a>.</p>
+<h2>7. User consent</h2>
+<p>Where a user connects their own account, we obtain their explicit consent and request only the minimum necessary scopes.</p>
+<h2>8. Trademarks</h2>
+<p>Pinterest, the Pinterest logo and related marks are trademarks of Pinterest, Inc. We use these marks only in accordance with Pinterest's brand guidelines and claim no affiliation with or endorsement by Pinterest.</p>
+<h2>9. Contact</h2>
+<p>For questions about this disclosure or our data practices: <a href="mailto:${SELLER.email}">${SELLER.email}</a>. For our general data practices, see our <a href="/en/privacy">Privacy Policy</a> and <a href="/en/terms">Terms of Use</a>.</p>
+` },
+  },
+
   // ── PRIVACY ─────────────────────────────────────────────
   privacy: {
     tr: { title: 'Gizlilik Politikası', updated: UPDATED_TR, html: `

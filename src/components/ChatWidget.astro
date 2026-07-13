@@ -489,13 +489,13 @@ const welcomeText = locale === 'en'
         chatHistory = chatHistory.filter(m => m.id !== tempMsg.id);
         renderMessages();
         msgInput.value = text;
-        alert(isEn ? 'Message could not be sent. Please contact us via WhatsApp or Etsy.' : 'Mesajınız iletilemedi. Lütfen WhatsApp veya Etsy üzerinden iletişime geçin.');
+        alert(isEn ? 'Message could not be sent. Please contact us via WhatsApp.' : 'Mesajınız iletilemedi. Lütfen WhatsApp üzerinden iletişime geçin.');
       }
     } catch {
       chatHistory = chatHistory.filter(m => m.id !== tempMsg.id);
       renderMessages();
       msgInput.value = text;
-      alert(isEn ? 'Connection error. Please contact us via WhatsApp or Etsy.' : 'Bağlantı hatası. Lütfen WhatsApp veya Etsy üzerinden iletişime geçin.');
+      alert(isEn ? 'Connection error. Please contact us via WhatsApp.' : 'Bağlantı hatası. Lütfen WhatsApp üzerinden iletişime geçin.');
     }
   }
 
