@@ -302,12 +302,14 @@ const shippingCfg = (settings as any).shipping || {};
     .summary-card { background: var(--section); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: var(--space-5); position: sticky; top: 96px; }
     .summary-card__h { font-family: var(--font-display); font-size: 1.3rem; margin: 0 0 var(--space-4); padding-bottom: var(--space-3); border-bottom: 1px solid var(--line); }
     .summary__items-list { display: flex; flex-direction: column; gap: var(--space-4); }
-    .summary-item { display: grid; grid-template-columns: 48px 1fr auto; align-items: center; gap: var(--space-3); font-size: .9rem; }
-    .summary-item__media { position: relative; width: 48px; height: 48px; }
-    .summary-item__media img { width: 48px; height: 48px; object-fit: cover; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); }
-    .summary-item__qty { position: absolute; top: -7px; right: -7px; min-width: 20px; height: 20px; padding: 0 5px; display: grid; place-items: center; background: var(--accent); color: var(--on-accent); font-size: .72rem; font-weight: 700; border-radius: 10px; border: 2px solid var(--section); }
-    .summary-item__title { line-height: 1.35; color: var(--ink); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-    .summary-item__price { font-weight: 600; color: var(--ink); font-feature-settings: "tnum"; white-space: nowrap; }
+    /* Summary rows are injected via innerHTML, so their styles MUST be global
+       (Astro's scoped styles never reach dynamically-created DOM). */
+    :global(.summary-item) { display: grid; grid-template-columns: 48px 1fr auto; align-items: center; gap: var(--space-3); font-size: .9rem; }
+    :global(.summary-item__media) { position: relative; width: 48px; height: 48px; flex-shrink: 0; }
+    :global(.summary-item__media img) { width: 48px; height: 48px; object-fit: cover; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); }
+    :global(.summary-item__qty) { position: absolute; top: -7px; right: -7px; min-width: 20px; height: 20px; padding: 0 5px; display: grid; place-items: center; background: var(--accent); color: var(--on-accent); font-size: .72rem; font-weight: 700; border-radius: 10px; border: 2px solid var(--section); }
+    :global(.summary-item__title) { line-height: 1.35; color: var(--ink); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    :global(.summary-item__price) { font-weight: 600; color: var(--ink); font-feature-settings: "tnum"; white-space: nowrap; }
 
     .summary-divider { height: 1px; background: var(--line); margin: var(--space-4) 0; }
     .summary-row { display: flex; justify-content: space-between; font-size: 0.95rem; margin-bottom: var(--space-3); color: var(--muted); }
