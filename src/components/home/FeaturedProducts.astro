@@ -2,8 +2,29 @@
 import { t, type Locale } from '@lib/i18n';
 import { loadProducts } from '@lib/products';
 import FeaturedCard from './FeaturedCard.astro';
+import settings from '../../data/settings.json';
 const { locale } = Astro.props as { locale: Locale };
-const products = loadProducts().slice(0, 6);
+
+// Featured selection is managed in the admin panel and persisted to settings.json
+// as `featured: [productId, ...]`. Show those (in order, active only); if none set,
+// fall back to the first 6 active products. Always pad up to 6.
+const FEATURED_COUNT = 6;
+const all = loadProducts();
+const featuredIds: string[] = Array.isArray((settings as any).featured)
+  ? (settings as any).featured.map((x: unknown) => String(x))
+  : [];
+let products = [] as typeof all;
+if (featuredIds.length) {
+  const byId = new Map(all.map((p) => [String(p.id), p]));
+  products = featuredIds.map((id) => byId.get(id)).filter(Boolean) as typeof all;
+}
+if (products.length < FEATURED_COUNT) {
+  for (const p of all) {
+    if (products.length >= FEATURED_COUNT) break;
+    if (!products.includes(p)) products.push(p);
+  }
+}
+products = products.slice(0, FEATURED_COUNT);
 
 const eyebrow = t('home.featuredEyebrow', locale);
 const title = t('home.featured', locale);

@@ -9,6 +9,7 @@
   "etsy": "https://aselovers.etsy.com",
   "logo": "",
   "favicon": "/favicon.svg",
+  "featured": [],
   "categoryCovers": {
     "Crochet Bags": "/images/categories/bags.png",
     "Safari Animals": "/images/categories/safari.png",

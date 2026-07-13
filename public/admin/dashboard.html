@@ -1881,7 +1881,7 @@ function renderProducts() {
   const allCategories = [...new Set(['amigurumi', 'bag', 'decor', 'accessory', ...categoriesFromProducts, ...categoriesFromCovers])];
 
   tbody.innerHTML = _products.map((p, i) => {
-    const isFeatured = (overrides.featured || []).includes(p.id);
+    const isFeatured = (_content.featured || []).map(String).includes(String(p.id));
     const name = p.title_tr || p.title_en || '(isimsiz)';
     return `<tr>
       <td>${p.image ? `<img src="${p.image}" class="product-thumb" loading="lazy">` : '<div class="product-thumb-placeholder">🧶</div>'}</td>
@@ -2054,14 +2054,25 @@ function confirmDeleteProduct(id, name) {
   });
 }
 
-function toggleFeatured(productId, btn) {
-  const overrides = getProductOverrides();
-  overrides.featured = overrides.featured || [];
-  const idx = overrides.featured.indexOf(productId);
-  if (idx === -1) { overrides.featured.push(productId); btn.classList.add('starred'); btn.textContent = '★'; }
-  else { overrides.featured.splice(idx,1); btn.classList.remove('starred'); btn.textContent = '☆'; }
-  saveProductOverrides(overrides);
-  toast('Güncellendi', 'ok');
+async function toggleFeatured(productId, btn) {
+  // Server-persisted: featured ids live in settings.json (survives Etsy sync).
+  // The storefront "Öne Çıkanlar" reads this list; first 6 are shown, in order.
+  _content.featured = (_content.featured || []).map(String);
+  const id = String(productId);
+  const idx = _content.featured.indexOf(id);
+  if (idx === -1) { _content.featured.push(id); btn.classList.add('starred'); btn.textContent = '★'; }
+  else { _content.featured.splice(idx, 1); btn.classList.remove('starred'); btn.textContent = '☆'; }
+  try {
+    const res = await fetch('/api/admin/settings', {
+      method: 'PUT', credentials: 'include', headers: ADM_HDR,
+      body: JSON.stringify({ featured: _content.featured })
+    });
+    if (res.status === 501) { toast('⚠️ GITHUB_TOKEN ayarlı değil — kaydedilemedi.', 'err'); return; }
+    if (res.ok) {
+      const n = _content.featured.length;
+      toast(n > 6 ? `Kaydedildi ✓ — ilk 6 gösterilir (${n} seçili)` : 'Öne çıkanlar kaydedildi ✓ (site ~1-2 dk içinde yenilenir)', 'ok');
+    } else { toast('⚠️ Kaydedilemedi.', 'err'); }
+  } catch { toast('⚠️ Sunucuya ulaşılamadı.', 'err'); }
 }
 
 function updateProductCat(productId, cat) {

@@ -252,6 +252,10 @@ async function handleSettingsPut(request: Request, env: Record<string, any>): Pr
     if (typeof body.etsy === 'string') data.etsy = body.etsy;
     if (typeof body.logo === 'string') data.logo = body.logo;
     if (typeof body.favicon === 'string') data.favicon = body.favicon;
+    // Featured products (homepage "Öne Çıkanlar"): array of product ids, in order.
+    if (Array.isArray(body.featured)) {
+      data.featured = body.featured.map((x: unknown) => String(x)).slice(0, 24);
+    }
     if (body.categoryCovers && typeof body.categoryCovers === 'object') {
       data.categoryCovers = { ...data.categoryCovers, ...body.categoryCovers };
     }
