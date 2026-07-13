@@ -26,6 +26,7 @@ export const POST: APIRoute = async (context) => {
   const PAYTR_MERCHANT_KEY = env.PAYTR_MERCHANT_KEY || 'test_merchant_key';
   const PAYTR_MERCHANT_SALT = env.PAYTR_MERCHANT_SALT || 'test_merchant_salt';
   const PAYTR_TEST_MODE = env.PAYTR_TEST_MODE === '0' ? '0' : '1';
+  const credsConfigured = Boolean(env.PAYTR_MERCHANT_ID && env.PAYTR_MERCHANT_KEY && env.PAYTR_MERCHANT_SALT);
 
   try {
     const body = await request.json().catch(() => null);
@@ -34,7 +35,18 @@ export const POST: APIRoute = async (context) => {
     const { email, name, phone, address, city, cart, currency = 'TRY', lang = 'tr', country = 'TR' } = body;
 
     if (!email || !name || !phone || !address || !city || !Array.isArray(cart) || cart.length === 0) {
-      return json({ error: 'Lütfen bilgilerinizi kontrol edin.' }, 400);
+      return json({ error: lang === 'en' ? 'Please check your details.' : 'Lütfen bilgilerinizi kontrol edin.' }, 400);
+    }
+
+    // PayTR merchant keys not configured yet — fail gracefully with a clear,
+    // customer-friendly message instead of a raw provider error.
+    if (!credsConfigured) {
+      return json({
+        error: lang === 'en'
+          ? 'Online payment is not active yet. Please reach us on WhatsApp (+90 506 792 76 85) and we will gladly complete your order.'
+          : 'Online ödeme henüz aktif değil. Lütfen WhatsApp’tan (+90 506 792 76 85) bize ulaşın; siparişinizi birlikte seve seve tamamlayalım.',
+        code: 'payment_unavailable',
+      }, 503);
     }
 
     const products = productsData.products || [];
@@ -135,10 +147,11 @@ export const POST: APIRoute = async (context) => {
       return json({ token: data.token }, 200);
     } else {
       console.error('[PayTR API Error]', data.err_msg);
-      return json({ error: 'Ödeme oturumu başlatılamadı: ' + (data.err_msg || 'Bilinmeyen hata') }, 500);
+      const base = lang === 'en' ? 'Could not start the payment session.' : 'Ödeme oturumu başlatılamadı.';
+      return json({ error: data.err_msg ? `${base} (${data.err_msg})` : base }, 502);
     }
   } catch (e: any) {
     console.error('[PayTR Fetch Error]', e.message);
-    return json({ error: 'PayTR sunucusuna bağlanılamadı.' }, 500);
+    return json({ error: 'PayTR sunucusuna bağlanılamadı. Lütfen tekrar deneyin.' }, 502);
   }
 };
