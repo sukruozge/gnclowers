@@ -1,5 +1,6 @@
 ---
 import { t, type Locale } from '@lib/i18n';
+import { LEGAL_ROUTES } from '@lib/legal';
 import Logo from './Logo.astro';
 const { locale } = Astro.props as { locale: Locale };
 const p = (tr: string, en: string) => (locale === 'tr' ? `/tr/${tr}` : `/en/${en}`);
@@ -22,12 +23,18 @@ const year = new Date().getFullYear();
       <a href="https://www.etsy.com/shop/aselovers" target="_blank" rel="noopener">Etsy</a>
       <a href="https://www.instagram.com/" target="_blank" rel="noopener">Instagram</a>
     </div>
+    <nav class="foot__col" aria-label={t('footer.legal', locale)}>
+      <h4>{t('footer.legal', locale)}</h4>
+      {LEGAL_ROUTES.map((r) => (
+        <a href={locale === 'tr' ? `/tr/${r.tr}` : `/en/${r.en}`}>{locale === 'tr' ? r.labelTr : r.labelEn}</a>
+      ))}
+    </nav>
   </div>
   <div class="container foot__base"><p>© {year} Aselovers — {t('footer.rights', locale)}</p></div>
 </footer>
 <style>
   .foot { background: var(--footer-bg); color: var(--footer-fg); margin-top: var(--space-8); padding: var(--space-7) 0 var(--space-5); }
-  .foot__inner { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: var(--space-6); }
+  .foot__inner { display: grid; grid-template-columns: 2fr 1fr 1fr 1.2fr; gap: var(--space-6); }
   .foot__brandlogo :global(.logo__word), .foot__brandlogo :global(.logo__tag) { color: var(--footer-fg); }
   .foot__tag { color: color-mix(in srgb, var(--footer-fg) 72%, transparent); max-width: 34ch; margin-top: var(--space-3); }
   .foot__col h4 { font-family: var(--font-body); font-size: var(--step-small); letter-spacing: .12em; text-transform: uppercase; color: color-mix(in srgb, var(--footer-fg) 65%, transparent); margin-bottom: var(--space-3); }
@@ -35,5 +42,6 @@ const year = new Date().getFullYear();
   .foot__col a:hover { color: var(--accent); }
   .foot__base { border-top: 1px solid color-mix(in srgb, var(--footer-fg) 18%, transparent); margin-top: var(--space-6); padding-top: var(--space-4); }
   .foot__base p { font-size: var(--step-small); color: color-mix(in srgb, var(--footer-fg) 60%, transparent); margin: 0; }
-  @media (max-width: 640px) { .foot__inner { grid-template-columns: 1fr; gap: var(--space-5); } }
+  @media (max-width: 900px) { .foot__inner { grid-template-columns: 1fr 1fr; gap: var(--space-5); } .foot__brand { grid-column: 1 / -1; } }
+  @media (max-width: 560px) { .foot__inner { grid-template-columns: 1fr; } }
 </style>

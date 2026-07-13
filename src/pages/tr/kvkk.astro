@@ -1,0 +1,6 @@
+---
+import LegalLayout from '../../components/LegalLayout.astro';
+import { LEGAL } from '@lib/legal';
+const c = LEGAL.kvkk.tr;
+---
+<LegalLayout locale="tr" title={c.title} updated={c.updated} html={c.html} pathSelf="kvkk" pathsAlt={{ tr: 'kvkk', en: 'data-protection' }} />

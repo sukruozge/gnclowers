@@ -1,0 +1,6 @@
+---
+import LegalLayout from '../../components/LegalLayout.astro';
+import { LEGAL } from '@lib/legal';
+const c = LEGAL.privacy.en;
+---
+<LegalLayout locale="en" title={c.title} updated={c.updated} html={c.html} pathSelf="privacy" pathsAlt={{ tr: 'gizlilik', en: 'privacy' }} />
