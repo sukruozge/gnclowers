@@ -13,6 +13,14 @@ export default defineConfig({
   site: SITE_URL,
   output: 'static',
 
+  // Astro's default CSRF guard (security.checkOrigin) rejects cross-site POSTs
+  // with a form content-type. PayTR's payment callback is exactly that — a
+  // server-to-server `application/x-www-form-urlencoded` POST from paytr.com —
+  // so the guard 403'd it before our handler ran and orders never recorded.
+  // Disabling it is safe here: the admin API is protected by a SameSite=Strict
+  // cookie (never sent cross-site) plus JWT, not by this form-origin check.
+  security: { checkOrigin: false },
+
   // imageService: 'passthrough' — all product images are remote Etsy URLs
   // rendered directly in <img>; we do not use Astro image optimization. This
   // keeps `sharp` (a native Node addon that cannot run on Cloudflare's edge)
