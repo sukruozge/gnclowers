@@ -1,9 +1,13 @@
 ---
 import { t, type Locale } from '@lib/i18n';
 import SectionHeading from '../SectionHeading.astro';
+import { faqPageJsonLd } from '@lib/jsonld';
 const { locale } = Astro.props as { locale: Locale };
-const items = [1, 2, 3, 4].map((n) => ({ q: t(`faq.q${n}`, locale), a: t(`faq.a${n}`, locale) }));
+const items = [1, 2, 3, 4, 5, 6].map((n) => ({ q: t(`faq.q${n}`, locale), a: t(`faq.a${n}`, locale) }))
+  .filter((it) => it.q && !it.q.startsWith('faq.'));
+const faqLd = faqPageJsonLd(items);
 ---
+<script type="application/ld+json" set:html={faqLd} is:inline />
 <section class="section">
   <div class="container faq reveal">
     <SectionHeading title={t('faq.title', locale)} />

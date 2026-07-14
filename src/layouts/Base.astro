@@ -29,12 +29,21 @@ const alts = alternates(site, pathsAlt);
     <meta name="description" content={description} />
     <link rel="canonical" href={canon} />
     {alts.map((a) => <link rel="alternate" hreflang={a.hreflang} href={a.href} />)}
+    <!-- Let Google & AI crawlers show full snippets and large image previews. -->
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <meta name="theme-color" content="#B0532E" />
+    <meta property="og:site_name" content="Aselovers" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canon} />
     <meta property="og:image" content={ogImage ?? `${site}/og-default.svg`} />
+    <meta property="og:locale" content={locale === 'tr' ? 'tr_TR' : 'en_US'} />
+    <meta property="og:locale:alternate" content={locale === 'tr' ? 'en_US' : 'tr_TR'} />
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage ?? `${site}/og-default.svg`} />
     <script type="application/ld+json" set:html={organizationJsonLd(site)} />
     <script type="application/ld+json" set:html={websiteJsonLd(site)} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />

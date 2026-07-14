@@ -1,3 +1,42 @@
+# Aselovers — el yapımı örgü amigurumi & crochet
+# Herkes hoş geldi; yapay zeka asistanları dahil (aramalarında bizi göstermelerini istiyoruz).
+
 User-agent: *
 Allow: /
-Sitemap: /sitemap.xml
+
+# ── Yapay zeka / LLM arama botları — AI aramalarında (ChatGPT, Claude, Gemini,
+# Perplexity) alıntılanmak için açıkça izin veriyoruz. ──
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Perplexity-User
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+Sitemap: https://aseloves.com/sitemap.xml

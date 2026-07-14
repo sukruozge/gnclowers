@@ -19,8 +19,30 @@ export function organizationJsonLd(site: string): string {
     name: BRAND,
     url: site,
     logo: `${site}/favicon.svg`,
+    image: `${site}/hero.png`,
     description: BRAND_DESC,
-    sameAs: ['https://www.instagram.com/aselovers/'],
+    email: 'info@aselovers.com',
+    address: { '@type': 'PostalAddress', addressLocality: 'İstanbul', addressCountry: 'TR' },
+    areaServed: 'Worldwide',
+    knowsAbout: ['amigurumi', 'crochet', 'örgü', 'handmade toys', 'nursery decor', 'baby gifts'],
+    sameAs: [
+      'https://www.instagram.com/aselovers/',
+      'https://pinterest.com/aselovers',
+      'https://aselovers.etsy.com',
+    ],
+  });
+}
+
+/** FAQ schema — a high-value AEO signal: LLMs and Google surface Q&A directly. */
+export function faqPageJsonLd(items: Array<{ q: string; a: string }>): string {
+  return encode({
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: items.map((it) => ({
+      '@type': 'Question',
+      name: it.q,
+      acceptedAnswer: { '@type': 'Answer', text: it.a },
+    })),
   });
 }
 
@@ -79,21 +101,39 @@ export function breadcrumbJsonLd(items: Array<{ name: string; url: string }>): s
   });
 }
 
-export function productJsonLd(product: Product, locale: Locale, url: string): string {
+export function productJsonLd(
+  product: Product,
+  locale: Locale,
+  url: string,
+  rating?: { value: number; count: number },
+): string {
   const desc = locale === 'tr' ? product.description_tr : product.description_en;
   const data: Record<string, unknown> = {
     '@context': 'https://schema.org',
     '@type': 'Product',
     name: localizedTitle(product, locale),
     description: desc,
+    brand: { '@type': 'Brand', name: BRAND },
+    category: product.category,
+    itemCondition: 'https://schema.org/NewCondition',
     offers: {
       '@type': 'Offer',
       price: product.price.toFixed(2),
       priceCurrency: product.currency,
       url,
       availability: 'https://schema.org/InStock',
+      seller: { '@type': 'Organization', name: BRAND },
     },
   };
+  // Real, verified seller rating from Etsy (shop-wide) — only when we have it.
+  if (rating && rating.count > 0 && rating.value > 0) {
+    data.aggregateRating = {
+      '@type': 'AggregateRating',
+      ratingValue: rating.value,
+      reviewCount: rating.count,
+      bestRating: 5,
+    };
+  }
   const images = product.images?.length ? product.images : (product.image ? [product.image] : []);
   if (images.length) data.image = images;
   return JSON.stringify(data).replace(/</g, '\\u003c');

@@ -7,7 +7,7 @@ import ProductCard from '../../../components/ProductCard.astro';
 import ProductGallery from '../../../components/ProductGallery.astro';
 import RatingBadge from '../../../components/RatingBadge.astro';
 import { loadProducts, localizedTitle, productSlug, type Product } from '@lib/products';
-import { productJsonLd } from '@lib/jsonld';
+import { productJsonLd, breadcrumbJsonLd } from '@lib/jsonld';
 import { loadReviews } from '@lib/reviews';
 
 export function getStaticPaths() {
@@ -21,12 +21,20 @@ const enSlug = productSlug(product, 'en');
 const title = localizedTitle(product, 'tr');
 const price = new Intl.NumberFormat('tr-TR', { style: 'currency', currency: product.currency }).format(product.price);
 const related = loadProducts().filter((x) => x.category === product.category && x.id !== product.id).slice(0, 4);
-const ld = productJsonLd(product, 'tr', `${site}/tr/${selfPath}`);
 const shop = loadReviews().shop;
+const ld = productJsonLd(product, 'tr', `${site}/tr/${selfPath}`, shop.rating ? { value: shop.rating, count: shop.count } : undefined);
+const crumbLd = breadcrumbJsonLd([
+  { name: 'Ana sayfa', url: `${site}/tr` },
+  { name: 'Ürünler', url: `${site}/tr/urunler` },
+  { name: title, url: `${site}/tr/${selfPath}` },
+]);
 ---
 <Base locale="tr" title={`${title} — Aselovers`} description={product.description_tr || title}
   pathSelf={selfPath} pathsAlt={{ tr: selfPath, en: `product/${enSlug}` }} ogImage={product.image ?? undefined}>
-  <Fragment slot="head"><script type="application/ld+json" set:html={ld} /></Fragment>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={ld} />
+    <script type="application/ld+json" set:html={crumbLd} />
+  </Fragment>
   <Nav locale="tr" />
   <main>
     <section class="section detail-section">
