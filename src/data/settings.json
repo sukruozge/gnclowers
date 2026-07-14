@@ -9,8 +9,18 @@
   "etsy": "https://aselovers.etsy.com",
   "logo": "",
   "favicon": "/favicon.svg",
-  "featured": [],
-  "shipping": { "tr": { "fee": 0, "freeOver": 0 }, "intl": { "fee": 0 } },
+  "featured": [
+    "4499730639"
+  ],
+  "shipping": {
+    "tr": {
+      "fee": 0,
+      "freeOver": 0
+    },
+    "intl": {
+      "fee": 0
+    }
+  },
   "categoryCovers": {
     "Crochet Bags": "/images/categories/bags.png",
     "Safari Animals": "/images/categories/safari.png",
