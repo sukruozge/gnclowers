@@ -1,14 +1,19 @@
 ---
 import { t, type Locale } from '@lib/i18n';
 const { locale } = Astro.props as { locale: Locale };
+const okMsg = locale === 'tr' ? 'Teşekkürler! Aboneliğiniz alındı. 🧶' : 'Thank you! You are subscribed. 🧶';
+const errMsg = locale === 'tr' ? 'Bir sorun oldu, tekrar deneyin.' : 'Something went wrong, please try again.';
+const badMsg = locale === 'tr' ? 'Geçerli bir e-posta girin.' : 'Please enter a valid email.';
+const sending = locale === 'tr' ? 'Gönderiliyor…' : 'Sending…';
 ---
 <section class="section">
   <div class="container news">
     <h2>{t('home.newsletterTitle', locale)}</h2>
-    <form class="news__form" onsubmit="return false;">
-      <input type="email" required placeholder={t('home.newsletterPlaceholder', locale)} aria-label={t('home.newsletterPlaceholder', locale)} />
+    <form class="news__form" id="news-form" data-ok={okMsg} data-err={errMsg} data-bad={badMsg} data-sending={sending}>
+      <input type="email" name="email" required placeholder={t('home.newsletterPlaceholder', locale)} aria-label={t('home.newsletterPlaceholder', locale)} />
       <button type="submit">{t('home.newsletterCta', locale)}</button>
     </form>
+    <p class="news__msg" id="news-msg" role="status" aria-live="polite"></p>
   </div>
 </section>
 <style>
@@ -19,4 +24,49 @@ const { locale } = Astro.props as { locale: Locale };
   .news__form input:focus-visible { border-color: var(--accent); }
   .news__form button { padding: 13px 26px; border: none; border-radius: var(--radius-pill); background: var(--accent); color: var(--on-accent); font: inherit; font-weight: 500; cursor: pointer; transition: background var(--dur) var(--ease); }
   .news__form button:hover { background: var(--accent-ink); }
+  .news__form button:disabled { opacity: .65; cursor: progress; }
+  .news__msg { min-height: 1.4em; margin: var(--space-3) 0 0; font-size: .92rem; font-weight: 500; opacity: 0; transition: opacity var(--dur) var(--ease); }
+  .news__msg.show { opacity: 1; }
+  .news__msg.ok { color: #16a34a; }
+  .news__msg.err { color: #dc2626; }
 </style>
+<script>
+  const form = document.getElementById('news-form') as HTMLFormElement | null;
+  const msg = document.getElementById('news-msg');
+  const input = form?.querySelector('input[type=email]') as HTMLInputElement | null;
+  const btn = form?.querySelector('button[type=submit]') as HTMLButtonElement | null;
+  const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+  function show(text: string, ok: boolean) {
+    if (!msg) return;
+    msg.textContent = text;
+    msg.classList.remove('ok', 'err');
+    msg.classList.add('show', ok ? 'ok' : 'err');
+  }
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!input || !btn) return;
+    const email = input.value.trim();
+    if (!EMAIL_RE.test(email)) { show(form.dataset.bad || 'Invalid email', false); input.focus(); return; }
+
+    const label = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = form.dataset.sending || 'Sending…';
+    try {
+      const res = await fetch('/api/newsletter', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, source: 'home' }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok && data.ok) { show(form.dataset.ok || 'Subscribed', true); form.reset(); }
+      else { show(form.dataset.err || 'Error', false); }
+    } catch {
+      show(form.dataset.err || 'Error', false);
+    } finally {
+      btn.disabled = false;
+      btn.textContent = label;
+    }
+  });
+</script>

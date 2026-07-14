@@ -414,6 +414,16 @@
     .oc-metarow a { color: var(--primary); }
     .oi-thumb--ph { color: var(--muted-foreground); }
     .oftrack-label { font-size: .72rem; color: var(--muted-foreground); font-weight: 600; }
+
+    /* Newsletter subscribers list */
+    .sub-row { display: grid; grid-template-columns: 1fr auto auto auto; align-items: center; gap: 14px; padding: 11px 18px; border-bottom: 1px solid var(--border); font-size: .86rem; }
+    .sub-row:last-child { border-bottom: none; }
+    .sub-email { color: var(--primary); font-weight: 600; word-break: break-all; }
+    .sub-date { color: var(--muted-foreground); font-size: .78rem; white-space: nowrap; }
+    .sub-src { font-size: .66rem; text-transform: uppercase; letter-spacing: .04em; color: var(--muted-foreground); background: var(--secondary); border: 1px solid var(--border); border-radius: 99px; padding: 2px 9px; }
+    .sub-del { background: none; border: 1px solid var(--border); color: var(--muted-foreground); border-radius: 6px; font-size: .72rem; padding: 4px 10px; cursor: pointer; font-family: inherit; }
+    .sub-del:hover { border-color: #ef4444; color: #ef4444; }
+    @media (max-width: 640px) { .sub-row { grid-template-columns: 1fr auto; row-gap: 6px; } .sub-src { display: none; } }
     .order-head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 13px 18px; border-bottom: 1px solid var(--border); }
     .ostatus { display: inline-flex; align-items: center; gap: 6px; font-size: .7rem; font-weight: 700; letter-spacing: .02em; padding: 4px 11px; border-radius: 99px; }
     .ostatus .odot { width: 7px; height: 7px; border-radius: 50%; }
@@ -743,6 +753,10 @@
         <span class="nav-icon">💬</span>
         <span class="nav-label">Mesajlar</span>
       </button>
+      <button class="sidebar-nav-item" onclick="showPage('subscribers',this)">
+        <span class="nav-icon">📧</span>
+        <span class="nav-label">Aboneler</span>
+      </button>
       <button class="sidebar-nav-item" onclick="showPage('analytics',this)">
         <span class="nav-icon">📈</span>
         <span class="nav-label">Trafik & Analiz</span>
@@ -810,28 +824,8 @@
           <button class="notifications-btn" onclick="toggleDropdown(event, 'notification-dropdown')" title="Bildirimler">🔔</button>
           <div class="dropdown-menu notification-dropdown" id="notification-dropdown">
             <div class="dropdown-header"><h6>Bildirimler</h6></div>
-            <div class="notification-list">
-              <div class="notification-item">
-                <div class="notification-item-icon" style="background:rgba(34,197,94,0.1);color:#22c55e;">✓</div>
-                <div class="notification-item-content">
-                  <p>Sipariş #12345 başarıyla tamamlandı</p>
-                  <small>2 dakika önce</small>
-                </div>
-              </div>
-              <div class="notification-item">
-                <div class="notification-item-icon" style="background:rgba(89,105,255,0.1);color:#5969ff;">👤</div>
-                <div class="notification-item-content">
-                  <p>Yeni bülten abonesi kayıt oldu</p>
-                  <small>15 dakika önce</small>
-                </div>
-              </div>
-              <div class="notification-item">
-                <div class="notification-item-icon" style="background:rgba(255,64,123,0.1);color:#ff407b;">⚠️</div>
-                <div class="notification-item-content">
-                  <p>Kritik stok uyarısı: Çanta modeli</p>
-                  <small>1 saat önce</small>
-                </div>
-              </div>
+            <div class="notification-list" id="notification-list">
+              <div class="notification-item"><div class="notification-item-content"><p style="color:var(--muted-foreground)">Yükleniyor…</p></div></div>
             </div>
             <div class="dropdown-divider"></div>
             <a href="#" class="dropdown-item text-center" style="color:var(--primary);font-weight:600;text-align:center;">Tüm Bildirimleri Gör</a>
@@ -1395,6 +1389,34 @@
       </div>
     </div>
 
+    <!-- SUBSCRIBERS PAGE -->
+    <div class="page" id="page-subscribers">
+      <div class="page-title">Bülten Aboneleri</div>
+      <div class="page-subtitle">Sitedeki bülten formundan kaydolan e-postalar</div>
+
+      <div class="okpis" style="margin-bottom:18px;">
+        <div class="okpi"><div class="okpi-label">Toplam Abone</div><div class="okpi-val" id="subs-count">0</div><div class="okpi-sub">kayıtlı e-posta</div></div>
+        <div class="okpi"><div class="okpi-label">Son 7 Gün</div><div class="okpi-val" id="subs-week">0</div><div class="okpi-sub">yeni abone</div></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
+          <div class="card-title">Abone Listesi</div>
+          <div style="display:flex;gap:8px;">
+            <input id="subs-search" placeholder="E-posta ara…" oninput="renderSubscribers()" style="min-height:38px;padding:8px 12px;border:1px solid var(--border);border-radius:8px;background:var(--secondary);color:var(--foreground);font-family:inherit;font-size:.85rem;">
+            <button class="btn btn-sm btn-outline" onclick="copySubscribers()">E-postaları Kopyala</button>
+          </div>
+        </div>
+        <div class="card-body" style="padding:0;">
+          <div id="subs-list"></div>
+          <div id="subs-empty" class="empty-state" style="display:none;">
+            <div class="empty-state-icon">📭</div>
+            <p>Henüz bülten abonesi yok.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- ANALYTICS PAGE -->
     <div class="page" id="page-analytics">
       <div class="page-title">Trafik & Analiz</div>
@@ -1852,6 +1874,42 @@ async function initApp() {
   renderSettings();
   updateApiStatus();
   loadQuickApiKey();
+  loadNotifications();
+}
+
+// Real activity feed for the notification bell (payments, new subscribers).
+function _timeAgo(ts) {
+  const t = new Date(ts).getTime(); if (isNaN(t)) return '';
+  const s = Math.floor((Date.now() - t) / 1000);
+  if (s < 60) return 'az önce';
+  if (s < 3600) return Math.floor(s / 60) + ' dk önce';
+  if (s < 86400) return Math.floor(s / 3600) + ' saat önce';
+  return Math.floor(s / 86400) + ' gün önce';
+}
+async function loadNotifications() {
+  const el = document.getElementById('notification-list');
+  if (!el) return;
+  try {
+    const res = await fetch('/api/admin/activity', { headers: ADM_HDR, credentials: 'include' });
+    if (!res.ok) throw new Error();
+    const acts = await res.json();
+    if (!Array.isArray(acts) || !acts.length) {
+      el.innerHTML = '<div class="notification-item"><div class="notification-item-content"><p style="color:var(--muted-foreground)">Henüz bildirim yok.</p></div></div>';
+      return;
+    }
+    const meta = (a) => {
+      if (a.action === 'ÖDEME_BAŞARILI') return { bg: 'rgba(34,197,94,0.1)', c: '#22c55e', i: '✓' };
+      if (a.action === 'ÖDEME_BAŞARISIZ') return { bg: 'rgba(239,68,68,0.1)', c: '#ef4444', i: '!' };
+      if (a.action === 'BÜLTEN_ABONE') return { bg: 'rgba(89,105,255,0.1)', c: '#5969ff', i: '@' };
+      return { bg: 'var(--secondary)', c: 'var(--muted-foreground)', i: '•' };
+    };
+    el.innerHTML = acts.slice(0, 12).map(a => {
+      const m = meta(a);
+      return `<div class="notification-item"><div class="notification-item-icon" style="background:${m.bg};color:${m.c};">${m.i}</div><div class="notification-item-content"><p>${esc(a.detail || a.action || '')}</p><small>${_timeAgo(a.ts)}</small></div></div>`;
+    }).join('');
+  } catch {
+    el.innerHTML = '<div class="notification-item"><div class="notification-item-content"><p style="color:var(--muted-foreground)">Bildirimler yüklenemedi.</p></div></div>';
+  }
 }
 
 // ── NAVIGATION ────────────────────────────────────────────
@@ -1868,12 +1926,14 @@ function showPage(pageId, btn) {
     settings: 'Ayarlar',
     orders: 'Siparişler (PayTR)',
     messages: 'Müşteri Mesajları',
+    subscribers: 'Bülten Aboneleri',
     analytics: 'Trafik & Analiz'
   };
   document.getElementById('topbar-title').textContent = titles[pageId] || pageId;
 
   if (pageId === 'orders') loadOrdersPage();
   else if (pageId === 'messages') loadMessagesPage();
+  else if (pageId === 'subscribers') loadSubscribersPage();
   else if (pageId === 'analytics') loadAnalyticsPage();
 }
 
@@ -3321,6 +3381,63 @@ function copyOrderId(btn) {
     () => { const t = btn.textContent; btn.textContent = 'kopyalandı'; setTimeout(() => { btn.textContent = t; }, 1400); },
     () => toast('Kopyalanamadı', 'err')
   );
+}
+
+// ── NEWSLETTER SUBSCRIBERS ─────────────────────────────────
+let _subs = [];
+async function loadSubscribersPage() {
+  const listEl = document.getElementById('subs-list');
+  if (listEl) listEl.innerHTML = '<div style="padding:24px;text-align:center;color:var(--muted-foreground)">Yükleniyor…</div>';
+  try {
+    const res = await fetch('/api/admin/newsletter', { headers: ADM_HDR, credentials: 'include' });
+    if (!res.ok) throw new Error();
+    _subs = await res.json();
+    if (!Array.isArray(_subs)) _subs = [];
+    renderSubscribers();
+  } catch {
+    if (listEl) listEl.innerHTML = '<div style="padding:24px;text-align:center;color:#ef4444">Aboneler yüklenemedi.</div>';
+  }
+}
+function renderSubscribers() {
+  const listEl = document.getElementById('subs-list');
+  const empty = document.getElementById('subs-empty');
+  if (!listEl) return;
+  const q = (document.getElementById('subs-search')?.value || '').trim().toLowerCase();
+  const cEl = document.getElementById('subs-count'); if (cEl) cEl.textContent = _subs.length;
+  const weekAgo = Date.now() - 7 * 86400000;
+  const wEl = document.getElementById('subs-week'); if (wEl) wEl.textContent = _subs.filter(s => new Date(s.ts).getTime() >= weekAgo).length;
+  const rows = _subs.filter(s => !q || (s.email || '').toLowerCase().includes(q));
+  if (!rows.length) {
+    listEl.innerHTML = '';
+    if (empty) { empty.style.display = 'block'; const p = empty.querySelector('p'); if (p) p.textContent = _subs.length ? 'Aramaya uyan abone yok.' : 'Henüz bülten abonesi yok.'; }
+    return;
+  }
+  if (empty) empty.style.display = 'none';
+  listEl.innerHTML = rows.map(s => {
+    const d = s.ts ? new Date(s.ts).toLocaleString('tr-TR', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—';
+    return `<div class="sub-row">
+      <a class="sub-email" href="mailto:${esc(s.email)}">${esc(s.email)}</a>
+      <span class="sub-date">${d}</span>
+      <span class="sub-src">${esc(s.source || 'site')}</span>
+      <button class="sub-del" title="Listeden kaldır" onclick="removeSubscriber('${esc(s.email)}')">Kaldır</button>
+    </div>`;
+  }).join('');
+}
+function copySubscribers() {
+  const emails = _subs.map(s => s.email).filter(Boolean).join(', ');
+  if (!emails) { toast('Kopyalanacak abone yok', 'err'); return; }
+  if (!navigator.clipboard) { toast('Kopyalama desteklenmiyor', 'err'); return; }
+  navigator.clipboard.writeText(emails).then(() => toast(`${_subs.length} e-posta kopyalandı`, 'ok'), () => toast('Kopyalanamadı', 'err'));
+}
+async function removeSubscriber(email) {
+  if (!confirm(email + ' listeden kaldırılsın mı?')) return;
+  try {
+    const res = await fetch('/api/admin/newsletter', { method: 'DELETE', headers: ADM_HDR, credentials: 'include', body: JSON.stringify({ email }) });
+    if (!res.ok) throw new Error();
+    _subs = _subs.filter(s => (s.email || '').toLowerCase() !== email.toLowerCase());
+    renderSubscribers();
+    toast('Abone kaldırıldı', 'ok');
+  } catch { toast('Kaldırılamadı', 'err'); }
 }
 
 function copyOrderShip(btn) {

@@ -610,6 +610,16 @@ async function router(method: string, context: APIContext): Promise<Response> {
       return json({ ok: true, message: newReply }, 200);
     }
 
+    // Recent activity feed (payment success/fail, new subscribers) for the bell.
+    if (method === 'GET' && action === 'activity') {
+      if (!(await isAuthed(request, env))) return json({ error: 'invalid' }, 401);
+      const kv = env.ADMIN_KV;
+      if (!kv) return json([], 200);
+      const raw = await kv.get('activity');
+      const list = raw ? JSON.parse(raw) : [];
+      return json(Array.isArray(list) ? list.slice(0, 20) : [], 200);
+    }
+
     if (method === 'GET' && action === 'analytics') {
       if (!(await isAuthed(request, env))) return json({ error: 'invalid' }, 401);
       const kv = env.ADMIN_KV;
@@ -624,6 +634,28 @@ async function router(method: string, context: APIContext): Promise<Response> {
       if (!kv) return json([], 200);
       const raw = await kv.get('orders');
       return json(raw ? JSON.parse(raw) : [], 200);
+    }
+
+    // Newsletter subscribers (written by the public /api/newsletter endpoint).
+    if (action === 'newsletter') {
+      if (!(await isAuthed(request, env))) return json({ error: 'invalid' }, 401);
+      const kv = env.ADMIN_KV;
+      if (!kv) return json([], 200);
+      if (method === 'GET') {
+        const raw = await kv.get('newsletter');
+        return json(raw ? JSON.parse(raw) : [], 200);
+      }
+      // Unsubscribe / remove an address from the list.
+      if (method === 'DELETE') {
+        const body = await readBody(request);
+        const email = typeof body?.email === 'string' ? body.email.toLowerCase() : '';
+        if (!email) return json({ error: 'invalid' }, 400);
+        const raw = await kv.get('newsletter');
+        const list = raw ? JSON.parse(raw) : [];
+        const next = list.filter((s: any) => (s.email || '').toLowerCase() !== email);
+        await kv.put('newsletter', JSON.stringify(next));
+        return json({ ok: true }, 200);
+      }
     }
 
     // Update an order's fulfillment status / cargo tracking / internal note.
