@@ -1,7 +1,11 @@
-import type { Product } from './products';
+import type { Product, ProductOptionGroup, ProductVariant } from './products';
 
 export interface EtsyImage { url_570xN?: string; url_fullxfull?: string; }
 export interface EtsyTranslation { language: string; title?: string; description?: string; }
+export interface EtsyPropertyValue { property_id?: number; property_name?: string; values?: string[]; }
+export interface EtsyOffering { price?: { amount?: number; divisor?: number }; quantity?: number; is_enabled?: boolean; }
+export interface EtsyInventoryProduct { property_values?: EtsyPropertyValue[]; offerings?: EtsyOffering[]; }
+export interface EtsyInventory { products?: EtsyInventoryProduct[]; price_on_property?: number[]; }
 export interface EtsyListing {
   listing_id: number | string;
   title?: string;
@@ -14,6 +18,35 @@ export interface EtsyListing {
   shop_section_id?: number | null;
   images?: EtsyImage[];
   translations?: EtsyTranslation[];
+  inventory?: EtsyInventory;
+}
+
+// Turn Etsy's inventory payload into our option groups + priced variants.
+// Only real variations (an actual property with values) produce output; a plain
+// listing returns a single product with no property_values and is ignored.
+export function mapInventory(inv: EtsyInventory | undefined): { options: ProductOptionGroup[]; variants: ProductVariant[] } {
+  const products = inv?.products ?? [];
+  const groups = new Map<string, string[]>();
+  const variants: ProductVariant[] = [];
+  for (const p of products) {
+    const values: Record<string, string> = {};
+    for (const pv of p.property_values ?? []) {
+      const name = (pv.property_name ?? '').trim();
+      const val = (pv.values ?? [])[0];
+      if (name && val) {
+        values[name] = val;
+        const list = groups.get(name) ?? [];
+        if (!list.includes(val)) list.push(val);
+        groups.set(name, list);
+      }
+    }
+    if (!Object.keys(values).length) continue;
+    const off = (p.offerings ?? []).find((o) => o.is_enabled) ?? (p.offerings ?? [])[0];
+    const price = off?.price ? Number(off.price.amount ?? 0) / (off.price.divisor ?? 100) : NaN;
+    variants.push({ values, price: Number.isFinite(price) ? price : 0 });
+  }
+  const options: ProductOptionGroup[] = [...groups.entries()].map(([name, values]) => ({ name, values }));
+  return { options, variants };
 }
 
 const CATEGORY_MAP: Record<string, string> = {
@@ -59,6 +92,8 @@ export function mapListing(
   const sectionTitle = listing.shop_section_id != null
     ? sections[String(listing.shop_section_id)]
     : undefined;
+  const { options, variants } = mapInventory(listing.inventory);
+  const hasVars = options.length > 0 && options.some((o) => o.values.length > 1);
   return {
     id: String(listing.listing_id),
     title_en,
@@ -74,5 +109,6 @@ export function mapListing(
     tags: listing.tags ?? [],
     isNew: isNewListing(listing, now),
     isActive: listing.state === 'active',
+    ...(hasVars ? { options, variants } : {}),
   };
 }

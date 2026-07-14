@@ -1,6 +1,10 @@
 import raw from '../data/products.json';
 import { slugify } from './slug';
 import type { Locale } from './i18n';
+import type { ProductOptionGroup, ProductVariant } from './variants';
+
+export { variantKey, resolveVariantPrice } from './variants';
+export type { ProductOptionGroup, ProductVariant } from './variants';
 
 export interface Product {
   id: string;
@@ -17,6 +21,14 @@ export interface Product {
   tags: string[];
   isNew: boolean;
   isActive: boolean;
+  // Etsy variations (optional). `options` drives the selectors; `variants` maps a
+  // chosen combination to its price. Absent for listings without variations.
+  options?: ProductOptionGroup[];
+  variants?: ProductVariant[];
+}
+
+export function hasVariations(p: Product): boolean {
+  return Array.isArray(p.options) && p.options.length > 0 && p.options.some((o) => o.values.length > 1);
 }
 
 export function activeOnly(products: Product[]): Product[] {

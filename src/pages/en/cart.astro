@@ -79,9 +79,12 @@ const shippingCfg = (settings as any).shipping || {};
 
 <script>
   import { getCart, updateCartQuantity, removeFromCart } from '@lib/cart';
+  import { resolveVariantPrice } from '@lib/variants';
 
   const allProducts = JSON.parse(document.getElementById('cart-data')?.getAttribute('data-products') || '[]');
   const shippingCfg = JSON.parse(document.getElementById('cart-data')?.getAttribute('data-shipping') || '{}');
+  const optsText = (o?: Record<string, string>) => o ? Object.keys(o).map(k => `${k}: ${o[k]}`).join(' · ') : '';
+  const esc = (s: string) => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c] as string));
 
   const emptyDiv = document.getElementById('cart-empty');
   const contentDiv = document.getElementById('cart-content');
@@ -112,21 +115,24 @@ const shippingCfg = (settings as any).shipping || {};
     let currency = 'USD';
     const fmt = (n: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(n);
 
-    cart.forEach(item => {
+    cart.forEach((item, idx) => {
       const prod = allProducts.find(p => p.id === item.id);
       if (!prod) return;
-      subtotal += prod.price * item.quantity;
+      const unit = resolveVariantPrice(prod, item.options);
+      subtotal += unit * item.quantity;
       currency = prod.currency;
+      const optLine = optsText(item.options);
 
       const row = document.createElement('div');
       row.className = 'citem';
       row.innerHTML = `
         <div class="citem__product">
-          <div class="citem__media"><img src="${prod.image || '/bags.png'}" alt="${prod.title_en || prod.title_tr}" loading="lazy" /></div>
+          <div class="citem__media"><img src="${prod.image || '/bags.png'}" alt="${esc(prod.title_en || prod.title_tr)}" loading="lazy" /></div>
           <div class="citem__info">
-            <h3 class="citem__title">${prod.title_en || prod.title_tr}</h3>
-            <span class="citem__unit">${fmt(prod.price)}</span>
-            <button class="citem__remove" data-id="${item.id}">
+            <h3 class="citem__title">${esc(prod.title_en || prod.title_tr)}</h3>
+            ${optLine ? `<span class="citem__opts">${esc(optLine)}</span>` : ''}
+            <span class="citem__unit">${fmt(unit)}</span>
+            <button class="citem__remove" data-idx="${idx}">
               <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>
               Remove
             </button>
@@ -134,12 +140,12 @@ const shippingCfg = (settings as any).shipping || {};
         </div>
         <div class="citem__qty">
           <div class="cstep" role="group" aria-label="Quantity">
-            <button class="cstep__btn cstep__minus" data-id="${item.id}" aria-label="Decrease">−</button>
+            <button class="cstep__btn cstep__minus" data-idx="${idx}" aria-label="Decrease">−</button>
             <span class="cstep__val">${item.quantity}</span>
-            <button class="cstep__btn cstep__plus" data-id="${item.id}" aria-label="Increase">+</button>
+            <button class="cstep__btn cstep__plus" data-idx="${idx}" aria-label="Increase">+</button>
           </div>
         </div>
-        <div class="citem__total">${fmt(prod.price * item.quantity)}</div>
+        <div class="citem__total">${fmt(unit * item.quantity)}</div>
       `;
       itemsList?.appendChild(row);
     });
@@ -153,15 +159,16 @@ const shippingCfg = (settings as any).shipping || {};
     if (totalEl) totalEl.textContent = fmt(subtotal + shipping);
 
     document.querySelectorAll('.cstep__minus').forEach(btn => btn.addEventListener('click', () => {
-      const id = btn.getAttribute('data-id'); const cart = getCart(); const it = cart.find(x => x.id === id);
-      if (id && it && it.quantity > 1) { updateCartQuantity(id, it.quantity - 1); renderCart(); }
+      const it = getCart()[Number(btn.getAttribute('data-idx'))];
+      if (it && it.quantity > 1) { updateCartQuantity(it.id, it.quantity - 1, it.options); renderCart(); }
     }));
     document.querySelectorAll('.cstep__plus').forEach(btn => btn.addEventListener('click', () => {
-      const id = btn.getAttribute('data-id'); const cart = getCart(); const it = cart.find(x => x.id === id);
-      if (id && it) { updateCartQuantity(id, it.quantity + 1); renderCart(); }
+      const it = getCart()[Number(btn.getAttribute('data-idx'))];
+      if (it) { updateCartQuantity(it.id, it.quantity + 1, it.options); renderCart(); }
     }));
     document.querySelectorAll('.citem__remove').forEach(btn => btn.addEventListener('click', () => {
-      const id = btn.getAttribute('data-id'); if (id) { removeFromCart(id); renderCart(); }
+      const it = getCart()[Number(btn.getAttribute('data-idx'))];
+      if (it) { removeFromCart(it.id, it.options); renderCart(); }
     }));
   }
 
@@ -197,6 +204,7 @@ const shippingCfg = (settings as any).shipping || {};
   :global(.citem__media img) { width: 100%; height: 100%; object-fit: cover; }
   :global(.citem__info) { min-width: 0; display: flex; flex-direction: column; gap: 3px; }
   :global(.citem__title) { font-family: var(--font-body); font-size: .96rem; font-weight: 600; margin: 0; line-height: 1.35; color: var(--ink); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  :global(.citem__opts) { font-size: .8rem; color: var(--accent-ink); font-weight: 600; }
   :global(.citem__unit) { font-size: .85rem; color: var(--muted); }
   :global(.citem__remove) { display: inline-flex; align-items: center; gap: 5px; align-self: flex-start; background: none; border: none; color: var(--muted); cursor: pointer; font-size: .8rem; font-weight: 500; padding: 2px 0; margin-top: 2px; transition: color var(--dur) var(--ease); }
   :global(.citem__remove:hover) { color: var(--accent); }

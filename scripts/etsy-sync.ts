@@ -95,6 +95,26 @@ async function attachImages(listings: EtsyListing[]): Promise<void> {
   }
 }
 
+// Fetch a listing's inventory (variations/options + per-combination price).
+// Best-effort: a listing with no variations just yields nothing usable.
+async function getListingInventory(listingId: number | string): Promise<any | undefined> {
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      return await etsy(`listings/${listingId}/inventory`);
+    } catch {
+      if (attempt === 0) await sleep(1500);
+    }
+  }
+  return undefined;
+}
+
+async function attachInventory(listings: EtsyListing[]): Promise<void> {
+  for (const l of listings) {
+    l.inventory = await getListingInventory(l.listing_id);
+    await sleep(250);
+  }
+}
+
 async function getListings(shopId: string): Promise<EtsyListing[]> {
   const all: EtsyListing[] = [];
   let offset = 0;
@@ -203,6 +223,7 @@ async function main(): Promise<void> {
   }
   const listings = await getListings(shopId);
   await attachImages(listings);
+  await attachInventory(listings);
   const prev = loadPrevious();
   const matchedIds = new Set<string>();
 

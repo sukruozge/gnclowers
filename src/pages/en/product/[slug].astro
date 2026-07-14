@@ -52,7 +52,7 @@ const shop = loadReviews().shop;
 
             <div class="buybox">
               <div class="buybox__pricerow">
-                <span class="detail__price">{price}</span>
+                <span class="detail__price" id="detail-price">{price}</span>
                 <span class="detail__vat">VAT included</span>
                 <span class="handmade-tag">
                   <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 21s-8-4.5-8-10a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 11c0 5.5-8 10-8 10z"/></svg>
@@ -63,6 +63,24 @@ const shop = loadReviews().shop;
               <div class="stitch" aria-hidden="true">
                 <svg viewBox="0 0 240 8" preserveAspectRatio="none" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-dasharray="7 5"><path d="M2 4 Q10 -1 20 4 T40 4 T60 4 T80 4 T100 4 T120 4 T140 4 T160 4 T180 4 T200 4 T220 4 T238 4"/></svg>
               </div>
+
+              {product.options && product.options.length > 0 && (
+                <div class="variations" id="variations">
+                  {product.options.map((opt) => (
+                    <div class="variation">
+                      <label class="variation__label">{opt.name}</label>
+                      <div class="select-wrap">
+                        <select class="variation__sel" data-name={opt.name} required>
+                          <option value="" disabled selected>Select…</option>
+                          {opt.values.map((v) => <option value={v}>{v}</option>)}
+                        </select>
+                        <svg class="select-wrap__caret" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+                      </div>
+                    </div>
+                  ))}
+                  <p class="variation__err" id="variation-err" hidden>Please choose all options.</p>
+                </div>
+              )}
 
               <div class="detail__buy">
                 <div class="qtystep" role="group" aria-label="Quantity">
@@ -114,12 +132,34 @@ const shop = loadReviews().shop;
 
 <script>
   import { addToCart, showCartToast } from '@lib/cart';
+  import { resolveVariantPrice } from '@lib/variants';
 
   let qty = 1;
   const valEl = document.getElementById('qty-val');
   const minus = document.getElementById('qty-minus');
   const plus = document.getElementById('qty-plus');
   const btn = document.getElementById('add-to-cart');
+  const priceEl = document.getElementById('detail-price');
+  const errEl = document.getElementById('variation-err');
+  const sels = Array.from(document.querySelectorAll<HTMLSelectElement>('.variation__sel'));
+
+  const prod = btn ? JSON.parse(btn.getAttribute('data-product') || '{}') : {};
+  const fmtPrice = (n: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: prod.currency || 'TRY' }).format(n);
+
+  function selected(): Record<string, string> {
+    const out: Record<string, string> = {};
+    sels.forEach((s) => { if (s.value) out[s.dataset.name || ''] = s.value; });
+    return out;
+  }
+  function allChosen(): boolean { return sels.every((s) => !!s.value); }
+
+  function refreshPrice() {
+    if (!priceEl) return;
+    const sel = allChosen() ? selected() : undefined;
+    priceEl.textContent = fmtPrice(resolveVariantPrice(prod, sel));
+  }
+  sels.forEach((s) => s.addEventListener('change', () => { if (errEl) errEl.hidden = true; refreshPrice(); }));
+  refreshPrice();
 
   function render() { if (valEl) valEl.textContent = String(qty); if (minus) (minus as HTMLButtonElement).disabled = qty <= 1; }
   minus?.addEventListener('click', () => { if (qty > 1) { qty--; render(); } });
@@ -127,10 +167,14 @@ const shop = loadReviews().shop;
   render();
 
   btn?.addEventListener('click', () => {
-    const raw = btn.getAttribute('data-product');
-    if (!raw) return;
-    const prod = JSON.parse(raw);
-    addToCart(prod, qty);
+    if (sels.length && !allChosen()) {
+      if (errEl) errEl.hidden = false;
+      const firstEmpty = sels.find((s) => !s.value);
+      firstEmpty?.focus();
+      return;
+    }
+    const opts = sels.length ? selected() : undefined;
+    addToCart(prod, qty, opts);
     showCartToast({ addedLabel: 'Added to cart', goLabel: 'Go to cart', cartHref: '/en/cart' });
   });
 </script>
@@ -151,6 +195,15 @@ const shop = loadReviews().shop;
 
     .buybox { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: var(--space-5); box-shadow: var(--shadow-glass); }
     .buybox__pricerow { display: flex; align-items: baseline; gap: var(--space-3); flex-wrap: wrap; }
+
+    .variations { display: flex; flex-direction: column; gap: var(--space-3); margin: var(--space-4) 0; }
+    .variation { display: flex; flex-direction: column; gap: 6px; }
+    .variation__label { font-size: .85rem; font-weight: 600; color: var(--ink); }
+    .variation .select-wrap { position: relative; display: flex; }
+    .variation__sel { width: 100%; appearance: none; -webkit-appearance: none; font-family: inherit; font-size: .95rem; min-height: 48px; padding: 12px 40px 12px 14px; border: 1.5px solid var(--line); border-radius: 12px; background: var(--bg); color: var(--ink); cursor: pointer; transition: border-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease); }
+    .variation__sel:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 16%, transparent); }
+    .variation .select-wrap__caret { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; }
+    .variation__err { color: #dc2626; font-size: .82rem; font-weight: 500; margin: 2px 0 0; }
     .detail__price { font-family: var(--font-display); font-size: 2.1rem; color: var(--accent-ink); font-feature-settings: "tnum"; line-height: 1; }
     .detail__vat { font-size: var(--step-small); color: var(--muted); }
     .handmade-tag { margin-left: auto; display: inline-flex; align-items: center; gap: 5px; font-size: .68rem; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; color: var(--accent); background: color-mix(in srgb, var(--accent) 10%, var(--surface)); border: 1px solid color-mix(in srgb, var(--accent) 22%, var(--line)); padding: 5px 10px; border-radius: var(--radius-pill); }

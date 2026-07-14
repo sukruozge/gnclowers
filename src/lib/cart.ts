@@ -4,6 +4,18 @@ export interface CartItem {
   id: string;
   quantity: number;
   product?: Product;
+  // Selected Etsy variation options, e.g. { Model: "Lion" }. Absent for plain products.
+  options?: Record<string, string>;
+}
+
+// Two cart lines are the "same" only if product id AND chosen options match, so
+// a Lion and a Giraffe of the same listing stay as separate lines.
+function optionsKey(options?: Record<string, string>): string {
+  if (!options) return '';
+  return Object.keys(options).sort().map((k) => `${k}=${options[k]}`).join('|');
+}
+function sameLine(a: CartItem, b: { id: string; options?: Record<string, string> }): boolean {
+  return a.id === b.id && optionsKey(a.options) === optionsKey(b.options);
 }
 
 export function getCart(): CartItem[] {
@@ -21,28 +33,28 @@ export function saveCart(cart: CartItem[]): void {
   window.dispatchEvent(new Event('cart-updated'));
 }
 
-export function addToCart(product: Product, quantity: number = 1): void {
+export function addToCart(product: Product, quantity: number = 1, options?: Record<string, string>): void {
   const cart = getCart();
-  const existing = cart.find((item) => item.id === product.id);
+  const existing = cart.find((item) => sameLine(item, { id: product.id, options }));
   if (existing) {
     existing.quantity += quantity;
   } else {
-    cart.push({ id: product.id, quantity });
+    cart.push(options ? { id: product.id, quantity, options } : { id: product.id, quantity });
   }
   saveCart(cart);
 }
 
-export function updateCartQuantity(productId: string, quantity: number): void {
+export function updateCartQuantity(productId: string, quantity: number, options?: Record<string, string>): void {
   const cart = getCart();
-  const existing = cart.find((item) => item.id === productId);
+  const existing = cart.find((item) => sameLine(item, { id: productId, options }));
   if (existing) {
     existing.quantity = Math.max(1, quantity);
     saveCart(cart);
   }
 }
 
-export function removeFromCart(productId: string): void {
-  const cart = getCart().filter((item) => item.id !== productId);
+export function removeFromCart(productId: string, options?: Record<string, string>): void {
+  const cart = getCart().filter((item) => !sameLine(item, { id: productId, options }));
   saveCart(cart);
 }
 

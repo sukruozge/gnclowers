@@ -408,6 +408,7 @@
     @media (max-width: 760px) { .oc-main { grid-template-columns: 1fr; } .oc-ship { border-left: none; border-top: 1px solid var(--border); } }
     .oi-info { min-width: 0; }
     .oi-sub { font-size: .76rem; color: var(--muted-foreground); margin-top: 2px; font-variant-numeric: tabular-nums; }
+    .oi-opts { font-size: .76rem; color: var(--primary); font-weight: 600; margin-top: 2px; }
     .oc-meta { display: flex; flex-direction: column; gap: 6px; margin-top: 12px; padding-top: 11px; border-top: 1px solid var(--border); }
     .oc-metarow { font-size: .82rem; color: var(--foreground); display: flex; gap: 10px; align-items: baseline; }
     .oc-metak { min-width: 54px; color: var(--muted-foreground); font-size: .66rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; flex: none; }
@@ -3333,8 +3334,11 @@ function orderCardHTML(o) {
         const q = Number(it.qty) || 1;
         const priceNum = Number(it.price);
         const lineSub = isFinite(priceNum) ? `${q} × ${_fmtTL2(priceNum)} ₺` : `${esc(it.qty)} adet`;
+        const optLine = (it.options && typeof it.options === 'object')
+          ? Object.keys(it.options).map(k => `${esc(k)}: ${esc(it.options[k])}`).join(' · ')
+          : '';
         return `<div class="order-item"><div class="oi-media">${thumb}<span class="oi-qty">×${esc(it.qty)}</span></div>` +
-          `<div class="oi-info"><div class="oi-title">${esc(it.title)}</div><div class="oi-sub">${lineSub}</div></div></div>`;
+          `<div class="oi-info"><div class="oi-title">${esc(it.title)}</div>${optLine ? `<div class="oi-opts">${optLine}</div>` : ''}<div class="oi-sub">${lineSub}</div></div></div>`;
       }).join('')
     : '<div class="order-item"><div class="oi-title" style="color:var(--muted-foreground)">Ürün bilgisi kaydedilmemiş</div></div>';
 

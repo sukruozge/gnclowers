@@ -3,6 +3,7 @@ import { createHmac } from 'node:crypto';
 import productsData from '../../../data/products.json';
 import settings from '../../../data/settings.json';
 import { shippingFee } from '@lib/shipping';
+import { resolveVariantPrice } from '@lib/variants';
 
 export const prerender = false;
 
@@ -70,20 +71,35 @@ export const POST: APIRoute = async (context) => {
     const products = productsData.products || [];
     let totalAmount = 0;
     const basket: [string, string, number][] = [];
-    const items: { id: string; title: string; qty: number; price: number; image?: string }[] = [];
+    const items: { id: string; title: string; qty: number; price: number; image?: string; options?: Record<string, string> }[] = [];
 
     for (const item of cart) {
       const prod = products.find((p: any) => String(p.id) === String(item.id));
       if (!prod) return json({ error: 'Geçersiz ürün seçimi.' }, 400);
 
-      const price = prod.price;
+      // Sanitize the client-sent options against the product's real option set,
+      // so only genuine variation values reach the order / price lookup.
+      let options: Record<string, string> | undefined;
+      const prodOptions = (prod as any).options;
+      if (item.options && typeof item.options === 'object' && Array.isArray(prodOptions)) {
+        const clean: Record<string, string> = {};
+        for (const grp of prodOptions) {
+          const v = (item.options as any)[grp.name];
+          if (typeof v === 'string' && Array.isArray(grp.values) && grp.values.includes(v)) clean[grp.name] = v;
+        }
+        if (Object.keys(clean).length) options = clean;
+      }
+
+      // Price ALWAYS resolved server-side from products.json — never trust client.
+      const price = resolveVariantPrice(prod as any, options);
       // Bound quantity to a sane positive range: `parseInt(...)||1` alone would
       // let a negative quantity through (-1 || 1 === -1) and skew the basket.
       const qty = Math.min(Math.max(parseInt(item.quantity, 10) || 1, 1), 99);
       totalAmount += price * qty;
-      const title = prod.title_tr || prod.title_en;
-      basket.push([title, String(price), qty]);
-      items.push({ id: String(prod.id), title, qty, price, image: prod.image });
+      const baseTitle = prod.title_tr || prod.title_en;
+      const optSuffix = options ? ' (' + Object.keys(options).map((k) => `${k}: ${options![k]}`).join(', ') + ')' : '';
+      basket.push([baseTitle + optSuffix, String(price), qty]);
+      items.push({ id: String(prod.id), title: baseTitle, qty, price, image: prod.image, ...(options ? { options } : {}) });
     }
 
     // Region-based shipping, computed server-side (never trust the client).
