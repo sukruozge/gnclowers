@@ -355,6 +355,24 @@
     .star-btn { background: none; border: none; cursor: pointer; font-size: 1.25rem; color: var(--border); transition: color .15s; padding: 4px; }
     .star-btn.starred { color: #f59e0b; }
 
+    /* PRODUCT FILTER TOOLBAR */
+    .pfilter { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; padding: 16px 20px; border-bottom: 1px solid var(--border); }
+    .pfilter-search { position: relative; flex: 1 1 240px; min-width: 200px; }
+    .pfilter-search input { width: 100%; padding: 9px 12px 9px 34px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--secondary); color: var(--foreground); font-size: .85rem; font-family: inherit; }
+    .pfilter-search input:focus { outline: none; border-color: var(--primary); background: var(--card); box-shadow: 0 0 0 2px rgba(89,105,255,.15); }
+    .pfilter-search .pfs-icon { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); font-size: .8rem; opacity: .55; pointer-events: none; }
+    .seg { display: inline-flex; background: var(--secondary); border: 1px solid var(--border); border-radius: var(--radius); padding: 3px; gap: 2px; }
+    .seg-btn { border: none; background: none; padding: 7px 15px; border-radius: var(--radius); font-size: .8rem; font-weight: 600; cursor: pointer; color: var(--muted-foreground); transition: .15s; font-family: inherit; }
+    .seg-btn:hover { color: var(--foreground); }
+    .seg-btn.active { background: var(--card); color: var(--primary); box-shadow: 0 1px 2px rgba(0,0,0,.12); }
+    .seg-btn .seg-n { opacity: .6; font-weight: 500; margin-left: 5px; font-size: .72rem; }
+    /* dual-language product name cell */
+    .pname-tr { font-weight: 600; font-size: .84rem; color: var(--foreground); line-height: 1.3; }
+    .pname-en { font-size: .76rem; color: var(--muted-foreground); line-height: 1.3; margin-top: 2px; }
+    .pname-en .lng { font-size: .58rem; font-weight: 700; letter-spacing: .04em; opacity: .65; border: 1px solid var(--border); border-radius: 3px; padding: 0 3px; margin-right: 5px; vertical-align: 1px; }
+    tr.prow-off { opacity: .5; }
+    tr.prow-off .pname-tr { text-decoration: line-through; text-decoration-color: var(--muted-foreground); }
+
     /* SYNC STATUS */
     .sync-status { display: flex; align-items: center; gap: 12px; font-size: .86rem; padding: 12px 16px; border-radius: var(--radius); background: var(--secondary); border: 1px solid var(--border); }
     .sync-dot { width: 10px; height: 10px; border-radius: 50%; }
@@ -877,17 +895,28 @@
           </div>
           <button class="btn btn-gold btn-sm" onclick="showAddProduct()">+ Yeni Ürün Ekle</button>
         </div>
+        <div class="pfilter">
+          <div class="pfilter-search">
+            <span class="pfs-icon">🔍</span>
+            <input id="product-search" type="search" placeholder="Ara — Türkçe veya İngilizce başlık, kategori…" oninput="onProductFilter()" autocomplete="off" spellcheck="false">
+          </div>
+          <div class="seg" id="product-status-seg">
+            <button class="seg-btn active" data-status="all" onclick="setProductStatus('all', this)">Tümü<span class="seg-n" id="segn-all"></span></button>
+            <button class="seg-btn" data-status="active" onclick="setProductStatus('active', this)">Satışta<span class="seg-n" id="segn-active"></span></button>
+            <button class="seg-btn" data-status="passive" onclick="setProductStatus('passive', this)">Pasif<span class="seg-n" id="segn-passive"></span></button>
+          </div>
+        </div>
         <div class="card-body" style="padding:0">
           <div class="table-wrap">
             <table>
               <thead>
                 <tr>
                   <th>Görsel</th>
-                  <th>Ürün Adı</th>
+                  <th>Ürün Adı (TR / EN)</th>
                   <th>Kategori</th>
                   <th>Fiyat</th>
                   <th>Öne Çıkar</th>
-                  <th>Durum</th>
+                  <th>Satışta</th>
                   <th>İşlem</th>
                 </tr>
               </thead>
@@ -1562,6 +1591,11 @@ const DEFAULT_PASS = 'aselovers2024';
 let _products = [];
 let _blogPosts = [];
 let _content = {};
+let _productQuery = '';
+let _productStatus = 'all'; // 'all' | 'active' | 'passive'
+
+// Turkish-aware lowercase so "İ/ı" and "I/i" match as users expect when searching.
+function _norm(s) { return String(s || '').toLocaleLowerCase('tr').trim(); }
 
 function getPass() { return localStorage.getItem('ase_admin_pass') || DEFAULT_PASS; }
 function getEtsyConfig() {
@@ -1864,30 +1898,63 @@ async function doSync() {
 
 // ── PRODUCTS ──────────────────────────────────────────────
 function renderProducts() {
-  const overrides = getProductOverrides();
   const tbody = document.getElementById('products-tbody');
   const empty = document.getElementById('products-empty');
   const count = document.getElementById('products-count');
+  const emptyText = empty.querySelector('p');
+
+  // Segmented-control counts (over ALL products, regardless of the search box).
+  const activeCount = _products.filter(p => p.isActive !== false).length;
+  const passiveCount = _products.length - activeCount;
+  const setN = (id, n) => { const e = document.getElementById(id); if (e) e.textContent = n; };
+  setN('segn-all', _products.length);
+  setN('segn-active', activeCount);
+  setN('segn-passive', passiveCount);
 
   if (!_products.length) {
     tbody.innerHTML = '';
     empty.style.display = '';
+    if (emptyText) emptyText.textContent = 'Henüz ürün yok. Etsy sync yapın veya products.json dosyasını güncelleyin.';
     count.textContent = '0 ürün';
     return;
   }
+
+  // Bilingual + status filter. Search matches TR title, EN title, category and id.
+  const q = _norm(_productQuery);
+  const filtered = _products.filter(p => {
+    const active = p.isActive !== false;
+    if (_productStatus === 'active' && !active) return false;
+    if (_productStatus === 'passive' && active) return false;
+    if (!q) return true;
+    return _norm(`${p.title_tr || ''} ${p.title_en || ''} ${p.category || ''} ${p.id || ''}`).includes(q);
+  });
+
+  const filtering = !!q || _productStatus !== 'all';
+  count.textContent = filtering ? `${filtered.length} / ${_products.length} ürün` : `${_products.length} ürün`;
+
+  if (!filtered.length) {
+    tbody.innerHTML = '';
+    empty.style.display = '';
+    if (emptyText) emptyText.textContent = 'Aramanıza / filtrenize uyan ürün yok.';
+    return;
+  }
   empty.style.display = 'none';
-  count.textContent = _products.length + ' ürün';
 
   const categoriesFromProducts = [...new Set(_products.map(p => p.category))].filter(Boolean);
   const categoriesFromCovers = Object.keys(_content.categoryCovers || {});
   const allCategories = [...new Set(['amigurumi', 'bag', 'decor', 'accessory', ...categoriesFromProducts, ...categoriesFromCovers])];
 
-  tbody.innerHTML = _products.map((p, i) => {
+  tbody.innerHTML = filtered.map((p) => {
     const isFeatured = (_content.featured || []).map(String).includes(String(p.id));
-    const name = p.title_tr || p.title_en || '(isimsiz)';
-    return `<tr>
+    const active = p.isActive !== false;
+    const nameTr = p.title_tr || '(TR başlık yok)';
+    const nameEn = p.title_en || '(EN başlık yok)';
+    return `<tr class="${active ? '' : 'prow-off'}">
       <td>${p.image ? `<img src="${p.image}" class="product-thumb" loading="lazy">` : '<div class="product-thumb-placeholder">🧶</div>'}</td>
-      <td><div style="font-weight:500;font-size:.84rem">${name}</div></td>
+      <td>
+        <div class="pname-tr">${esc(nameTr)}</div>
+        <div class="pname-en"><span class="lng">EN</span>${esc(nameEn)}</div>
+      </td>
       <td>
         <select class="cat-select" onchange="updateProductCat('${p.id}',this.value)">
           ${allCategories.map(c => `<option value="${c}" ${p.category===c?'selected':''}>${c}</option>`).join('')}
@@ -1899,14 +1966,59 @@ function renderProducts() {
           ${isFeatured ? '★' : '☆'}
         </button>
       </td>
-      <td><span class="badge ${p.isActive !== false ? 'badge-green' : 'badge-gray'}">${p.isActive !== false ? 'Aktif' : 'Pasif'}</span></td>
+      <td>
+        <label class="toggle" title="${active ? 'Satışta — pasife almak için tıkla' : 'Pasif — satışa açmak için tıkla'}">
+          <input type="checkbox" ${active ? 'checked' : ''} onchange="toggleProductActive('${p.id}', this)">
+          <span class="toggle-slider"></span>
+        </label>
+      </td>
       <td style="white-space:nowrap">
         <button class="btn-icon" onclick="editProduct('${p.id}')" title="Düzenle">✏️</button>
-        ${p.url ? `<a href="${p.url}" target="_blank" class="btn-icon" title="Etsy'de Gör">↗</a>` : ''}
-        <button class="btn-icon" onclick="confirmDeleteProduct('${p.id}', ${JSON.stringify(name)})" title="Sil">🗑️</button>
+        <button class="btn-icon" onclick="confirmDeleteProduct('${p.id}')" title="Sil">🗑️</button>
       </td>
     </tr>`;
   }).join('');
+}
+
+function onProductFilter() {
+  _productQuery = document.getElementById('product-search').value;
+  renderProducts();
+}
+
+function setProductStatus(status, btn) {
+  _productStatus = status;
+  document.querySelectorAll('#product-status-seg .seg-btn').forEach(b => b.classList.toggle('active', b === btn));
+  renderProducts();
+}
+
+// Quick sale on/off straight from the list. Sends the full product (the API
+// re-validates title_tr/en + price), optimistic UI with revert on failure.
+async function toggleProductActive(id, inputEl) {
+  const p = _products.find(x => String(x.id) === String(id));
+  if (!p) return;
+  const desired = inputEl.checked;
+  inputEl.disabled = true;
+  const payload = {
+    title_tr: p.title_tr, title_en: p.title_en,
+    description_tr: p.description_tr || '', description_en: p.description_en || '',
+    price: p.price, currency: p.currency || 'TRY', category: p.category || 'amigurumi',
+    image: p.image || undefined, url: p.url || undefined,
+    isActive: desired, isNew: !!p.isNew,
+  };
+  try {
+    const res = await fetch(`/api/admin/products/${encodeURIComponent(id)}`, {
+      method: 'PUT', headers: ADM_HDR, credentials: 'include', body: JSON.stringify(payload),
+    });
+    if (res.status === 501) throw new Error('GITHUB_TOKEN');
+    if (!res.ok) throw new Error('save');
+    p.isActive = desired;
+    renderProducts();
+    toast(desired ? 'Ürün satışa açıldı ✓ (site ~1-2 dk içinde yenilenir)' : 'Ürün satıştan kaldırıldı ✓', 'ok');
+  } catch (e) {
+    inputEl.checked = !desired;
+    inputEl.disabled = false;
+    toast(e.message === 'GITHUB_TOKEN' ? '⚠️ GITHUB_TOKEN ayarlı değil — kaydedilemedi.' : '⚠️ Güncellenemedi, tekrar deneyin.', 'err');
+  }
 }
 
 function showAddProduct() {
@@ -2033,6 +2145,7 @@ async function saveProduct() {
 }
 
 function confirmDeleteProduct(id, name) {
+  if (!name) { const p = _products.find(x => String(x.id) === String(id)); name = p ? (p.title_tr || p.title_en || 'Ürün') : 'Ürün'; }
   openModal('Ürünü Sil', `"${name}" isimli ürünü tamamen silmek istediğinizden emin misiniz?`, async () => {
     try {
       const res = await fetch(`/api/admin/products/${encodeURIComponent(id)}`, {
