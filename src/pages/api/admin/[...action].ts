@@ -626,6 +626,28 @@ async function router(method: string, context: APIContext): Promise<Response> {
       return json(raw ? JSON.parse(raw) : [], 200);
     }
 
+    // Update an order's fulfillment status / cargo tracking / internal note.
+    // Orders live in ADMIN_KV (written by the PayTR callback), so this is a KV
+    // write, not a GitHub commit.
+    if (method === 'POST' && action === 'order-update') {
+      if (!(await isAuthed(request, env))) return json({ error: 'invalid' }, 401);
+      const kv = env.ADMIN_KV;
+      if (!kv) return json({ error: 'no-kv' }, 500);
+      const body = await readBody(request);
+      if (!body || typeof body.orderId !== 'string') return json({ error: 'invalid' }, 400);
+      const ALLOWED = ['new', 'preparing', 'shipped', 'delivered', 'cancelled'];
+      const raw = await kv.get('orders');
+      const orders = raw ? JSON.parse(raw) : [];
+      const o = orders.find((x: any) => x.orderId === body.orderId);
+      if (!o) return json({ error: 'not-found' }, 404);
+      if (typeof body.fulfillment === 'string' && ALLOWED.includes(body.fulfillment)) o.fulfillment = body.fulfillment;
+      if (typeof body.tracking === 'string') o.tracking = body.tracking.slice(0, 120);
+      if (typeof body.note === 'string') o.note = body.note.slice(0, 500);
+      o.updatedAt = new Date().toISOString();
+      await kv.put('orders', JSON.stringify(orders));
+      return json({ ok: true, order: o }, 200);
+    }
+
     if (method === 'POST' && action === 'products') return await handleProductCreate(request, env);
     if (action.startsWith('products/')) {
       const id = decodeURIComponent(action.slice('products/'.length));

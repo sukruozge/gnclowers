@@ -423,6 +423,25 @@
     .ochart-bar:hover .ochart-fill { opacity: .78; }
     .ochart-lbl { font-size: .62rem; color: var(--muted-foreground); white-space: nowrap; }
 
+    /* ORDER FULFILLMENT (status pipeline + cargo tracking) */
+    .seg--wrap { flex-wrap: wrap; }
+    .ostatus2 { display: inline-flex; align-items: center; gap: 6px; font-size: .72rem; font-weight: 700; padding: 4px 11px; border-radius: 99px; }
+    .ostatus2 .odot { width: 7px; height: 7px; border-radius: 50%; }
+    .ofulfil { display: flex; flex-wrap: wrap; gap: 12px 16px; align-items: center; justify-content: space-between; padding: 13px 18px; border-top: 1px solid var(--border); }
+    .ofulfil-steps { display: flex; flex-wrap: wrap; gap: 6px; }
+    .ofstep { border: 1px solid var(--border); background: var(--card); color: var(--muted-foreground); font-size: .74rem; font-weight: 600; padding: 6px 12px; border-radius: 99px; cursor: pointer; font-family: inherit; transition: .15s; white-space: nowrap; }
+    .ofstep:hover { border-color: var(--primary); color: var(--primary); }
+    .ofstep.done { background: var(--secondary); color: var(--foreground); border-color: var(--border); }
+    .ofstep.active { background: var(--primary); border-color: var(--primary); color: #fff; }
+    .ofstep--cancel:hover { border-color: #ef4444; color: #ef4444; }
+    .ofstep--cancel.active { background: #ef4444; border-color: #ef4444; color: #fff; }
+    .ofulfil-track { display: flex; align-items: center; gap: 7px; }
+    .ofulfil-track .oico { opacity: .6; }
+    .oftrack-input { border: 1px solid var(--border); border-radius: 6px; padding: 6px 10px; font-size: .8rem; font-family: inherit; background: var(--secondary); color: var(--foreground); width: 170px; max-width: 48vw; }
+    .oftrack-input:focus { outline: none; border-color: var(--primary); background: var(--card); }
+    .ofsaved { font-size: .7rem; color: #16a34a; font-weight: 600; opacity: 0; transition: opacity .2s; }
+    .ofsaved.show { opacity: 1; }
+
     /* SYNC STATUS */
     .sync-status { display: flex; align-items: center; gap: 12px; font-size: .86rem; padding: 12px 16px; border-radius: var(--radius); background: var(--secondary); border: 1px solid var(--border); }
     .sync-dot { width: 10px; height: 10px; border-radius: 50%; }
@@ -1300,10 +1319,13 @@
         </div>
         <div class="card-body" style="padding:0">
           <div class="pfilter">
-            <div class="seg" id="order-status-seg">
-              <button class="seg-btn active" data-ostatus="all" onclick="setOrderStatus('all',this)">Tümü<span class="seg-n" id="osegn-all"></span></button>
-              <button class="seg-btn" data-ostatus="completed" onclick="setOrderStatus('completed',this)">Başarılı<span class="seg-n" id="osegn-completed"></span></button>
-              <button class="seg-btn" data-ostatus="failed" onclick="setOrderStatus('failed',this)">Başarısız<span class="seg-n" id="osegn-failed"></span></button>
+            <div class="seg seg--wrap" id="order-status-seg">
+              <button class="seg-btn active" onclick="setOrderStatus('all',this)">Tümü<span class="seg-n" id="osegn-all"></span></button>
+              <button class="seg-btn" onclick="setOrderStatus('new',this)">🆕 Yeni<span class="seg-n" id="osegn-new"></span></button>
+              <button class="seg-btn" onclick="setOrderStatus('preparing',this)">🧶 Hazırlanıyor<span class="seg-n" id="osegn-preparing"></span></button>
+              <button class="seg-btn" onclick="setOrderStatus('shipped',this)">📦 Kargolandı<span class="seg-n" id="osegn-shipped"></span></button>
+              <button class="seg-btn" onclick="setOrderStatus('delivered',this)">✅ Teslim<span class="seg-n" id="osegn-delivered"></span></button>
+              <button class="seg-btn" onclick="setOrderStatus('problem',this)">⚠️ Sorunlu<span class="seg-n" id="osegn-problem"></span></button>
             </div>
           </div>
           <div id="orders-list" class="orders-list"></div>
@@ -3030,7 +3052,7 @@ const _fmtTL2 = n => (Number(n) || 0).toLocaleString('tr-TR', { minimumFractionD
 
 // KPI cards + daily-revenue chart, computed from the period-filtered orders.
 function renderOrderStats(list) {
-  const done = list.filter(o => o.status === 'completed');
+  const done = list.filter(o => o.status === 'completed' && o.fulfillment !== 'cancelled');
   const revenue = done.reduce((s, o) => s + (Number(o.amount) || 0), 0);
   const qty = done.reduce((s, o) => s + (o.items || []).reduce((q, it) => q + (Number(it.qty) || 0), 0), 0);
   const avg = done.length ? revenue / done.length : 0;
@@ -3070,6 +3092,29 @@ function renderOrderChart(done) {
   }).join('');
 }
 
+// Fulfillment pipeline for PAID orders. new → preparing → shipped → delivered
+// (or cancelled). Failed payments have no fulfillment stage.
+const OFULF = {
+  new:       { label: 'Yeni',          color: '#f59e0b', icon: '🆕' },
+  preparing: { label: 'Hazırlanıyor',  color: '#8b5cf6', icon: '🧶' },
+  shipped:   { label: 'Kargolandı',    color: '#3b82f6', icon: '📦' },
+  delivered: { label: 'Teslim Edildi', color: '#22c55e', icon: '✅' },
+  cancelled: { label: 'İptal',         color: '#ef4444', icon: '✖' },
+};
+const OFULF_STEPS = ['new', 'preparing', 'shipped', 'delivered'];
+
+function ofulf(o) {
+  if (o.status !== 'completed') return null;
+  const k = o.fulfillment || 'new';
+  return OFULF[k] ? k : 'new';
+}
+
+function matchOrderFilter(o, key) {
+  if (key === 'all') return true;
+  if (key === 'problem') return o.status !== 'completed' || o.fulfillment === 'cancelled';
+  return ofulf(o) === key;
+}
+
 function renderOrders() {
   const listEl = document.getElementById('orders-list');
   const empty = document.getElementById('orders-empty');
@@ -3084,12 +3129,11 @@ function renderOrders() {
   renderOrderStats(inPeriod);
 
   const setN = (id, n) => { const e = document.getElementById(id); if (e) e.textContent = n; };
-  const completed = inPeriod.filter(o => o.status === 'completed').length;
   setN('osegn-all', inPeriod.length);
-  setN('osegn-completed', completed);
-  setN('osegn-failed', inPeriod.length - completed);
+  OFULF_STEPS.forEach(k => setN('osegn-' + k, inPeriod.filter(o => ofulf(o) === k).length));
+  setN('osegn-problem', inPeriod.filter(o => o.status !== 'completed' || o.fulfillment === 'cancelled').length);
 
-  const filtered = _orderStatus === 'all' ? inPeriod : inPeriod.filter(o => o.status === _orderStatus);
+  const filtered = inPeriod.filter(o => matchOrderFilter(o, _orderStatus));
   countEl.textContent = _orderStatus === 'all' ? `${inPeriod.length} sipariş` : `${filtered.length} / ${inPeriod.length} sipariş`;
 
   if (!filtered.length) {
@@ -3107,9 +3151,23 @@ function renderOrders() {
     const amtNum = Number(o.amount);
     const cur = (o.currency || 'TRY') === 'TRY' ? '₺' : esc(o.currency);
     const amtStr = isFinite(amtNum) ? amtNum.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ' + cur : esc(o.amount) + ' ' + cur;
+    const fkey = ofulf(o);
+    const meta = ok ? OFULF[fkey] : null;
     const status = ok
-      ? '<span class="ostatus ok"><span class="odot"></span>Başarılı</span>'
-      : '<span class="ostatus fail"><span class="odot"></span>Başarısız</span>';
+      ? `<span class="ostatus2" style="background:${meta.color}22;color:${meta.color}"><span class="odot" style="background:${meta.color}"></span>${meta.icon} ${meta.label}</span>`
+      : '<span class="ostatus fail"><span class="odot"></span>Ödeme Başarısız</span>';
+    const fulfilBar = ok ? (() => {
+      const curIdx = OFULF_STEPS.indexOf(fkey);
+      const steps = OFULF_STEPS.map((k, i) => {
+        const cls = curIdx >= 0 && i < curIdx ? 'done' : (k === fkey ? 'active' : '');
+        return `<button class="ofstep ${cls}" onclick="setOrderFulfillment('${o.orderId}','${k}')">${OFULF[k].icon} ${OFULF[k].label}</button>`;
+      }).join('');
+      const cancelBtn = `<button class="ofstep ofstep--cancel ${fkey === 'cancelled' ? 'active' : ''}" onclick="setOrderFulfillment('${o.orderId}','cancelled')">✖ İptal</button>`;
+      return `<div class="ofulfil"><div class="ofulfil-steps">${steps}${cancelBtn}</div>` +
+        `<div class="ofulfil-track"><span class="oico">🚚</span>` +
+        `<input class="oftrack-input" placeholder="Kargo takip no" value="${esc(o.tracking || '')}" onblur="saveOrderTracking('${o.orderId}',this)" onkeydown="if(event.key==='Enter'){this.blur();}">` +
+        `<span class="ofsaved" id="ofsaved-${esc(o.orderId)}">kaydedildi ✓</span></div></div>`;
+    })() : '';
     const items = (o.items && o.items.length)
       ? o.items.map(it => {
           const prod = _products.find(p => String(p.id) === String(it.id));
@@ -3130,6 +3188,7 @@ function renderOrders() {
         <span class="order-amt">${amtStr}</span>
       </div>
       <div class="order-items">${items}</div>
+      ${fulfilBar}
       <div class="order-body">
         <div>
           <div class="order-sec-label">Müşteri</div>
@@ -3156,6 +3215,38 @@ function copyOrderShip(btn) {
     () => { const t = btn.textContent; btn.textContent = 'Kopyalandı ✓'; setTimeout(() => { btn.textContent = t; }, 1500); },
     () => toast('Kopyalanamadı', 'err')
   );
+}
+
+// Persist an order's fulfillment stage / cargo tracking to KV (admin API).
+async function updateOrderStatus(orderId, patch) {
+  try {
+    const res = await fetch('/api/admin/order-update', {
+      method: 'POST', headers: ADM_HDR, credentials: 'include',
+      body: JSON.stringify({ orderId, ...patch }),
+    });
+    if (!res.ok) throw new Error();
+    const data = await res.json();
+    const o = _orders.find(x => x.orderId === orderId);
+    if (o && data.order) Object.assign(o, data.order);
+    return true;
+  } catch { toast('⚠️ Güncellenemedi, tekrar deneyin.', 'err'); return false; }
+}
+
+async function setOrderFulfillment(orderId, key) {
+  if (await updateOrderStatus(orderId, { fulfillment: key })) {
+    renderOrders();
+    toast('Sipariş durumu güncellendi ✓', 'ok');
+  }
+}
+
+async function saveOrderTracking(orderId, inputEl) {
+  const o = _orders.find(x => x.orderId === orderId);
+  const val = inputEl.value.trim();
+  if (o && (o.tracking || '') === val) return; // no change
+  if (await updateOrderStatus(orderId, { tracking: val })) {
+    const s = document.getElementById('ofsaved-' + orderId);
+    if (s) { s.classList.add('show'); setTimeout(() => s.classList.remove('show'), 1600); }
+  }
 }
 
 // HTML-escape any user-derived value before it is placed via innerHTML.
