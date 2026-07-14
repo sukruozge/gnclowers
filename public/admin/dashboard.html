@@ -406,6 +406,23 @@
     .order-copy:hover { background: var(--primary); color: #fff; border-color: var(--primary); }
     .order-fail { margin: 0 18px 16px; padding: 9px 13px; border-radius: 8px; background: rgba(239,68,68,.1); color: #ef4444; font-size: .82rem; font-weight: 500; }
 
+    /* ORDER STATS (KPIs + chart) */
+    .ostat-head { margin-bottom: 16px; }
+    .okpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 18px; }
+    @media (max-width: 820px) { .okpis { grid-template-columns: repeat(2, 1fr); } }
+    .okpi { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 15px 17px; }
+    .okpi-label { font-size: .7rem; font-weight: 600; letter-spacing: .03em; text-transform: uppercase; color: var(--muted-foreground); margin-bottom: 9px; display: flex; align-items: center; gap: 6px; }
+    .okpi-val { font-size: 1.5rem; font-weight: 800; color: var(--foreground); font-variant-numeric: tabular-nums; line-height: 1.05; }
+    .okpi-sub { font-size: .73rem; color: var(--muted-foreground); margin-top: 5px; }
+    .ochart-card { margin-bottom: 20px; }
+    .ochart { display: flex; align-items: flex-end; gap: 5px; height: 150px; }
+    .ochart-bar { flex: 1 1 0; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 6px; height: 100%; min-width: 0; }
+    .ochart-track { width: 100%; height: 100%; display: flex; align-items: flex-end; justify-content: center; }
+    .ochart-fill { width: 100%; max-width: 30px; min-height: 3px; background: var(--primary); border-radius: 5px 5px 0 0; transition: opacity .15s; }
+    .ochart-fill.is-zero { background: var(--border); }
+    .ochart-bar:hover .ochart-fill { opacity: .78; }
+    .ochart-lbl { font-size: .62rem; color: var(--muted-foreground); white-space: nowrap; }
+
     /* SYNC STATUS */
     .sync-status { display: flex; align-items: center; gap: 12px; font-size: .86rem; padding: 12px 16px; border-radius: var(--radius); background: var(--secondary); border: 1px solid var(--border); }
     .sync-dot { width: 10px; height: 10px; border-radius: 50%; }
@@ -1251,6 +1268,30 @@
     <div class="page" id="page-orders">
       <div class="page-title">Siparişler (PayTR)</div>
       <div class="page-subtitle">PayTR üzerinden gelen kredi kartı siparişleri</div>
+
+      <!-- PERIOD SELECTOR -->
+      <div class="ostat-head">
+        <div class="seg" id="order-period-seg">
+          <button class="seg-btn" data-operiod="today" onclick="setOrderPeriod('today',this)">Bugün</button>
+          <button class="seg-btn" data-operiod="7d" onclick="setOrderPeriod('7d',this)">Son 7 Gün</button>
+          <button class="seg-btn" data-operiod="30d" onclick="setOrderPeriod('30d',this)">Son 30 Gün</button>
+          <button class="seg-btn active" data-operiod="all" onclick="setOrderPeriod('all',this)">Tümü</button>
+        </div>
+      </div>
+
+      <!-- KPI CARDS -->
+      <div class="okpis" id="okpis"></div>
+
+      <!-- DAILY REVENUE CHART -->
+      <div class="card ochart-card">
+        <div class="card-header" style="display:flex; justify-content:space-between; align-items:center;">
+          <div class="card-title">Günlük Ciro</div>
+          <div id="ochart-sub" style="font-size:.78rem;color:var(--muted-foreground)"></div>
+        </div>
+        <div class="card-body">
+          <div id="ochart" class="ochart"></div>
+        </div>
+      </div>
 
       <div class="card">
         <div class="card-header" style="display:flex; justify-content:space-between; align-items:center;">
@@ -2945,6 +2986,7 @@ function changeChartFilter(type) {
 // ── ORDERS PAGE LOADER ──────────────────────────────────────
 let _orders = [];
 let _orderStatus = 'all'; // 'all' | 'completed' | 'failed'
+let _orderPeriod = 'all'; // 'today' | '7d' | '30d' | 'all'
 
 async function loadOrdersPage() {
   const listEl = document.getElementById('orders-list');
@@ -2968,33 +3010,92 @@ function setOrderStatus(status, btn) {
   renderOrders();
 }
 
+function setOrderPeriod(period, btn) {
+  _orderPeriod = period;
+  document.querySelectorAll('#order-period-seg .seg-btn').forEach(b => b.classList.toggle('active', b === btn));
+  renderOrders();
+}
+
+// Millisecond cutoff for the selected period (0 = all time).
+function orderPeriodCutoff() {
+  const now = Date.now();
+  if (_orderPeriod === 'today') { const d = new Date(); d.setHours(0, 0, 0, 0); return d.getTime(); }
+  if (_orderPeriod === '7d') return now - 7 * 86400000;
+  if (_orderPeriod === '30d') return now - 30 * 86400000;
+  return 0;
+}
+
+const _fmtTL0 = n => (Number(n) || 0).toLocaleString('tr-TR', { maximumFractionDigits: 0 });
+const _fmtTL2 = n => (Number(n) || 0).toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+// KPI cards + daily-revenue chart, computed from the period-filtered orders.
+function renderOrderStats(list) {
+  const done = list.filter(o => o.status === 'completed');
+  const revenue = done.reduce((s, o) => s + (Number(o.amount) || 0), 0);
+  const qty = done.reduce((s, o) => s + (o.items || []).reduce((q, it) => q + (Number(it.qty) || 0), 0), 0);
+  const avg = done.length ? revenue / done.length : 0;
+
+  const kpis = document.getElementById('okpis');
+  if (kpis) kpis.innerHTML =
+    `<div class="okpi"><div class="okpi-label">💰 Ciro</div><div class="okpi-val">${_fmtTL2(revenue)} ₺</div><div class="okpi-sub">${done.length} başarılı sipariş</div></div>` +
+    `<div class="okpi"><div class="okpi-label">📦 Sipariş</div><div class="okpi-val">${done.length}</div><div class="okpi-sub">${list.length} toplam işlem</div></div>` +
+    `<div class="okpi"><div class="okpi-label">🛒 Ort. Sepet</div><div class="okpi-val">${_fmtTL2(avg)} ₺</div><div class="okpi-sub">sipariş başına</div></div>` +
+    `<div class="okpi"><div class="okpi-label">🧶 Satılan Ürün</div><div class="okpi-val">${qty}</div><div class="okpi-sub">adet</div></div>`;
+
+  renderOrderChart(done);
+}
+
+function renderOrderChart(done) {
+  const chart = document.getElementById('ochart');
+  const sub = document.getElementById('ochart-sub');
+  if (!chart) return;
+  const days = (_orderPeriod === '30d' || _orderPeriod === 'all') ? 30 : 7;
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const buckets = [];
+  for (let i = days - 1; i >= 0; i--) { const d = new Date(today); d.setDate(d.getDate() - i); buckets.push({ d, rev: 0 }); }
+  done.forEach(o => {
+    const t = new Date(o.createdAt); if (isNaN(t)) return; t.setHours(0, 0, 0, 0);
+    const b = buckets.find(x => x.d.getTime() === t.getTime());
+    if (b) b.rev += Number(o.amount) || 0;
+  });
+  const max = Math.max(1, ...buckets.map(b => b.rev));
+  if (sub) sub.textContent = `son ${days} gün`;
+  chart.innerHTML = buckets.map(b => {
+    const h = Math.round((b.rev / max) * 100);
+    const lbl = b.d.toLocaleDateString('tr-TR', { day: '2-digit', month: '2-digit' });
+    const showLbl = days <= 7 || b.d.getDate() === 1 || b.d.getDate() % 5 === 0;
+    return `<div class="ochart-bar" title="${lbl}: ${b.rev ? _fmtTL0(b.rev) + ' ₺' : '0 ₺'}">` +
+      `<div class="ochart-track"><div class="ochart-fill ${b.rev ? '' : 'is-zero'}" style="height:${b.rev ? Math.max(h, 4) : 3}%"></div></div>` +
+      `<span class="ochart-lbl">${showLbl ? lbl : ''}</span></div>`;
+  }).join('');
+}
+
 function renderOrders() {
   const listEl = document.getElementById('orders-list');
   const empty = document.getElementById('orders-empty');
   const countEl = document.getElementById('orders-count');
   const emptyText = empty.querySelector('p');
 
-  const completed = _orders.filter(o => o.status === 'completed').length;
+  // Filter by the selected period first; KPIs, chart and status counts all
+  // reflect the chosen window (Bugün / 7 gün / 30 gün / Tümü).
+  const cutoff = orderPeriodCutoff();
+  const inPeriod = cutoff ? _orders.filter(o => new Date(o.createdAt).getTime() >= cutoff) : _orders;
+
+  renderOrderStats(inPeriod);
+
   const setN = (id, n) => { const e = document.getElementById(id); if (e) e.textContent = n; };
-  setN('osegn-all', _orders.length);
+  const completed = inPeriod.filter(o => o.status === 'completed').length;
+  setN('osegn-all', inPeriod.length);
   setN('osegn-completed', completed);
-  setN('osegn-failed', _orders.length - completed);
+  setN('osegn-failed', inPeriod.length - completed);
 
-  if (!_orders.length) {
-    listEl.innerHTML = '';
-    empty.style.display = 'block';
-    if (emptyText) emptyText.textContent = 'Henüz gelen ödeme/sipariş bulunmuyor.';
-    countEl.textContent = '0 sipariş';
-    return;
-  }
-
-  const filtered = _orderStatus === 'all' ? _orders : _orders.filter(o => o.status === _orderStatus);
-  countEl.textContent = _orderStatus === 'all' ? `${_orders.length} sipariş` : `${filtered.length} / ${_orders.length} sipariş`;
+  const filtered = _orderStatus === 'all' ? inPeriod : inPeriod.filter(o => o.status === _orderStatus);
+  countEl.textContent = _orderStatus === 'all' ? `${inPeriod.length} sipariş` : `${filtered.length} / ${inPeriod.length} sipariş`;
 
   if (!filtered.length) {
     listEl.innerHTML = '';
     empty.style.display = 'block';
-    if (emptyText) emptyText.textContent = 'Bu filtreye uyan sipariş yok.';
+    if (emptyText) emptyText.textContent = _orders.length ? 'Bu dönem/filtreye uyan sipariş yok.' : 'Henüz gelen ödeme/sipariş bulunmuyor.';
     return;
   }
   empty.style.display = 'none';
