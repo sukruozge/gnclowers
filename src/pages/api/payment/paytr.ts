@@ -44,10 +44,15 @@ export const POST: APIRoute = async (context) => {
     const address = clip(body.address, 400);
     const city = clip(body.city, 80);
     const country = clip(body.country, 8) || 'TR';
+    const province = clip(body.province, 60);
+    const district = clip(body.district, 60);
+    const postal = clip(body.postal, 12);
+    // For TR orders the shipping locality is İl + İlçe; fall back to raw city text.
+    const cityResolved = (province && district) ? `${district} / ${province}` : city;
     const currency = CURRENCIES.includes(body.currency) ? body.currency : 'TRY';
     const cart = body.cart;
 
-    if (!email || !name || !phone || !address || !city || !Array.isArray(cart) || cart.length === 0) {
+    if (!email || !name || !phone || !address || !cityResolved || !Array.isArray(cart) || cart.length === 0) {
       return json({ error: lang === 'en' ? 'Please check your details.' : 'Lütfen bilgilerinizi kontrol edin.' }, 400);
     }
 
@@ -101,7 +106,7 @@ export const POST: APIRoute = async (context) => {
           `pending_order:${merchant_oid}`,
           JSON.stringify({
             orderId: merchant_oid,
-            customer: { name, email, phone, address, city, country },
+            customer: { name, email, phone, address, city: cityResolved, province, district, postal, country },
             items,
             subtotal,
             shipping,

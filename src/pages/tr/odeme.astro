@@ -4,6 +4,7 @@ import Nav from '../../components/Nav.astro';
 import Footer from '../../components/Footer.astro';
 import { loadProducts } from '@lib/products';
 import settings from '../../data/settings.json';
+import trCities from '../../data/tr-cities.json';
 
 const allProducts = loadProducts();
 const shippingCfg = (settings as any).shipping || {};
@@ -55,25 +56,56 @@ const shippingCfg = (settings as any).shipping || {};
               </div>
 
               <div class="form-group">
-                <label for="c-address">Açık Adres</label>
-                <textarea id="c-address" name="street-address" autocomplete="street-address" required rows="3" placeholder="Mahalle, Cadde, Sokak, Kapı No, Daire"></textarea>
+                <label for="c-country">Ülke / Bölge</label>
+                <div class="select-wrap">
+                  <select id="c-country" name="country" autocomplete="country">
+                    <option value="TR" selected>Türkiye</option>
+                    <option value="INTL">Yurt dışı</option>
+                  </select>
+                  <svg class="select-wrap__caret" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+                </div>
               </div>
 
-              <div class="form-row">
+              <div class="form-row" id="row-tr">
                 <div class="form-group flex-1">
-                  <label for="c-city">Şehir / İlçe</label>
-                  <input type="text" id="c-city" name="address-level2" autocomplete="address-level2" required placeholder="Örn: İstanbul / Kadıköy" />
-                </div>
-                <div class="form-group flex-1">
-                  <label for="c-country">Ülke / Bölge</label>
+                  <label for="c-province">İl</label>
                   <div class="select-wrap">
-                    <select id="c-country" name="country" autocomplete="country">
-                      <option value="TR" selected>Türkiye</option>
-                      <option value="INTL">Yurt dışı</option>
+                    <select id="c-province" name="province" autocomplete="address-level1" required>
+                      <option value="" disabled selected>İl seçin…</option>
                     </select>
                     <svg class="select-wrap__caret" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
                   </div>
                 </div>
+                <div class="form-group flex-1">
+                  <label for="c-district">İlçe</label>
+                  <div class="select-wrap">
+                    <select id="c-district" name="district" autocomplete="address-level2" required disabled>
+                      <option value="" disabled selected>Önce il seçin</option>
+                    </select>
+                    <svg class="select-wrap__caret" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-row" id="row-intl" style="display: none;">
+                <div class="form-group flex-1">
+                  <label for="c-city-intl">Şehir (City)</label>
+                  <input type="text" id="c-city-intl" autocomplete="address-level2" placeholder="City" />
+                </div>
+                <div class="form-group flex-1">
+                  <label for="c-country-name">Ülke (Country)</label>
+                  <input type="text" id="c-country-name" autocomplete="country-name" placeholder="Country" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="c-address">Açık Adres</label>
+                <textarea id="c-address" name="street-address" autocomplete="street-address" required rows="3" placeholder="Mahalle, Cadde, Sokak, Bina/Kapı No, Daire"></textarea>
+              </div>
+
+              <div class="form-group">
+                <label for="c-postal">Posta Kodu <span class="lbl-opt">(opsiyonel)</span></label>
+                <input type="text" id="c-postal" name="postal-code" autocomplete="postal-code" inputmode="numeric" maxlength="5" placeholder="Örn: 34710" />
               </div>
 
               <div id="checkout-error" class="form-error" role="alert" style="display: none;"></div>
@@ -83,10 +115,24 @@ const shippingCfg = (settings as any).shipping || {};
                 Güvenli Ödemeye Geç
               </button>
 
-              <p class="secure-note">
-                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                256-bit SSL ile şifrelenir · Ödeme PayTR güvenli altyapısı üzerinden alınır
-              </p>
+              <div class="pay-trust">
+                <div class="pay-trust__row">
+                  <span class="pay-trust__seal">
+                    <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><path d="M12 2l8 3v6c0 5-3.4 9-8 11-4.6-2-8-6-8-11V5z"/><path d="M9 12l2 2 4-4"/></svg>
+                    <span><b>PayTR</b> güvenli ödeme</span>
+                  </span>
+                  <span class="cardmarks" aria-label="Kabul edilen kartlar">
+                    <span class="cardmark cardmark--visa">VISA</span>
+                    <span class="cardmark cardmark--mc"><i></i><i></i></span>
+                    <span class="cardmark cardmark--troy">troy</span>
+                  </span>
+                </div>
+                <ul class="pay-trust__points">
+                  <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> 256-bit SSL şifreleme</li>
+                  <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><path d="M12 2l8 3v6c0 5-3.4 9-8 11-4.6-2-8-6-8-11V5z"/><path d="M9 12l2 2 4-4"/></svg> 3D Secure doğrulama</li>
+                  <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></svg> Kart bilgileriniz bizde saklanmaz</li>
+                </ul>
+              </div>
             </form>
 
             <div id="paytr-container" class="formcard" style="display: none;">
@@ -128,7 +174,7 @@ const shippingCfg = (settings as any).shipping || {};
       </div>
     </section>
   </main>
-  <div id="cart-data" data-products={JSON.stringify(allProducts)} data-shipping={JSON.stringify(shippingCfg)} style="display: none;"></div>
+  <div id="cart-data" data-products={JSON.stringify(allProducts)} data-shipping={JSON.stringify(shippingCfg)} data-cities={JSON.stringify(trCities)} style="display: none;"></div>
   <Footer locale="tr" />
 
 <script>
@@ -191,6 +237,97 @@ const shippingCfg = (settings as any).shipping || {};
   updateTotals();
   countrySelect?.addEventListener('change', updateTotals);
 
+  // ── İl → İlçe (dependent dropdowns) + Türkiye / Yurt dışı toggle ──────
+  const cities = JSON.parse(document.getElementById('cart-data')?.getAttribute('data-cities') || '{}');
+  const provinceSel = document.getElementById('c-province') as HTMLSelectElement | null;
+  const districtSel = document.getElementById('c-district') as HTMLSelectElement | null;
+  const rowTr = document.getElementById('row-tr');
+  const rowIntl = document.getElementById('row-intl');
+  const cityIntl = document.getElementById('c-city-intl') as HTMLInputElement | null;
+
+  if (provinceSel) {
+    Object.keys(cities).sort((a, b) => a.localeCompare(b, 'tr')).forEach((il) => {
+      const o = document.createElement('option'); o.value = il; o.textContent = il; provinceSel.appendChild(o);
+    });
+  }
+  provinceSel?.addEventListener('change', () => {
+    if (!districtSel) return;
+    const list: string[] = cities[provinceSel.value] || [];
+    districtSel.innerHTML = '<option value="" disabled selected>İlçe seçin…</option>';
+    list.forEach((ilce) => { const o = document.createElement('option'); o.value = ilce; o.textContent = ilce; districtSel.appendChild(o); });
+    districtSel.disabled = list.length === 0;
+    clearErr(provinceSel); clearErr(districtSel);
+  });
+  districtSel?.addEventListener('change', () => clearErr(districtSel));
+
+  function applyCountry() {
+    const intl = (countrySelect?.value || 'TR') === 'INTL';
+    if (rowTr) rowTr.style.display = intl ? 'none' : '';
+    if (rowIntl) rowIntl.style.display = intl ? '' : 'none';
+    if (provinceSel) provinceSel.required = !intl;
+    if (districtSel) districtSel.required = !intl;
+    if (cityIntl) cityIntl.required = intl;
+  }
+  countrySelect?.addEventListener('change', applyCountry);
+  applyCountry();
+
+  // ── Validation — every required field checked; no garbage gets through ──
+  const val = (id: string) => ((document.getElementById(id) as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement | null)?.value || '').trim();
+  const normPhone = (v: string) => v.replace(/[^0-9]/g, '');
+  function fieldGroup(el: HTMLElement) { return el.closest('.form-group'); }
+  function setErr(el: HTMLElement, msg: string) {
+    el.classList.add('is-invalid');
+    const g = fieldGroup(el); if (!g) return;
+    let s = g.querySelector('.fielderr') as HTMLElement | null;
+    if (!s) { s = document.createElement('span'); s.className = 'fielderr'; g.appendChild(s); }
+    s.textContent = msg;
+  }
+  function clearErr(el: HTMLElement | null) {
+    if (!el) return;
+    el.classList.remove('is-invalid');
+    const s = fieldGroup(el)?.querySelector('.fielderr') as HTMLElement | null;
+    if (s) s.textContent = '';
+  }
+  function validate(): boolean {
+    let ok = true; let firstBad: HTMLElement | null = null;
+    const fail = (id: string, msg: string) => {
+      const el = document.getElementById(id); if (el) { setErr(el, msg); if (!firstBad) firstBad = el; } ok = false;
+    };
+    const pass = (id: string) => clearErr(document.getElementById(id));
+    const intl = (countrySelect?.value || 'TR') === 'INTL';
+
+    const nameV = val('c-name');
+    if (nameV.length < 3 || !/\s/.test(nameV)) fail('c-name', 'Lütfen ad ve soyadınızı girin.'); else pass('c-name');
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(val('c-email'))) fail('c-email', 'Geçerli bir e-posta adresi girin.'); else pass('c-email');
+
+    const phoneD = normPhone(val('c-phone'));
+    if (intl) { if (phoneD.length < 7) fail('c-phone', 'Geçerli bir telefon numarası girin.'); else pass('c-phone'); }
+    else {
+      const d = phoneD.replace(/^90/, '').replace(/^0/, '');
+      if (!(d.length === 10 && d.startsWith('5'))) fail('c-phone', 'Geçerli bir cep telefonu girin (05XX XXX XX XX).'); else pass('c-phone');
+    }
+
+    if (intl) {
+      if (val('c-city-intl').length < 2) fail('c-city-intl', 'Şehir girin.'); else pass('c-city-intl');
+      if (val('c-country-name').length < 2) fail('c-country-name', 'Ülke girin.'); else pass('c-country-name');
+    } else {
+      if (!val('c-province')) fail('c-province', 'İl seçin.'); else pass('c-province');
+      if (!val('c-district')) fail('c-district', 'İlçe seçin.'); else pass('c-district');
+    }
+
+    if (val('c-address').length < 10) fail('c-address', 'Açık adresinizi tam yazın (mahalle, sokak, kapı no).'); else pass('c-address');
+
+    const postalV = val('c-postal');
+    if (!intl && postalV && !/^[0-9]{5}$/.test(postalV)) fail('c-postal', 'Posta kodu 5 haneli olmalı.'); else pass('c-postal');
+
+    if (firstBad) { (firstBad as HTMLElement).focus({ preventScroll: true }); (firstBad as HTMLElement).scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+    return ok;
+  }
+  ['c-name', 'c-email', 'c-phone', 'c-address', 'c-postal', 'c-city-intl', 'c-country-name'].forEach((id) => {
+    document.getElementById(id)?.addEventListener('input', function (this: HTMLElement) { clearErr(this); });
+  });
+
   const form = document.getElementById('checkout-form') as HTMLFormElement | null;
   const paytrContainer = document.getElementById('paytr-container');
   const iframeWrapper = document.getElementById('paytr-iframe-wrapper');
@@ -200,18 +337,23 @@ const shippingCfg = (settings as any).shipping || {};
   form?.addEventListener('submit', async (e) => {
     e.preventDefault();
     if (!submitBtn) return;
+    if (!validate()) return;
     submitBtn.disabled = true;
     submitBtn.classList.add('is-loading');
     submitBtn.textContent = 'Ödeme oturumu açılıyor…';
     if (errorEl) errorEl.style.display = 'none';
 
+    const intl = (countrySelect?.value || 'TR') === 'INTL';
     const payload = {
-      name: (document.getElementById('c-name') as HTMLInputElement).value,
-      email: (document.getElementById('c-email') as HTMLInputElement).value,
-      phone: (document.getElementById('c-phone') as HTMLInputElement).value,
-      address: (document.getElementById('c-address') as HTMLTextAreaElement).value,
-      city: (document.getElementById('c-city') as HTMLInputElement).value,
-      country: (document.getElementById('c-country') as HTMLSelectElement).value,
+      name: val('c-name'),
+      email: val('c-email'),
+      phone: val('c-phone'),
+      address: val('c-address'),
+      country: intl ? 'INTL' : 'TR',
+      province: intl ? '' : val('c-province'),
+      district: intl ? '' : val('c-district'),
+      city: intl ? [val('c-city-intl'), val('c-country-name')].filter(Boolean).join(', ') : '',
+      postal: val('c-postal'),
       cart: cart.map(x => ({ id: x.id, quantity: x.quantity })),
       currency: currency,
       lang: 'tr'
@@ -316,6 +458,31 @@ const shippingCfg = (settings as any).shipping || {};
     .checkout__submit.is-loading { opacity: .75; cursor: progress; }
     .secure-note { display: flex; align-items: center; justify-content: center; gap: 7px; text-align: center; font-size: .8rem; color: var(--muted); margin: var(--space-3) 0 0; }
     .secure-note svg { color: var(--accent); flex-shrink: 0; }
+
+    /* Inline field validation */
+    .lbl-opt { font-weight: 400; color: var(--muted); font-size: .78rem; }
+    .fielderr { display: block; color: #dc2626; font-size: .78rem; margin-top: 5px; font-weight: 500; }
+    .form-group input.is-invalid, .form-group textarea.is-invalid, .form-group select.is-invalid {
+      border-color: #dc2626; box-shadow: 0 0 0 3px color-mix(in srgb, #dc2626 14%, transparent);
+    }
+
+    /* Payment-security / trust bar */
+    .pay-trust { margin-top: var(--space-4); padding: var(--space-4); border: 1px solid var(--line); border-radius: 14px; background: color-mix(in srgb, var(--accent) 4%, var(--surface)); }
+    .pay-trust__row { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); flex-wrap: wrap; }
+    .pay-trust__seal { display: inline-flex; align-items: center; gap: 8px; font-size: .92rem; color: var(--ink); }
+    .pay-trust__seal svg { color: #16a34a; flex-shrink: 0; }
+    .pay-trust__seal b { color: var(--accent-ink); font-weight: 800; }
+    .cardmarks { display: inline-flex; align-items: center; gap: 7px; }
+    .cardmark { height: 26px; min-width: 42px; padding: 0 8px; display: inline-flex; align-items: center; justify-content: center; border-radius: 5px; background: #fff; border: 1px solid var(--line); font-size: .72rem; font-weight: 800; }
+    .cardmark--visa { color: #1a1f71; font-style: italic; letter-spacing: .04em; }
+    .cardmark--troy { color: #00a1a1; font-style: italic; }
+    .cardmark--mc { padding: 0 10px; }
+    .cardmark--mc i { width: 15px; height: 15px; border-radius: 50%; display: block; }
+    .cardmark--mc i:first-child { background: #eb001b; }
+    .cardmark--mc i:last-child { background: #f79e1b; margin-left: -7px; mix-blend-mode: multiply; }
+    .pay-trust__points { list-style: none; margin: var(--space-3) 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px 16px; }
+    .pay-trust__points li { display: inline-flex; align-items: center; gap: 6px; font-size: .8rem; color: var(--muted); }
+    .pay-trust__points svg { color: #16a34a; flex-shrink: 0; }
 
     .paytr-desc { font-size: 0.9rem; color: var(--muted); margin-bottom: var(--space-4); }
     /* Grid/flex children default to min-width:auto and refuse to shrink below

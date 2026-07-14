@@ -83,10 +83,24 @@ const shippingCfg = (settings as any).shipping || {};
                 Proceed to Secure Payment
               </button>
 
-              <p class="secure-note">
-                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                256-bit SSL encrypted · Payment processed securely by PayTR
-              </p>
+              <div class="pay-trust">
+                <div class="pay-trust__row">
+                  <span class="pay-trust__seal">
+                    <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><path d="M12 2l8 3v6c0 5-3.4 9-8 11-4.6-2-8-6-8-11V5z"/><path d="M9 12l2 2 4-4"/></svg>
+                    <span><b>PayTR</b> secure payment</span>
+                  </span>
+                  <span class="cardmarks" aria-label="Accepted cards">
+                    <span class="cardmark cardmark--visa">VISA</span>
+                    <span class="cardmark cardmark--mc"><i></i><i></i></span>
+                    <span class="cardmark cardmark--troy">troy</span>
+                  </span>
+                </div>
+                <ul class="pay-trust__points">
+                  <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> 256-bit SSL encryption</li>
+                  <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><path d="M12 2l8 3v6c0 5-3.4 9-8 11-4.6-2-8-6-8-11V5z"/><path d="M9 12l2 2 4-4"/></svg> 3D Secure verification</li>
+                  <li><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></svg> Your card details are never stored by us</li>
+                </ul>
+              </div>
             </form>
 
             <div id="paytr-container" class="formcard" style="display: none;">
@@ -197,9 +211,43 @@ const shippingCfg = (settings as any).shipping || {};
   const errorEl = document.getElementById('checkout-error');
   const submitBtn = document.getElementById('checkout-submit-btn') as HTMLButtonElement | null;
 
+  // ── Validation — required fields checked so no incomplete/garbage order ──
+  const val = (id: string) => ((document.getElementById(id) as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement | null)?.value || '').trim();
+  function fieldGroup(el: HTMLElement) { return el.closest('.form-group'); }
+  function setErr(el: HTMLElement, msg: string) {
+    el.classList.add('is-invalid');
+    const g = fieldGroup(el); if (!g) return;
+    let s = g.querySelector('.fielderr') as HTMLElement | null;
+    if (!s) { s = document.createElement('span'); s.className = 'fielderr'; g.appendChild(s); }
+    s.textContent = msg;
+  }
+  function clearErr(el: HTMLElement | null) {
+    if (!el) return;
+    el.classList.remove('is-invalid');
+    const s = fieldGroup(el)?.querySelector('.fielderr') as HTMLElement | null;
+    if (s) s.textContent = '';
+  }
+  function validate(): boolean {
+    let ok = true; let firstBad: HTMLElement | null = null;
+    const fail = (id: string, msg: string) => { const el = document.getElementById(id); if (el) { setErr(el, msg); if (!firstBad) firstBad = el; } ok = false; };
+    const pass = (id: string) => clearErr(document.getElementById(id));
+    const nameV = val('c-name');
+    if (nameV.length < 3 || !/\s/.test(nameV)) fail('c-name', 'Please enter your full name.'); else pass('c-name');
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(val('c-email'))) fail('c-email', 'Enter a valid email address.'); else pass('c-email');
+    if (val('c-phone').replace(/[^0-9]/g, '').length < 7) fail('c-phone', 'Enter a valid phone number.'); else pass('c-phone');
+    if (val('c-address').length < 10) fail('c-address', 'Please enter your full address.'); else pass('c-address');
+    if (val('c-city').length < 3) fail('c-city', 'Enter your city / state / zip.'); else pass('c-city');
+    if (firstBad) { (firstBad as HTMLElement).focus({ preventScroll: true }); (firstBad as HTMLElement).scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+    return ok;
+  }
+  ['c-name', 'c-email', 'c-phone', 'c-address', 'c-city'].forEach((id) => {
+    document.getElementById(id)?.addEventListener('input', function (this: HTMLElement) { clearErr(this); });
+  });
+
   form?.addEventListener('submit', async (e) => {
     e.preventDefault();
     if (!submitBtn) return;
+    if (!validate()) return;
     submitBtn.disabled = true;
     submitBtn.classList.add('is-loading');
     submitBtn.textContent = 'Opening payment session…';
@@ -316,6 +364,30 @@ const shippingCfg = (settings as any).shipping || {};
     .checkout__submit.is-loading { opacity: .75; cursor: progress; }
     .secure-note { display: flex; align-items: center; justify-content: center; gap: 7px; text-align: center; font-size: .8rem; color: var(--muted); margin: var(--space-3) 0 0; }
     .secure-note svg { color: var(--accent); flex-shrink: 0; }
+
+    /* Inline field validation */
+    .fielderr { display: block; color: #dc2626; font-size: .78rem; margin-top: 5px; font-weight: 500; }
+    .form-group input.is-invalid, .form-group textarea.is-invalid, .form-group select.is-invalid {
+      border-color: #dc2626; box-shadow: 0 0 0 3px color-mix(in srgb, #dc2626 14%, transparent);
+    }
+
+    /* Payment-security / trust bar */
+    .pay-trust { margin-top: var(--space-4); padding: var(--space-4); border: 1px solid var(--line); border-radius: 14px; background: color-mix(in srgb, var(--accent) 4%, var(--surface)); }
+    .pay-trust__row { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); flex-wrap: wrap; }
+    .pay-trust__seal { display: inline-flex; align-items: center; gap: 8px; font-size: .92rem; color: var(--ink); }
+    .pay-trust__seal svg { color: #16a34a; flex-shrink: 0; }
+    .pay-trust__seal b { color: var(--accent-ink); font-weight: 800; }
+    .cardmarks { display: inline-flex; align-items: center; gap: 7px; }
+    .cardmark { height: 26px; min-width: 42px; padding: 0 8px; display: inline-flex; align-items: center; justify-content: center; border-radius: 5px; background: #fff; border: 1px solid var(--line); font-size: .72rem; font-weight: 800; }
+    .cardmark--visa { color: #1a1f71; font-style: italic; letter-spacing: .04em; }
+    .cardmark--troy { color: #00a1a1; font-style: italic; }
+    .cardmark--mc { padding: 0 10px; }
+    .cardmark--mc i { width: 15px; height: 15px; border-radius: 50%; display: block; }
+    .cardmark--mc i:first-child { background: #eb001b; }
+    .cardmark--mc i:last-child { background: #f79e1b; margin-left: -7px; mix-blend-mode: multiply; }
+    .pay-trust__points { list-style: none; margin: var(--space-3) 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px 16px; }
+    .pay-trust__points li { display: inline-flex; align-items: center; gap: 6px; font-size: .8rem; color: var(--muted); }
+    .pay-trust__points svg { color: #16a34a; flex-shrink: 0; }
 
     .paytr-desc { font-size: 0.9rem; color: var(--muted); margin-bottom: var(--space-4); }
     /* Grid/flex children default to min-width:auto and refuse to shrink below

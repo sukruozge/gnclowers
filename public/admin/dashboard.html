@@ -394,7 +394,11 @@
     .oc-top { display: flex; align-items: flex-start; gap: 12px; padding: 14px 18px; border-bottom: 1px solid var(--border); }
     .oc-buyer { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
     .oc-name { font-size: 1rem; font-weight: 700; color: var(--foreground); }
-    .oc-id { font-family: ui-monospace, monospace; font-size: .69rem; color: var(--muted-foreground); }
+    .oc-id { display: inline-flex; align-items: center; gap: 7px; flex-wrap: wrap; font-size: .72rem; color: var(--muted-foreground); }
+    .oc-no { font-family: ui-monospace, monospace; font-weight: 700; color: var(--foreground); letter-spacing: .02em; }
+    .oc-sep { opacity: .45; }
+    .oc-copyid { background: none; border: none; color: var(--primary); font-size: .68rem; font-weight: 600; cursor: pointer; font-family: inherit; padding: 0; text-decoration: underline; text-underline-offset: 2px; }
+    .oc-copyid:hover { opacity: .75; }
     .oc-amt { margin-left: auto; font-size: 1.18rem; font-weight: 800; color: var(--foreground); white-space: nowrap; font-variant-numeric: tabular-nums; }
 
     /* Card main: items | shipping */
@@ -404,10 +408,12 @@
     @media (max-width: 760px) { .oc-main { grid-template-columns: 1fr; } .oc-ship { border-left: none; border-top: 1px solid var(--border); } }
     .oi-info { min-width: 0; }
     .oi-sub { font-size: .76rem; color: var(--muted-foreground); margin-top: 2px; font-variant-numeric: tabular-nums; }
-    .oc-meta { display: flex; flex-direction: column; gap: 5px; margin-top: 11px; }
-    .oc-metarow { font-size: .82rem; color: var(--foreground); display: flex; gap: 8px; align-items: baseline; }
-    .oc-metarow .oico { width: 15px; opacity: .55; flex: none; text-align: center; }
+    .oc-meta { display: flex; flex-direction: column; gap: 6px; margin-top: 12px; padding-top: 11px; border-top: 1px solid var(--border); }
+    .oc-metarow { font-size: .82rem; color: var(--foreground); display: flex; gap: 10px; align-items: baseline; }
+    .oc-metak { min-width: 54px; color: var(--muted-foreground); font-size: .66rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; flex: none; }
     .oc-metarow a { color: var(--primary); }
+    .oi-thumb--ph { color: var(--muted-foreground); }
+    .oftrack-label { font-size: .72rem; color: var(--muted-foreground); font-weight: 600; }
     .order-head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 13px 18px; border-bottom: 1px solid var(--border); }
     .ostatus { display: inline-flex; align-items: center; gap: 6px; font-size: .7rem; font-weight: 700; letter-spacing: .02em; padding: 4px 11px; border-radius: 99px; }
     .ostatus .odot { width: 7px; height: 7px; border-radius: 50%; }
@@ -1339,11 +1345,11 @@
           <div class="pfilter">
             <div class="seg seg--wrap" id="order-status-seg">
               <button class="seg-btn active" onclick="setOrderStatus('all',this)">Tümü<span class="seg-n" id="osegn-all"></span></button>
-              <button class="seg-btn" onclick="setOrderStatus('new',this)">🆕 Yeni<span class="seg-n" id="osegn-new"></span></button>
-              <button class="seg-btn" onclick="setOrderStatus('preparing',this)">🧶 Hazırlanıyor<span class="seg-n" id="osegn-preparing"></span></button>
-              <button class="seg-btn" onclick="setOrderStatus('shipped',this)">📦 Kargolandı<span class="seg-n" id="osegn-shipped"></span></button>
-              <button class="seg-btn" onclick="setOrderStatus('delivered',this)">✅ Teslim<span class="seg-n" id="osegn-delivered"></span></button>
-              <button class="seg-btn" onclick="setOrderStatus('problem',this)">⚠️ Sorunlu<span class="seg-n" id="osegn-problem"></span></button>
+              <button class="seg-btn" onclick="setOrderStatus('new',this)">Yeni<span class="seg-n" id="osegn-new"></span></button>
+              <button class="seg-btn" onclick="setOrderStatus('preparing',this)">Hazırlanıyor<span class="seg-n" id="osegn-preparing"></span></button>
+              <button class="seg-btn" onclick="setOrderStatus('shipped',this)">Kargolandı<span class="seg-n" id="osegn-shipped"></span></button>
+              <button class="seg-btn" onclick="setOrderStatus('delivered',this)">Teslim<span class="seg-n" id="osegn-delivered"></span></button>
+              <button class="seg-btn" onclick="setOrderStatus('problem',this)">Sorunlu<span class="seg-n" id="osegn-problem"></span></button>
             </div>
           </div>
           <div id="orders-list" class="orders-list"></div>
@@ -3077,10 +3083,10 @@ function renderOrderStats(list) {
 
   const kpis = document.getElementById('okpis');
   if (kpis) kpis.innerHTML =
-    `<div class="okpi"><div class="okpi-label">💰 Ciro</div><div class="okpi-val">${_fmtTL2(revenue)} ₺</div><div class="okpi-sub">${done.length} başarılı sipariş</div></div>` +
-    `<div class="okpi"><div class="okpi-label">📦 Sipariş</div><div class="okpi-val">${done.length}</div><div class="okpi-sub">${list.length} toplam işlem</div></div>` +
-    `<div class="okpi"><div class="okpi-label">🛒 Ort. Sepet</div><div class="okpi-val">${_fmtTL2(avg)} ₺</div><div class="okpi-sub">sipariş başına</div></div>` +
-    `<div class="okpi"><div class="okpi-label">🧶 Satılan Ürün</div><div class="okpi-val">${qty}</div><div class="okpi-sub">adet</div></div>`;
+    `<div class="okpi"><div class="okpi-label">Ciro</div><div class="okpi-val">${_fmtTL2(revenue)} ₺</div><div class="okpi-sub">${done.length} başarılı sipariş</div></div>` +
+    `<div class="okpi"><div class="okpi-label">Sipariş</div><div class="okpi-val">${done.length}</div><div class="okpi-sub">${list.length} toplam işlem</div></div>` +
+    `<div class="okpi"><div class="okpi-label">Ort. Sepet</div><div class="okpi-val">${_fmtTL2(avg)} ₺</div><div class="okpi-sub">sipariş başına</div></div>` +
+    `<div class="okpi"><div class="okpi-label">Satılan Ürün</div><div class="okpi-val">${qty}</div><div class="okpi-sub">adet</div></div>`;
 
   renderOrderChart(done);
 }
@@ -3248,13 +3254,13 @@ function orderCardHTML(o) {
     const curIdx = OFULF_STEPS.indexOf(fkey);
     const steps = OFULF_STEPS.map((k, i) => {
       const cls = curIdx >= 0 && i < curIdx ? 'done' : (k === fkey ? 'active' : '');
-      return `<button class="ofstep ${cls}" onclick="setOrderFulfillment('${o.orderId}','${k}')">${OFULF[k].icon} ${OFULF[k].label}</button>`;
+      return `<button class="ofstep ${cls}" onclick="setOrderFulfillment('${o.orderId}','${k}')">${OFULF[k].label}</button>`;
     }).join('');
-    const cancelBtn = `<button class="ofstep ofstep--cancel ${fkey === 'cancelled' ? 'active' : ''}" onclick="setOrderFulfillment('${o.orderId}','cancelled')">✖ İptal</button>`;
+    const cancelBtn = `<button class="ofstep ofstep--cancel ${fkey === 'cancelled' ? 'active' : ''}" onclick="setOrderFulfillment('${o.orderId}','cancelled')">İptal</button>`;
     return `<div class="ofulfil"><div class="ofulfil-steps">${steps}${cancelBtn}</div>` +
-      `<div class="ofulfil-track"><span class="oico">🚚</span>` +
-      `<input class="oftrack-input" placeholder="Kargo takip no" value="${esc(o.tracking || '')}" onblur="saveOrderTracking('${o.orderId}',this)" onkeydown="if(event.key==='Enter'){this.blur();}">` +
-      `<span class="ofsaved" id="ofsaved-${esc(o.orderId)}">kaydedildi ✓</span></div></div>`;
+      `<div class="ofulfil-track"><span class="oftrack-label">Kargo takip</span>` +
+      `<input class="oftrack-input" placeholder="Takip numarası" value="${esc(o.tracking || '')}" onblur="saveOrderTracking('${o.orderId}',this)" onkeydown="if(event.key==='Enter'){this.blur();}">` +
+      `<span class="ofsaved" id="ofsaved-${esc(o.orderId)}">kaydedildi</span></div></div>`;
   })() : '';
 
   const items = (o.items && o.items.length)
@@ -3263,7 +3269,7 @@ function orderCardHTML(o) {
         const img = it.image || (prod && prod.image) || '';
         const thumb = img
           ? `<img class="oi-thumb" src="${esc(img)}" alt="" loading="lazy">`
-          : '<div class="oi-thumb oi-thumb--ph">🧶</div>';
+          : '<div class="oi-thumb oi-thumb--ph"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/></svg></div>';
         const q = Number(it.qty) || 1;
         const priceNum = Number(it.price);
         const lineSub = isFinite(priceNum) ? `${q} × ${_fmtTL2(priceNum)} ₺` : `${esc(it.qty)} adet`;
@@ -3272,36 +3278,49 @@ function orderCardHTML(o) {
       }).join('')
     : '<div class="order-item"><div class="oi-title" style="color:var(--muted-foreground)">Ürün bilgisi kaydedilmemiş</div></div>';
 
-  const addrBlock = [esc(c.address || ''), esc([c.city, c.country].filter(Boolean).join(' / '))].filter(Boolean).join('\n') || '—';
-  const shipText = encodeURIComponent([c.name, c.address, [c.city, c.country].filter(Boolean).join(' / '), c.phone, c.email].filter(Boolean).join('\n'));
+  const locality = [c.city, c.country && c.country !== 'TR' ? c.country : ''].filter(Boolean).join(' · ');
+  const addrBlock = [esc(c.address || ''), esc(locality), c.postal ? esc('Posta kodu: ' + c.postal) : ''].filter(Boolean).join('\n') || '—';
+  const shipText = encodeURIComponent([c.name, c.address, locality, c.postal ? 'Posta: ' + c.postal : '', c.phone, c.email].filter(Boolean).join('\n'));
   const shipCost = Number(o.shipping);
   const shipLine = isFinite(shipCost) ? (shipCost > 0 ? `${_fmtTL2(shipCost)} ₺` : 'Ücretsiz') : '—';
+  // Short, human-readable order code for scanning; full merchant_oid stays copyable.
+  const shortId = String(o.orderId || '').replace(/[^a-z0-9]/gi, '').slice(-6).toUpperCase() || '—';
 
   return `<article class="order-card ${ok ? '' : 'is-failed'}">
     <div class="oc-top">
       <div class="oc-buyer">
         <span class="oc-name">${esc(c.name || 'Misafir')}</span>
-        <span class="oc-id">${esc(o.orderId)} · ${dateStr}</span>
+        <span class="oc-id"><span class="oc-no">#${shortId}</span><span class="oc-sep">·</span>${dateStr}<button class="oc-copyid" data-oid="${esc(o.orderId)}" onclick="copyOrderId(this)" title="Tam sipariş no: ${esc(o.orderId)}">no'yu kopyala</button></span>
       </div>
       <div class="oc-amt">${amtStr}</div>
     </div>
     <div class="oc-main">
       <div class="oc-items">${items}</div>
       <div class="oc-ship">
-        <div class="order-sec-label">Teslimat
-          <button class="order-copy" data-ship="${shipText}" onclick="copyOrderShip(this)">📋 Kopyala</button>
+        <div class="order-sec-label">Teslimat adresi
+          <button class="order-copy" data-ship="${shipText}" onclick="copyOrderShip(this)">Kopyala</button>
         </div>
         <div class="order-addr">${addrBlock}</div>
         <div class="oc-meta">
-          <span class="oc-metarow"><span class="oico">📞</span>${c.phone ? `<a href="tel:${esc(c.phone)}">${esc(c.phone)}</a>` : '—'}</span>
-          <span class="oc-metarow"><span class="oico">✉️</span>${c.email ? `<a href="mailto:${esc(c.email)}">${esc(c.email)}</a>` : '—'}</span>
-          <span class="oc-metarow"><span class="oico">🚚</span>Kargo: ${shipLine}</span>
+          <span class="oc-metarow"><span class="oc-metak">Tel</span>${c.phone ? `<a href="tel:${esc(c.phone)}">${esc(c.phone)}</a>` : '—'}</span>
+          <span class="oc-metarow"><span class="oc-metak">E-posta</span>${c.email ? `<a href="mailto:${esc(c.email)}">${esc(c.email)}</a>` : '—'}</span>
+          <span class="oc-metarow"><span class="oc-metak">Kargo</span>${shipLine}</span>
         </div>
       </div>
     </div>
     ${fulfilBar}
-    ${!ok && o.failedReason ? `<div class="order-fail">⚠️ ${esc(o.failedReason)}</div>` : ''}
+    ${!ok && o.failedReason ? `<div class="order-fail">Ödeme başarısız — ${esc(o.failedReason)}</div>` : ''}
   </article>`;
+}
+
+// Copy the full merchant_oid (the short #code shown is just for scanning).
+function copyOrderId(btn) {
+  const oid = btn.dataset.oid || '';
+  if (!navigator.clipboard) { toast('Kopyalama desteklenmiyor', 'err'); return; }
+  navigator.clipboard.writeText(oid).then(
+    () => { const t = btn.textContent; btn.textContent = 'kopyalandı'; setTimeout(() => { btn.textContent = t; }, 1400); },
+    () => toast('Kopyalanamadı', 'err')
+  );
 }
 
 function copyOrderShip(btn) {
