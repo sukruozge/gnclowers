@@ -8,8 +8,17 @@ export const POST: APIRoute = async (context) => {
   const runtime = (locals as any).runtime;
   const env = runtime?.env ?? {};
 
-  const PAYTR_MERCHANT_KEY = env.PAYTR_MERCHANT_KEY || 'test_merchant_key';
-  const PAYTR_MERCHANT_SALT = env.PAYTR_MERCHANT_SALT || 'test_merchant_salt';
+  const PAYTR_MERCHANT_KEY = env.PAYTR_MERCHANT_KEY;
+  const PAYTR_MERCHANT_SALT = env.PAYTR_MERCHANT_SALT;
+
+  // Never fall back to public/literal test credentials here. If the merchant
+  // keys aren't configured, the signature check would use a well-known salt/key
+  // and ANY anonymous caller could forge a valid "success" callback to mark
+  // orders paid. When unconfigured, reject outright.
+  if (!PAYTR_MERCHANT_KEY || !PAYTR_MERCHANT_SALT) {
+    console.warn('[PayTR Callback] merchant creds not configured — rejecting callback');
+    return new Response('FAIL');
+  }
 
   try {
     const formData = await request.formData();

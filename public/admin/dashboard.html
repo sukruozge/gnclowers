@@ -2835,27 +2835,36 @@ async function loadOrdersPage() {
       
       const c = o.customer || null;
       const custHtml = c
-        ? `${c.name || ''}${c.city ? ' · ' + c.city : ''}${c.country && c.country !== 'TR' ? ' (' + c.country + ')' : ''}` +
-          (c.phone ? `<br><span style="color:var(--muted-foreground);font-size:.76rem">${c.phone}</span>` : '')
+        ? `${esc(c.name || '')}${c.city ? ' · ' + esc(c.city) : ''}${c.country && c.country !== 'TR' ? ' (' + esc(c.country) + ')' : ''}` +
+          (c.phone ? `<br><span style="color:var(--muted-foreground);font-size:.76rem">${esc(c.phone)}</span>` : '')
         : '<span style="color:var(--muted-foreground)">—</span>';
       const addr = c ? `${c.address || ''} ${c.city || ''} ${c.country || ''} · ${c.email || ''}`.trim() : '';
       const itemsHtml = (o.items && o.items.length)
-        ? o.items.map(it => `${it.title} <strong>×${it.qty}</strong>`).join('<br>')
+        ? o.items.map(it => `${esc(it.title)} <strong>×${esc(it.qty)}</strong>`).join('<br>')
         : '<span style="color:var(--muted-foreground)">—</span>';
       row.innerHTML = `
-        <td><strong style="font-size:.78rem">${o.orderId}</strong></td>
-        <td title="${addr.replace(/"/g, '&quot;')}">${custHtml}</td>
+        <td><strong style="font-size:.78rem">${esc(o.orderId)}</strong></td>
+        <td title="${esc(addr)}">${custHtml}</td>
         <td style="font-size:.8rem;max-width:260px">${itemsHtml}</td>
-        <td>${o.amount} ${o.currency || 'TRY'}</td>
+        <td>${esc(o.amount)} ${esc(o.currency || 'TRY')}</td>
         <td style="white-space:nowrap">${dateStr}</td>
         <td>${statusBadge}</td>
-        <td style="color:var(--muted-foreground)">${o.failedReason || '-'}</td>
+        <td style="color:var(--muted-foreground)">${esc(o.failedReason || '-')}</td>
       `;
       tbody.appendChild(row);
     });
   } catch {
     tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--destructive);">Siparişler yüklenemedi.</td></tr>';
   }
+}
+
+// HTML-escape any user-derived value before it is placed via innerHTML.
+// Guest chat / analytics / order fields are attacker-controllable, so every
+// interpolation of them below MUST pass through esc() to prevent stored XSS.
+function esc(v) {
+  return String(v == null ? '' : v).replace(/[&<>"']/g, c => (
+    { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
+  ));
 }
 
 // ── MESSAGES PAGE LOADER ────────────────────────────────────
@@ -2899,11 +2908,11 @@ async function loadMessagesPage() {
       
       item.innerHTML = `
         <div class="chat-user-meta">
-          <strong>${u.name}</strong>
+          <strong>${esc(u.name)}</strong>
           <span>${dateStr}</span>
         </div>
         <div style="font-size:.82rem;color:var(--muted-foreground);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;justify-content:space-between;align-items:center;">
-          <span>${u.lastMessageText}</span>
+          <span>${esc(u.lastMessageText)}</span>
           ${unreadBadge}
         </div>
       `;
@@ -2942,7 +2951,7 @@ async function selectChatRoom(userId, userName) {
       bubble.className = `chat-msg-row ${m.sender}`;
       const timeStr = new Date(m.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
       bubble.innerHTML = `
-        <div>${m.text}</div>
+        <div>${esc(m.text)}</div>
         <span style="font-size:0.65rem;opacity:0.7;align-self:flex-end;margin-top:4px;">${timeStr}</span>
       `;
       messagesEl.appendChild(bubble);
@@ -3002,7 +3011,7 @@ async function loadAnalyticsPage() {
     } else {
       referrers.forEach(([ref, val]) => {
         const row = document.createElement('tr');
-        row.innerHTML = `<td><strong>${ref}</strong></td><td>${val}</td>`;
+        row.innerHTML = `<td><strong>${esc(ref)}</strong></td><td>${esc(val)}</td>`;
         refTbody.appendChild(row);
       });
     }
@@ -3014,7 +3023,7 @@ async function loadAnalyticsPage() {
     } else {
       products.forEach(([id, info]) => {
         const row = document.createElement('tr');
-        row.innerHTML = `<td><strong>${info.title || id}</strong></td><td>${info.views}</td>`;
+        row.innerHTML = `<td><strong>${esc(info.title || id)}</strong></td><td>${esc(info.views)}</td>`;
         prodTbody.appendChild(row);
       });
     }

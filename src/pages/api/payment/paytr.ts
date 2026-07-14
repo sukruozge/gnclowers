@@ -7,15 +7,20 @@ import { shippingFee } from '@lib/shipping';
 export const prerender = false;
 
 function json(body: unknown, status: number): Response {
+  // Same-origin endpoint (called only by our own checkout page). No wildcard
+  // CORS — a `*` here let any site invoke it and spam pending_order/PayTR.
   return new Response(JSON.stringify(body), {
     status,
     headers: {
       'content-type': 'application/json',
       'cache-control': 'no-store',
-      'access-control-allow-origin': '*',
     },
   });
 }
+
+const CURRENCIES = ['TRY', 'USD', 'EUR', 'GBP'];
+const clip = (v: unknown, max: number) =>
+  String(v ?? '').replace(/\p{Cc}/gu, '').slice(0, max).trim();
 
 export const POST: APIRoute = async (context) => {
   const { request, locals } = context;
@@ -32,7 +37,15 @@ export const POST: APIRoute = async (context) => {
     const body = await request.json().catch(() => null);
     if (!body) return json({ error: 'Geçersiz istek gövdesi.' }, 400);
 
-    const { email, name, phone, address, city, cart, currency = 'TRY', lang = 'tr', country = 'TR' } = body;
+    const lang = body.lang === 'en' ? 'en' : 'tr';
+    const email = clip(body.email, 160);
+    const name = clip(body.name, 120);
+    const phone = clip(body.phone, 40);
+    const address = clip(body.address, 400);
+    const city = clip(body.city, 80);
+    const country = clip(body.country, 8) || 'TR';
+    const currency = CURRENCIES.includes(body.currency) ? body.currency : 'TRY';
+    const cart = body.cart;
 
     if (!email || !name || !phone || !address || !city || !Array.isArray(cart) || cart.length === 0) {
       return json({ error: lang === 'en' ? 'Please check your details.' : 'Lütfen bilgilerinizi kontrol edin.' }, 400);
@@ -59,7 +72,9 @@ export const POST: APIRoute = async (context) => {
       if (!prod) return json({ error: 'Geçersiz ürün seçimi.' }, 400);
 
       const price = prod.price;
-      const qty = parseInt(item.quantity, 10) || 1;
+      // Bound quantity to a sane positive range: `parseInt(...)||1` alone would
+      // let a negative quantity through (-1 || 1 === -1) and skew the basket.
+      const qty = Math.min(Math.max(parseInt(item.quantity, 10) || 1, 1), 99);
       totalAmount += price * qty;
       const title = prod.title_tr || prod.title_en;
       basket.push([title, String(price), qty]);
@@ -73,7 +88,8 @@ export const POST: APIRoute = async (context) => {
     const grandTotal = subtotal + shipping;
 
     const paytrAmount = Math.round(grandTotal * 100);
-    const merchant_oid = 'oid_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7);
+    // Crypto-random suffix so order ids aren't guessable within the 24h window.
+    const merchant_oid = 'oid' + Date.now() + crypto.randomUUID().replace(/-/g, '').slice(0, 12);
     const user_ip = request.headers.get('CF-Connecting-IP') || request.headers.get('x-real-ip') || '127.0.0.1';
 
     // Persist a pending order so the async callback can attach customer + line items.
@@ -107,12 +123,20 @@ export const POST: APIRoute = async (context) => {
 
     const user_basket = Buffer.from(JSON.stringify(basket)).toString('base64');
 
-    const no_install = '0';
-    const max_install = '12';
+    // Field names MUST be `no_installment` / `max_installment` (PayTR's official
+    // sample). The old `no_install` / `max_install` were silently ignored by
+    // PayTR, so its token hash used its own defaults and never matched ours.
+    const no_installment = '0';   // 0 = installments allowed
+    const max_installment = '0';  // 0 = show all available installments
     const timeout_limit = '30';
     const test_mode = PAYTR_TEST_MODE;
+    // Verbose provider errors only while testing; off in live mode.
+    const debug_on = test_mode === '1' ? '1' : '0';
+    // PayTR expects 'TL' for Turkish Lira, not the ISO code 'TRY'. This value is
+    // part of the token hash, so it must be identical here and in the payload.
+    const paytrCurrency = currency === 'TRY' ? 'TL' : currency;
 
-    const hashStr = PAYTR_MERCHANT_ID + user_ip + merchant_oid + email + paytrAmount + user_basket + no_install + max_install + currency + test_mode + PAYTR_MERCHANT_SALT;
+    const hashStr = PAYTR_MERCHANT_ID + user_ip + merchant_oid + email + paytrAmount + user_basket + no_installment + max_installment + paytrCurrency + test_mode + PAYTR_MERCHANT_SALT;
     const paytr_token = createHmac('sha256', PAYTR_MERCHANT_KEY).update(hashStr).digest('base64');
 
     const payload = new URLSearchParams({
@@ -123,9 +147,9 @@ export const POST: APIRoute = async (context) => {
       payment_amount: String(paytrAmount),
       paytr_token,
       user_basket,
-      no_install,
-      max_install,
-      currency,
+      no_installment,
+      max_installment,
+      currency: paytrCurrency,
       test_mode,
       user_name: name,
       user_address: `${address} ${city}`,
@@ -133,7 +157,8 @@ export const POST: APIRoute = async (context) => {
       merchant_ok_url,
       merchant_fail_url,
       timeout_limit,
-      debug_on: '1',
+      debug_on,
+      lang,
     });
 
     const response = await fetch('https://www.paytr.com/odeme/api/get-token', {

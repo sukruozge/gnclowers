@@ -309,6 +309,19 @@ async function handleUpload(request: Request, env: Record<string, any>): Promise
     return json({ error: 'path ve base64 alanları zorunludur.' }, 400);
   }
 
+  // Confine uploads to the public/ asset tree. Without this, an authenticated
+  // admin (or a hijacked session) could overwrite ANY repo path — e.g.
+  // .github/workflows/*.yml — and gain arbitrary code execution in CI, which
+  // holds the repo secrets. Reject traversal and anything outside public/.
+  filePath = filePath.replace(/\\/g, '/').replace(/^\/+/, '');
+  if (
+    filePath.includes('..') ||
+    filePath.includes('\0') ||
+    !filePath.startsWith('public/')
+  ) {
+    return json({ error: 'Geçersiz dosya yolu (yalnızca public/ altına yükleme yapılabilir).' }, 400);
+  }
+
   // Strip base64 metadata prefix if exists
   const commaIdx = base64.indexOf(',');
   if (commaIdx !== -1) {

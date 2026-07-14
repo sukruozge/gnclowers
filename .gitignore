@@ -10,3 +10,6 @@ dist/
 .claude/
 public/products.json
 .dev.vars
+
+# PayTR integration reference bundle (docs/PDFs/sample code) — local only
+PayTR IFrame API/
