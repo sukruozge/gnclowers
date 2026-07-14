@@ -2,6 +2,7 @@
 import { t, type Locale } from '@lib/i18n';
 import { loadProducts } from '@lib/products';
 import FeaturedCard from './FeaturedCard.astro';
+import Ambient from '../Ambient.astro';
 import settings from '../../data/settings.json';
 const { locale } = Astro.props as { locale: Locale };
 
@@ -36,6 +37,7 @@ let _li = 0;
 const titleWords = title.split(' ').map((w) => [...w].map((ch) => ({ ch, i: _li++ })));
 ---
 <section class="section fsec">
+  <Ambient variant="warm" />
   <div class="container">
     <header class="fhead reveal">
       <p class="fhead__eyebrow">{eyebrow}</p>
@@ -80,6 +82,8 @@ const titleWords = title.split(' ').map((w) => [...w].map((ch) => ({ ch, i: _li+
     transition: opacity .5s var(--ease), transform .55s cubic-bezier(.34,1.5,.5,1);
     transition-delay: calc(var(--i) * 45ms);
   }
+  .fsec { position: relative; overflow: hidden; }
+  .fsec > .container { position: relative; z-index: 1; }
   .fhead__stitch { display: block; width: 150px; height: 15px; margin: var(--space-2) auto var(--space-3); overflow: visible; }
   .fhead__stitch path {
     fill: none; stroke: var(--accent); stroke-width: 3; stroke-linecap: round;

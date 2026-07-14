@@ -1,0 +1,68 @@
+---
+// Soft ambient backdrop: a few large, heavily-blurred orbs in brand tones that
+// drift very slowly behind a section's content. Purely decorative — adds depth
+// and a premium, crafted feel without looking busy. Respects reduced motion.
+// Usage: place as the first child of a `position: relative` section, and give
+// the section's content wrapper `position: relative; z-index: 1`.
+const { variant = 'warm' } = Astro.props as { variant?: 'warm' | 'tint' };
+---
+<div class={`ambient ambient--${variant}`} aria-hidden="true">
+  <span class="ambient__orb ambient__orb--1"></span>
+  <span class="ambient__orb ambient__orb--2"></span>
+  <span class="ambient__orb ambient__orb--3"></span>
+</div>
+<style>
+  .ambient {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .ambient__orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(72px);
+    will-change: transform;
+  }
+  /* Warm terracotta + sage + caramel — for cream-background sections */
+  .ambient--warm .ambient__orb--1 {
+    width: 520px; height: 520px; top: -140px; left: -110px;
+    background: radial-gradient(circle at 32% 32%, rgba(176, 83, 46, 0.20), transparent 70%);
+    animation: drift1 27s ease-in-out infinite;
+  }
+  .ambient--warm .ambient__orb--2 {
+    width: 460px; height: 460px; bottom: -160px; right: -90px;
+    background: radial-gradient(circle at 50% 50%, rgba(124, 139, 111, 0.17), transparent 70%);
+    animation: drift2 34s ease-in-out infinite;
+  }
+  .ambient--warm .ambient__orb--3 {
+    width: 400px; height: 400px; top: 34%; left: 46%;
+    background: radial-gradient(circle at 50% 50%, rgba(200, 133, 82, 0.13), transparent 70%);
+    animation: drift3 40s ease-in-out infinite;
+  }
+  /* Slightly softer, for already-tinted sections */
+  .ambient--tint .ambient__orb--1 {
+    width: 480px; height: 480px; top: -120px; right: -100px;
+    background: radial-gradient(circle at 40% 40%, rgba(176, 83, 46, 0.15), transparent 70%);
+    animation: drift2 30s ease-in-out infinite;
+  }
+  .ambient--tint .ambient__orb--2 {
+    width: 440px; height: 440px; bottom: -150px; left: -90px;
+    background: radial-gradient(circle at 50% 50%, rgba(94, 122, 155, 0.12), transparent 70%);
+    animation: drift1 36s ease-in-out infinite;
+  }
+  .ambient--tint .ambient__orb--3 {
+    width: 360px; height: 360px; top: 20%; left: 40%;
+    background: radial-gradient(circle at 50% 50%, rgba(200, 133, 82, 0.10), transparent 70%);
+    animation: drift3 44s ease-in-out infinite;
+  }
+
+  @keyframes drift1 { 0%, 100% { transform: translate(0, 0) scale(1); } 50% { transform: translate(64px, 44px) scale(1.1); } }
+  @keyframes drift2 { 0%, 100% { transform: translate(0, 0) scale(1); } 50% { transform: translate(-54px, -32px) scale(1.08); } }
+  @keyframes drift3 { 0%, 100% { transform: translate(0, 0) scale(1); } 50% { transform: translate(-42px, 54px) scale(1.13); } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ambient__orb { animation: none !important; }
+  }
+</style>

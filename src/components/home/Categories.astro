@@ -2,6 +2,7 @@
 import { t, type Locale } from '@lib/i18n';
 import { loadProducts } from '@lib/products';
 import SectionHeading from '../SectionHeading.astro';
+import Ambient from '../Ambient.astro';
 import settings from '../../data/settings.json';
 
 const { locale } = Astro.props as { locale: Locale };
@@ -50,8 +51,9 @@ const catalog = locale === 'tr' ? '/tr/urunler' : '/en/products';
 const unit = locale === 'tr' ? 'ürün' : 'items';
 const exploreLabel = locale === 'tr' ? 'Keşfet' : 'Explore';
 ---
-<section class="section">
-  <div class="container">
+<section class="section cats-section">
+  <Ambient variant="warm" />
+  <div class="container cats-container">
     <div class="reveal reveal--fade-up">
       <SectionHeading title={t('home.categories', locale)} />
     </div>
@@ -78,6 +80,8 @@ const exploreLabel = locale === 'tr' ? 'Keşfet' : 'Explore';
   </div>
 </section>
 <style>
+  .cats-section { position: relative; overflow: hidden; }
+  .cats-container { position: relative; z-index: 1; }
   .cats {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));

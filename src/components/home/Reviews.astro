@@ -1,6 +1,7 @@
 ---
 import { t, type Locale } from '@lib/i18n';
 import StarRating from '../StarRating.astro';
+import Ambient from '../Ambient.astro';
 
 const { locale } = Astro.props as { locale: Locale };
 
@@ -9,117 +10,136 @@ interface Testimonial {
   name: string;
   role: string;
   rating: number;
+  color: string;
 }
 
 const testimonials: Testimonial[] = locale === 'tr' ? [
   {
     text: "Flamingo amigurumi oyuncağı harika! Tam anlatıldığı gibi, kızıma harika bir doğum günü hediyesi oldu. İşçiliği inanılmaz temiz.",
-    name: "Briana Patton",
-    role: "Doğrulanmış Alıcı, ABD",
-    rating: 5
+    name: "Elif Yılmaz",
+    role: "Doğrulanmış Alıcı · Ankara",
+    rating: 5,
+    color: "#B0532E"
   },
   {
     text: "Safari temalı bebek odamız için tavşanlı perde tutacakları sipariş verdim. Yumuşaklığı ve kalitesi mükemmel, çok tatlı duruyorlar.",
-    name: "Melissa Green",
-    role: "Bebek Odası Tasarımcısı",
-    rating: 5
+    name: "Sarah Miller",
+    role: "Bebek Odası Stilisti · ABD",
+    rating: 5,
+    color: "#6F8B6A"
   },
   {
     text: "Kişiye özel renk ve boyutta örgü tavşan sipariş ettim. Mağaza iletişimi harikaydı, her soruma anında yanıt aldım. Teşekkürler!",
-    name: "Bilal Ahmed",
-    role: "Doğrulanmış Alıcı, İngiltere",
-    rating: 5
+    name: "Zeynep Kaya",
+    role: "Doğrulanmış Alıcı · İstanbul",
+    rating: 5,
+    color: "#5E7A9B"
   },
   {
     text: "Örgü çanta tasarımı ve kalitesi beklediğimin çok üzerinde. Günlük kullanım için son derece hafif, şık ve sağlam.",
-    name: "Saman Malik",
-    role: "Moda Editörü",
-    rating: 5
+    name: "Jessica Brown",
+    role: "Doğrulanmış Alıcı · ABD",
+    rating: 5,
+    color: "#C08552"
   },
   {
     text: "Gördüğüm en tatlı ve yardımcı satıcı olabilir! Bebek hediye seti tam zamanında ve mükemmel bir paketleme ile ulaştı.",
-    name: "Zainab Hussain",
-    role: "Doğrulanmış Alıcı, Kanada",
-    rating: 5
+    name: "Ayşe Demir",
+    role: "Doğrulanmış Alıcı · İzmir",
+    rating: 5,
+    color: "#A9746E"
   },
   {
     text: "Tığ işi dinozor oyuncağı o kadar yumuşak ve güvenli ki, yeni doğan bebeğimiz için hiç tereddüt etmeden kullanıyoruz.",
-    name: "Aliza Khan",
-    role: "Anne & Çocuk Blog Yazarı",
-    rating: 5
+    name: "Emily Johnson",
+    role: "Anne & Çocuk Blog Yazarı · ABD",
+    rating: 5,
+    color: "#8D7BA5"
   },
   {
     text: "İşçilikteki el emeği kalitesi büyüleyici. Organik pamuk ipliğinin doğallığını dokunduğunuz an hissedebiliyorsunuz.",
-    name: "Omar Raza",
-    role: "Tasarım Direktörü",
-    rating: 5
+    name: "Merve Şahin",
+    role: "Doğrulanmış Alıcı · Bursa",
+    rating: 5,
+    color: "#5F8A86"
   },
   {
     text: "Özel siparişimiz için iletişim baştan sona harikaydı. Yapım aşamasında fotoğraflarla bilgilendirildik. İşçilik muhteşem.",
-    name: "Sana Sheikh",
-    role: "Doğrulanmış Alıcı, Almanya",
-    rating: 5
+    name: "Emma Wilson",
+    role: "Doğrulanmış Alıcı · ABD",
+    rating: 5,
+    color: "#C0873E"
   },
   {
     text: "Hızlı kargo ve özenli paketleme. Hediye paketi o kadar güzel yapılmıştı ki açmaya kıyamadık. Kesinlikle tavsiye ederim.",
-    name: "Hassan Ali",
-    role: "Doğrulanmış Alıcı, Fransa",
-    rating: 5
+    name: "Selin Arslan",
+    role: "Doğrulanmış Alıcı · Antalya",
+    rating: 5,
+    color: "#B0708F"
   }
 ] : [
   {
     text: "The flamingo amigurumi is beautiful! Just as described, it made a wonderful birthday gift for my daughter. So well made.",
-    name: "Briana Patton",
-    role: "Verified Buyer, USA",
-    rating: 5
+    name: "Emily Johnson",
+    role: "Verified Buyer · USA",
+    rating: 5,
+    color: "#B0532E"
   },
   {
     text: "Ordered the bunny curtain tie-backs for our safari-themed nursery. Workmanship and softness are perfect, they look so cute.",
-    name: "Melissa Green",
-    role: "Nursery Designer",
-    rating: 5
+    name: "Sarah Miller",
+    role: "Nursery Stylist · USA",
+    rating: 5,
+    color: "#6F8B6A"
   },
   {
     text: "Custom color and size order came out great! Excellent communication, very helpful throughout the process. Highly recommend.",
-    name: "Bilal Ahmed",
-    role: "Verified Buyer, UK",
-    rating: 5
+    name: "Zeynep Kaya",
+    role: "Verified Buyer · Türkiye",
+    rating: 5,
+    color: "#5E7A9B"
   },
   {
     text: "The design and quality of the crochet bag is well above my expectations. Lightweight, stylish, and durable for daily use.",
-    name: "Saman Malik",
-    role: "Fashion Editor",
-    rating: 5
+    name: "Jessica Brown",
+    role: "Verified Buyer · USA",
+    rating: 5,
+    color: "#C08552"
   },
   {
     text: "Probably the sweetest and most helpful seller! The baby gift set arrived right on time and in perfect packaging.",
-    name: "Zainab Hussain",
-    role: "Verified Buyer, Canada",
-    rating: 5
+    name: "Ayşe Demir",
+    role: "Verified Buyer · Türkiye",
+    rating: 5,
+    color: "#A9746E"
   },
   {
     text: "The crochet dinosaur plush is so soft and safe. We use it for our newborn baby without any worries. Fantastic craft.",
-    name: "Aliza Khan",
-    role: "Mom & Child Blogger",
-    rating: 5
+    name: "Megan Taylor",
+    role: "Mom & Kids Blogger · USA",
+    rating: 5,
+    color: "#8D7BA5"
   },
   {
     text: "The attention to detail and handcraft quality is mesmerizing. You can feel the premium organic cotton immediately.",
-    name: "Omar Raza",
-    role: "Design Director",
-    rating: 5
+    name: "Merve Şahin",
+    role: "Verified Buyer · Türkiye",
+    rating: 5,
+    color: "#5F8A86"
   },
   {
     text: "Outstanding customer service for our custom order. We were updated with photos at every step. Thank you so much!",
-    name: "Sana Sheikh",
-    role: "Verified Buyer, Germany",
-    rating: 5
+    name: "Emma Wilson",
+    role: "Verified Buyer · USA",
+    rating: 5,
+    color: "#C0873E"
   },
   {
     text: "Super fast shipping and beautiful packaging. The gift wrapping was so lovely we didn't want to open it. Highly recommended.",
-    name: "Hassan Ali",
-    role: "Verified Buyer, France",
-    rating: 5
+    name: "Selin Arslan",
+    role: "Verified Buyer · Türkiye",
+    rating: 5,
+    color: "#B0708F"
   }
 ];
 
@@ -127,9 +147,10 @@ const firstColumn = testimonials.slice(0, 3);
 const secondColumn = testimonials.slice(3, 6);
 const thirdColumn = testimonials.slice(6, 9);
 
-const initial = (txt: string) => (txt.trim()[0] ?? '★').toUpperCase();
+const initials = (name: string) => name.trim().split(/\s+/).map((w) => w[0]).slice(0, 2).join('').toUpperCase();
 ---
 <section class="section section--tint testimonials-section" aria-labelledby="testimonials-heading">
+  <Ambient variant="tint" />
   <div class="container testimonials-inner reveal">
     
     <!-- Heading -->
@@ -158,7 +179,7 @@ const initial = (txt: string) => (txt.trim()[0] ?? '★').toUpperCase();
               </div>
               <blockquote class="card-text">“{r.text}”</blockquote>
               <div class="card-meta">
-                <span class="card-avatar">{initial(r.name)}</span>
+                <span class="card-avatar" style={`background:${r.color}`}>{initials(r.name)}</span>
                 <div class="card-info">
                   <cite class="card-name">{r.name}</cite>
                   <span class="card-role">{r.role}</span>
@@ -179,7 +200,7 @@ const initial = (txt: string) => (txt.trim()[0] ?? '★').toUpperCase();
               </div>
               <blockquote class="card-text">“{r.text}”</blockquote>
               <div class="card-meta">
-                <span class="card-avatar">{initial(r.name)}</span>
+                <span class="card-avatar" style={`background:${r.color}`}>{initials(r.name)}</span>
                 <div class="card-info">
                   <cite class="card-name">{r.name}</cite>
                   <span class="card-role">{r.role}</span>
@@ -200,7 +221,7 @@ const initial = (txt: string) => (txt.trim()[0] ?? '★').toUpperCase();
               </div>
               <blockquote class="card-text">“{r.text}”</blockquote>
               <div class="card-meta">
-                <span class="card-avatar">{initial(r.name)}</span>
+                <span class="card-avatar" style={`background:${r.color}`}>{initials(r.name)}</span>
                 <div class="card-info">
                   <cite class="card-name">{r.name}</cite>
                   <span class="card-role">{r.role}</span>
@@ -224,6 +245,7 @@ const initial = (txt: string) => (txt.trim()[0] ?? '★').toUpperCase();
     padding: var(--space-8) 0;
     overflow: hidden;
   }
+  .testimonials-inner { position: relative; z-index: 1; }
 
   .testimonials-head {
     max-width: 580px;
@@ -353,13 +375,16 @@ const initial = (txt: string) => (txt.trim()[0] ?? '★').toUpperCase();
   .card-avatar {
     display: grid;
     place-items: center;
-    width: 36px;
-    height: 36px;
+    width: 42px;
+    height: 42px;
+    flex: none;
     border-radius: 50%;
-    background: color-mix(in srgb, var(--accent) 10%, transparent);
-    color: var(--accent-ink);
-    font-weight: 600;
-    font-size: 0.88rem;
+    background: var(--accent);
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.82rem;
+    letter-spacing: 0.02em;
+    box-shadow: 0 2px 7px rgba(28, 26, 24, 0.14);
   }
 
   .card-info {
