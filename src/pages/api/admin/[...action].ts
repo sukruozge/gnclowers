@@ -194,7 +194,16 @@ async function handleSync(request: Request, env: Record<string, any>): Promise<R
     return json({ ok: true }, 200);
   } catch (err) {
     console.error('admin sync error', err);
-    return json({ error: 'Sync tetiklenemedi.' }, 502);
+    const m = String((err as any)?.message || '');
+    // workflow_dispatch needs the PAT's "Actions: Read and write" permission;
+    // the token likely only has Contents. Surface an actionable hint.
+    if (m.includes('403')) {
+      return json({ error: 'GitHub token\'ının "Actions" (Read and write) izni yok. Token ayarlarından Actions iznini ekleyip tekrar deneyin. (Gece otomatik senkron zaten çalışıyor.)' }, 502);
+    }
+    if (m.includes('404')) {
+      return json({ error: 'Senkron iş akışı bulunamadı (etsy-sync.yml) veya token bu depoya erişemiyor.' }, 502);
+    }
+    return json({ error: 'Sync tetiklenemedi (' + (m || 'bilinmeyen hata') + ').' }, 502);
   }
 }
 

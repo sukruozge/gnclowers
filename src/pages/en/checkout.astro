@@ -285,12 +285,15 @@ const shippingCfg = (settings as any).shipping || {};
       document.getElementById('step-info')?.classList.add('steps__item--done');
       document.getElementById('step-pay')?.classList.add('steps__item--active');
       if (iframeWrapper) {
-        // iOS Safari sizes an iframe to its CONTENT width unless we pin
-        // width:1px + min-width:100% — that (not a wrapper scrollbar) is what
-        // caused the sideways scroll on phones. Height is handled by PayTR's
-        // official auto-resizer so the whole form fits with no inner scrollbar.
-        iframeWrapper.innerHTML = `<iframe src="https://www.paytr.com/odeme/guvenli/${data.token}" id="paytriframe" frameborder="0" scrolling="no" style="width:1px;min-width:100%;height:600px;border:0;"></iframe>`;
-        const runResize = () => { try { (window as any).iFrameResize({ checkOrigin: false }, '#paytriframe'); } catch (e) {} };
+        // Two mobile fixes in the inline style:
+        //  • width:1px + min-width:100% stops iOS from sizing the iframe to its
+        //    CONTENT width — that was the sideways scroll.
+        //  • a tall initial height means that even if PayTR's auto-resizer never
+        //    fires, the whole form (incl. the pay button) is reachable by normal
+        //    page scroll — no nested/erratic scrollbar. If the resizer DOES fire
+        //    it shrinks this to the exact content height (no blank space).
+        iframeWrapper.innerHTML = `<iframe src="https://www.paytr.com/odeme/guvenli/${data.token}" id="paytriframe" frameborder="0" scrolling="no" style="width:1px;min-width:100%;height:1300px;border:0;"></iframe>`;
+        const runResize = () => { try { ((window as any).iFrameResize || (window as any).iframeResize)?.({ checkOrigin: false, heightCalculationMethod: 'lowestElement' }, '#paytriframe'); } catch (e) {} };
         const startResize = () => {
           runResize();
           // PayTR's form grows as it loads (card type → installments → agreement);
