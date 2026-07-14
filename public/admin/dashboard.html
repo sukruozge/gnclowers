@@ -374,25 +374,37 @@
     tr.prow-off .pname-tr { text-decoration: line-through; text-decoration-color: var(--muted-foreground); }
 
     /* ORDER CARDS */
-    .orders-list { display: grid; gap: 14px; padding: 20px; }
-    .order-card { border: 1px solid var(--border); border-radius: var(--radius); background: var(--card); overflow: hidden; }
-    .order-card.is-failed { opacity: .7; }
-    .order-head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 12px 16px; border-bottom: 1px solid var(--border); background: var(--secondary); }
-    .order-id { font-family: ui-monospace, monospace; font-size: .74rem; color: var(--muted-foreground); }
-    .order-date { font-size: .76rem; color: var(--muted-foreground); }
-    .order-amt { margin-left: auto; font-size: 1.05rem; font-weight: 700; color: var(--foreground); white-space: nowrap; }
-    .order-body { display: grid; grid-template-columns: 1fr 1.2fr; gap: 18px; padding: 16px; }
+    .orders-list { display: grid; gap: 16px; padding: 20px; }
+    .order-card { border: 1px solid var(--border); border-radius: 10px; background: var(--card); overflow: hidden; transition: box-shadow .16s ease, transform .16s ease; }
+    .order-card:hover { box-shadow: 0 8px 24px rgba(30,30,70,.09); transform: translateY(-1px); }
+    .order-card.is-failed { opacity: .82; }
+    .order-head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 13px 18px; border-bottom: 1px solid var(--border); }
+    .ostatus { display: inline-flex; align-items: center; gap: 6px; font-size: .7rem; font-weight: 700; letter-spacing: .02em; padding: 4px 11px; border-radius: 99px; }
+    .ostatus .odot { width: 7px; height: 7px; border-radius: 50%; }
+    .ostatus.ok { background: rgba(34,197,94,.13); color: #16a34a; }
+    .ostatus.ok .odot { background: #22c55e; }
+    .ostatus.fail { background: rgba(239,68,68,.13); color: #ef4444; }
+    .ostatus.fail .odot { background: #ef4444; }
+    .order-date { font-size: .78rem; color: var(--muted-foreground); }
+    .order-id { font-family: ui-monospace, monospace; font-size: .71rem; color: var(--muted-foreground); opacity: .85; }
+    .order-amt { margin-left: auto; font-size: 1.16rem; font-weight: 800; color: var(--foreground); white-space: nowrap; font-variant-numeric: tabular-nums; }
+    .order-items { display: flex; flex-direction: column; gap: 12px; padding: 15px 18px; }
+    .order-item { display: flex; align-items: center; gap: 13px; }
+    .oi-media { position: relative; flex: none; }
+    .oi-thumb { width: 54px; height: 54px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border); background: var(--secondary); display: block; }
+    .oi-thumb--ph { display: grid; place-items: center; font-size: 1.4rem; }
+    .oi-qty { position: absolute; top: -7px; right: -7px; background: var(--primary); color: #fff; font-size: .64rem; font-weight: 700; min-width: 19px; height: 19px; padding: 0 5px; border-radius: 10px; display: grid; place-items: center; box-shadow: 0 1px 3px rgba(0,0,0,.25); }
+    .oi-title { font-size: .88rem; color: var(--foreground); line-height: 1.35; font-weight: 500; }
+    .order-body { display: grid; grid-template-columns: 1fr 1.25fr; gap: 20px; padding: 16px 18px; border-top: 1px solid var(--border); background: var(--secondary); }
     @media (max-width: 760px) { .order-body { grid-template-columns: 1fr; } }
-    .order-sec-label { font-size: .66rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--muted-foreground); margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; }
-    .order-field { font-size: .86rem; margin-bottom: 4px; line-height: 1.45; color: var(--foreground); }
-    .order-field .k { color: var(--muted-foreground); display: inline-block; min-width: 58px; }
-    .order-addr { font-size: .9rem; line-height: 1.5; color: var(--foreground); white-space: pre-line; }
-    .order-copy { border: 1px solid var(--border); background: var(--card); color: var(--primary); font-size: .68rem; font-weight: 600; padding: 3px 9px; border-radius: var(--radius); cursor: pointer; font-family: inherit; }
-    .order-copy:hover { background: var(--secondary); }
-    .order-items { border-top: 1px solid var(--border); padding: 12px 16px; }
-    .order-item { display: flex; justify-content: space-between; gap: 10px; font-size: .85rem; padding: 5px 0; color: var(--foreground); }
-    .order-item + .order-item { border-top: 1px dashed var(--border); }
-    .order-fail { margin: 0 16px 14px; padding: 8px 12px; border-radius: var(--radius); background: rgba(239,68,68,.1); color: #ef4444; font-size: .8rem; }
+    .order-sec-label { font-size: .64rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted-foreground); margin-bottom: 9px; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .order-field { font-size: .87rem; margin-bottom: 5px; line-height: 1.5; color: var(--foreground); display: flex; gap: 8px; align-items: baseline; }
+    .order-field .oico { width: 15px; opacity: .55; flex: none; text-align: center; }
+    .order-field a { color: var(--primary); }
+    .order-addr { font-size: .93rem; line-height: 1.55; color: var(--foreground); white-space: pre-line; font-weight: 500; }
+    .order-copy { border: 1px solid var(--border); background: var(--card); color: var(--primary); font-size: .68rem; font-weight: 700; padding: 4px 11px; border-radius: 6px; cursor: pointer; font-family: inherit; white-space: nowrap; transition: .15s; }
+    .order-copy:hover { background: var(--primary); color: #fff; border-color: var(--primary); }
+    .order-fail { margin: 0 18px 16px; padding: 9px 13px; border-radius: 8px; background: rgba(239,68,68,.1); color: #ef4444; font-size: .82rem; font-weight: 500; }
 
     /* SYNC STATUS */
     .sync-status { display: flex; align-items: center; gap: 12px; font-size: .86rem; padding: 12px 16px; border-radius: var(--radius); background: var(--secondary); border: 1px solid var(--border); }
@@ -2990,39 +3002,48 @@ function renderOrders() {
   listEl.innerHTML = filtered.map(o => {
     const c = o.customer || {};
     const ok = o.status === 'completed';
-    const dateStr = o.createdAt ? new Date(o.createdAt).toLocaleString('tr-TR') : '—';
-    const badge = ok ? '<span class="badge badge-green">Başarılı</span>' : '<span class="badge badge-red">Başarısız</span>';
+    const dateStr = o.createdAt ? new Date(o.createdAt).toLocaleString('tr-TR', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—';
+    const amtNum = Number(o.amount);
+    const cur = (o.currency || 'TRY') === 'TRY' ? '₺' : esc(o.currency);
+    const amtStr = isFinite(amtNum) ? amtNum.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ' + cur : esc(o.amount) + ' ' + cur;
+    const status = ok
+      ? '<span class="ostatus ok"><span class="odot"></span>Başarılı</span>'
+      : '<span class="ostatus fail"><span class="odot"></span>Başarısız</span>';
     const items = (o.items && o.items.length)
-      ? o.items.map(it => `<div class="order-item"><span>${esc(it.title)}</span><strong>×${esc(it.qty)}</strong></div>`).join('')
-      : '<div class="order-item"><span style="color:var(--muted-foreground)">Ürün bilgisi yok</span></div>';
+      ? o.items.map(it => {
+          const prod = _products.find(p => String(p.id) === String(it.id));
+          const img = it.image || (prod && prod.image) || '';
+          const thumb = img
+            ? `<img class="oi-thumb" src="${esc(img)}" alt="" loading="lazy">`
+            : '<div class="oi-thumb oi-thumb--ph">🧶</div>';
+          return `<div class="order-item"><div class="oi-media">${thumb}<span class="oi-qty">×${esc(it.qty)}</span></div><div class="oi-title">${esc(it.title)}</div></div>`;
+        }).join('')
+      : '<div class="order-item"><div class="oi-title" style="color:var(--muted-foreground)">Ürün bilgisi kaydedilmemiş</div></div>';
     const addrBlock = [esc(c.name || ''), esc(c.address || ''), esc([c.city, c.country].filter(Boolean).join(' / '))].filter(Boolean).join('\n') || '—';
     const shipText = encodeURIComponent([c.name, c.address, [c.city, c.country].filter(Boolean).join(' / '), c.phone, c.email].filter(Boolean).join('\n'));
     return `<div class="order-card ${ok ? '' : 'is-failed'}">
       <div class="order-head">
-        ${badge}
-        <span class="order-id">${esc(o.orderId)}</span>
+        ${status}
         <span class="order-date">${dateStr}</span>
-        <span class="order-amt">${esc(o.amount)} ${esc(o.currency || 'TRY')}</span>
+        <span class="order-id">${esc(o.orderId)}</span>
+        <span class="order-amt">${amtStr}</span>
       </div>
+      <div class="order-items">${items}</div>
       <div class="order-body">
         <div>
           <div class="order-sec-label">Müşteri</div>
-          <div class="order-field"><span class="k">Ad</span>${esc(c.name || '—')}</div>
-          <div class="order-field"><span class="k">Telefon</span>${c.phone ? `<a href="tel:${esc(c.phone)}">${esc(c.phone)}</a>` : '—'}</div>
-          <div class="order-field"><span class="k">E-posta</span>${c.email ? `<a href="mailto:${esc(c.email)}">${esc(c.email)}</a>` : '—'}</div>
+          <div class="order-field"><span class="oico">👤</span>${esc(c.name || '—')}</div>
+          <div class="order-field"><span class="oico">📞</span>${c.phone ? `<a href="tel:${esc(c.phone)}">${esc(c.phone)}</a>` : '—'}</div>
+          <div class="order-field"><span class="oico">✉️</span>${c.email ? `<a href="mailto:${esc(c.email)}">${esc(c.email)}</a>` : '—'}</div>
         </div>
         <div>
           <div class="order-sec-label">Teslimat Adresi
-            <button class="order-copy" data-ship="${shipText}" onclick="copyOrderShip(this)">Kopyala</button>
+            <button class="order-copy" data-ship="${shipText}" onclick="copyOrderShip(this)">📋 Kopyala</button>
           </div>
           <div class="order-addr">${addrBlock}</div>
         </div>
       </div>
-      <div class="order-items">
-        <div class="order-sec-label" style="margin-bottom:6px">Ürünler</div>
-        ${items}
-      </div>
-      ${!ok && o.failedReason ? `<div class="order-fail">Hata: ${esc(o.failedReason)}</div>` : ''}
+      ${!ok && o.failedReason ? `<div class="order-fail">⚠️ ${esc(o.failedReason)}</div>` : ''}
     </div>`;
   }).join('');
 }

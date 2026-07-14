@@ -65,7 +65,7 @@ export const POST: APIRoute = async (context) => {
     const products = productsData.products || [];
     let totalAmount = 0;
     const basket: [string, string, number][] = [];
-    const items: { id: string; title: string; qty: number; price: number }[] = [];
+    const items: { id: string; title: string; qty: number; price: number; image?: string }[] = [];
 
     for (const item of cart) {
       const prod = products.find((p: any) => String(p.id) === String(item.id));
@@ -78,7 +78,7 @@ export const POST: APIRoute = async (context) => {
       totalAmount += price * qty;
       const title = prod.title_tr || prod.title_en;
       basket.push([title, String(price), qty]);
-      items.push({ id: String(prod.id), title, qty, price });
+      items.push({ id: String(prod.id), title, qty, price, image: prod.image });
     }
 
     // Region-based shipping, computed server-side (never trust the client).
