@@ -373,6 +373,27 @@
     tr.prow-off { opacity: .5; }
     tr.prow-off .pname-tr { text-decoration: line-through; text-decoration-color: var(--muted-foreground); }
 
+    /* ORDER CARDS */
+    .orders-list { display: grid; gap: 14px; padding: 20px; }
+    .order-card { border: 1px solid var(--border); border-radius: var(--radius); background: var(--card); overflow: hidden; }
+    .order-card.is-failed { opacity: .7; }
+    .order-head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 12px 16px; border-bottom: 1px solid var(--border); background: var(--secondary); }
+    .order-id { font-family: ui-monospace, monospace; font-size: .74rem; color: var(--muted-foreground); }
+    .order-date { font-size: .76rem; color: var(--muted-foreground); }
+    .order-amt { margin-left: auto; font-size: 1.05rem; font-weight: 700; color: var(--foreground); white-space: nowrap; }
+    .order-body { display: grid; grid-template-columns: 1fr 1.2fr; gap: 18px; padding: 16px; }
+    @media (max-width: 760px) { .order-body { grid-template-columns: 1fr; } }
+    .order-sec-label { font-size: .66rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--muted-foreground); margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; }
+    .order-field { font-size: .86rem; margin-bottom: 4px; line-height: 1.45; color: var(--foreground); }
+    .order-field .k { color: var(--muted-foreground); display: inline-block; min-width: 58px; }
+    .order-addr { font-size: .9rem; line-height: 1.5; color: var(--foreground); white-space: pre-line; }
+    .order-copy { border: 1px solid var(--border); background: var(--card); color: var(--primary); font-size: .68rem; font-weight: 600; padding: 3px 9px; border-radius: var(--radius); cursor: pointer; font-family: inherit; }
+    .order-copy:hover { background: var(--secondary); }
+    .order-items { border-top: 1px solid var(--border); padding: 12px 16px; }
+    .order-item { display: flex; justify-content: space-between; gap: 10px; font-size: .85rem; padding: 5px 0; color: var(--foreground); }
+    .order-item + .order-item { border-top: 1px dashed var(--border); }
+    .order-fail { margin: 0 16px 14px; padding: 8px 12px; border-radius: var(--radius); background: rgba(239,68,68,.1); color: #ef4444; font-size: .8rem; }
+
     /* SYNC STATUS */
     .sync-status { display: flex; align-items: center; gap: 12px; font-size: .86rem; padding: 12px 16px; border-radius: var(--radius); background: var(--secondary); border: 1px solid var(--border); }
     .sync-dot { width: 10px; height: 10px; border-radius: 50%; }
@@ -1225,22 +1246,14 @@
           <div id="orders-count" style="font-size:.8rem;color:var(--muted-foreground)">0 sipariş</div>
         </div>
         <div class="card-body" style="padding:0">
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Sipariş ID</th>
-                  <th>Müşteri</th>
-                  <th>Ürünler</th>
-                  <th>Tutar</th>
-                  <th>Tarih</th>
-                  <th>Durum</th>
-                  <th>Hata Sebebi</th>
-                </tr>
-              </thead>
-              <tbody id="orders-tbody"></tbody>
-            </table>
+          <div class="pfilter">
+            <div class="seg" id="order-status-seg">
+              <button class="seg-btn active" data-ostatus="all" onclick="setOrderStatus('all',this)">Tümü<span class="seg-n" id="osegn-all"></span></button>
+              <button class="seg-btn" data-ostatus="completed" onclick="setOrderStatus('completed',this)">Başarılı<span class="seg-n" id="osegn-completed"></span></button>
+              <button class="seg-btn" data-ostatus="failed" onclick="setOrderStatus('failed',this)">Başarısız<span class="seg-n" id="osegn-failed"></span></button>
+            </div>
           </div>
+          <div id="orders-list" class="orders-list"></div>
           <div id="orders-empty" class="empty-state">
             <div class="empty-state-icon">🛍️</div>
             <p>Henüz gelen ödeme/sipariş bulunmuyor.</p>
@@ -2918,57 +2931,109 @@ function changeChartFilter(type) {
 
 
 // ── ORDERS PAGE LOADER ──────────────────────────────────────
-async function loadOrdersPage() {
-  const tbody = document.getElementById('orders-tbody');
-  const empty = document.getElementById('orders-empty');
-  const countEl = document.getElementById('orders-count');
-  
-  tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">Yükleniyor...</td></tr>';
-  empty.style.display = 'none';
+let _orders = [];
+let _orderStatus = 'all'; // 'all' | 'completed' | 'failed'
 
+async function loadOrdersPage() {
+  const listEl = document.getElementById('orders-list');
+  const empty = document.getElementById('orders-empty');
+  listEl.innerHTML = '<div style="padding:24px;text-align:center;color:var(--muted-foreground)">Yükleniyor...</div>';
+  empty.style.display = 'none';
   try {
     const res = await fetch('/api/admin/orders', { headers: ADM_HDR, credentials: 'include' });
     if (!res.ok) throw new Error();
-    const orders = await res.json();
-    
-    tbody.innerHTML = '';
-    if (!orders.length) {
-      empty.style.display = 'block';
-      countEl.textContent = '0 sipariş';
-      return;
-    }
-
-    countEl.textContent = orders.length + ' sipariş';
-    orders.reverse().forEach(o => {
-      const row = document.createElement('tr');
-      const dateStr = new Date(o.createdAt).toLocaleString('tr-TR');
-      const statusBadge = o.status === 'completed' 
-        ? '<span class="badge badge-green">Başarılı</span>'
-        : '<span class="badge badge-red">Başarısız</span>';
-      
-      const c = o.customer || null;
-      const custHtml = c
-        ? `${esc(c.name || '')}${c.city ? ' · ' + esc(c.city) : ''}${c.country && c.country !== 'TR' ? ' (' + esc(c.country) + ')' : ''}` +
-          (c.phone ? `<br><span style="color:var(--muted-foreground);font-size:.76rem">${esc(c.phone)}</span>` : '')
-        : '<span style="color:var(--muted-foreground)">—</span>';
-      const addr = c ? `${c.address || ''} ${c.city || ''} ${c.country || ''} · ${c.email || ''}`.trim() : '';
-      const itemsHtml = (o.items && o.items.length)
-        ? o.items.map(it => `${esc(it.title)} <strong>×${esc(it.qty)}</strong>`).join('<br>')
-        : '<span style="color:var(--muted-foreground)">—</span>';
-      row.innerHTML = `
-        <td><strong style="font-size:.78rem">${esc(o.orderId)}</strong></td>
-        <td title="${esc(addr)}">${custHtml}</td>
-        <td style="font-size:.8rem;max-width:260px">${itemsHtml}</td>
-        <td>${esc(o.amount)} ${esc(o.currency || 'TRY')}</td>
-        <td style="white-space:nowrap">${dateStr}</td>
-        <td>${statusBadge}</td>
-        <td style="color:var(--muted-foreground)">${esc(o.failedReason || '-')}</td>
-      `;
-      tbody.appendChild(row);
-    });
+    _orders = await res.json();
+    _orders.reverse(); // newest first
+    renderOrders();
   } catch {
-    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--destructive);">Siparişler yüklenemedi.</td></tr>';
+    listEl.innerHTML = '<div style="padding:24px;text-align:center;color:#ef4444">Siparişler yüklenemedi.</div>';
   }
+}
+
+function setOrderStatus(status, btn) {
+  _orderStatus = status;
+  document.querySelectorAll('#order-status-seg .seg-btn').forEach(b => b.classList.toggle('active', b === btn));
+  renderOrders();
+}
+
+function renderOrders() {
+  const listEl = document.getElementById('orders-list');
+  const empty = document.getElementById('orders-empty');
+  const countEl = document.getElementById('orders-count');
+  const emptyText = empty.querySelector('p');
+
+  const completed = _orders.filter(o => o.status === 'completed').length;
+  const setN = (id, n) => { const e = document.getElementById(id); if (e) e.textContent = n; };
+  setN('osegn-all', _orders.length);
+  setN('osegn-completed', completed);
+  setN('osegn-failed', _orders.length - completed);
+
+  if (!_orders.length) {
+    listEl.innerHTML = '';
+    empty.style.display = 'block';
+    if (emptyText) emptyText.textContent = 'Henüz gelen ödeme/sipariş bulunmuyor.';
+    countEl.textContent = '0 sipariş';
+    return;
+  }
+
+  const filtered = _orderStatus === 'all' ? _orders : _orders.filter(o => o.status === _orderStatus);
+  countEl.textContent = _orderStatus === 'all' ? `${_orders.length} sipariş` : `${filtered.length} / ${_orders.length} sipariş`;
+
+  if (!filtered.length) {
+    listEl.innerHTML = '';
+    empty.style.display = 'block';
+    if (emptyText) emptyText.textContent = 'Bu filtreye uyan sipariş yok.';
+    return;
+  }
+  empty.style.display = 'none';
+
+  listEl.innerHTML = filtered.map(o => {
+    const c = o.customer || {};
+    const ok = o.status === 'completed';
+    const dateStr = o.createdAt ? new Date(o.createdAt).toLocaleString('tr-TR') : '—';
+    const badge = ok ? '<span class="badge badge-green">Başarılı</span>' : '<span class="badge badge-red">Başarısız</span>';
+    const items = (o.items && o.items.length)
+      ? o.items.map(it => `<div class="order-item"><span>${esc(it.title)}</span><strong>×${esc(it.qty)}</strong></div>`).join('')
+      : '<div class="order-item"><span style="color:var(--muted-foreground)">Ürün bilgisi yok</span></div>';
+    const addrBlock = [esc(c.name || ''), esc(c.address || ''), esc([c.city, c.country].filter(Boolean).join(' / '))].filter(Boolean).join('\n') || '—';
+    const shipText = encodeURIComponent([c.name, c.address, [c.city, c.country].filter(Boolean).join(' / '), c.phone, c.email].filter(Boolean).join('\n'));
+    return `<div class="order-card ${ok ? '' : 'is-failed'}">
+      <div class="order-head">
+        ${badge}
+        <span class="order-id">${esc(o.orderId)}</span>
+        <span class="order-date">${dateStr}</span>
+        <span class="order-amt">${esc(o.amount)} ${esc(o.currency || 'TRY')}</span>
+      </div>
+      <div class="order-body">
+        <div>
+          <div class="order-sec-label">Müşteri</div>
+          <div class="order-field"><span class="k">Ad</span>${esc(c.name || '—')}</div>
+          <div class="order-field"><span class="k">Telefon</span>${c.phone ? `<a href="tel:${esc(c.phone)}">${esc(c.phone)}</a>` : '—'}</div>
+          <div class="order-field"><span class="k">E-posta</span>${c.email ? `<a href="mailto:${esc(c.email)}">${esc(c.email)}</a>` : '—'}</div>
+        </div>
+        <div>
+          <div class="order-sec-label">Teslimat Adresi
+            <button class="order-copy" data-ship="${shipText}" onclick="copyOrderShip(this)">Kopyala</button>
+          </div>
+          <div class="order-addr">${addrBlock}</div>
+        </div>
+      </div>
+      <div class="order-items">
+        <div class="order-sec-label" style="margin-bottom:6px">Ürünler</div>
+        ${items}
+      </div>
+      ${!ok && o.failedReason ? `<div class="order-fail">Hata: ${esc(o.failedReason)}</div>` : ''}
+    </div>`;
+  }).join('');
+}
+
+function copyOrderShip(btn) {
+  const text = decodeURIComponent(btn.dataset.ship || '');
+  if (!navigator.clipboard) { toast('Kopyalama desteklenmiyor', 'err'); return; }
+  navigator.clipboard.writeText(text).then(
+    () => { const t = btn.textContent; btn.textContent = 'Kopyalandı ✓'; setTimeout(() => { btn.textContent = t; }, 1500); },
+    () => toast('Kopyalanamadı', 'err')
+  );
 }
 
 // HTML-escape any user-derived value before it is placed via innerHTML.
