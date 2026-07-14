@@ -379,16 +379,16 @@
     .order-card:hover { box-shadow: 0 8px 24px rgba(30,30,70,.09); transform: translateY(-1px); }
     .order-card.is-failed { opacity: .85; }
 
-    /* Etsy-style stage groups */
-    .ogroup { margin-bottom: 26px; }
+    /* Etsy-style ship-by-date groups — clean, quiet headers */
+    .ogroup { margin-bottom: 22px; }
     .ogroup:last-child { margin-bottom: 0; }
-    .ogroup-head { display: flex; align-items: center; gap: 11px; padding: 2px 4px 11px; border-bottom: 2px solid var(--gc, var(--border)); margin-bottom: 14px; }
-    .ogroup-icon { width: 30px; height: 30px; border-radius: 8px; display: grid; place-items: center; font-size: .95rem; flex: none; }
-    .ogroup-title { display: flex; flex-direction: column; line-height: 1.2; min-width: 0; }
-    .ogroup-label { font-size: .95rem; font-weight: 800; color: var(--foreground); }
-    .ogroup-hint { font-size: .69rem; color: var(--muted-foreground); font-weight: 500; }
-    .ogroup-count { margin-left: auto; min-width: 26px; height: 26px; padding: 0 9px; border-radius: 99px; background: var(--gc, var(--muted-foreground)); color: #fff; font-size: .82rem; font-weight: 800; display: grid; place-items: center; }
-    .ogroup-cards { display: grid; gap: 14px; }
+    .ogroup-head { display: flex; align-items: center; gap: 10px; padding: 8px 14px; background: var(--secondary); border-radius: 8px; margin-bottom: 12px; }
+    .ogroup-label { font-size: .85rem; font-weight: 700; color: var(--foreground); }
+    .ogroup-count { font-size: .72rem; font-weight: 700; color: var(--muted-foreground); background: var(--card); border: 1px solid var(--border); border-radius: 99px; padding: 1px 9px; min-width: 22px; text-align: center; }
+    .ogroup-hint { font-size: .72rem; color: var(--muted-foreground); margin-left: 2px; }
+    .ogroup--overdue .ogroup-head { background: rgba(220,38,38,.09); }
+    .ogroup--overdue .ogroup-label { color: #dc2626; }
+    .ogroup-cards { display: grid; gap: 12px; }
 
     /* Card top: buyer + total */
     .oc-top { display: flex; align-items: flex-start; gap: 12px; padding: 14px 18px; border-bottom: 1px solid var(--border); }
@@ -438,12 +438,11 @@
 
     /* ORDER STATS (KPIs + chart) */
     .ostat-head { margin-bottom: 16px; }
-    .okpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 18px; }
-    @media (max-width: 820px) { .okpis { grid-template-columns: repeat(2, 1fr); } }
-    .okpi { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 15px 17px; }
-    .okpi-label { font-size: .7rem; font-weight: 600; letter-spacing: .03em; text-transform: uppercase; color: var(--muted-foreground); margin-bottom: 9px; display: flex; align-items: center; gap: 6px; }
-    .okpi-val { font-size: 1.5rem; font-weight: 800; color: var(--foreground); font-variant-numeric: tabular-nums; line-height: 1.05; }
-    .okpi-sub { font-size: .73rem; color: var(--muted-foreground); margin-top: 5px; }
+    .okpis { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; }
+    .okpi { background: var(--card); border: 1px solid var(--border); border-radius: 9px; padding: 9px 15px; flex: 1 1 auto; min-width: 140px; }
+    .okpi-label { font-size: .65rem; font-weight: 600; letter-spacing: .03em; text-transform: uppercase; color: var(--muted-foreground); margin-bottom: 4px; display: flex; align-items: center; gap: 5px; }
+    .okpi-val { font-size: 1.18rem; font-weight: 800; color: var(--foreground); font-variant-numeric: tabular-nums; line-height: 1.05; }
+    .okpi-sub { font-size: .68rem; color: var(--muted-foreground); margin-top: 2px; }
     .ochart-card { margin-bottom: 20px; }
     .ochart { display: flex; align-items: flex-end; gap: 5px; height: 150px; }
     .ochart-bar { flex: 1 1 0; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 6px; height: 100%; min-width: 0; }
@@ -1328,19 +1327,8 @@
         </div>
       </div>
 
-      <!-- KPI CARDS -->
+      <!-- KPI STRIP (compact) -->
       <div class="okpis" id="okpis"></div>
-
-      <!-- DAILY REVENUE CHART -->
-      <div class="card ochart-card">
-        <div class="card-header" style="display:flex; justify-content:space-between; align-items:center;">
-          <div class="card-title">Günlük Ciro</div>
-          <div id="ochart-sub" style="font-size:.78rem;color:var(--muted-foreground)"></div>
-        </div>
-        <div class="card-body">
-          <div id="ochart" class="ochart"></div>
-        </div>
-      </div>
 
       <div class="card">
         <div class="card-header" style="display:flex; justify-content:space-between; align-items:center;">
@@ -3145,19 +3133,63 @@ function matchOrderFilter(o, key) {
   return ofulf(o) === key;
 }
 
-// Etsy-style grouping: bucket each order by the stage it's waiting in, so the
-// list reads as "what needs doing" at a glance instead of one long stream.
-const ORDER_GROUPS = [
-  { key: 'new',       label: 'Yeni sipariş',   hint: 'hazırlığa başla',   color: '#f59e0b', icon: '🆕' },
-  { key: 'preparing', label: 'Hazırlanıyor',   hint: 'örgüde / paketlemede', color: '#8b5cf6', icon: '🧶' },
-  { key: 'shipped',   label: 'Kargolandı',     hint: 'yolda',              color: '#3b82f6', icon: '📦' },
-  { key: 'delivered', label: 'Teslim edildi',  hint: 'tamamlandı',         color: '#22c55e', icon: '✅' },
-  { key: 'problem',   label: 'Sorunlu / İptal', hint: 'başarısız ödeme veya iptal', color: '#ef4444', icon: '⚠️' },
-];
+// Etsy-style grouping by SHIP-BY DATE. Handmade orders get a small processing
+// window; open orders (new/preparing) are bucketed by their ship-by deadline
+// (Gecikmiş / Bugün / Yarın / DD Ay'e kadar), so the queue reads as "what must
+// ship next". Shipped / delivered / problem fall into trailing fixed groups.
+const SHIP_PROCESSING_DAYS = 3;
 
-function orderGroupKey(o) {
+function _startOfDay(d) { const x = new Date(d); x.setHours(0, 0, 0, 0); return x; }
+
+function shipByDate(o) {
+  const base = o.paidAt || o.createdAt;
+  if (!base) return null;
+  const d = _startOfDay(base);
+  if (isNaN(d.getTime())) return null;
+  d.setDate(d.getDate() + SHIP_PROCESSING_DAYS);
+  return d;
+}
+
+// Which lane an order belongs to: open (still to ship) | shipped | delivered | problem.
+function orderStageKey(o) {
   if (o.status !== 'completed' || o.fulfillment === 'cancelled') return 'problem';
-  return ofulf(o); // new | preparing | shipped | delivered
+  const k = ofulf(o);
+  if (k === 'shipped') return 'shipped';
+  if (k === 'delivered') return 'delivered';
+  return 'open'; // new or preparing
+}
+
+function buildOrderGroups(list) {
+  const today = _startOfDay(new Date());
+  const tomorrow = new Date(today); tomorrow.setDate(tomorrow.getDate() + 1);
+  const fmt = d => d.toLocaleDateString('tr-TR', { day: '2-digit', month: 'short' });
+
+  const buckets = new Map(); // ship-by time -> group
+  const shipped = [], delivered = [], problem = [];
+
+  list.forEach(o => {
+    const lane = orderStageKey(o);
+    if (lane === 'shipped') return shipped.push(o);
+    if (lane === 'delivered') return delivered.push(o);
+    if (lane === 'problem') return problem.push(o);
+    const sb = shipByDate(o) || today;
+    const t = sb.getTime();
+    if (!buckets.has(t)) {
+      let label, overdue = false;
+      if (t < today.getTime()) { label = 'Gecikmiş · ' + fmt(sb); overdue = true; }
+      else if (t === today.getTime()) label = 'Bugün kargola';
+      else if (t === tomorrow.getTime()) label = 'Yarın kargola';
+      else label = fmt(sb) + "'e kadar kargola";
+      buckets.set(t, { key: 'd' + t, label, overdue, order: t, rows: [] });
+    }
+    buckets.get(t).rows.push(o);
+  });
+
+  const groups = Array.from(buckets.values()).sort((a, b) => a.order - b.order);
+  if (shipped.length) groups.push({ key: 'shipped', label: 'Kargoda', hint: 'yolda', rows: shipped });
+  if (delivered.length) groups.push({ key: 'delivered', label: 'Teslim edildi', rows: delivered });
+  if (problem.length) groups.push({ key: 'problem', label: 'Sorunlu / İptal', overdue: true, rows: problem });
+  return groups;
 }
 
 function renderOrders() {
@@ -3189,20 +3221,16 @@ function renderOrders() {
   }
   empty.style.display = 'none';
 
-  // Render as Etsy-style stage groups: a labelled section per stage, each with
-  // its own count, so the queue reads as a to-do list. Only non-empty groups show.
-  listEl.innerHTML = ORDER_GROUPS.map(g => {
-    const rows = filtered.filter(o => orderGroupKey(o) === g.key);
-    if (!rows.length) return '';
-    return `<section class="ogroup">
-      <header class="ogroup-head" style="--gc:${g.color}">
-        <span class="ogroup-icon" style="background:${g.color}1f">${g.icon}</span>
-        <span class="ogroup-title"><span class="ogroup-label">${g.label}</span><span class="ogroup-hint">${g.hint}</span></span>
-        <span class="ogroup-count">${rows.length}</span>
+  // Etsy-style: a labelled section per ship-by date (plus trailing shipped/
+  // delivered/problem lanes), so the queue reads as "what must ship next".
+  listEl.innerHTML = buildOrderGroups(filtered).map(g => `<section class="ogroup${g.overdue ? ' ogroup--overdue' : ''}">
+      <header class="ogroup-head">
+        <span class="ogroup-label">${g.label}</span>
+        <span class="ogroup-count">${g.rows.length}</span>
+        ${g.hint ? `<span class="ogroup-hint">${g.hint}</span>` : ''}
       </header>
-      <div class="ogroup-cards">${rows.map(orderCardHTML).join('')}</div>
-    </section>`;
-  }).join('');
+      <div class="ogroup-cards">${g.rows.map(orderCardHTML).join('')}</div>
+    </section>`).join('');
 }
 
 // A single order card — buyer + total up top, line items on the left, shipping
