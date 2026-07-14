@@ -37,15 +37,18 @@ const REPRESENTATIVE_IMAGES: Record<string, string> = {
 
 const cats = [...new Set(products.map((p) => p.category))]
   .map((c) => {
-    const sample = products.find((p) => p.category === c && p.image);
+    const items = products.filter((p) => p.category === c);
+    const sample = items.find((p) => p.image);
     const chosenImage = REPRESENTATIVE_IMAGES[c] ?? sample?.image;
     const label = catLabels[c]?.[locale] ?? c;
-    return { c, label, img: chosenImage, alt: label };
+    return { c, label, img: chosenImage, alt: label, count: items.length };
   })
   .filter((cat) => cat.img)
   .slice(0, 8);
 
 const catalog = locale === 'tr' ? '/tr/urunler' : '/en/products';
+const unit = locale === 'tr' ? 'ürün' : 'items';
+const exploreLabel = locale === 'tr' ? 'Keşfet' : 'Explore';
 ---
 <section class="section">
   <div class="container">
@@ -54,51 +57,66 @@ const catalog = locale === 'tr' ? '/tr/urunler' : '/en/products';
     </div>
     <div class="cats">
       {cats.map((cat, idx) => (
-        <a class={`cat hover-scale reveal reveal--fade-up reveal--d${(idx % 4) + 1}`} href={`${catalog}?cat=${encodeURIComponent(cat.c)}`}>
+        <a class={`cat reveal reveal--fade-up reveal--d${(idx % 4) + 1}`} href={`${catalog}?cat=${encodeURIComponent(cat.c)}`}>
           <div class="cat__media">
             {cat.img && <img src={cat.img} alt={cat.alt} loading="lazy" />}
             <div class="cat__overlay">
-              <span class="cat__overlay-btn">{locale === 'tr' ? 'Keşfet' : 'Explore'} →</span>
+              <span class="cat__overlay-btn">
+                {exploreLabel}
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>
+              </span>
             </div>
           </div>
           <span class="cat__label">{cat.label}</span>
+          <svg class="cat__stitch" viewBox="0 0 64 6" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M2 4 Q10 0 18 4 T34 4 T50 4 T62 4" />
+          </svg>
+          {cat.count > 0 && <span class="cat__count">{cat.count} {unit}</span>}
         </a>
       ))}
     </div>
   </div>
 </section>
 <style>
-  .cats { 
-    display: grid; 
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); 
-    gap: var(--space-6) var(--space-5); 
+  .cats {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: var(--space-7) var(--space-5);
   }
-  .cat { 
+  .cat {
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
+    transition: transform var(--dur) var(--ease);
   }
-  .cat__media { 
+  .cat:hover { transform: translateY(-6px); }
+
+  .cat__media {
     position: relative;
     width: 100%;
-    aspect-ratio: 9/12; 
-    overflow: hidden; 
-    border-radius: 120px 120px var(--radius) var(--radius); 
-    background: var(--section); 
-    box-shadow: 0 8px 24px rgba(28, 26, 24, 0.04);
+    aspect-ratio: 9/12;
+    overflow: hidden;
+    border-radius: 130px 130px var(--radius) var(--radius);
+    background: var(--section);
+    border: 1px solid var(--line);
+    box-shadow: 0 10px 30px rgba(28, 26, 24, 0.05);
+    transition: box-shadow var(--dur) var(--ease);
   }
-  .cat__media img { 
-    width: 100%; 
-    height: 100%; 
-    object-fit: cover; 
-    transition: transform 1s var(--ease); 
+  .cat:hover .cat__media { box-shadow: 0 20px 46px rgba(28, 26, 24, 0.13); }
+  .cat__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 1.1s var(--ease);
   }
-  
+  .cat:hover .cat__media img { transform: scale(1.07); }
+
+  /* Warm terracotta-tinted reveal with a glass "Explore" pill */
   .cat__overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(to top, rgba(28, 26, 24, 0.4) 0%, transparent 60%);
+    background: linear-gradient(to top, rgba(133, 58, 27, 0.62) 0%, rgba(133, 58, 27, 0.12) 42%, transparent 72%);
     opacity: 0;
     display: flex;
     align-items: flex-end;
@@ -106,29 +124,68 @@ const catalog = locale === 'tr' ? '/tr/urunler' : '/en/products';
     padding-bottom: var(--space-5);
     transition: opacity var(--dur) var(--ease);
   }
-  
   .cat__overlay-btn {
-    color: var(--surface);
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    color: #fff;
     font-size: var(--step-small);
     font-weight: 600;
+    letter-spacing: 0.03em;
+    padding: 8px 17px;
+    border-radius: var(--radius-pill);
+    background: rgba(255, 255, 255, 0.14);
+    border: 1px solid rgba(255, 255, 255, 0.75);
+    -webkit-backdrop-filter: blur(3px);
+    backdrop-filter: blur(3px);
+    transform: translateY(8px);
+    transition: transform var(--dur) var(--ease);
+  }
+  .cat:hover .cat__overlay { opacity: 1; }
+  .cat:hover .cat__overlay-btn { transform: translateY(0); }
+
+  .cat__label {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 1.28rem;
+    font-weight: 500;
+    margin-top: var(--space-4);
+    color: var(--ink);
+    transition: color var(--dur) var(--ease);
+  }
+  .cat:hover .cat__label { color: var(--accent-ink); }
+
+  /* Signature hand-stitch (running-stitch) accent under each name */
+  .cat__stitch {
+    display: block;
+    width: 58px;
+    height: 6px;
+    margin: 10px auto 0;
+  }
+  .cat__stitch path {
+    fill: none;
+    stroke: rgba(176, 83, 46, 0.45);
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-dasharray: 4 3.5;
+    transition: stroke var(--dur) var(--ease);
+  }
+  .cat:hover .cat__stitch path { stroke: var(--accent); }
+
+  /* Product count under the stitch accent */
+  .cat__count {
+    display: block;
+    margin-top: 8px;
+    font-family: var(--font-body);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    border-bottom: 1.5px solid var(--surface);
-    padding-bottom: 2px;
+    color: var(--muted);
   }
 
-  .cat:hover .cat__media img { 
-    transform: scale(1.06); 
-  }
-  .cat:hover .cat__overlay {
-    opacity: 1;
-  }
-  .cat__label { 
-    display: block; 
-    font-family: var(--font-display); 
-    font-size: 1.25rem; 
-    font-weight: 500;
-    margin-top: var(--space-4); 
-    color: var(--ink);
+  @media (prefers-reduced-motion: reduce) {
+    .cat, .cat__media, .cat__media img, .cat__overlay-btn { transition: none; }
+    .cat:hover { transform: none; }
   }
 </style>
