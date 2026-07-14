@@ -374,10 +374,40 @@
     tr.prow-off .pname-tr { text-decoration: line-through; text-decoration-color: var(--muted-foreground); }
 
     /* ORDER CARDS */
-    .orders-list { display: grid; gap: 16px; padding: 20px; }
+    .orders-list { padding: 20px; }
     .order-card { border: 1px solid var(--border); border-radius: 10px; background: var(--card); overflow: hidden; transition: box-shadow .16s ease, transform .16s ease; }
     .order-card:hover { box-shadow: 0 8px 24px rgba(30,30,70,.09); transform: translateY(-1px); }
-    .order-card.is-failed { opacity: .82; }
+    .order-card.is-failed { opacity: .85; }
+
+    /* Etsy-style stage groups */
+    .ogroup { margin-bottom: 26px; }
+    .ogroup:last-child { margin-bottom: 0; }
+    .ogroup-head { display: flex; align-items: center; gap: 11px; padding: 2px 4px 11px; border-bottom: 2px solid var(--gc, var(--border)); margin-bottom: 14px; }
+    .ogroup-icon { width: 30px; height: 30px; border-radius: 8px; display: grid; place-items: center; font-size: .95rem; flex: none; }
+    .ogroup-title { display: flex; flex-direction: column; line-height: 1.2; min-width: 0; }
+    .ogroup-label { font-size: .95rem; font-weight: 800; color: var(--foreground); }
+    .ogroup-hint { font-size: .69rem; color: var(--muted-foreground); font-weight: 500; }
+    .ogroup-count { margin-left: auto; min-width: 26px; height: 26px; padding: 0 9px; border-radius: 99px; background: var(--gc, var(--muted-foreground)); color: #fff; font-size: .82rem; font-weight: 800; display: grid; place-items: center; }
+    .ogroup-cards { display: grid; gap: 14px; }
+
+    /* Card top: buyer + total */
+    .oc-top { display: flex; align-items: flex-start; gap: 12px; padding: 14px 18px; border-bottom: 1px solid var(--border); }
+    .oc-buyer { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+    .oc-name { font-size: 1rem; font-weight: 700; color: var(--foreground); }
+    .oc-id { font-family: ui-monospace, monospace; font-size: .69rem; color: var(--muted-foreground); }
+    .oc-amt { margin-left: auto; font-size: 1.18rem; font-weight: 800; color: var(--foreground); white-space: nowrap; font-variant-numeric: tabular-nums; }
+
+    /* Card main: items | shipping */
+    .oc-main { display: grid; grid-template-columns: 1.15fr 1fr; }
+    .oc-items { display: flex; flex-direction: column; gap: 12px; padding: 15px 18px; }
+    .oc-ship { padding: 15px 18px; border-left: 1px solid var(--border); background: var(--secondary); }
+    @media (max-width: 760px) { .oc-main { grid-template-columns: 1fr; } .oc-ship { border-left: none; border-top: 1px solid var(--border); } }
+    .oi-info { min-width: 0; }
+    .oi-sub { font-size: .76rem; color: var(--muted-foreground); margin-top: 2px; font-variant-numeric: tabular-nums; }
+    .oc-meta { display: flex; flex-direction: column; gap: 5px; margin-top: 11px; }
+    .oc-metarow { font-size: .82rem; color: var(--foreground); display: flex; gap: 8px; align-items: baseline; }
+    .oc-metarow .oico { width: 15px; opacity: .55; flex: none; text-align: center; }
+    .oc-metarow a { color: var(--primary); }
     .order-head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 13px 18px; border-bottom: 1px solid var(--border); }
     .ostatus { display: inline-flex; align-items: center; gap: 6px; font-size: .7rem; font-weight: 700; letter-spacing: .02em; padding: 4px 11px; border-radius: 99px; }
     .ostatus .odot { width: 7px; height: 7px; border-radius: 50%; }
@@ -3115,6 +3145,21 @@ function matchOrderFilter(o, key) {
   return ofulf(o) === key;
 }
 
+// Etsy-style grouping: bucket each order by the stage it's waiting in, so the
+// list reads as "what needs doing" at a glance instead of one long stream.
+const ORDER_GROUPS = [
+  { key: 'new',       label: 'Yeni sipariş',   hint: 'hazırlığa başla',   color: '#f59e0b', icon: '🆕' },
+  { key: 'preparing', label: 'Hazırlanıyor',   hint: 'örgüde / paketlemede', color: '#8b5cf6', icon: '🧶' },
+  { key: 'shipped',   label: 'Kargolandı',     hint: 'yolda',              color: '#3b82f6', icon: '📦' },
+  { key: 'delivered', label: 'Teslim edildi',  hint: 'tamamlandı',         color: '#22c55e', icon: '✅' },
+  { key: 'problem',   label: 'Sorunlu / İptal', hint: 'başarısız ödeme veya iptal', color: '#ef4444', icon: '⚠️' },
+];
+
+function orderGroupKey(o) {
+  if (o.status !== 'completed' || o.fulfillment === 'cancelled') return 'problem';
+  return ofulf(o); // new | preparing | shipped | delivered
+}
+
 function renderOrders() {
   const listEl = document.getElementById('orders-list');
   const empty = document.getElementById('orders-empty');
@@ -3144,68 +3189,91 @@ function renderOrders() {
   }
   empty.style.display = 'none';
 
-  listEl.innerHTML = filtered.map(o => {
-    const c = o.customer || {};
-    const ok = o.status === 'completed';
-    const dateStr = o.createdAt ? new Date(o.createdAt).toLocaleString('tr-TR', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—';
-    const amtNum = Number(o.amount);
-    const cur = (o.currency || 'TRY') === 'TRY' ? '₺' : esc(o.currency);
-    const amtStr = isFinite(amtNum) ? amtNum.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ' + cur : esc(o.amount) + ' ' + cur;
-    const fkey = ofulf(o);
-    const meta = ok ? OFULF[fkey] : null;
-    const status = ok
-      ? `<span class="ostatus2" style="background:${meta.color}22;color:${meta.color}"><span class="odot" style="background:${meta.color}"></span>${meta.icon} ${meta.label}</span>`
-      : '<span class="ostatus fail"><span class="odot"></span>Ödeme Başarısız</span>';
-    const fulfilBar = ok ? (() => {
-      const curIdx = OFULF_STEPS.indexOf(fkey);
-      const steps = OFULF_STEPS.map((k, i) => {
-        const cls = curIdx >= 0 && i < curIdx ? 'done' : (k === fkey ? 'active' : '');
-        return `<button class="ofstep ${cls}" onclick="setOrderFulfillment('${o.orderId}','${k}')">${OFULF[k].icon} ${OFULF[k].label}</button>`;
-      }).join('');
-      const cancelBtn = `<button class="ofstep ofstep--cancel ${fkey === 'cancelled' ? 'active' : ''}" onclick="setOrderFulfillment('${o.orderId}','cancelled')">✖ İptal</button>`;
-      return `<div class="ofulfil"><div class="ofulfil-steps">${steps}${cancelBtn}</div>` +
-        `<div class="ofulfil-track"><span class="oico">🚚</span>` +
-        `<input class="oftrack-input" placeholder="Kargo takip no" value="${esc(o.tracking || '')}" onblur="saveOrderTracking('${o.orderId}',this)" onkeydown="if(event.key==='Enter'){this.blur();}">` +
-        `<span class="ofsaved" id="ofsaved-${esc(o.orderId)}">kaydedildi ✓</span></div></div>`;
-    })() : '';
-    const items = (o.items && o.items.length)
-      ? o.items.map(it => {
-          const prod = _products.find(p => String(p.id) === String(it.id));
-          const img = it.image || (prod && prod.image) || '';
-          const thumb = img
-            ? `<img class="oi-thumb" src="${esc(img)}" alt="" loading="lazy">`
-            : '<div class="oi-thumb oi-thumb--ph">🧶</div>';
-          return `<div class="order-item"><div class="oi-media">${thumb}<span class="oi-qty">×${esc(it.qty)}</span></div><div class="oi-title">${esc(it.title)}</div></div>`;
-        }).join('')
-      : '<div class="order-item"><div class="oi-title" style="color:var(--muted-foreground)">Ürün bilgisi kaydedilmemiş</div></div>';
-    const addrBlock = [esc(c.name || ''), esc(c.address || ''), esc([c.city, c.country].filter(Boolean).join(' / '))].filter(Boolean).join('\n') || '—';
-    const shipText = encodeURIComponent([c.name, c.address, [c.city, c.country].filter(Boolean).join(' / '), c.phone, c.email].filter(Boolean).join('\n'));
-    return `<div class="order-card ${ok ? '' : 'is-failed'}">
-      <div class="order-head">
-        ${status}
-        <span class="order-date">${dateStr}</span>
-        <span class="order-id">${esc(o.orderId)}</span>
-        <span class="order-amt">${amtStr}</span>
-      </div>
-      <div class="order-items">${items}</div>
-      ${fulfilBar}
-      <div class="order-body">
-        <div>
-          <div class="order-sec-label">Müşteri</div>
-          <div class="order-field"><span class="oico">👤</span>${esc(c.name || '—')}</div>
-          <div class="order-field"><span class="oico">📞</span>${c.phone ? `<a href="tel:${esc(c.phone)}">${esc(c.phone)}</a>` : '—'}</div>
-          <div class="order-field"><span class="oico">✉️</span>${c.email ? `<a href="mailto:${esc(c.email)}">${esc(c.email)}</a>` : '—'}</div>
-        </div>
-        <div>
-          <div class="order-sec-label">Teslimat Adresi
-            <button class="order-copy" data-ship="${shipText}" onclick="copyOrderShip(this)">📋 Kopyala</button>
-          </div>
-          <div class="order-addr">${addrBlock}</div>
-        </div>
-      </div>
-      ${!ok && o.failedReason ? `<div class="order-fail">⚠️ ${esc(o.failedReason)}</div>` : ''}
-    </div>`;
+  // Render as Etsy-style stage groups: a labelled section per stage, each with
+  // its own count, so the queue reads as a to-do list. Only non-empty groups show.
+  listEl.innerHTML = ORDER_GROUPS.map(g => {
+    const rows = filtered.filter(o => orderGroupKey(o) === g.key);
+    if (!rows.length) return '';
+    return `<section class="ogroup">
+      <header class="ogroup-head" style="--gc:${g.color}">
+        <span class="ogroup-icon" style="background:${g.color}1f">${g.icon}</span>
+        <span class="ogroup-title"><span class="ogroup-label">${g.label}</span><span class="ogroup-hint">${g.hint}</span></span>
+        <span class="ogroup-count">${rows.length}</span>
+      </header>
+      <div class="ogroup-cards">${rows.map(orderCardHTML).join('')}</div>
+    </section>`;
   }).join('');
+}
+
+// A single order card — buyer + total up top, line items on the left, shipping
+// & contact on the right, then the fulfillment pipeline + cargo tracking below.
+function orderCardHTML(o) {
+  const c = o.customer || {};
+  const ok = o.status === 'completed';
+  const dateStr = o.createdAt ? new Date(o.createdAt).toLocaleString('tr-TR', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—';
+  const amtNum = Number(o.amount);
+  const cur = (o.currency || 'TRY') === 'TRY' ? '₺' : esc(o.currency);
+  const amtStr = isFinite(amtNum) ? amtNum.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ' + cur : esc(o.amount) + ' ' + cur;
+  const fkey = ofulf(o);
+
+  const fulfilBar = ok ? (() => {
+    const curIdx = OFULF_STEPS.indexOf(fkey);
+    const steps = OFULF_STEPS.map((k, i) => {
+      const cls = curIdx >= 0 && i < curIdx ? 'done' : (k === fkey ? 'active' : '');
+      return `<button class="ofstep ${cls}" onclick="setOrderFulfillment('${o.orderId}','${k}')">${OFULF[k].icon} ${OFULF[k].label}</button>`;
+    }).join('');
+    const cancelBtn = `<button class="ofstep ofstep--cancel ${fkey === 'cancelled' ? 'active' : ''}" onclick="setOrderFulfillment('${o.orderId}','cancelled')">✖ İptal</button>`;
+    return `<div class="ofulfil"><div class="ofulfil-steps">${steps}${cancelBtn}</div>` +
+      `<div class="ofulfil-track"><span class="oico">🚚</span>` +
+      `<input class="oftrack-input" placeholder="Kargo takip no" value="${esc(o.tracking || '')}" onblur="saveOrderTracking('${o.orderId}',this)" onkeydown="if(event.key==='Enter'){this.blur();}">` +
+      `<span class="ofsaved" id="ofsaved-${esc(o.orderId)}">kaydedildi ✓</span></div></div>`;
+  })() : '';
+
+  const items = (o.items && o.items.length)
+    ? o.items.map(it => {
+        const prod = _products.find(p => String(p.id) === String(it.id));
+        const img = it.image || (prod && prod.image) || '';
+        const thumb = img
+          ? `<img class="oi-thumb" src="${esc(img)}" alt="" loading="lazy">`
+          : '<div class="oi-thumb oi-thumb--ph">🧶</div>';
+        const q = Number(it.qty) || 1;
+        const priceNum = Number(it.price);
+        const lineSub = isFinite(priceNum) ? `${q} × ${_fmtTL2(priceNum)} ₺` : `${esc(it.qty)} adet`;
+        return `<div class="order-item"><div class="oi-media">${thumb}<span class="oi-qty">×${esc(it.qty)}</span></div>` +
+          `<div class="oi-info"><div class="oi-title">${esc(it.title)}</div><div class="oi-sub">${lineSub}</div></div></div>`;
+      }).join('')
+    : '<div class="order-item"><div class="oi-title" style="color:var(--muted-foreground)">Ürün bilgisi kaydedilmemiş</div></div>';
+
+  const addrBlock = [esc(c.address || ''), esc([c.city, c.country].filter(Boolean).join(' / '))].filter(Boolean).join('\n') || '—';
+  const shipText = encodeURIComponent([c.name, c.address, [c.city, c.country].filter(Boolean).join(' / '), c.phone, c.email].filter(Boolean).join('\n'));
+  const shipCost = Number(o.shipping);
+  const shipLine = isFinite(shipCost) ? (shipCost > 0 ? `${_fmtTL2(shipCost)} ₺` : 'Ücretsiz') : '—';
+
+  return `<article class="order-card ${ok ? '' : 'is-failed'}">
+    <div class="oc-top">
+      <div class="oc-buyer">
+        <span class="oc-name">${esc(c.name || 'Misafir')}</span>
+        <span class="oc-id">${esc(o.orderId)} · ${dateStr}</span>
+      </div>
+      <div class="oc-amt">${amtStr}</div>
+    </div>
+    <div class="oc-main">
+      <div class="oc-items">${items}</div>
+      <div class="oc-ship">
+        <div class="order-sec-label">Teslimat
+          <button class="order-copy" data-ship="${shipText}" onclick="copyOrderShip(this)">📋 Kopyala</button>
+        </div>
+        <div class="order-addr">${addrBlock}</div>
+        <div class="oc-meta">
+          <span class="oc-metarow"><span class="oico">📞</span>${c.phone ? `<a href="tel:${esc(c.phone)}">${esc(c.phone)}</a>` : '—'}</span>
+          <span class="oc-metarow"><span class="oico">✉️</span>${c.email ? `<a href="mailto:${esc(c.email)}">${esc(c.email)}</a>` : '—'}</span>
+          <span class="oc-metarow"><span class="oico">🚚</span>Kargo: ${shipLine}</span>
+        </div>
+      </div>
+    </div>
+    ${fulfilBar}
+    ${!ok && o.failedReason ? `<div class="order-fail">⚠️ ${esc(o.failedReason)}</div>` : ''}
+  </article>`;
 }
 
 function copyOrderShip(btn) {
