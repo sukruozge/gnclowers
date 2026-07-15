@@ -10,7 +10,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "sync": "tsx scripts/etsy-sync.ts",
-    "etsy-auth": "tsx scripts/etsy-oauth.ts"
+    "etsy-auth": "tsx scripts/etsy-oauth.ts",
+    "blog-publish": "tsx scripts/blog-publish.ts"
   },
   "engines": {
     "node": ">=18.0.0"

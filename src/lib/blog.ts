@@ -17,8 +17,11 @@
   metaDesc?: string;
   /** Reading-time label override (e.g. "5 min"). Falls back to a computed estimate. */
   readTime?: string;
-  /** When false, the post is a draft. Absent/true means published. */
+  /** When false, the post is a draft/queued and hidden from the storefront. Absent/true means live. */
   published?: boolean;
+  /** ISO date (YYYY-MM-DD) when a queued post should auto-publish. The daily
+   *  blog-publish workflow flips `published` to true on/after this date. */
+  publishAt?: string;
 }
 
 import blogData from "../data/blog.json";
@@ -26,7 +29,11 @@ import blogData from "../data/blog.json";
 const POSTS: Post[] = blogData as Post[];
 
 export function loadPosts(): Post[] {
-  return [...POSTS].sort((a, b) => b.date.localeCompare(a.date));
+  // Hide drafts / queued posts (published === false). Queued posts go live when
+  // the daily blog-publish workflow flips them on/after their publishAt date.
+  return [...POSTS]
+    .filter((p) => p.published !== false)
+    .sort((a, b) => b.date.localeCompare(a.date));
 }
 
 export function postSlug(post: Post): string {
