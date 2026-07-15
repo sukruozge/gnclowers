@@ -34,23 +34,18 @@ export const LEGAL_ROUTES: LegalEntry[] = [
 
 const sellerBlockTr = `
 <p>
-  <strong>Satıcı:</strong> ${SELLER.legalName} ("${SELLER.brand}")<br>
-  <strong>Adres:</strong> ${SELLER.address}<br>
-  <strong>Vergi Dairesi / No:</strong> ${SELLER.taxOffice} / ${SELLER.taxNo}<br>
-  <strong>MERSİS:</strong> ${SELLER.mersis}<br>
-  <strong>E-posta:</strong> <a href="mailto:${SELLER.email}">${SELLER.email}</a> &middot;
-  <strong>Telefon:</strong> ${SELLER.phone} &middot; <strong>WhatsApp:</strong> ${SELLER.whatsapp}<br>
-  <strong>Web:</strong> ${SELLER.site}
+  <strong>Satıcı:</strong> ${SELLER.brand}<br>
+  <strong>İletişim:</strong> <a href="mailto:${SELLER.email}">${SELLER.email}</a> &middot; <strong>WhatsApp:</strong> ${SELLER.whatsapp}<br>
+  <strong>Web:</strong> ${SELLER.site}<br>
+  <span style="opacity:.75">Satıcıya ait tescilli yasal unvan, adres ve vergi bilgileri talep hâlinde yukarıdaki iletişim kanallarından paylaşılır.</span>
 </p>`;
 
 const sellerBlockEn = `
 <p>
-  <strong>Seller:</strong> ${SELLER.legalName} ("${SELLER.brand}")<br>
-  <strong>Address:</strong> ${SELLER.address}<br>
-  <strong>Tax office / no:</strong> ${SELLER.taxOffice} / ${SELLER.taxNo}<br>
-  <strong>Email:</strong> <a href="mailto:${SELLER.email}">${SELLER.email}</a> &middot;
-  <strong>Phone:</strong> ${SELLER.phone} &middot; <strong>WhatsApp:</strong> ${SELLER.whatsapp}<br>
-  <strong>Web:</strong> ${SELLER.site}
+  <strong>Seller:</strong> ${SELLER.brand}<br>
+  <strong>Contact:</strong> <a href="mailto:${SELLER.email}">${SELLER.email}</a> &middot; <strong>WhatsApp:</strong> ${SELLER.whatsapp}<br>
+  <strong>Web:</strong> ${SELLER.site}<br>
+  <span style="opacity:.75">The seller's registered legal name, address and tax details are available on request via the contact channels above.</span>
 </p>`;
 
 export const LEGAL: Record<string, { tr: LegalDoc; en: LegalDoc }> = {
@@ -246,7 +241,7 @@ ${sellerBlockEn}
   // ── KVKK ────────────────────────────────────────────────
   kvkk: {
     tr: { title: 'KVKK Aydınlatma Metni', updated: UPDATED_TR, html: `
-<p>6698 sayılı Kişisel Verilerin Korunması Kanunu ("KVKK") uyarınca, veri sorumlusu sıfatıyla ${SELLER.legalName} ("${SELLER.brand}") tarafından kişisel verileriniz aşağıda açıklandığı şekilde işlenmektedir.</p>
+<p>6698 sayılı Kişisel Verilerin Korunması Kanunu ("KVKK") uyarınca, veri sorumlusu sıfatıyla ${SELLER.brand} tarafından kişisel verileriniz aşağıda açıklandığı şekilde işlenmektedir.</p>
 <h2>1. İşlenen veriler ve amaç</h2>
 <p>Kimlik, iletişim ve teslimat bilgileriniz; siparişin oluşturulması, teslimi, faturalandırma, müşteri desteği ve yasal yükümlülüklerin yerine getirilmesi amacıyla işlenir.</p>
 <h2>2. Hukuki sebep</h2>
@@ -267,7 +262,7 @@ ${sellerBlockEn}
 <p>Taleplerinizi <a href="mailto:${SELLER.email}">${SELLER.email}</a> adresine iletebilirsiniz.</p>
 ${sellerBlockTr}` },
     en: { title: 'Data Protection Notice', updated: UPDATED_EN, html: `
-<p>Under Turkish Law No. 6698 on the Protection of Personal Data ("KVKK"), ${SELLER.legalName} ("${SELLER.brand}"), as data controller, processes your personal data as described below.</p>
+<p>Under Turkish Law No. 6698 on the Protection of Personal Data ("KVKK"), ${SELLER.brand}, as data controller, processes your personal data as described below.</p>
 <h2>1. Data and purpose</h2>
 <p>Your identity, contact and delivery data are processed to create and deliver orders, invoice, provide support and meet legal obligations.</p>
 <h2>2. Legal basis</h2>
