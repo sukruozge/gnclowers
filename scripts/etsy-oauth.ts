@@ -22,6 +22,7 @@
 import { createServer } from 'node:http';
 import { createHash, randomBytes } from 'node:crypto';
 import { exec } from 'node:child_process';
+import { writeFileSync } from 'node:fs';
 
 const API_KEY = process.env.ETSY_API_KEY ?? '';
 const PORT = 3003;
@@ -83,11 +84,14 @@ const server = createServer(async (req, res) => {
   try {
     const tokens = await exchangeCode(code);
     res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' }).end(
-      '<h2>✓ Yetkilendirme tamam</h2><p>Bu sekmeyi kapatabilirsiniz. Refresh token terminale yazıldı.</p>',
+      '<h2>✓ Yetkilendirme tamam</h2><p>Bu sekmeyi kapatabilirsiniz. Refresh token dosyaya yazıldı.</p>',
     );
-    console.log('\n✓ Success! Add this to your GitHub secret ETSY_REFRESH_TOKEN:\n');
-    console.log('  ' + tokens.refresh_token + '\n');
-    console.log('(access token expires in', tokens.expires_in, 'seconds — the sync refreshes it automatically.)\n');
+    // Write the token to a gitignored file instead of printing it, so it never
+    // ends up in logs/console output.
+    const tokenFile = '.etsy-refresh-token.txt';
+    writeFileSync(tokenFile, String(tokens.refresh_token) + '\n');
+    console.log(`\n✓ Success! Refresh token written to ${tokenFile}`);
+    console.log(`  (starts with ${String(tokens.refresh_token).slice(0, 6)}… ) — open that file and paste the whole value into the GitHub secret ETSY_REFRESH_TOKEN.\n`);
   } catch (err) {
     res.writeHead(500).end('Token exchange failed — see terminal.');
     console.error('\n✗', err instanceof Error ? err.message : err, '\n');

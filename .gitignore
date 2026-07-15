@@ -13,3 +13,5 @@ public/products.json
 
 # PayTR integration reference bundle (docs/PDFs/sample code) — local only
 PayTR IFrame API/
+
+.etsy-refresh-token.txt
