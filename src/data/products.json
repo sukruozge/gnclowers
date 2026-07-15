@@ -1,5 +1,5 @@
 {
-  "lastSync": "2026-07-15T18:19:39.600Z",
+  "lastSync": "2026-07-15T18:34:02.066Z",
   "shopId": "65409401",
   "shopName": "aselovers",
   "total": 126,
@@ -46,7 +46,58 @@
         "stuffed bear"
       ],
       "isNew": true,
-      "isActive": true
+      "isActive": true,
+      "options": [
+        {
+          "name": "Primary color",
+          "values": [
+            "Cream(Standard)",
+            "Blue",
+            "Pink",
+            "Green",
+            "Brown",
+            "Gray"
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "values": {
+            "Primary color": "Cream(Standard)"
+          },
+          "price": 2399
+        },
+        {
+          "values": {
+            "Primary color": "Blue"
+          },
+          "price": 2399
+        },
+        {
+          "values": {
+            "Primary color": "Pink"
+          },
+          "price": 2399
+        },
+        {
+          "values": {
+            "Primary color": "Green"
+          },
+          "price": 2399
+        },
+        {
+          "values": {
+            "Primary color": "Brown"
+          },
+          "price": 2399
+        },
+        {
+          "values": {
+            "Primary color": "Gray"
+          },
+          "price": 2399
+        }
+      ]
     },
     {
       "id": "4485801447",
@@ -89,7 +140,58 @@
         "baby gift"
       ],
       "isNew": true,
-      "isActive": true
+      "isActive": true,
+      "options": [
+        {
+          "name": "Options",
+          "values": [
+            "Bunny",
+            "Bear",
+            "Giraffe",
+            "Beer",
+            "Monkey",
+            "Lion"
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "values": {
+            "Options": "Bunny"
+          },
+          "price": 4000
+        },
+        {
+          "values": {
+            "Options": "Bear"
+          },
+          "price": 4000
+        },
+        {
+          "values": {
+            "Options": "Giraffe"
+          },
+          "price": 4000
+        },
+        {
+          "values": {
+            "Options": "Beer"
+          },
+          "price": 4000
+        },
+        {
+          "values": {
+            "Options": "Monkey"
+          },
+          "price": 4000
+        },
+        {
+          "values": {
+            "Options": "Lion"
+          },
+          "price": 4000
+        }
+      ]
     },
     {
       "id": "4537080531",
@@ -226,7 +328,100 @@
         "nursery accessory"
       ],
       "isNew": true,
-      "isActive": true
+      "isActive": true,
+      "options": [
+        {
+          "name": "Select Model",
+          "values": [
+            "Custom 2 pieces",
+            "Bunny",
+            "Unicorn",
+            "Octopus",
+            "Sleeping Bear",
+            "Deer",
+            "Giraffe",
+            "Monkey",
+            "Lion",
+            "Sid",
+            "Mix-Kit",
+            "Mouse (2 Pieces)"
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "values": {
+            "Select Model": "Custom 2 pieces"
+          },
+          "price": 2800
+        },
+        {
+          "values": {
+            "Select Model": "Bunny"
+          },
+          "price": 2350
+        },
+        {
+          "values": {
+            "Select Model": "Unicorn"
+          },
+          "price": 2639
+        },
+        {
+          "values": {
+            "Select Model": "Octopus"
+          },
+          "price": 2639
+        },
+        {
+          "values": {
+            "Select Model": "Sleeping Bear"
+          },
+          "price": 2639
+        },
+        {
+          "values": {
+            "Select Model": "Deer"
+          },
+          "price": 2639
+        },
+        {
+          "values": {
+            "Select Model": "Giraffe"
+          },
+          "price": 2639
+        },
+        {
+          "values": {
+            "Select Model": "Monkey"
+          },
+          "price": 2639
+        },
+        {
+          "values": {
+            "Select Model": "Lion"
+          },
+          "price": 2639
+        },
+        {
+          "values": {
+            "Select Model": "Sid"
+          },
+          "price": 2639
+        },
+        {
+          "values": {
+            "Select Model": "Mix-Kit"
+          },
+          "price": 4600
+        },
+        {
+          "values": {
+            "Select Model": "Mouse (2 Pieces)"
+          },
+          "price": 3135
+        }
+      ]
     },
     {
       "id": "4531962847",
@@ -328,7 +523,72 @@
         "cute animal"
       ],
       "isNew": true,
-      "isActive": true
+      "isActive": true,
+      "options": [
+        {
+          "name": "Choose Your Model",
+          "values": [
+            "Blue Giraffe",
+            "Pink Giraffe",
+            "Yellow Giraffe",
+            "Orange Giraffe",
+            "Mint Green Giraffe",
+            "Beige Graffe",
+            "Dressed Giraffe",
+            "Customizable Giraffe"
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "values": {
+            "Choose Your Model": "Blue Giraffe"
+          },
+          "price": 2645
+        },
+        {
+          "values": {
+            "Choose Your Model": "Pink Giraffe"
+          },
+          "price": 2350
+        },
+        {
+          "values": {
+            "Choose Your Model": "Yellow Giraffe"
+          },
+          "price": 2350
+        },
+        {
+          "values": {
+            "Choose Your Model": "Orange Giraffe"
+          },
+          "price": 2350
+        },
+        {
+          "values": {
+            "Choose Your Model": "Mint Green Giraffe"
+          },
+          "price": 2350
+        },
+        {
+          "values": {
+            "Choose Your Model": "Beige Graffe"
+          },
+          "price": 2350
+        },
+        {
+          "values": {
+            "Choose Your Model": "Dressed Giraffe"
+          },
+          "price": 2820
+        },
+        {
+          "values": {
+            "Choose Your Model": "Customizable Giraffe"
+          },
+          "price": 2645
+        }
+      ]
     },
     {
       "id": "4535234770",
@@ -374,7 +634,30 @@
         "bunny nursery"
       ],
       "isNew": true,
-      "isActive": true
+      "isActive": true,
+      "options": [
+        {
+          "name": "Select Model",
+          "values": [
+            "Standard",
+            "Customizable"
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "values": {
+            "Select Model": "Standard"
+          },
+          "price": 2500
+        },
+        {
+          "values": {
+            "Select Model": "Customizable"
+          },
+          "price": 2850
+        }
+      ]
     },
     {
       "id": "4509236939",
@@ -618,7 +901,44 @@
         "dinosaur decor"
       ],
       "isNew": true,
-      "isActive": true
+      "isActive": true,
+      "options": [
+        {
+          "name": "Choose Your Model",
+          "values": [
+            "Green",
+            "Red",
+            "Blue",
+            "Custom Dinosaur"
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "values": {
+            "Choose Your Model": "Green"
+          },
+          "price": 2450
+        },
+        {
+          "values": {
+            "Choose Your Model": "Red"
+          },
+          "price": 2450
+        },
+        {
+          "values": {
+            "Choose Your Model": "Blue"
+          },
+          "price": 2450
+        },
+        {
+          "values": {
+            "Choose Your Model": "Custom Dinosaur"
+          },
+          "price": 2725
+        }
+      ]
     },
     {
       "id": "4534402337",
@@ -652,7 +972,58 @@
       "category": "Bunny Rabbits Toys",
       "tags": [],
       "isNew": true,
-      "isActive": true
+      "isActive": true,
+      "options": [
+        {
+          "name": "Primary color",
+          "values": [
+            "Pink",
+            "Beige",
+            "Yellow",
+            "Orange",
+            "Green",
+            "Blue"
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "values": {
+            "Primary color": "Pink"
+          },
+          "price": 1899
+        },
+        {
+          "values": {
+            "Primary color": "Beige"
+          },
+          "price": 1899
+        },
+        {
+          "values": {
+            "Primary color": "Yellow"
+          },
+          "price": 1899
+        },
+        {
+          "values": {
+            "Primary color": "Orange"
+          },
+          "price": 1899
+        },
+        {
+          "values": {
+            "Primary color": "Green"
+          },
+          "price": 1899
+        },
+        {
+          "values": {
+            "Primary color": "Blue"
+          },
+          "price": 1899
+        }
+      ]
     },
     {
       "id": "4497297061",
@@ -697,7 +1068,30 @@
         "baby decor"
       ],
       "isNew": false,
-      "isActive": true
+      "isActive": true,
+      "options": [
+        {
+          "name": "Choose Your Model",
+          "values": [
+            "Standard",
+            "Customizable"
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "values": {
+            "Choose Your Model": "Standard"
+          },
+          "price": 2595
+        },
+        {
+          "values": {
+            "Choose Your Model": "Customizable"
+          },
+          "price": 3369
+        }
+      ]
     },
     {
       "id": "4533378792",
@@ -745,7 +1139,72 @@
         "woodland nursery"
       ],
       "isNew": true,
-      "isActive": true
+      "isActive": true,
+      "options": [
+        {
+          "name": "Primary color",
+          "values": [
+            "Black",
+            "Blue",
+            "Green",
+            "Orange",
+            "Pink",
+            "White",
+            "Red",
+            "Yellow"
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "values": {
+            "Primary color": "Black"
+          },
+          "price": 2125
+        },
+        {
+          "values": {
+            "Primary color": "Blue"
+          },
+          "price": 2125
+        },
+        {
+          "values": {
+            "Primary color": "Green"
+          },
+          "price": 2125
+        },
+        {
+          "values": {
+            "Primary color": "Orange"
+          },
+          "price": 2125
+        },
+        {
+          "values": {
+            "Primary color": "Pink"
+          },
+          "price": 2125
+        },
+        {
+          "values": {
+            "Primary color": "White"
+          },
+          "price": 2125
+        },
+        {
+          "values": {
+            "Primary color": "Red"
+          },
+          "price": 2125
+        },
+        {
+          "values": {
+            "Primary color": "Yellow"
+          },
+          "price": 2125
+        }
+      ]
     },
     {
       "id": "4532541531",
@@ -877,7 +1336,44 @@
         "straw bag summer"
       ],
       "isNew": true,
-      "isActive": true
+      "isActive": true,
+      "options": [
+        {
+          "name": "Primary color",
+          "values": [
+            "Brown",
+            "Black",
+            "Standard(LightBrown)",
+            "Cream"
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "values": {
+            "Primary color": "Brown"
+          },
+          "price": 3560
+        },
+        {
+          "values": {
+            "Primary color": "Black"
+          },
+          "price": 3650
+        },
+        {
+          "values": {
+            "Primary color": "Standard(LightBrown)"
+          },
+          "price": 3500
+        },
+        {
+          "values": {
+            "Primary color": "Cream"
+          },
+          "price": 3600
+        }
+      ]
     },
     {
       "id": "4530907192",
@@ -1018,7 +1514,173 @@
         "crochet doll"
       ],
       "isNew": true,
-      "isActive": true
+      "isActive": true,
+      "options": [
+        {
+          "name": "Choose Your Model",
+          "values": [
+            "Standard",
+            "Customizable"
+          ]
+        },
+        {
+          "name": "Primary color",
+          "values": [
+            "Black",
+            "Blue",
+            "Brown",
+            "Green",
+            "Orange",
+            "Pink",
+            "White",
+            "Yellow",
+            "Beige",
+            "Purple"
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "values": {
+            "Choose Your Model": "Standard",
+            "Primary color": "Black"
+          },
+          "price": 2550
+        },
+        {
+          "values": {
+            "Choose Your Model": "Standard",
+            "Primary color": "Blue"
+          },
+          "price": 2550
+        },
+        {
+          "values": {
+            "Choose Your Model": "Standard",
+            "Primary color": "Brown"
+          },
+          "price": 2550
+        },
+        {
+          "values": {
+            "Choose Your Model": "Standard",
+            "Primary color": "Green"
+          },
+          "price": 2550
+        },
+        {
+          "values": {
+            "Choose Your Model": "Standard",
+            "Primary color": "Orange"
+          },
+          "price": 2550
+        },
+        {
+          "values": {
+            "Choose Your Model": "Standard",
+            "Primary color": "Pink"
+          },
+          "price": 2550
+        },
+        {
+          "values": {
+            "Choose Your Model": "Standard",
+            "Primary color": "White"
+          },
+          "price": 2550
+        },
+        {
+          "values": {
+            "Choose Your Model": "Standard",
+            "Primary color": "Yellow"
+          },
+          "price": 2550
+        },
+        {
+          "values": {
+            "Choose Your Model": "Standard",
+            "Primary color": "Beige"
+          },
+          "price": 2550
+        },
+        {
+          "values": {
+            "Choose Your Model": "Standard",
+            "Primary color": "Purple"
+          },
+          "price": 2550
+        },
+        {
+          "values": {
+            "Choose Your Model": "Customizable",
+            "Primary color": "Black"
+          },
+          "price": 2975
+        },
+        {
+          "values": {
+            "Choose Your Model": "Customizable",
+            "Primary color": "Blue"
+          },
+          "price": 2975
+        },
+        {
+          "values": {
+            "Choose Your Model": "Customizable",
+            "Primary color": "Brown"
+          },
+          "price": 2975
+        },
+        {
+          "values": {
+            "Choose Your Model": "Customizable",
+            "Primary color": "Green"
+          },
+          "price": 2975
+        },
+        {
+          "values": {
+            "Choose Your Model": "Customizable",
+            "Primary color": "Orange"
+          },
+          "price": 2975
+        },
+        {
+          "values": {
+            "Choose Your Model": "Customizable",
+            "Primary color": "Pink"
+          },
+          "price": 2975
+        },
+        {
+          "values": {
+            "Choose Your Model": "Customizable",
+            "Primary color": "White"
+          },
+          "price": 2975
+        },
+        {
+          "values": {
+            "Choose Your Model": "Customizable",
+            "Primary color": "Yellow"
+          },
+          "price": 2975
+        },
+        {
+          "values": {
+            "Choose Your Model": "Customizable",
+            "Primary color": "Beige"
+          },
+          "price": 2975
+        },
+        {
+          "values": {
+            "Choose Your Model": "Customizable",
+            "Primary color": "Purple"
+          },
+          "price": 2975
+        }
+      ]
     },
     {
       "id": "4504917829",
@@ -1066,7 +1728,44 @@
         "safari baby shower"
       ],
       "isNew": true,
-      "isActive": true
+      "isActive": true,
+      "options": [
+        {
+          "name": "Choose Your Model",
+          "values": [
+            "Yellow",
+            "Orange",
+            "Beige",
+            "Customizable 2 Piece"
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "values": {
+            "Choose Your Model": "Yellow"
+          },
+          "price": 2645
+        },
+        {
+          "values": {
+            "Choose Your Model": "Orange"
+          },
+          "price": 2645
+        },
+        {
+          "values": {
+            "Choose Your Model": "Beige"
+          },
+          "price": 2645
+        },
+        {
+          "values": {
+            "Choose Your Model": "Customizable 2 Piece"
+          },
+          "price": 6000
+        }
+      ]
     },
     {
       "id": "4529682282",
@@ -1111,7 +1810,30 @@
         "crochet plush toy"
       ],
       "isNew": true,
-      "isActive": true
+      "isActive": true,
+      "options": [
+        {
+          "name": "Choose Your Model",
+          "values": [
+            "Standard",
+            "Customizable"
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "values": {
+            "Choose Your Model": "Standard"
+          },
+          "price": 2650
+        },
+        {
+          "values": {
+            "Choose Your Model": "Customizable"
+          },
+          "price": 2950
+        }
+      ]
     },
     {
       "id": "4528349481",
@@ -1155,7 +1877,30 @@
         "handmade gift for he"
       ],
       "isNew": true,
-      "isActive": true
+      "isActive": true,
+      "options": [
+        {
+          "name": "Choose Your Model",
+          "values": [
+            "Standard",
+            "Lined"
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "values": {
+            "Choose Your Model": "Standard"
+          },
+          "price": 2705
+        },
+        {
+          "values": {
+            "Choose Your Model": "Lined"
+          },
+          "price": 2905
+        }
+      ]
     },
     {
       "id": "4527854128",
@@ -1205,7 +1950,30 @@
         "crochet plush toy"
       ],
       "isNew": true,
-      "isActive": true
+      "isActive": true,
+      "options": [
+        {
+          "name": "Choose Your Model",
+          "values": [
+            "Standard",
+            "Customizable"
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "values": {
+            "Choose Your Model": "Standard"
+          },
+          "price": 2700
+        },
+        {
+          "values": {
+            "Choose Your Model": "Customizable"
+          },
+          "price": 3100
+        }
+      ]
     },
     {
       "id": "4499665986",
@@ -1255,7 +2023,30 @@
         "nursery styling"
       ],
       "isNew": true,
-      "isActive": true
+      "isActive": true,
+      "options": [
+        {
+          "name": "Select Model",
+          "values": [
+            "Standard",
+            "Personalized"
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "values": {
+            "Select Model": "Standard"
+          },
+          "price": 2643
+        },
+        {
+          "values": {
+            "Select Model": "Personalized"
+          },
+          "price": 2800
+        }
+      ]
     },
     {
       "id": "4526751350",
@@ -1301,7 +2092,30 @@
         "easter basket gift"
       ],
       "isNew": true,
-      "isActive": true
+      "isActive": true,
+      "options": [
+        {
+          "name": "Select Model",
+          "values": [
+            "Standard",
+            "Customizable"
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "values": {
+            "Select Model": "Standard"
+          },
+          "price": 2800
+        },
+        {
+          "values": {
+            "Select Model": "Customizable"
+          },
+          "price": 3200
+        }
+      ]
     },
     {
       "id": "4525952683",
@@ -1450,7 +2264,30 @@
         "teddy plush"
       ],
       "isNew": true,
-      "isActive": true
+      "isActive": true,
+      "options": [
+        {
+          "name": "Choose Your Size",
+          "values": [
+            "Standard 10&quot; (25 cm)",
+            "Large 12&quot; (30cm)"
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "values": {
+            "Choose Your Size": "Standard 10&quot; (25 cm)"
+          },
+          "price": 2460
+        },
+        {
+          "values": {
+            "Choose Your Size": "Large 12&quot; (30cm)"
+          },
+          "price": 3200
+        }
+      ]
     },
     {
       "id": "4524655805",
@@ -1493,7 +2330,30 @@
         "custom name toy"
       ],
       "isNew": true,
-      "isActive": true
+      "isActive": true,
+      "options": [
+        {
+          "name": "Choose Your Model",
+          "values": [
+            "Standard",
+            "Customizable"
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "values": {
+            "Choose Your Model": "Standard"
+          },
+          "price": 2150
+        },
+        {
+          "values": {
+            "Choose Your Model": "Customizable"
+          },
+          "price": 2322
+        }
+      ]
     },
     {
       "id": "4524545901",
@@ -1681,7 +2541,44 @@
         "amigurumi plush"
       ],
       "isNew": true,
-      "isActive": true
+      "isActive": true,
+      "options": [
+        {
+          "name": "Primary color",
+          "values": [
+            "Blue",
+            "Green",
+            "Pink",
+            "Yellow"
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "values": {
+            "Primary color": "Blue"
+          },
+          "price": 2620
+        },
+        {
+          "values": {
+            "Primary color": "Green"
+          },
+          "price": 2620
+        },
+        {
+          "values": {
+            "Primary color": "Pink"
+          },
+          "price": 2620
+        },
+        {
+          "values": {
+            "Primary color": "Yellow"
+          },
+          "price": 2620
+        }
+      ]
     },
     {
       "id": "4523466332",
@@ -1782,7 +2679,30 @@
         "stuffed monkey"
       ],
       "isNew": true,
-      "isActive": true
+      "isActive": true,
+      "options": [
+        {
+          "name": "Choose Your Model",
+          "values": [
+            "Standard",
+            "Customizable"
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "values": {
+            "Choose Your Model": "Standard"
+          },
+          "price": 2817
+        },
+        {
+          "values": {
+            "Choose Your Model": "Customizable"
+          },
+          "price": 3000
+        }
+      ]
     },
     {
       "id": "4522852441",
@@ -1833,7 +2753,72 @@
         "giraffe gift"
       ],
       "isNew": true,
-      "isActive": true
+      "isActive": true,
+      "options": [
+        {
+          "name": "Choose Your Model",
+          "values": [
+            "Blue Giraffe",
+            "Pink Giraffe",
+            "Yellow Giraffe",
+            "Orange Giraffe",
+            "Mint Green Giraffe",
+            "Beige Graffe",
+            "Dressed Giraffe",
+            "Customizable Giraffe"
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "values": {
+            "Choose Your Model": "Blue Giraffe"
+          },
+          "price": 2645
+        },
+        {
+          "values": {
+            "Choose Your Model": "Pink Giraffe"
+          },
+          "price": 2350
+        },
+        {
+          "values": {
+            "Choose Your Model": "Yellow Giraffe"
+          },
+          "price": 2350
+        },
+        {
+          "values": {
+            "Choose Your Model": "Orange Giraffe"
+          },
+          "price": 2350
+        },
+        {
+          "values": {
+            "Choose Your Model": "Mint Green Giraffe"
+          },
+          "price": 2350
+        },
+        {
+          "values": {
+            "Choose Your Model": "Beige Graffe"
+          },
+          "price": 2350
+        },
+        {
+          "values": {
+            "Choose Your Model": "Dressed Giraffe"
+          },
+          "price": 2820
+        },
+        {
+          "values": {
+            "Choose Your Model": "Customizable Giraffe"
+          },
+          "price": 2645
+        }
+      ]
     },
     {
       "id": "4522140365",
@@ -1878,7 +2863,37 @@
         "crochet rabbit"
       ],
       "isNew": true,
-      "isActive": true
+      "isActive": true,
+      "options": [
+        {
+          "name": "Choose Your Model",
+          "values": [
+            "1 Pieces (LEFT)",
+            "1 Pieces (Right)",
+            "SET ( 2 Pieces )"
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "values": {
+            "Choose Your Model": "1 Pieces (LEFT)"
+          },
+          "price": 1600
+        },
+        {
+          "values": {
+            "Choose Your Model": "1 Pieces (Right)"
+          },
+          "price": 1600
+        },
+        {
+          "values": {
+            "Choose Your Model": "SET ( 2 Pieces )"
+          },
+          "price": 2960
+        }
+      ]
     },
     {
       "id": "4522114663",
@@ -1929,7 +2944,135 @@
         "gift ready"
       ],
       "isNew": true,
-      "isActive": true
+      "isActive": true,
+      "options": [
+        {
+          "name": "Select Model",
+          "values": [
+            "Sheep",
+            "Pig",
+            "Red-Children",
+            "Green-Children",
+            "Blue-Dog",
+            "Octopus",
+            "Unicorn",
+            "Bunny",
+            "Deer",
+            "Leon",
+            "Yellow-Giraffe",
+            "Monkey",
+            "Pink Bear",
+            "Pink Leon",
+            "Brown-Bear",
+            "MIX 3 Piece Set",
+            "Custom 2 Pieces"
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "values": {
+            "Select Model": "Sheep"
+          },
+          "price": 2499
+        },
+        {
+          "values": {
+            "Select Model": "Pig"
+          },
+          "price": 2499
+        },
+        {
+          "values": {
+            "Select Model": "Red-Children"
+          },
+          "price": 2499
+        },
+        {
+          "values": {
+            "Select Model": "Green-Children"
+          },
+          "price": 2499
+        },
+        {
+          "values": {
+            "Select Model": "Blue-Dog"
+          },
+          "price": 2499
+        },
+        {
+          "values": {
+            "Select Model": "Octopus"
+          },
+          "price": 2499
+        },
+        {
+          "values": {
+            "Select Model": "Unicorn"
+          },
+          "price": 2499
+        },
+        {
+          "values": {
+            "Select Model": "Bunny"
+          },
+          "price": 2499
+        },
+        {
+          "values": {
+            "Select Model": "Deer"
+          },
+          "price": 2499
+        },
+        {
+          "values": {
+            "Select Model": "Leon"
+          },
+          "price": 2499
+        },
+        {
+          "values": {
+            "Select Model": "Yellow-Giraffe"
+          },
+          "price": 2499
+        },
+        {
+          "values": {
+            "Select Model": "Monkey"
+          },
+          "price": 2499
+        },
+        {
+          "values": {
+            "Select Model": "Pink Bear"
+          },
+          "price": 2499
+        },
+        {
+          "values": {
+            "Select Model": "Pink Leon"
+          },
+          "price": 2499
+        },
+        {
+          "values": {
+            "Select Model": "Brown-Bear"
+          },
+          "price": 2499
+        },
+        {
+          "values": {
+            "Select Model": "MIX 3 Piece Set"
+          },
+          "price": 4000
+        },
+        {
+          "values": {
+            "Select Model": "Custom 2 Pieces"
+          },
+          "price": 2699
+        }
+      ]
     },
     {
       "id": "4521886718",
@@ -2125,7 +3268,30 @@
         "nursery keepsake"
       ],
       "isNew": true,
-      "isActive": true
+      "isActive": true,
+      "options": [
+        {
+          "name": "Choose Your Model",
+          "values": [
+            "Standard",
+            "Customizable"
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "values": {
+            "Choose Your Model": "Standard"
+          },
+          "price": 2250
+        },
+        {
+          "values": {
+            "Choose Your Model": "Customizable"
+          },
+          "price": 2725
+        }
+      ]
     },
     {
       "id": "4520625367",
@@ -2176,7 +3342,44 @@
         "gift for baby"
       ],
       "isNew": true,
-      "isActive": true
+      "isActive": true,
+      "options": [
+        {
+          "name": "Choose Your Model",
+          "values": [
+            "Standard (10 inch)",
+            "Large Bunny(12inch)",
+            "Customizable 10 inch",
+            "Customizable 12 inch"
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "values": {
+            "Choose Your Model": "Standard (10 inch)"
+          },
+          "price": 2250
+        },
+        {
+          "values": {
+            "Choose Your Model": "Large Bunny(12inch)"
+          },
+          "price": 2950
+        },
+        {
+          "values": {
+            "Choose Your Model": "Customizable 10 inch"
+          },
+          "price": 2600
+        },
+        {
+          "values": {
+            "Choose Your Model": "Customizable 12 inch"
+          },
+          "price": 3250
+        }
+      ]
     },
     {
       "id": "4520179107",
@@ -2361,7 +3564,30 @@
         "Crochet Toy Girl"
       ],
       "isNew": true,
-      "isActive": true
+      "isActive": true,
+      "options": [
+        {
+          "name": "Choose Your Model",
+          "values": [
+            "Standard",
+            "Customizable"
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "values": {
+            "Choose Your Model": "Standard"
+          },
+          "price": 2500
+        },
+        {
+          "values": {
+            "Choose Your Model": "Customizable"
+          },
+          "price": 2850
+        }
+      ]
     },
     {
       "id": "4518334648",
@@ -2412,7 +3638,65 @@
         "girls accessory"
       ],
       "isNew": true,
-      "isActive": true
+      "isActive": true,
+      "options": [
+        {
+          "name": "Choose Your Model",
+          "values": [
+            "Standard 1 Pack",
+            "Customizable 5 Pack",
+            "Customizable 10 Pack",
+            "Customizable 20 Pack",
+            "Customizable 30 Pack",
+            "Customizable 40 Pack",
+            "Customizable 50 Pack"
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "values": {
+            "Choose Your Model": "Standard 1 Pack"
+          },
+          "price": 549
+        },
+        {
+          "values": {
+            "Choose Your Model": "Customizable 5 Pack"
+          },
+          "price": 1999
+        },
+        {
+          "values": {
+            "Choose Your Model": "Customizable 10 Pack"
+          },
+          "price": 3499
+        },
+        {
+          "values": {
+            "Choose Your Model": "Customizable 20 Pack"
+          },
+          "price": 4499
+        },
+        {
+          "values": {
+            "Choose Your Model": "Customizable 30 Pack"
+          },
+          "price": 5299
+        },
+        {
+          "values": {
+            "Choose Your Model": "Customizable 40 Pack"
+          },
+          "price": 7499
+        },
+        {
+          "values": {
+            "Choose Your Model": "Customizable 50 Pack"
+          },
+          "price": 8224
+        }
+      ]
     },
     {
       "id": "4518319834",
@@ -2459,7 +3743,65 @@
         "crochet hair clips"
       ],
       "isNew": true,
-      "isActive": true
+      "isActive": true,
+      "options": [
+        {
+          "name": "Choose Your Model",
+          "values": [
+            "Standard",
+            "Customizable",
+            "5 Pack",
+            "10 Pack",
+            "30 Pack",
+            "40 Pack",
+            "50 Pack"
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "values": {
+            "Choose Your Model": "Standard"
+          },
+          "price": 549
+        },
+        {
+          "values": {
+            "Choose Your Model": "Customizable"
+          },
+          "price": 649
+        },
+        {
+          "values": {
+            "Choose Your Model": "5 Pack"
+          },
+          "price": 1999
+        },
+        {
+          "values": {
+            "Choose Your Model": "10 Pack"
+          },
+          "price": 3499
+        },
+        {
+          "values": {
+            "Choose Your Model": "30 Pack"
+          },
+          "price": 5299
+        },
+        {
+          "values": {
+            "Choose Your Model": "40 Pack"
+          },
+          "price": 7499
+        },
+        {
+          "values": {
+            "Choose Your Model": "50 Pack"
+          },
+          "price": 8224
+        }
+      ]
     },
     {
       "id": "4518107346",
@@ -2508,7 +3850,44 @@
         "floral hair set"
       ],
       "isNew": true,
-      "isActive": true
+      "isActive": true,
+      "options": [
+        {
+          "name": "Choose Daisy Style",
+          "values": [
+            "Daisy Clips Pair",
+            "Daisy Headband",
+            "Daisy Pigtail Pair",
+            "Complete Daisy Set"
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "values": {
+            "Choose Daisy Style": "Daisy Clips Pair"
+          },
+          "price": 499
+        },
+        {
+          "values": {
+            "Choose Daisy Style": "Daisy Headband"
+          },
+          "price": 749
+        },
+        {
+          "values": {
+            "Choose Daisy Style": "Daisy Pigtail Pair"
+          },
+          "price": 699
+        },
+        {
+          "values": {
+            "Choose Daisy Style": "Complete Daisy Set"
+          },
+          "price": 1699
+        }
+      ]
     },
     {
       "id": "4517865727",
@@ -2559,7 +3938,142 @@
         "girls accessory"
       ],
       "isNew": true,
-      "isActive": true
+      "isActive": true,
+      "options": [
+        {
+          "name": "Choose Your Model",
+          "values": [
+            "Bunny Ears",
+            "Avocado",
+            "Orange Slice",
+            "Daisy Flower",
+            "Mushroom",
+            "Rainbow",
+            "Strawberry",
+            "Ladybug",
+            "Bunny Carrot",
+            "Cherry",
+            "Sunflower",
+            "Lavender",
+            "Red Flower",
+            "Daisy Set",
+            "3 Pairs Set",
+            "5 Pairs Set",
+            "Full Collection",
+            "Daisy Headband"
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "values": {
+            "Choose Your Model": "Bunny Ears"
+          },
+          "price": 483
+        },
+        {
+          "values": {
+            "Choose Your Model": "Avocado"
+          },
+          "price": 500
+        },
+        {
+          "values": {
+            "Choose Your Model": "Orange Slice"
+          },
+          "price": 483
+        },
+        {
+          "values": {
+            "Choose Your Model": "Daisy Flower"
+          },
+          "price": 483
+        },
+        {
+          "values": {
+            "Choose Your Model": "Mushroom"
+          },
+          "price": 483
+        },
+        {
+          "values": {
+            "Choose Your Model": "Rainbow"
+          },
+          "price": 500
+        },
+        {
+          "values": {
+            "Choose Your Model": "Strawberry"
+          },
+          "price": 483
+        },
+        {
+          "values": {
+            "Choose Your Model": "Ladybug"
+          },
+          "price": 483
+        },
+        {
+          "values": {
+            "Choose Your Model": "Bunny Carrot"
+          },
+          "price": 536
+        },
+        {
+          "values": {
+            "Choose Your Model": "Cherry"
+          },
+          "price": 483
+        },
+        {
+          "values": {
+            "Choose Your Model": "Sunflower"
+          },
+          "price": 500
+        },
+        {
+          "values": {
+            "Choose Your Model": "Lavender"
+          },
+          "price": 483
+        },
+        {
+          "values": {
+            "Choose Your Model": "Red Flower"
+          },
+          "price": 483
+        },
+        {
+          "values": {
+            "Choose Your Model": "Daisy Set"
+          },
+          "price": 1699
+        },
+        {
+          "values": {
+            "Choose Your Model": "3 Pairs Set"
+          },
+          "price": 1399
+        },
+        {
+          "values": {
+            "Choose Your Model": "5 Pairs Set"
+          },
+          "price": 1999
+        },
+        {
+          "values": {
+            "Choose Your Model": "Full Collection"
+          },
+          "price": 3999
+        },
+        {
+          "values": {
+            "Choose Your Model": "Daisy Headband"
+          },
+          "price": 749
+        }
+      ]
     },
     {
       "id": "4500203725",
@@ -2608,7 +4122,44 @@
         "baby toys"
       ],
       "isNew": true,
-      "isActive": true
+      "isActive": true,
+      "options": [
+        {
+          "name": "Select Model",
+          "values": [
+            "Standard",
+            "Pink",
+            "Blue",
+            "Green"
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "values": {
+            "Select Model": "Standard"
+          },
+          "price": 2200
+        },
+        {
+          "values": {
+            "Select Model": "Pink"
+          },
+          "price": 2460
+        },
+        {
+          "values": {
+            "Select Model": "Blue"
+          },
+          "price": 2460
+        },
+        {
+          "values": {
+            "Select Model": "Green"
+          },
+          "price": 2460
+        }
+      ]
     },
     {
       "id": "4517611083",
@@ -2652,7 +4203,30 @@
         "monkey gift"
       ],
       "isNew": true,
-      "isActive": true
+      "isActive": true,
+      "options": [
+        {
+          "name": "Select Model",
+          "values": [
+            "Standard",
+            "Customizable"
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "values": {
+            "Select Model": "Standard"
+          },
+          "price": 2700
+        },
+        {
+          "values": {
+            "Select Model": "Customizable"
+          },
+          "price": 3350
+        }
+      ]
     },
     {
       "id": "4517600647",
@@ -2688,7 +4262,30 @@
       "category": "Amigurumi Toys",
       "tags": [],
       "isNew": true,
-      "isActive": true
+      "isActive": true,
+      "options": [
+        {
+          "name": "Choose Your Model",
+          "values": [
+            "Standard",
+            "Customizable"
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "values": {
+            "Choose Your Model": "Standard"
+          },
+          "price": 2199
+        },
+        {
+          "values": {
+            "Choose Your Model": "Customizable"
+          },
+          "price": 2579
+        }
+      ]
     },
     {
       "id": "4509615543",
@@ -2787,7 +4384,30 @@
         "toddler toy"
       ],
       "isNew": true,
-      "isActive": true
+      "isActive": true,
+      "options": [
+        {
+          "name": "Choose Your Bunny",
+          "values": [
+            "Standard",
+            "Customizable"
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "values": {
+            "Choose Your Bunny": "Standard"
+          },
+          "price": 1980
+        },
+        {
+          "values": {
+            "Choose Your Bunny": "Customizable"
+          },
+          "price": 2499
+        }
+      ]
     },
     {
       "id": "4511067258",
@@ -2834,7 +4454,30 @@
         "rabbit nursery decor"
       ],
       "isNew": true,
-      "isActive": true
+      "isActive": true,
+      "options": [
+        {
+          "name": "Choose Your Model",
+          "values": [
+            "Standard",
+            "Customizable"
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "values": {
+            "Choose Your Model": "Standard"
+          },
+          "price": 2550
+        },
+        {
+          "values": {
+            "Choose Your Model": "Customizable"
+          },
+          "price": 2750
+        }
+      ]
     },
     {
       "id": "4515727881",
@@ -2922,7 +4565,30 @@
         "monkey gift"
       ],
       "isNew": false,
-      "isActive": true
+      "isActive": true,
+      "options": [
+        {
+          "name": "Select Model",
+          "values": [
+            "Standard",
+            "Customizable"
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "values": {
+            "Select Model": "Standard"
+          },
+          "price": 2700
+        },
+        {
+          "values": {
+            "Select Model": "Customizable"
+          },
+          "price": 3350
+        }
+      ]
     },
     {
       "id": "4515155425",
@@ -2966,7 +4632,30 @@
         "graduation gift"
       ],
       "isNew": false,
-      "isActive": true
+      "isActive": true,
+      "options": [
+        {
+          "name": "Choose Your Model",
+          "values": [
+            "Standard",
+            "Customizable"
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "values": {
+            "Choose Your Model": "Standard"
+          },
+          "price": 2500
+        },
+        {
+          "values": {
+            "Choose Your Model": "Customizable"
+          },
+          "price": 2850
+        }
+      ]
     },
     {
       "id": "4515072822",
@@ -3615,7 +5304,37 @@
         "custom name toy"
       ],
       "isNew": false,
-      "isActive": true
+      "isActive": true,
+      "options": [
+        {
+          "name": "Choose Your Color",
+          "values": [
+            "Pink",
+            "Green",
+            "Blue"
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "values": {
+            "Choose Your Color": "Pink"
+          },
+          "price": 2460
+        },
+        {
+          "values": {
+            "Choose Your Color": "Green"
+          },
+          "price": 2460
+        },
+        {
+          "values": {
+            "Choose Your Color": "Blue"
+          },
+          "price": 2460
+        }
+      ]
     },
     {
       "id": "4511782866",
@@ -3666,7 +5385,30 @@
         "cute teddy bear"
       ],
       "isNew": false,
-      "isActive": true
+      "isActive": true,
+      "options": [
+        {
+          "name": "Choose Your Size",
+          "values": [
+            "Standard 10&quot; (25 cm)",
+            "Large 12&quot; (30cm)"
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "values": {
+            "Choose Your Size": "Standard 10&quot; (25 cm)"
+          },
+          "price": 2460
+        },
+        {
+          "values": {
+            "Choose Your Size": "Large 12&quot; (30cm)"
+          },
+          "price": 3200
+        }
+      ]
     },
     {
       "id": "4511436897",
@@ -3715,7 +5457,37 @@
         "baby girl"
       ],
       "isNew": false,
-      "isActive": true
+      "isActive": true,
+      "options": [
+        {
+          "name": "Choose Your Bunny",
+          "values": [
+            "Bunny Set",
+            "Pofuna ( GIRL )",
+            "Tofi ( BOY )"
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "values": {
+            "Choose Your Bunny": "Bunny Set"
+          },
+          "price": 7500
+        },
+        {
+          "values": {
+            "Choose Your Bunny": "Pofuna ( GIRL )"
+          },
+          "price": 3790
+        },
+        {
+          "values": {
+            "Choose Your Bunny": "Tofi ( BOY )"
+          },
+          "price": 3790
+        }
+      ]
     },
     {
       "id": "4511433912",
@@ -3760,7 +5532,30 @@
         "newborn keepsake"
       ],
       "isNew": false,
-      "isActive": true
+      "isActive": true,
+      "options": [
+        {
+          "name": "Select Model",
+          "values": [
+            "Standard",
+            "Personalized"
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "values": {
+            "Select Model": "Standard"
+          },
+          "price": 2460
+        },
+        {
+          "values": {
+            "Select Model": "Personalized"
+          },
+          "price": 2750
+        }
+      ]
     },
     {
       "id": "4511430815",
@@ -3805,7 +5600,30 @@
         "soft plush toy"
       ],
       "isNew": false,
-      "isActive": true
+      "isActive": true,
+      "options": [
+        {
+          "name": "Select Model",
+          "values": [
+            "Standard",
+            "Customizable"
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "values": {
+            "Select Model": "Standard"
+          },
+          "price": 2460
+        },
+        {
+          "values": {
+            "Select Model": "Customizable"
+          },
+          "price": 2750
+        }
+      ]
     },
     {
       "id": "4511429025",
@@ -3856,7 +5674,30 @@
         "easter bunny"
       ],
       "isNew": false,
-      "isActive": true
+      "isActive": true,
+      "options": [
+        {
+          "name": "Select Model",
+          "values": [
+            "Standard",
+            "Customizable"
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "values": {
+            "Select Model": "Standard"
+          },
+          "price": 2460
+        },
+        {
+          "values": {
+            "Select Model": "Customizable"
+          },
+          "price": 2750
+        }
+      ]
     },
     {
       "id": "4511074846",
@@ -3904,7 +5745,58 @@
         "newborn keepsake"
       ],
       "isNew": false,
-      "isActive": true
+      "isActive": true,
+      "options": [
+        {
+          "name": "Outfit Color",
+          "values": [
+            "Pink",
+            "Yellow",
+            "Green",
+            "Beige",
+            "Black",
+            "Blue"
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "values": {
+            "Outfit Color": "Pink"
+          },
+          "price": 2550
+        },
+        {
+          "values": {
+            "Outfit Color": "Yellow"
+          },
+          "price": 2550
+        },
+        {
+          "values": {
+            "Outfit Color": "Green"
+          },
+          "price": 2550
+        },
+        {
+          "values": {
+            "Outfit Color": "Beige"
+          },
+          "price": 2550
+        },
+        {
+          "values": {
+            "Outfit Color": "Black"
+          },
+          "price": 2550
+        },
+        {
+          "values": {
+            "Outfit Color": "Blue"
+          },
+          "price": 2550
+        }
+      ]
     },
     {
       "id": "4510731336",
@@ -4003,7 +5895,30 @@
         "baby girl gifts"
       ],
       "isNew": false,
-      "isActive": true
+      "isActive": true,
+      "options": [
+        {
+          "name": "Choose Model",
+          "values": [
+            "Standard",
+            "Customizable"
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "values": {
+            "Choose Model": "Standard"
+          },
+          "price": 2733
+        },
+        {
+          "values": {
+            "Choose Model": "Customizable"
+          },
+          "price": 3000
+        }
+      ]
     },
     {
       "id": "4509502541",
@@ -4233,7 +6148,37 @@
         "crochet animal duck"
       ],
       "isNew": false,
-      "isActive": true
+      "isActive": true,
+      "options": [
+        {
+          "name": "Choose Your Color",
+          "values": [
+            "Pink",
+            "Green",
+            "Blue"
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "values": {
+            "Choose Your Color": "Pink"
+          },
+          "price": 2460
+        },
+        {
+          "values": {
+            "Choose Your Color": "Green"
+          },
+          "price": 2460
+        },
+        {
+          "values": {
+            "Choose Your Color": "Blue"
+          },
+          "price": 2460
+        }
+      ]
     },
     {
       "id": "4504327862",
@@ -4376,7 +6321,30 @@
         "turtle nursery"
       ],
       "isNew": false,
-      "isActive": true
+      "isActive": true,
+      "options": [
+        {
+          "name": "Select Model",
+          "values": [
+            "Standard",
+            "Customizable"
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "values": {
+            "Select Model": "Standard"
+          },
+          "price": 2460
+        },
+        {
+          "values": {
+            "Select Model": "Customizable"
+          },
+          "price": 2750
+        }
+      ]
     },
     {
       "id": "4503034961",
@@ -4423,7 +6391,30 @@
         "toddler gift"
       ],
       "isNew": false,
-      "isActive": true
+      "isActive": true,
+      "options": [
+        {
+          "name": "Select Model",
+          "values": [
+            "Standard",
+            "Customizable"
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "values": {
+            "Select Model": "Standard"
+          },
+          "price": 2800
+        },
+        {
+          "values": {
+            "Select Model": "Customizable"
+          },
+          "price": 3200
+        }
+      ]
     },
     {
       "id": "4503015434",
@@ -4470,7 +6461,30 @@
         "baby shower gift"
       ],
       "isNew": false,
-      "isActive": true
+      "isActive": true,
+      "options": [
+        {
+          "name": "Select Model",
+          "values": [
+            "Standard",
+            "Personalized"
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "values": {
+            "Select Model": "Standard"
+          },
+          "price": 2911
+        },
+        {
+          "values": {
+            "Select Model": "Personalized"
+          },
+          "price": 3150
+        }
+      ]
     },
     {
       "id": "4502597893",
@@ -4518,7 +6532,30 @@
         "crochet puppy plush"
       ],
       "isNew": false,
-      "isActive": true
+      "isActive": true,
+      "options": [
+        {
+          "name": "Select Model",
+          "values": [
+            "Standard",
+            "Customizable"
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "values": {
+            "Select Model": "Standard"
+          },
+          "price": 2812
+        },
+        {
+          "values": {
+            "Select Model": "Customizable"
+          },
+          "price": 3125
+        }
+      ]
     },
     {
       "id": "4502177102",
@@ -4656,7 +6693,30 @@
         "crochet gift"
       ],
       "isNew": false,
-      "isActive": true
+      "isActive": true,
+      "options": [
+        {
+          "name": "Select Model",
+          "values": [
+            "Standard",
+            "Customizable"
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "values": {
+            "Select Model": "Standard"
+          },
+          "price": 2850
+        },
+        {
+          "values": {
+            "Select Model": "Customizable"
+          },
+          "price": 3250
+        }
+      ]
     },
     {
       "id": "4501387348",
@@ -4701,7 +6761,30 @@
         "soft plush toy"
       ],
       "isNew": false,
-      "isActive": true
+      "isActive": true,
+      "options": [
+        {
+          "name": "Select Model",
+          "values": [
+            "Standard",
+            "Customizable"
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "values": {
+            "Select Model": "Standard"
+          },
+          "price": 2500
+        },
+        {
+          "values": {
+            "Select Model": "Customizable"
+          },
+          "price": 2850
+        }
+      ]
     },
     {
       "id": "4500889086",
@@ -4843,7 +6926,30 @@
         "custom name bunny"
       ],
       "isNew": false,
-      "isActive": true
+      "isActive": true,
+      "options": [
+        {
+          "name": "Select Model",
+          "values": [
+            "Standard",
+            "Personalized"
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "values": {
+            "Select Model": "Standard"
+          },
+          "price": 2150
+        },
+        {
+          "values": {
+            "Select Model": "Personalized"
+          },
+          "price": 2500
+        }
+      ]
     },
     {
       "id": "4500187744",
@@ -4894,7 +7000,135 @@
         "gift ready"
       ],
       "isNew": false,
-      "isActive": true
+      "isActive": true,
+      "options": [
+        {
+          "name": "Select Model",
+          "values": [
+            "Sheep",
+            "Pig",
+            "Red-Children",
+            "Green-Children",
+            "Blue-Dog",
+            "Octopus",
+            "Unicorn",
+            "Bunny",
+            "Deer",
+            "Leon",
+            "Yellow-Giraffe",
+            "Monkey",
+            "Pink Bear",
+            "Pink Leon",
+            "Brown-Bear",
+            "MIX 3 Piece Set",
+            "Custom 2 Pieces"
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "values": {
+            "Select Model": "Sheep"
+          },
+          "price": 2499
+        },
+        {
+          "values": {
+            "Select Model": "Pig"
+          },
+          "price": 2499
+        },
+        {
+          "values": {
+            "Select Model": "Red-Children"
+          },
+          "price": 2499
+        },
+        {
+          "values": {
+            "Select Model": "Green-Children"
+          },
+          "price": 2499
+        },
+        {
+          "values": {
+            "Select Model": "Blue-Dog"
+          },
+          "price": 2499
+        },
+        {
+          "values": {
+            "Select Model": "Octopus"
+          },
+          "price": 2499
+        },
+        {
+          "values": {
+            "Select Model": "Unicorn"
+          },
+          "price": 2499
+        },
+        {
+          "values": {
+            "Select Model": "Bunny"
+          },
+          "price": 2499
+        },
+        {
+          "values": {
+            "Select Model": "Deer"
+          },
+          "price": 2499
+        },
+        {
+          "values": {
+            "Select Model": "Leon"
+          },
+          "price": 2499
+        },
+        {
+          "values": {
+            "Select Model": "Yellow-Giraffe"
+          },
+          "price": 2499
+        },
+        {
+          "values": {
+            "Select Model": "Monkey"
+          },
+          "price": 2499
+        },
+        {
+          "values": {
+            "Select Model": "Pink Bear"
+          },
+          "price": 2499
+        },
+        {
+          "values": {
+            "Select Model": "Pink Leon"
+          },
+          "price": 2499
+        },
+        {
+          "values": {
+            "Select Model": "Brown-Bear"
+          },
+          "price": 2499
+        },
+        {
+          "values": {
+            "Select Model": "MIX 3 Piece Set"
+          },
+          "price": 4000
+        },
+        {
+          "values": {
+            "Select Model": "Custom 2 Pieces"
+          },
+          "price": 2699
+        }
+      ]
     },
     {
       "id": "4499864470",
@@ -4940,7 +7174,30 @@
         "personalized gift"
       ],
       "isNew": false,
-      "isActive": true
+      "isActive": true,
+      "options": [
+        {
+          "name": "Select Model",
+          "values": [
+            "Standard",
+            "Personalized"
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "values": {
+            "Select Model": "Standard"
+          },
+          "price": 2550
+        },
+        {
+          "values": {
+            "Select Model": "Personalized"
+          },
+          "price": 2750
+        }
+      ]
     },
     {
       "id": "4499698392",
@@ -4986,7 +7243,30 @@
         "custom doll"
       ],
       "isNew": false,
-      "isActive": true
+      "isActive": true,
+      "options": [
+        {
+          "name": "Select Model",
+          "values": [
+            "Standard",
+            "Personalized"
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "values": {
+            "Select Model": "Standard"
+          },
+          "price": 2867
+        },
+        {
+          "values": {
+            "Select Model": "Personalized"
+          },
+          "price": 3300
+        }
+      ]
     },
     {
       "id": "4492698686",
@@ -5030,7 +7310,65 @@
         "kids room decor"
       ],
       "isNew": false,
-      "isActive": true
+      "isActive": true,
+      "options": [
+        {
+          "name": "Select Model",
+          "values": [
+            "Bunny",
+            "Lion",
+            "Sleeping Bear",
+            "Monkey",
+            "Deer",
+            "Giraffe",
+            "Custom Set 3 Pieces"
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "values": {
+            "Select Model": "Bunny"
+          },
+          "price": 2350
+        },
+        {
+          "values": {
+            "Select Model": "Lion"
+          },
+          "price": 2639
+        },
+        {
+          "values": {
+            "Select Model": "Sleeping Bear"
+          },
+          "price": 2639
+        },
+        {
+          "values": {
+            "Select Model": "Monkey"
+          },
+          "price": 2639
+        },
+        {
+          "values": {
+            "Select Model": "Deer"
+          },
+          "price": 2639
+        },
+        {
+          "values": {
+            "Select Model": "Giraffe"
+          },
+          "price": 2639
+        },
+        {
+          "values": {
+            "Select Model": "Custom Set 3 Pieces"
+          },
+          "price": 4600
+        }
+      ]
     },
     {
       "id": "4499121882",
@@ -5121,7 +7459,37 @@
         "handmade teddy bear"
       ],
       "isNew": false,
-      "isActive": true
+      "isActive": true,
+      "options": [
+        {
+          "name": "Select Color",
+          "values": [
+            "Pink",
+            "Blue",
+            "Green"
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "values": {
+            "Select Color": "Pink"
+          },
+          "price": 2550
+        },
+        {
+          "values": {
+            "Select Color": "Blue"
+          },
+          "price": 2550
+        },
+        {
+          "values": {
+            "Select Color": "Green"
+          },
+          "price": 2550
+        }
+      ]
     },
     {
       "id": "4499061315",
@@ -5299,7 +7667,37 @@
         "amigurumi bunny"
       ],
       "isNew": false,
-      "isActive": true
+      "isActive": true,
+      "options": [
+        {
+          "name": "Choose Your Bunny",
+          "values": [
+            "Bunny Set",
+            "Pofuna ( GIRL )",
+            "Tofi ( BOY )"
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "values": {
+            "Choose Your Bunny": "Bunny Set"
+          },
+          "price": 7500
+        },
+        {
+          "values": {
+            "Choose Your Bunny": "Pofuna ( GIRL )"
+          },
+          "price": 3790
+        },
+        {
+          "values": {
+            "Choose Your Bunny": "Tofi ( BOY )"
+          },
+          "price": 3790
+        }
+      ]
     },
     {
       "id": "4495940645",
@@ -5447,7 +7845,37 @@
         "crochet toy"
       ],
       "isNew": false,
-      "isActive": true
+      "isActive": true,
+      "options": [
+        {
+          "name": "Primary color",
+          "values": [
+            "Pink",
+            "Beige",
+            "Blue"
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "values": {
+            "Primary color": "Pink"
+          },
+          "price": 2000
+        },
+        {
+          "values": {
+            "Primary color": "Beige"
+          },
+          "price": 2000
+        },
+        {
+          "values": {
+            "Primary color": "Blue"
+          },
+          "price": 2000
+        }
+      ]
     },
     {
       "id": "4490334947",
