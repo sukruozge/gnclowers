@@ -31,7 +31,7 @@ jobs:
           ETSY_SHOP: aselovers
       - name: Commit changes if any
         run: |
-          git add src/data/products.json src/data/reviews.json
+          git add src/data/products.json src/data/reviews.json src/data/settings.json
           if git diff --cached --quiet; then
             echo "No data changes — nothing to commit."
           else

@@ -9,6 +9,8 @@ import RatingBadge from '../../../components/RatingBadge.astro';
 import { loadProducts, localizedTitle, productSlug, type Product } from '@lib/products';
 import { productJsonLd, breadcrumbJsonLd } from '@lib/jsonld';
 import { loadReviews } from '@lib/reviews';
+import { displayPrice, FALLBACK_RATES } from '@lib/currency';
+import settings from '../../../data/settings.json';
 
 export function getStaticPaths() {
   return loadProducts().map((p) => ({ params: { slug: productSlug(p, 'en') }, props: { product: p } }));
@@ -19,7 +21,8 @@ const site = Astro.site!.toString().replace(/\/+$/, '');
 const selfPath = `product/${productSlug(product, 'en')}`;
 const trSlug = productSlug(product, 'tr');
 const title = localizedTitle(product, 'en');
-const price = new Intl.NumberFormat('en-US', { style: 'currency', currency: product.currency }).format(product.price);
+const rates = (settings as any).rates ?? FALLBACK_RATES;
+const price = displayPrice(product.price, 'en', rates);
 const related = loadProducts().filter((x) => x.category === product.category && x.id !== product.id).slice(0, 4);
 const shop = loadReviews().shop;
 const ld = productJsonLd(product, 'en', `${site}/en/${selfPath}`, shop.rating ? { value: shop.rating, count: shop.count } : undefined);
@@ -60,7 +63,7 @@ const crumbLd = breadcrumbJsonLd([
 
             <div class="buybox">
               <div class="buybox__pricerow">
-                <span class="detail__price" id="detail-price">{price}</span>
+                <span class="detail__price" id="detail-price" data-usd-rate={rates.usd}>{price}</span>
                 <span class="detail__vat">VAT included</span>
                 <span class="handmade-tag">
                   <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 21s-8-4.5-8-10a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 11c0 5.5-8 10-8 10z"/></svg>
@@ -152,7 +155,9 @@ const crumbLd = breadcrumbJsonLd([
   const sels = Array.from(document.querySelectorAll<HTMLSelectElement>('.variation__sel'));
 
   const prod = btn ? JSON.parse(btn.getAttribute('data-product') || '{}') : {};
-  const fmtPrice = (n: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: prod.currency || 'TRY' }).format(n);
+  // Prices are stored in TRY; the EN site shows USD. Convert with the embedded rate.
+  const usdRate = Number(priceEl?.getAttribute('data-usd-rate')) || 47.03;
+  const fmtPrice = (n: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(n / usdRate);
 
   function selected(): Record<string, string> {
     const out: Record<string, string> = {};

@@ -232,6 +232,29 @@ async function applyTranslations(products: Product[], prev: Map<string, Product>
   }
 }
 
+const SETTINGS_OUT = new URL('../src/data/settings.json', import.meta.url);
+
+// Refresh TRY→USD / TRY→EUR rates so the EN storefront prices stay accurate.
+// Best-effort: a failure keeps the existing rates. TRY is volatile, so daily is ideal.
+async function updateRates(): Promise<void> {
+  try {
+    const res = await fetch('https://api.frankfurter.dev/v1/latest?from=USD&to=TRY,EUR');
+    if (!res.ok) throw new Error(`FX ${res.status}`);
+    const d: any = await res.json();
+    const tryPerUsd = Number(d?.rates?.TRY);
+    const eurPerUsd = Number(d?.rates?.EUR);
+    if (!(tryPerUsd > 0 && eurPerUsd > 0)) throw new Error('bad rate payload');
+    const usd = Math.round(tryPerUsd * 100) / 100;
+    const eur = Math.round((tryPerUsd / eurPerUsd) * 100) / 100;
+    const s = JSON.parse(readFileSync(SETTINGS_OUT, 'utf8'));
+    s.rates = { usd, eur, updatedAt: new Date().toISOString().slice(0, 10) };
+    writeFileSync(SETTINGS_OUT, JSON.stringify(s, null, 2) + '\n', 'utf8');
+    console.log(`FX rates updated: 1 USD = ${usd} TRY, 1 EUR = ${eur} TRY`);
+  } catch (err) {
+    console.warn('Could not update FX rates (keeping existing):', err instanceof Error ? err.message : err);
+  }
+}
+
 async function main(): Promise<void> {
   if (!API_KEY) {
     console.error('ETSY_API_KEY is not set — aborting.');
@@ -319,6 +342,7 @@ async function main(): Promise<void> {
       `(${withImages} with images, ${cats} categories, ${Object.keys(sections).length} shop sections)`,
   );
   await writeReviews(shop);
+  await updateRates();
 }
 
 main().catch((err) => {

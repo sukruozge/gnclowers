@@ -69,9 +69,18 @@ export const POST: APIRoute = async (context) => {
     }
 
     const products = productsData.products || [];
-    let totalAmount = 0;
+    let totalAmount = 0; // in the order currency (converted)
+    let subtotalTry = 0; // TRY base, for the TRY-denominated free-shipping threshold
     const basket: [string, string, number][] = [];
     const items: { id: string; title: string; qty: number; price: number; image?: string; options?: Record<string, string> }[] = [];
+
+    // Product prices are stored in TRY. When the order is placed in USD/EUR (the
+    // EN storefront), convert every amount server-side with the settings rate so
+    // PayTR charges the correct foreign-currency amount — never trust the client.
+    const rates = (settings as any).rates ?? { usd: 47.03, eur: 53.65 };
+    const fxRate = currency === 'USD' ? (Number(rates.usd) || 47.03)
+      : currency === 'EUR' ? (Number(rates.eur) || 53.65) : 1;
+    const conv = (tryAmt: number) => currency === 'TRY' ? tryAmt : Math.round((tryAmt / fxRate) * 100) / 100;
 
     for (const item of cart) {
       const prod = products.find((p: any) => String(p.id) === String(item.id));
@@ -91,20 +100,24 @@ export const POST: APIRoute = async (context) => {
       }
 
       // Price ALWAYS resolved server-side from products.json — never trust client.
-      const price = resolveVariantPrice(prod as any, options);
+      // Then converted to the order currency (TRY→USD/EUR) if needed.
+      const priceTry = resolveVariantPrice(prod as any, options);
+      const price = conv(priceTry);
       // Bound quantity to a sane positive range: `parseInt(...)||1` alone would
       // let a negative quantity through (-1 || 1 === -1) and skew the basket.
       const qty = Math.min(Math.max(parseInt(item.quantity, 10) || 1, 1), 99);
       totalAmount += price * qty;
+      subtotalTry += priceTry * qty;
       const baseTitle = prod.title_tr || prod.title_en;
       const optSuffix = options ? ' (' + Object.keys(options).map((k) => `${k}: ${options![k]}`).join(', ') + ')' : '';
       basket.push([baseTitle + optSuffix, String(price), qty]);
       items.push({ id: String(prod.id), title: baseTitle, qty, price, image: prod.image, ...(options ? { options } : {}) });
     }
 
-    // Region-based shipping, computed server-side (never trust the client).
+    // Region-based shipping, computed server-side (never trust the client),
+    // then converted to the order currency to match the item prices.
     const subtotal = totalAmount;
-    const shipping = shippingFee((settings as any).shipping, country, subtotal);
+    const shipping = conv(shippingFee((settings as any).shipping, country, subtotalTry));
     if (shipping > 0) basket.push(['Kargo', String(shipping), 1]);
     const grandTotal = subtotal + shipping;
 

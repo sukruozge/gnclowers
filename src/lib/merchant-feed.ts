@@ -23,15 +23,26 @@ function gCategory(cat: string): string {
   return 'Toys & Games > Toys';
 }
 
-export function buildMerchantFeed(site: string): string {
+export interface FeedOptions { locale?: 'tr' | 'en'; usdRate?: number }
+
+export function buildMerchantFeed(site: string, opts: FeedOptions = {}): string {
+  const locale = opts.locale ?? 'tr';
+  const usdRate = opts.usdRate ?? 47.03;
+  const isEn = locale === 'en';
+
   const items = loadProducts().map((p) => {
     const imgs = (p.images && p.images.length ? p.images : (p.image ? [p.image] : [])).filter(Boolean) as string[];
     if (!imgs.length) return ''; // Merchant Center requires an image_link
 
-    const title = (p.title_tr || p.title_en || '').slice(0, 150);
-    const desc = plain(p.description_tr || p.description_en || title);
-    const link = canonical(site, 'tr', `urun/${productSlug(p, 'tr')}`);
-    const price = `${Number(p.price).toFixed(2)} ${p.currency || 'TRY'}`;
+    const title = ((isEn ? p.title_en : p.title_tr) || p.title_en || p.title_tr || '').slice(0, 150);
+    const desc = plain((isEn ? p.description_en : p.description_tr) || p.description_en || title);
+    const link = isEn
+      ? canonical(site, 'en', `product/${productSlug(p, 'en')}`)
+      : canonical(site, 'tr', `urun/${productSlug(p, 'tr')}`);
+    // TR feed = TRY; EN feed = USD (converted from the TRY base price).
+    const price = isEn
+      ? `${(Number(p.price) / usdRate).toFixed(2)} USD`
+      : `${Number(p.price).toFixed(2)} ${p.currency || 'TRY'}`;
 
     const lines = [
       '  <item>',
@@ -53,10 +64,11 @@ export function buildMerchantFeed(site: string): string {
     return lines.join('\n');
   }).filter(Boolean).join('\n');
 
+  const channelTitle = isEn ? 'Aselovers — Handmade Crochet Toys' : 'Aselovers — El Yapımı Örgü Oyuncak';
   return `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:g="http://base.google.com/ns/1.0">
 <channel>
-  <title>Aselovers — El Yapımı Örgü Oyuncak</title>
+  <title>${channelTitle}</title>
   <link>${esc(site)}</link>
   <description>Handmade crochet / amigurumi toys, baby gifts and nursery decor.</description>
 ${items}

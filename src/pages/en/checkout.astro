@@ -142,7 +142,7 @@ const shippingCfg = (settings as any).shipping || {};
       </div>
     </section>
   </main>
-  <div id="cart-data" data-products={JSON.stringify(allProducts)} data-shipping={JSON.stringify(shippingCfg)} style="display: none;"></div>
+  <div id="cart-data" data-products={JSON.stringify(allProducts)} data-shipping={JSON.stringify(shippingCfg)} data-rate-usd={((settings as any).rates?.usd) ?? 47.03} style="display: none;"></div>
   <Footer locale="en" />
 
 <script>
@@ -161,15 +161,16 @@ const shippingCfg = (settings as any).shipping || {};
   const totalEl = document.getElementById('summary-total');
 
   let totalAmount = 0;
-  let currency = 'USD';
+  const currency = 'USD';
+  // Prices are stored in TRY; the EN checkout shows and charges USD. Convert at display.
+  const usdRate = Number(document.getElementById('cart-data')?.getAttribute('data-rate-usd')) || 47.03;
 
   cart.forEach(item => {
     const prod = allProducts.find(p => p.id === item.id);
     if (!prod) return;
     const unit = resolveVariantPrice(prod, item.options);
     totalAmount += unit * item.quantity;
-    currency = prod.currency;
-    const formattedPrice = new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(unit * item.quantity);
+    const formattedPrice = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format((unit * item.quantity) / usdRate);
     const img = prod.image || '/bags.png';
     const optLine = optsText(item.options);
     const row = document.createElement('div');
@@ -184,7 +185,7 @@ const shippingCfg = (settings as any).shipping || {};
 
   const shippingEl = document.getElementById('summary-shipping');
   const countrySelect = document.getElementById('c-country') as HTMLSelectElement | null;
-  const fmt = (n: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(n);
+  const fmt = (n: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(n / usdRate);
 
   function calcShipping(country: string): number {
     const isTr = (country || 'TR') === 'TR';

@@ -1,13 +1,16 @@
 ---
 import { type Locale } from '@lib/i18n';
 import { localizedTitle, productSlug, type Product } from '@lib/products';
+import { displayPrice, FALLBACK_RATES } from '@lib/currency';
+import settings from '../../data/settings.json';
 
 const { product, locale } = Astro.props as { product: Product; locale: Locale };
 const title = localizedTitle(product, locale);
 const href = locale === 'tr'
   ? `/tr/urun/${productSlug(product, 'tr')}`
   : `/en/product/${productSlug(product, 'en')}`;
-const price = new Intl.NumberFormat(locale === 'tr' ? 'tr-TR' : 'en-US', { style: 'currency', currency: product.currency }).format(product.price);
+const rates = (settings as any).rates ?? FALLBACK_RATES;
+const price = displayPrice(product.price, locale, rates);
 
 // Pick 3 representative photos (first / middle / last for variety), padded if fewer.
 const pool = (product.images && product.images.length ? product.images : (product.image ? [product.image] : []))
@@ -33,7 +36,7 @@ const order = [photos[1], photos[2], photos[0]]; // left, right, center
     ))}
   </div>
   <h3 class="fc__title">{title}</h3>
-  <span class="fc__price">{price}</span>
+  <span class="fc__price price-amt" data-try={product.price} data-cur={product.currency}>{price}</span>
 </a>
 
 <style>
@@ -78,18 +81,19 @@ const order = [photos[1], photos[2], photos[0]]; // left, right, center
   .fc:hover .fc__count { opacity: 0; }
 
   .fc__title {
-    font-size: .98rem; font-weight: 500; line-height: 1.35; margin: 0 0 8px; color: var(--ink);
+    font-size: .98rem; font-weight: 500; line-height: 1.35; margin: 0 0 8px; color: var(--ink); text-align: center;
     /* Clamp to two lines so every card's price lands on the same baseline —
        long amigurumi names no longer sprawl and crowd the layout. */
     display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
     min-height: 2.7em;
   }
+  /* Centered, high-appeal price — a vivid warm tone that pulls the eye. */
   .fc__price {
-    display: inline-block; font-family: var(--font-body); color: var(--accent-ink);
-    font-weight: 700; font-size: 1.24rem; letter-spacing: .01em; font-variant-numeric: tabular-nums;
+    display: block; text-align: center; font-family: var(--font-body); color: #C2410C;
+    font-weight: 800; font-size: 1.28rem; letter-spacing: .01em; font-variant-numeric: tabular-nums;
     transition: color var(--dur) var(--ease);
   }
-  .fc:hover .fc__price { color: var(--accent); }
+  .fc:hover .fc__price { color: #9A3412; }
 
   /* Touch devices can't hover: keep an elegant closed-fan stack — the peeking
      corners still signal three photos, and the counter badge invites a tap. */

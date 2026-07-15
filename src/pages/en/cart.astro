@@ -73,7 +73,7 @@ const shippingCfg = (settings as any).shipping || {};
       </div>
     </section>
   </main>
-  <div id="cart-data" data-products={JSON.stringify(allProducts)} data-shipping={JSON.stringify(shippingCfg)} style="display: none;"></div>
+  <div id="cart-data" data-products={JSON.stringify(allProducts)} data-shipping={JSON.stringify(shippingCfg)} data-rate-usd={((settings as any).rates?.usd) ?? 47.03} style="display: none;"></div>
   <Footer locale="en" />
 </Base>
 
@@ -83,6 +83,8 @@ const shippingCfg = (settings as any).shipping || {};
 
   const allProducts = JSON.parse(document.getElementById('cart-data')?.getAttribute('data-products') || '[]');
   const shippingCfg = JSON.parse(document.getElementById('cart-data')?.getAttribute('data-shipping') || '{}');
+  // Prices are stored in TRY; the EN site shows USD. Convert at format time.
+  const usdRate = Number(document.getElementById('cart-data')?.getAttribute('data-rate-usd')) || 47.03;
   const optsText = (o?: Record<string, string>) => o ? Object.keys(o).map(k => `${k}: ${o[k]}`).join(' · ') : '';
   const esc = (s: string) => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c] as string));
 
@@ -112,15 +114,13 @@ const shippingCfg = (settings as any).shipping || {};
     if (itemsList) itemsList.innerHTML = '';
 
     let subtotal = 0;
-    let currency = 'USD';
-    const fmt = (n: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(n);
+    const fmt = (n: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(n / usdRate);
 
     cart.forEach((item, idx) => {
       const prod = allProducts.find(p => p.id === item.id);
       if (!prod) return;
       const unit = resolveVariantPrice(prod, item.options);
       subtotal += unit * item.quantity;
-      currency = prod.currency;
       const optLine = optsText(item.options);
 
       const row = document.createElement('div');
