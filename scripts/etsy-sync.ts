@@ -5,6 +5,7 @@ import { cachedTranslation } from '../src/lib/translate';
 
 const API_KEY = process.env.ETSY_API_KEY ?? '';
 const DEEPL_API_KEY = process.env.DEEPL_API_KEY ?? '';
+const ETSY_REFRESH_TOKEN = process.env.ETSY_REFRESH_TOKEN ?? '';
 const SHOP = process.env.ETSY_SHOP ?? 'aselovers';
 const OUT = new URL('../src/data/products.json', import.meta.url);
 const LIMIT = 100;
@@ -95,12 +96,34 @@ async function attachImages(listings: EtsyListing[]): Promise<void> {
   }
 }
 
+// getListingInventory needs an OAuth 2.0 token (listings_r scope), not just the
+// API key — so we exchange the long-lived refresh token for a short-lived
+// access token first. Without ETSY_REFRESH_TOKEN we skip variations entirely.
+async function getAccessToken(): Promise<string> {
+  const res = await fetch('https://api.etsy.com/v3/public/oauth/token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({
+      grant_type: 'refresh_token',
+      client_id: API_KEY,
+      refresh_token: ETSY_REFRESH_TOKEN,
+    }).toString(),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(`token refresh ${res.status}: ${JSON.stringify(data)}`);
+  return data.access_token as string;
+}
+
 // Fetch a listing's inventory (variations/options + per-combination price).
 // Best-effort: a listing with no variations just yields nothing usable.
-async function getListingInventory(listingId: number | string): Promise<any | undefined> {
+async function getListingInventory(listingId: number | string, token: string): Promise<any | undefined> {
   for (let attempt = 0; attempt < 2; attempt++) {
     try {
-      return await etsy(`listings/${listingId}/inventory`);
+      const res = await fetch(`https://openapi.etsy.com/v3/application/listings/${listingId}/inventory`, {
+        headers: { 'x-api-key': API_KEY, Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) throw new Error(`Etsy inventory ${res.status}`);
+      return await res.json();
     } catch {
       if (attempt === 0) await sleep(1500);
     }
@@ -108,9 +131,9 @@ async function getListingInventory(listingId: number | string): Promise<any | un
   return undefined;
 }
 
-async function attachInventory(listings: EtsyListing[]): Promise<void> {
+async function attachInventory(listings: EtsyListing[], token: string): Promise<void> {
   for (const l of listings) {
-    l.inventory = await getListingInventory(l.listing_id);
+    l.inventory = await getListingInventory(l.listing_id, token);
     await sleep(250);
   }
 }
@@ -223,7 +246,19 @@ async function main(): Promise<void> {
   }
   const listings = await getListings(shopId);
   await attachImages(listings);
-  await attachInventory(listings);
+  // Variations require OAuth. If a refresh token is configured, pull inventory
+  // (options + per-variant prices); otherwise skip it without failing the sync.
+  if (ETSY_REFRESH_TOKEN) {
+    try {
+      const token = await getAccessToken();
+      await attachInventory(listings, token);
+      console.log('Inventory (variations) fetched via OAuth.');
+    } catch (err) {
+      console.warn('Could not fetch inventory (variations):', err instanceof Error ? err.message : err);
+    }
+  } else {
+    console.log('ETSY_REFRESH_TOKEN not set — skipping product variations (options).');
+  }
   const prev = loadPrevious();
   const matchedIds = new Set<string>();
 

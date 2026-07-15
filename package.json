@@ -9,7 +9,8 @@
     "preview": "astro preview",
     "test": "vitest run",
     "test:watch": "vitest",
-    "sync": "tsx scripts/etsy-sync.ts"
+    "sync": "tsx scripts/etsy-sync.ts",
+    "etsy-auth": "tsx scripts/etsy-oauth.ts"
   },
   "engines": {
     "node": ">=18.0.0"
