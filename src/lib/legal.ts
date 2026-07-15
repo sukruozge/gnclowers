@@ -297,7 +297,7 @@ ${sellerBlockEn}` },
 <h2>3. Sipariş iptali</h2>
 <p>Siparişiniz henüz üretime alınmadıysa <a href="mailto:${SELLER.email}">${SELLER.email}</a> veya WhatsApp (${SELLER.whatsapp}) üzerinden ücretsiz iptal edebilirsiniz; ödemeniz iade edilir.</p>
 <h2>4. Ayıplı/hasarlı ürün</h2>
-<p>Ürün hatalı veya kargoda hasar görmüş ulaştıysa, teslimattan sonra en kısa sürede fotoğraflarla bize ulaşın; değişim veya tam iade sağlarız. Bu durumda kargo masrafı bize aittir.</p>
+<p>Ürün hatalı veya kargoda hasar görmüş ulaştıysa, lütfen teslimattan sonra <strong>3 gün içinde</strong> fotoğraflarla bize ulaşın; değişim veya tam iade sağlarız. Bu durumda kargo masrafı bize aittir. (Bu 3 günlük süre yalnızca ayıplı/hasarlı bildirimi içindir; standart ürünlerdeki 14 günlük yasal cayma hakkınız ayrıca saklıdır.)</p>
 <h2>5. İade süreci</h2>
 <ol>
   <li><a href="mailto:${SELLER.email}">${SELLER.email}</a> adresine sipariş numaranızla iade talebinizi iletin.</li>
@@ -313,7 +313,7 @@ ${sellerBlockEn}` },
 <h2>3. Order cancellation</h2>
 <p>If your order has not yet entered production, cancel it free of charge via <a href="mailto:${SELLER.email}">${SELLER.email}</a> or WhatsApp (${SELLER.whatsapp}); you will be refunded.</p>
 <h2>4. Defective/damaged items</h2>
-<p>If your item arrives faulty or damaged in transit, contact us with photos as soon as possible; we will replace it or refund you in full. We cover shipping in this case.</p>
+<p>If your item arrives faulty or damaged in transit, please contact us with photos <strong>within 3 days</strong> of delivery; we will replace it or refund you in full. We cover shipping in this case. (This 3-day window is only for reporting defects/damage; your separate 14-day legal right of withdrawal on standard items still applies.)</p>
 <h2>5. Return process</h2>
 <ol>
   <li>Email <a href="mailto:${SELLER.email}">${SELLER.email}</a> with your order number.</li>

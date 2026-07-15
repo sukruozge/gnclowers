@@ -4,6 +4,11 @@
   "email": "info@aselovers.com",
   "analytics": "",
   "currency": "TRY",
+  "rates": {
+    "usd": 47.03,
+    "eur": 53.65,
+    "updatedAt": "2026-07-15"
+  },
   "instagram": "https://instagram.com/aselovers",
   "pinterest": "https://pinterest.com/aselovers",
   "etsy": "https://aselovers.etsy.com",
