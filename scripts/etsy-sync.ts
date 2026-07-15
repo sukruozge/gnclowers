@@ -3,7 +3,10 @@ import { mapListing, type EtsyImage, type EtsyListing } from '../src/lib/etsy';
 import type { Product } from '../src/lib/products';
 import { cachedTranslation } from '../src/lib/translate';
 
+// ETSY_API_KEY may be "keystring" or "keystring:shared_secret" — Etsy wants the
+// full value in the x-api-key header, but OAuth's client_id is the keystring only.
 const API_KEY = process.env.ETSY_API_KEY ?? '';
+const KEYSTRING = API_KEY.split(':')[0];
 const DEEPL_API_KEY = process.env.DEEPL_API_KEY ?? '';
 const ETSY_REFRESH_TOKEN = process.env.ETSY_REFRESH_TOKEN ?? '';
 const SHOP = process.env.ETSY_SHOP ?? 'aselovers';
@@ -105,7 +108,7 @@ async function getAccessToken(): Promise<string> {
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     body: new URLSearchParams({
       grant_type: 'refresh_token',
-      client_id: API_KEY,
+      client_id: KEYSTRING,
       refresh_token: ETSY_REFRESH_TOKEN,
     }).toString(),
   });
