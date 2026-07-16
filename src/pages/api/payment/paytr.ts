@@ -49,6 +49,7 @@ export const POST: APIRoute = async (context) => {
     const province = clip(body.province, 60);
     const district = clip(body.district, 60);
     const postal = clip(body.postal, 12);
+    const note = clip(body.note, 500); // buyer's order note / personalization name / gift message
     // For TR orders the shipping locality is İl + İlçe; fall back to raw city text.
     const cityResolved = (province && district) ? `${district} / ${province}` : city;
     const currency = CURRENCIES.includes(body.currency) ? body.currency : 'TRY';
@@ -151,7 +152,7 @@ export const POST: APIRoute = async (context) => {
           `pending_order:${merchant_oid}`,
           JSON.stringify({
             orderId: merchant_oid,
-            customer: { name, email, phone, address, city: cityResolved, province, district, postal, country },
+            customer: { name, email, phone, address, city: cityResolved, province, district, postal, country, note },
             items,
             subtotal,
             shipping,

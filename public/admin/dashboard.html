@@ -3523,6 +3523,7 @@ function orderCardHTML(o) {
           <button class="order-copy" data-ship="${shipText}" onclick="copyOrderShip(this)">Kopyala</button>
         </div>
         <div class="order-addr">${addrBlock}</div>
+        ${c.note ? `<div class="order-custnote" style="margin-top:8px;padding:8px 10px;background:color-mix(in srgb,#eab308 14%,transparent);border:1px solid color-mix(in srgb,#eab308 42%,transparent);border-radius:8px;font-size:.82rem;line-height:1.45;"><strong>📝 Müşteri notu:</strong> ${esc(c.note)}</div>` : ''}
         <div class="oc-meta">
           <span class="oc-metarow"><span class="oc-metak">Tel</span>${c.phone ? `<a href="tel:${esc(c.phone)}">${esc(c.phone)}</a>` : '—'}</span>
           <span class="oc-metarow"><span class="oc-metak">E-posta</span>${c.email ? `<a href="mailto:${esc(c.email)}">${esc(c.email)}</a>` : '—'}</span>

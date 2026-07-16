@@ -108,6 +108,11 @@ const shippingCfg = (settings as any).shipping || {};
                 <input type="text" id="c-postal" name="postal-code" autocomplete="postal-code" inputmode="numeric" maxlength="5" placeholder="Örn: 34710" />
               </div>
 
+              <div class="form-group">
+                <label for="c-note">Sipariş Notu <span class="lbl-opt">(opsiyonel)</span></label>
+                <textarea id="c-note" name="note" rows="2" maxlength="500" placeholder="İşlenecek isim, hediye mesajı ya da özel isteğiniz…"></textarea>
+              </div>
+
               <div id="checkout-error" class="form-error" role="alert" style="display: none;"></div>
 
               <button type="submit" id="checkout-submit-btn" class="btn btn--primary checkout__submit">
@@ -367,6 +372,7 @@ const shippingCfg = (settings as any).shipping || {};
       district: intl ? '' : val('c-district'),
       city: intl ? [val('c-city-intl'), val('c-country-name')].filter(Boolean).join(', ') : '',
       postal: val('c-postal'),
+      note: val('c-note'),
       cart: cart.map(x => ({ id: x.id, quantity: x.quantity, options: x.options })),
       currency: currency,
       lang: 'tr'

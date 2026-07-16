@@ -102,6 +102,11 @@ const shippingCfg = (settings as any).shipping || {};
                 </div>
               </div>
 
+              <div class="form-group">
+                <label for="c-note">Order note <span class="lbl-opt">(optional)</span></label>
+                <textarea id="c-note" name="note" rows="2" maxlength="500" placeholder="Name to embroider, gift message, or any special request…"></textarea>
+              </div>
+
               <div id="checkout-error" class="form-error" role="alert" style="display: none;"></div>
 
               <button type="submit" id="checkout-submit-btn" class="btn btn--primary checkout__submit">
@@ -374,6 +379,7 @@ const shippingCfg = (settings as any).shipping || {};
       city: (document.getElementById('c-city') as HTMLInputElement).value,
       province: stateValue(),
       postal: (document.getElementById('c-postal') as HTMLInputElement).value,
+      note: (document.getElementById('c-note') as HTMLTextAreaElement)?.value || '',
       country: countrySelect?.value || 'US',
       cart: cart.map(x => ({ id: x.id, quantity: x.quantity, options: x.options })),
       currency: currency,
