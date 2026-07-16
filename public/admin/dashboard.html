@@ -1004,6 +1004,16 @@
             <button class="seg-btn" data-status="active" onclick="setProductStatus('active', this)">Satışta<span class="seg-n" id="segn-active"></span></button>
             <button class="seg-btn" data-status="passive" onclick="setProductStatus('passive', this)">Pasif<span class="seg-n" id="segn-passive"></span></button>
           </div>
+          <select id="product-cat-filter" onchange="onProductFilter()" title="Kategoriye göre" style="padding:8px 10px;border:1px solid var(--border);border-radius:8px;background:transparent;color:inherit;font-size:.82rem;">
+            <option value="all">Tüm kategoriler</option>
+          </select>
+          <select id="product-sort" onchange="onProductFilter()" title="Sırala" style="padding:8px 10px;border:1px solid var(--border);border-radius:8px;background:transparent;color:inherit;font-size:.82rem;">
+            <option value="default">Sıra: Varsayılan</option>
+            <option value="price-desc">Fiyat ↓ (yüksek)</option>
+            <option value="price-asc">Fiyat ↑ (düşük)</option>
+            <option value="title-tr">Başlık TR (A→Z)</option>
+            <option value="featured">Önce öne çıkanlar</option>
+          </select>
         </div>
         <div class="card-body" style="padding:0">
           <div class="table-wrap">
@@ -1746,6 +1756,8 @@ let _blogPosts = [];
 let _content = {};
 let _productQuery = '';
 let _productStatus = 'all'; // 'all' | 'active' | 'passive'
+let _productCat = 'all';
+let _productSort = 'default';
 
 // Turkish-aware lowercase so "İ/ı" and "I/i" match as users expect when searching.
 function _norm(s) { return String(s || '').toLocaleLowerCase('tr').trim(); }
@@ -2110,17 +2122,35 @@ function renderProducts() {
     return;
   }
 
-  // Bilingual + status filter. Search matches TR title, EN title, category and id.
+  // Populate the category filter dropdown from the live catalog (once per render).
+  const catFilterEl = document.getElementById('product-cat-filter');
+  if (catFilterEl) {
+    const cats = [...new Set(_products.map(p => p.category).filter(Boolean))].sort((a, b) => String(a).localeCompare(String(b), 'tr'));
+    const cur = _productCat;
+    catFilterEl.innerHTML = '<option value="all">Tüm kategoriler</option>' + cats.map(c => `<option value="${esc(c)}"${c === cur ? ' selected' : ''}>${esc(c)}</option>`).join('');
+    catFilterEl.value = cats.includes(cur) ? cur : 'all';
+  }
+
+  // Bilingual + status + category filter. Search matches TR title, EN title, category and id.
   const q = _norm(_productQuery);
-  const filtered = _products.filter(p => {
+  const featuredIds = (_content.featured || []).map(String);
+  let filtered = _products.filter(p => {
     const active = p.isActive !== false;
     if (_productStatus === 'active' && !active) return false;
     if (_productStatus === 'passive' && active) return false;
+    if (_productCat !== 'all' && p.category !== _productCat) return false;
     if (!q) return true;
     return _norm(`${p.title_tr || ''} ${p.title_en || ''} ${p.category || ''} ${p.id || ''}`).includes(q);
   });
 
-  const filtering = !!q || _productStatus !== 'all';
+  // Sorting (default keeps catalog order).
+  const num = (v) => Number(v) || 0;
+  if (_productSort === 'price-desc') filtered = filtered.slice().sort((a, b) => num(b.price) - num(a.price));
+  else if (_productSort === 'price-asc') filtered = filtered.slice().sort((a, b) => num(a.price) - num(b.price));
+  else if (_productSort === 'title-tr') filtered = filtered.slice().sort((a, b) => String(a.title_tr || '').localeCompare(String(b.title_tr || ''), 'tr'));
+  else if (_productSort === 'featured') filtered = filtered.slice().sort((a, b) => (featuredIds.includes(String(b.id)) ? 1 : 0) - (featuredIds.includes(String(a.id)) ? 1 : 0));
+
+  const filtering = !!q || _productStatus !== 'all' || _productCat !== 'all';
   count.textContent = filtering ? `${filtered.length} / ${_products.length} ürün` : `${_products.length} ürün`;
 
   if (!filtered.length) {
@@ -2169,6 +2199,7 @@ function renderProducts() {
       </td>
       <td style="white-space:nowrap">
         <button class="btn-icon" onclick="editProduct('${p.id}')" title="Düzenle">✏️</button>
+        <button class="btn-icon" onclick="duplicateProduct('${p.id}')" title="Kopyala">⧉</button>
         <button class="btn-icon" onclick="confirmDeleteProduct('${p.id}')" title="Sil">🗑️</button>
       </td>
     </tr>`;
@@ -2177,6 +2208,8 @@ function renderProducts() {
 
 function onProductFilter() {
   _productQuery = document.getElementById('product-search').value;
+  const cf = document.getElementById('product-cat-filter'); if (cf) _productCat = cf.value;
+  const sf = document.getElementById('product-sort'); if (sf) _productSort = sf.value;
   renderProducts();
 }
 
@@ -2405,6 +2438,34 @@ async function saveProduct() {
   }
 }
 
+async function duplicateProduct(id) {
+  const p = _products.find(x => String(x.id) === String(id));
+  if (!p) return;
+  const payload = {
+    title_tr: (p.title_tr || '') + ' (kopya)', title_en: (p.title_en || '') + ' (copy)',
+    description_tr: p.description_tr || '', description_en: p.description_en || '',
+    price: p.price, priceUsd: p.priceUsd ?? '', currency: p.currency || 'TRY', category: p.category || 'amigurumi',
+    image: p.image || undefined,
+    images: Array.isArray(p.images) ? p.images.slice() : undefined,
+    tags: Array.isArray(p.tags) ? p.tags.slice() : undefined,
+    options: Array.isArray(p.options) ? p.options : undefined,
+    variants: Array.isArray(p.variants) ? p.variants : undefined,
+    url: p.url || undefined,
+    isActive: false, isNew: false, // start passive so the copy isn't live before you edit it
+  };
+  try {
+    const res = await fetch('/api/admin/products', { method: 'POST', headers: ADM_HDR, credentials: 'include', body: JSON.stringify(payload) });
+    if (!res.ok) throw new Error('fail');
+    toast('✅ Ürün kopyalandı — pasif eklendi, düzenleyip aktif edin (yayına 1-2 dk)', 'ok');
+    const pr = await fetch('/products.json?v=' + Date.now());
+    const data = await pr.json();
+    _products = data.products || [];
+    renderProducts(); renderDashboard();
+  } catch {
+    toast('⚠️ Kopyalanamadı, tekrar deneyin.', 'err');
+  }
+}
+
 function confirmDeleteProduct(id, name) {
   if (!name) { const p = _products.find(x => String(x.id) === String(id)); name = p ? (p.title_tr || p.title_en || 'Ürün') : 'Ürün'; }
   openModal('Ürünü Sil', `"${name}" isimli ürünü tamamen silmek istediğinizden emin misiniz?`, async () => {
@@ -2451,11 +2512,27 @@ async function toggleFeatured(productId, btn) {
   } catch { toast('⚠️ Sunucuya ulaşılamadı.', 'err'); }
 }
 
-function updateProductCat(productId, cat) {
-  const overrides = getProductOverrides();
-  overrides.categories = overrides.categories || {};
-  overrides.categories[productId] = cat;
-  saveProductOverrides(overrides);
+async function updateProductCat(productId, cat) {
+  const p = _products.find(x => String(x.id) === String(productId));
+  if (!p) return;
+  const prev = p.category;
+  if (prev === cat) return;
+  p.category = cat; // optimistic
+  const payload = {
+    title_tr: p.title_tr, title_en: p.title_en,
+    description_tr: p.description_tr || '', description_en: p.description_en || '',
+    price: p.price, priceUsd: p.priceUsd ?? '', currency: p.currency || 'TRY',
+    category: cat, image: p.image || undefined, url: p.url || undefined,
+    isActive: p.isActive !== false, isNew: !!p.isNew,
+  };
+  try {
+    const res = await fetch(`/api/admin/products/${encodeURIComponent(productId)}`, { method: 'PUT', headers: ADM_HDR, credentials: 'include', body: JSON.stringify(payload) });
+    if (!res.ok) throw new Error('fail');
+    toast('✅ Kategori güncellendi (yayına 1-2 dk)', 'ok');
+  } catch {
+    p.category = prev; renderProducts();
+    toast('⚠️ Kategori güncellenemedi, tekrar deneyin.', 'err');
+  }
 }
 
 async function saveEtsyConfig() {
