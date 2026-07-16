@@ -949,7 +949,12 @@
     <!-- CONTENT PAGE -->
     <div class="page" id="page-content">
       <div class="page-title">İçerik Yönetimi</div>
-      <div class="page-subtitle">Site içeriklerini düzenleyin — değişiklikler anında aktif olur</div>
+      <div class="page-subtitle">Hero, Hakkımızda, Kargo, Yorumlar ve Footer metinleri</div>
+
+      <div style="display:flex;gap:10px;align-items:flex-start;background:color-mix(in srgb,#eab308 14%,transparent);border:1px solid color-mix(in srgb,#eab308 40%,transparent);border-radius:10px;padding:10px 14px;margin-bottom:16px;font-size:.84rem;">
+        <span style="font-size:1.1rem;line-height:1;">⚠️</span>
+        <div>Bu bölüm şu an <strong>yalnızca bu tarayıcıda yerel önizleme</strong> olarak saklanır; henüz siteye yansımaz. Site metinleri kodda (<code>src/lib/i18n.ts</code>, bileşenler) yönetiliyor — kalıcı değişiklik için bana söyleyin, gerçek kaydetmeyi bağlayabiliriz.</div>
+      </div>
 
       <div class="tabs" id="content-tabs">
         <button class="tab-btn active" onclick="switchContentTab('hero',this)">Hero</button>
@@ -1489,6 +1494,10 @@
       <div class="tab-panel" id="stab-password">
         <div class="card">
           <div class="card-body">
+            <div style="display:flex;gap:10px;align-items:flex-start;background:color-mix(in srgb,#eab308 14%,transparent);border:1px solid color-mix(in srgb,#eab308 40%,transparent);border-radius:10px;padding:10px 14px;margin-bottom:16px;font-size:.84rem;">
+              <span style="font-size:1.1rem;line-height:1;">⚠️</span>
+              <div>Gerçek giriş şifresi sunucuda güvenli (hash) saklanır; buradan <strong>kalıcı olarak değiştirilemez</strong>. Şifreyi değiştirmek için Cloudflare ortam değişkeni <code>ADMIN_PASSWORD_HASH</code> güncellenmelidir — bana söyleyin, birlikte yapalım.</div>
+            </div>
             <div class="form-group">
               <label>Mevcut Şifre</label>
               <input type="password" id="s-curr-pass" placeholder="Mevcut şifre">
@@ -1511,7 +1520,7 @@
 
 <!-- PRODUCT EDIT MODAL -->
 <div class="modal-overlay" id="product-modal">
-  <div class="modal" style="max-width: 600px; width: 90%;">
+  <div class="modal" style="max-width: 720px; width: 92%;">
     <div class="modal-title" id="product-modal-title">Yeni Ürün Ekle</div>
     <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
       <input type="hidden" id="p-id">
