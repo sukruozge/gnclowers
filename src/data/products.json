@@ -1,5 +1,5 @@
 {
-  "lastSync": "2026-07-15T18:34:02.066Z",
+  "lastSync": "2026-07-16T10:31:27.454Z",
   "shopId": "65409401",
   "shopName": "aselovers",
   "total": 126,
@@ -6600,7 +6600,30 @@
         "chick plush"
       ],
       "isNew": false,
-      "isActive": true
+      "isActive": true,
+      "options": [
+        {
+          "name": "Choose Your Model",
+          "values": [
+            "Standard",
+            "Customizable"
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "values": {
+            "Choose Your Model": "Standard"
+          },
+          "price": 2460
+        },
+        {
+          "values": {
+            "Choose Your Model": "Customizable"
+          },
+          "price": 3024
+        }
+      ]
     },
     {
       "id": "4502161443",
