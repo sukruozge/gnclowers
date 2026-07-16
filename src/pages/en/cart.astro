@@ -80,12 +80,13 @@ const shippingCfg = (settings as any).shipping || {};
 <script>
   import { getCart, updateCartQuantity, removeFromCart } from '@lib/cart';
   import { resolveVariantPrice } from '@lib/variants';
+  import { optionsLine } from '@lib/optionLabels';
 
   const allProducts = JSON.parse(document.getElementById('cart-data')?.getAttribute('data-products') || '[]');
   const shippingCfg = JSON.parse(document.getElementById('cart-data')?.getAttribute('data-shipping') || '{}');
   // Prices are stored in TRY; the EN site shows USD. Convert at format time.
   const usdRate = Number(document.getElementById('cart-data')?.getAttribute('data-rate-usd')) || 47.03;
-  const optsText = (o?: Record<string, string>) => o ? Object.keys(o).map(k => `${k}: ${o[k]}`).join(' · ') : '';
+  const optsText = (o?: Record<string, string>) => optionsLine(o, 'en');
   const esc = (s: string) => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c] as string));
 
   const emptyDiv = document.getElementById('cart-empty');

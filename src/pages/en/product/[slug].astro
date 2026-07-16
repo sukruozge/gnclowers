@@ -10,6 +10,7 @@ import { loadProducts, localizedTitle, productSlug, type Product } from '@lib/pr
 import { productJsonLd, breadcrumbJsonLd } from '@lib/jsonld';
 import { loadReviews } from '@lib/reviews';
 import { displayPrice, FALLBACK_RATES } from '@lib/currency';
+import { optName, optValue } from '@lib/optionLabels';
 import settings from '../../../data/settings.json';
 
 export function getStaticPaths() {
@@ -79,11 +80,11 @@ const crumbLd = breadcrumbJsonLd([
                 <div class="variations" id="variations">
                   {product.options.map((opt) => (
                     <div class="variation">
-                      <label class="variation__label">{opt.name}</label>
+                      <label class="variation__label">{optName(opt.name, 'en')}</label>
                       <div class="select-wrap">
                         <select class="variation__sel" data-name={opt.name} required>
                           <option value="" disabled selected>Select…</option>
-                          {opt.values.map((v) => <option value={v}>{v}</option>)}
+                          {opt.values.map((v) => <option value={v}>{optValue(v, 'en')}</option>)}
                         </select>
                         <svg class="select-wrap__caret" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
                       </div>
