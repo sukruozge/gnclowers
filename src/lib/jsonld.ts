@@ -5,7 +5,7 @@ import type { Post } from './blog';
 
 const BRAND = 'Aselovers';
 const BRAND_DESC =
-  'Handmade organic amigurumi and crochet toys, knitted in Istanbul with OEKO-TEX® and GOTS® certified 100% cotton yarn.';
+  'Handmade amigurumi and crochet toys, crocheted by hand in Istanbul from soft cotton yarn.';
 
 function encode(data: unknown): string {
   return JSON.stringify(data).replace(/</g, '\\u003c');
