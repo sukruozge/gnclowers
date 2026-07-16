@@ -1644,8 +1644,22 @@
         </div>
       </div>
       <div class="form-group" style="margin-bottom: 12px;">
-        <label>Görsel URL</label>
-        <input type="url" id="p-image" placeholder="https://i.etsystatic.com/...">
+        <label>Görseller <span style="font-weight:400;opacity:.6">— ilk görsel ana görseldir; sürükle-oynat için ◀ ▶</span></label>
+        <input type="hidden" id="p-image">
+        <div id="p-gallery"></div>
+        <div style="display:flex; gap:8px; margin-top:8px;">
+          <input type="url" id="p-image-add" placeholder="https://... görsel URL'i ekle" style="flex:1;" onkeydown="if(event.key==='Enter'){event.preventDefault();pAddImageUrl();}">
+          <button type="button" class="btn btn-outline" onclick="pAddImageUrl()" style="white-space:nowrap;">+ Görsel</button>
+        </div>
+      </div>
+      <div class="form-group" style="margin-bottom: 12px;">
+        <label>Varyantlar & Fiyatları <span style="font-weight:400;opacity:.6">— her varyantın ₺ fiyatını ayrı ayarla</span></label>
+        <div id="p-variants"></div>
+      </div>
+      <div class="form-group" style="margin-bottom: 12px;">
+        <label>Etiketler (SEO)</label>
+        <div id="p-tags"></div>
+        <input type="text" id="p-tag-add" placeholder="Etiket yaz, Enter'a bas" style="margin-top:6px;" onkeydown="if(event.key==='Enter'){event.preventDefault();pAddTag();}">
       </div>
       <div class="form-group" style="margin-bottom: 12px;">
         <label>Ödeme / Shopier Linki (İsteğe Bağlı)</label>
@@ -2137,7 +2151,11 @@ function renderProducts() {
           ${allCategories.map(c => `<option value="${c}" ${p.category===c?'selected':''}>${c}</option>`).join('')}
         </select>
       </td>
-      <td style="font-weight:600;font-size:.84rem">${p.price ? p.price + ' ₺' : '—'}</td>
+      <td style="font-weight:600;font-size:.84rem">
+        ${p.price ? p.price + ' ₺' : '—'}
+        ${p.priceUsd ? `<div style="font-weight:600;font-size:.72rem;color:#B0532E">$${p.priceUsd} <span style="opacity:.55;font-weight:400">özel</span></div>` : '<div style="font-weight:400;font-size:.7rem;opacity:.5">$ kurdan</div>'}
+        ${(Array.isArray(p.variants) && p.variants.length) ? `<div style="font-size:.68rem;opacity:.55">${p.variants.length} varyant</div>` : ''}
+      </td>
       <td>
         <button class="star-btn ${isFeatured ? 'starred' : ''}" onclick="toggleFeatured('${p.id}',this)" title="${isFeatured ? 'Öne çıkar kaldır' : 'Öne çıkar'}">
           ${isFeatured ? '★' : '☆'}
@@ -2198,6 +2216,53 @@ async function toggleProductActive(id, inputEl) {
   }
 }
 
+// ── Product editor: images / variants / tags (in-modal state) ──────────────
+let _pImages = [], _pTags = [], _pOptions = [], _pVariants = [];
+function _escA(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function syncPrimaryImage(){ const el=document.getElementById('p-image'); if(el) el.value = _pImages[0] || ''; }
+function renderPGallery(){
+  const el=document.getElementById('p-gallery'); if(!el) return;
+  if(!_pImages.length){ el.innerHTML='<div style="opacity:.55;font-size:.82rem;padding:6px 0;">Henüz görsel yok — aşağıdan URL ekleyin.</div>'; syncPrimaryImage(); return; }
+  el.innerHTML='<div style="display:flex;flex-wrap:wrap;gap:8px;">'+_pImages.map((src,i)=>
+    '<div style="position:relative;width:80px;height:80px;border-radius:8px;overflow:hidden;border:2px solid '+(i===0?'#B0532E':'transparent')+';box-shadow:0 1px 5px rgba(0,0,0,.14);">'
+    +'<img src="'+_escA(src)+'" style="width:100%;height:100%;object-fit:cover;display:block;" loading="lazy">'
+    +(i===0?'<span style="position:absolute;top:2px;left:2px;background:#B0532E;color:#fff;font-size:.58rem;padding:1px 5px;border-radius:6px;">ANA</span>':'')
+    +'<div style="position:absolute;bottom:0;left:0;right:0;display:flex;justify-content:space-around;background:rgba(0,0,0,.5);">'
+    +'<button type="button" title="Sola" onclick="pMoveImage('+i+',-1)" style="border:0;background:none;color:#fff;cursor:pointer;font-size:.72rem;padding:2px;">◀</button>'
+    +(i!==0?'<button type="button" title="Ana yap" onclick="pSetPrimary('+i+')" style="border:0;background:none;color:#fff;cursor:pointer;font-size:.72rem;padding:2px;">★</button>':'')
+    +'<button type="button" title="Sil" onclick="pRemoveImage('+i+')" style="border:0;background:none;color:#fff;cursor:pointer;font-size:.72rem;padding:2px;">✕</button>'
+    +'<button type="button" title="Sağa" onclick="pMoveImage('+i+',1)" style="border:0;background:none;color:#fff;cursor:pointer;font-size:.72rem;padding:2px;">▶</button>'
+    +'</div></div>').join('')+'</div>';
+  syncPrimaryImage();
+}
+function pAddImageUrl(){ const inp=document.getElementById('p-image-add'); const v=(inp.value||'').trim(); if(!v) return; if(!/^https?:\/\//i.test(v)){ toast('Geçerli bir URL girin (http...)','err'); return; } _pImages.push(v); inp.value=''; renderPGallery(); }
+function pRemoveImage(i){ _pImages.splice(i,1); renderPGallery(); }
+function pSetPrimary(i){ const s=_pImages.splice(i,1)[0]; _pImages.unshift(s); renderPGallery(); }
+function pMoveImage(i,dir){ const j=i+dir; if(j<0||j>=_pImages.length) return; const t=_pImages[i]; _pImages[i]=_pImages[j]; _pImages[j]=t; renderPGallery(); }
+
+function renderPVariants(){
+  const el=document.getElementById('p-variants'); if(!el) return;
+  if(!_pVariants.length || !_pOptions.length){ el.innerHTML='<div style="opacity:.55;font-size:.82rem;">Bu üründe varyant yok.</div>'; return; }
+  const names=_pOptions.map(o=>o.name);
+  el.innerHTML='<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:.8rem;">'
+    +'<thead><tr>'+names.map(n=>'<th style="text-align:left;padding:4px 6px;border-bottom:1px solid var(--border);">'+_escA(n)+'</th>').join('')
+    +'<th style="text-align:left;padding:4px 6px;border-bottom:1px solid var(--border);">Fiyat (₺)</th></tr></thead><tbody>'
+    +_pVariants.map((v,i)=>'<tr>'+names.map(n=>'<td style="padding:4px 6px;border-bottom:1px solid var(--border);">'+_escA((v.values&&v.values[n])||'')+'</td>').join('')
+      +'<td style="padding:4px 6px;border-bottom:1px solid var(--border);"><input type="number" step="0.01" value="'+(Number(v.price)||'')+'" onchange="pSetVariantPrice('+i+',this.value)" style="width:110px;"></td></tr>').join('')
+    +'</tbody></table></div>';
+}
+function pSetVariantPrice(i,val){ const n=parseFloat(val); if(_pVariants[i] && Number.isFinite(n) && n>0) _pVariants[i].price=n; }
+
+function renderPTags(){
+  const el=document.getElementById('p-tags'); if(!el) return;
+  el.innerHTML=_pTags.length ? _pTags.map((t,i)=>'<span style="display:inline-flex;align-items:center;gap:4px;background:color-mix(in srgb,#B0532E 12%,transparent);color:#8a3f22;border-radius:12px;padding:2px 8px;margin:2px;font-size:.75rem;">'+_escA(t)+'<button type="button" onclick="pRemoveTag('+i+')" style="border:0;background:none;cursor:pointer;color:#8a3f22;line-height:1;">✕</button></span>').join('') : '<span style="opacity:.55;font-size:.8rem;">Etiket yok</span>';
+}
+function pAddTag(){ const inp=document.getElementById('p-tag-add'); const v=(inp.value||'').trim(); if(!v) return; if(!_pTags.includes(v)) _pTags.push(v); inp.value=''; renderPTags(); }
+function pRemoveTag(i){ _pTags.splice(i,1); renderPTags(); }
+
+function renderProductRich(){ renderPGallery(); renderPVariants(); renderPTags(); }
+
 function showAddProduct() {
   populateProductCategories();
   document.getElementById('product-modal-title').textContent = 'Yeni Ürün Ekle';
@@ -2214,6 +2279,8 @@ function showAddProduct() {
   document.getElementById('p-url').value = '';
   document.getElementById('p-active').checked = true;
   document.getElementById('p-new').checked = true;
+  _pImages = []; _pTags = []; _pOptions = []; _pVariants = [];
+  renderProductRich();
   document.getElementById('product-modal').classList.add('open');
 }
 
@@ -2239,6 +2306,11 @@ function editProduct(id) {
   document.getElementById('p-url').value = p.url || '';
   document.getElementById('p-active').checked = p.isActive !== false;
   document.getElementById('p-new').checked = !!p.isNew;
+  _pImages = Array.isArray(p.images) && p.images.length ? p.images.slice() : (p.image ? [p.image] : []);
+  _pTags = Array.isArray(p.tags) ? p.tags.slice() : [];
+  _pOptions = Array.isArray(p.options) ? JSON.parse(JSON.stringify(p.options)) : [];
+  _pVariants = Array.isArray(p.variants) ? JSON.parse(JSON.stringify(p.variants)) : [];
+  renderProductRich();
   document.getElementById('product-modal').classList.add('open');
 }
 
@@ -2262,7 +2334,11 @@ async function saveProduct() {
     priceUsd: document.getElementById('p-price-usd').value.trim(),
     currency: document.getElementById('p-currency').value,
     category: document.getElementById('p-category').value,
-    image: document.getElementById('p-image').value.trim() || undefined,
+    image: (_pImages[0] || document.getElementById('p-image').value.trim()) || undefined,
+    images: _pImages.slice(),
+    tags: _pTags.slice(),
+    options: _pOptions,
+    variants: _pVariants,
     url: document.getElementById('p-url').value.trim() || undefined,
     isActive: document.getElementById('p-active').checked,
     isNew: document.getElementById('p-new').checked
@@ -2287,9 +2363,14 @@ async function saveProduct() {
         description_tr: payload.description_tr,
         description_en: payload.description_en,
         price: payload.price,
+        priceUsd: payload.priceUsd ? parseFloat(payload.priceUsd) : undefined,
         currency: payload.currency,
         category: payload.category,
         image: payload.image,
+        images: payload.images,
+        tags: payload.tags,
+        options: payload.options,
+        variants: payload.variants,
         url: payload.url,
         isActive: payload.isActive,
         isNew: payload.isNew,
