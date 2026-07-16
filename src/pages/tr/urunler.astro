@@ -53,7 +53,7 @@ const bPos = ['pa--l1', 'pa--r1', 'pa--l2', 'pa--r2', 'pa--l3', 'pa--r3'];
                 <span class="cat__img">
                   {c === 'all'
                     ? <span class="cat__collage">{allImages.map((src) => <img src={src} alt="" loading="lazy" />)}</span>
-                    : (catImage(c) ? <img src={catImage(c)} alt="" loading="lazy" /> : <span class="cat__ph" />)}
+                    : (catImage(c) ? <img src={catImage(c)} alt={`${catLabel[c] ?? c} — el yapımı örgü amigurumi`} loading="lazy" /> : <span class="cat__ph" />)}
                   <span class="cat__n">{catCount(c)}</span>
                 </span>
                 <span class="cat__name">{catLabel[c] ?? c}</span>
