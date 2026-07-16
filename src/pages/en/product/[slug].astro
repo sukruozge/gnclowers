@@ -26,7 +26,7 @@ const rates = (settings as any).rates ?? FALLBACK_RATES;
 const price = displayPrice(product.price, 'en', rates);
 const related = loadProducts().filter((x) => x.category === product.category && x.id !== product.id).slice(0, 4);
 const shop = loadReviews().shop;
-const ld = productJsonLd(product, 'en', `${site}/en/${selfPath}`, shop.rating ? { value: shop.rating, count: shop.count } : undefined);
+const ld = productJsonLd(product, 'en', `${site}/en/${selfPath}`, shop.rating ? { value: shop.rating, count: shop.count } : undefined, rates);
 const crumbLd = breadcrumbJsonLd([
   { name: 'Home', url: `${site}/en` },
   { name: 'Products', url: `${site}/en/products` },

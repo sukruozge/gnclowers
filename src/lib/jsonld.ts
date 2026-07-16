@@ -2,6 +2,7 @@ import type { Product } from './products';
 import { localizedTitle } from './products';
 import type { Locale } from './i18n';
 import type { Post } from './blog';
+import { localeCurrency, toCurrency, FALLBACK_RATES, type Rates } from './currency';
 
 const BRAND = 'Aselovers';
 const BRAND_DESC =
@@ -106,8 +107,17 @@ export function productJsonLd(
   locale: Locale,
   url: string,
   rating?: { value: number; count: number },
+  rates: Rates = FALLBACK_RATES,
 ): string {
   const desc = locale === 'tr' ? product.description_tr : product.description_en;
+  // Offer must reflect the price the visitor actually sees on this locale's page:
+  // TRY on /tr, USD on /en. Declaring TRY on the English page is a currency mismatch
+  // that suppresses Google rich results / Merchant listings.
+  const cur = localeCurrency(locale);
+  const price = toCurrency(product.price, cur, rates);
+  // Google recommends priceValidUntil on Offer; keep it a stable far-future date so
+  // the schema doesn't churn every build.
+  const priceValidUntil = `${new Date().getFullYear() + 1}-12-31`;
   const data: Record<string, unknown> = {
     '@context': 'https://schema.org',
     '@type': 'Product',
@@ -118,8 +128,9 @@ export function productJsonLd(
     itemCondition: 'https://schema.org/NewCondition',
     offers: {
       '@type': 'Offer',
-      price: product.price.toFixed(2),
-      priceCurrency: product.currency,
+      price: price.toFixed(2),
+      priceCurrency: cur,
+      priceValidUntil,
       url,
       availability: 'https://schema.org/InStock',
       seller: { '@type': 'Organization', name: BRAND },
