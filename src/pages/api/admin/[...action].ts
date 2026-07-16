@@ -39,10 +39,17 @@ interface ProductInput {
   currency?: unknown;
   category?: unknown;
   image?: unknown;
+  images?: unknown;
+  tags?: unknown;
+  options?: unknown;
+  variants?: unknown;
   url?: unknown;
   isActive?: unknown;
   isNew?: unknown;
 }
+
+interface ProductOptionGroup { name: string; values: string[] }
+interface ProductVariant { values: Record<string, string>; price: number }
 
 interface Product {
   id: string;
@@ -55,6 +62,10 @@ interface Product {
   currency: string;
   category: string;
   image?: string;
+  images?: string[];
+  tags?: string[];
+  options?: ProductOptionGroup[];
+  variants?: ProductVariant[];
   url?: string;
   isActive: boolean;
   isNew: boolean;
@@ -462,7 +473,7 @@ function normalizeProduct(input: ProductInput, id: string): Product | null {
   const puRaw = input.priceUsd;
   const puNum = typeof puRaw === 'number' ? puRaw : (typeof puRaw === 'string' && puRaw.trim() !== '' ? Number(puRaw) : NaN);
   const priceUsd = Number.isFinite(puNum) && puNum > 0 ? puNum : undefined;
-  return {
+  const out: Product = {
     id,
     title_tr,
     title_en,
@@ -477,6 +488,40 @@ function normalizeProduct(input: ProductInput, id: string): Product | null {
     isActive: input.isActive !== false,
     isNew: input.isNew === true,
   };
+  // Rich fields are only touched when the caller actually sends them — a partial PUT
+  // (e.g. the active/featured toggle) omits them, so `{...existing, ...updated}` keeps
+  // the current values instead of wiping variants/images the form didn't include.
+  if (Array.isArray(input.images)) {
+    out.images = (input.images as unknown[]).filter((x): x is string => typeof x === 'string' && x.trim() !== '');
+    if (!out.image && out.images.length) out.image = out.images[0];
+  }
+  if (Array.isArray(input.tags)) {
+    out.tags = (input.tags as unknown[]).filter((x): x is string => typeof x === 'string' && x.trim() !== '').map((s) => s.trim());
+  }
+  if (Array.isArray(input.options)) {
+    out.options = (input.options as any[])
+      .map((o) => ({
+        name: typeof o?.name === 'string' ? o.name.trim() : '',
+        values: Array.isArray(o?.values) ? o.values.filter((v: unknown): v is string => typeof v === 'string' && v.trim() !== '').map((v: string) => v.trim()) : [],
+      }))
+      .filter((o) => o.name && o.values.length);
+  }
+  if (Array.isArray(input.variants)) {
+    const names = new Set((out.options ?? []).map((o) => o.name));
+    out.variants = (input.variants as any[])
+      .map((v) => {
+        const values: Record<string, string> = {};
+        if (v?.values && typeof v.values === 'object') {
+          for (const [k, val] of Object.entries(v.values)) {
+            if (typeof k === 'string' && typeof val === 'string' && (names.size === 0 || names.has(k))) values[k] = val;
+          }
+        }
+        const vp = typeof v?.price === 'number' ? v.price : Number(v?.price);
+        return { values, price: Number.isFinite(vp) && vp > 0 ? vp : price };
+      })
+      .filter((v) => Object.keys(v.values).length > 0);
+  }
+  return out;
 }
 
 async function loadProducts(gh: Gh): Promise<{ data: ProductsFile; sha: string }> {

@@ -304,6 +304,12 @@ async function main(): Promise<void> {
         priceUsd: (existing as any).priceUsd !== undefined ? (existing as any).priceUsd : (mapped as any).priceUsd,
         currency: existing.currency !== undefined ? existing.currency : mapped.currency,
         image: existing.image !== undefined ? existing.image : mapped.image,
+        // Panel is the editing surface for these — manual curation (gallery order,
+        // variant prices, tags) wins over the nightly Etsy pull, like titles/price do.
+        images: (existing as any).images !== undefined ? (existing as any).images : (mapped as any).images,
+        tags: (existing as any).tags !== undefined ? (existing as any).tags : (mapped as any).tags,
+        options: (existing as any).options !== undefined ? (existing as any).options : (mapped as any).options,
+        variants: (existing as any).variants !== undefined ? (existing as any).variants : (mapped as any).variants,
         category: existing.category !== undefined ? existing.category : mapped.category,
         isActive: existing.isActive !== undefined ? existing.isActive : mapped.isActive,
         isNew: existing.isNew !== undefined ? existing.isNew : mapped.isNew,
