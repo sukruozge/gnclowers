@@ -802,7 +802,7 @@
 
         <!-- Notifications Dropdown -->
         <div class="dropdown">
-          <button class="notifications-btn" onclick="toggleDropdown(event, 'notification-dropdown')" title="Bildirimler">🔔</button>
+          <button class="notifications-btn" onclick="toggleDropdown(event, 'notification-dropdown'); markNotifSeen();" title="Bildirimler" style="position:relative;">🔔<span id="notif-badge" style="display:none;position:absolute;top:0;right:0;min-width:16px;height:16px;padding:0 4px;background:#dc2626;color:#fff;border-radius:8px;font-size:.62rem;line-height:16px;text-align:center;font-weight:700;box-sizing:border-box;"></span></button>
           <div class="dropdown-menu notification-dropdown" id="notification-dropdown">
             <div class="dropdown-header"><h6>Bildirimler</h6></div>
             <div class="notification-list" id="notification-list">
@@ -1820,6 +1820,8 @@ async function initApp() {
   updateApiStatus();
   loadQuickApiKey();
   loadNotifications();
+  // Keep the bell fresh — poll the activity feed every 60s (unread badge updates).
+  if (!window._notifPoll) window._notifPoll = setInterval(loadNotifications, 60000);
 }
 
 // Real activity feed for the notification bell (payments, new subscribers).
@@ -1831,6 +1833,10 @@ function _timeAgo(ts) {
   if (s < 86400) return Math.floor(s / 3600) + ' saat önce';
   return Math.floor(s / 86400) + ' gün önce';
 }
+let _notifLastSeen = Number(localStorage.getItem('ase_notif_seen') || 0);
+function updateNotifBadge(n) { const b = document.getElementById('notif-badge'); if (!b) return; if (n > 0) { b.textContent = n > 9 ? '9+' : String(n); b.style.display = ''; } else b.style.display = 'none'; }
+function markNotifSeen() { _notifLastSeen = Date.now(); localStorage.setItem('ase_notif_seen', String(_notifLastSeen)); updateNotifBadge(0); }
+
 async function loadNotifications() {
   const el = document.getElementById('notification-list');
   if (!el) return;
@@ -1852,6 +1858,7 @@ async function loadNotifications() {
       const m = meta(a);
       return `<div class="notification-item"><div class="notification-item-icon" style="background:${m.bg};color:${m.c};">${m.i}</div><div class="notification-item-content"><p>${esc(a.detail || a.action || '')}</p><small>${_timeAgo(a.ts)}</small></div></div>`;
     }).join('');
+    updateNotifBadge(acts.filter(a => Number(a.ts) > _notifLastSeen).length);
   } catch {
     el.innerHTML = '<div class="notification-item"><div class="notification-item-content"><p style="color:var(--muted-foreground)">Bildirimler yüklenemedi.</p></div></div>';
   }
