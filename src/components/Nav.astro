@@ -53,15 +53,10 @@ const collections = [...new Set(products.map((x) => x.category))]
 
       <!-- Right Actions -->
       <div class="nav__actions">
-        <!-- User profile icon (Mock) -->
-        <button class="nav__icon-btn nav__profile-btn" aria-label="Profil">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-        </button>
-
         <!-- Cart Icon -->
         <a class="nav__icon-btn cart-btn" href={locale === 'tr' ? '/tr/sepet' : '/en/cart'} aria-label={locale === 'tr' ? 'Sepet' : 'Cart'}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-          <span class="cart-badge" id="nav-cart-badge">0</span>
+          <span class="cart-badge" id="nav-cart-badge" hidden>0</span>
         </a>
 
         <!-- Lang toggle -->
@@ -71,8 +66,8 @@ const collections = [...new Set(products.map((x) => x.category))]
 
         <!-- Search Bar on the FAR right -->
         <div class="nav__search-container">
-          <div class="nav__search-bar">
-            <input type="text" placeholder={t('nav.searchPlaceholder', locale)} readonly />
+          <div class="nav__search-bar" id="nav-search" role="button" tabindex="0" aria-label={t('nav.searchPlaceholder', locale)} data-href={locale === 'tr' ? '/tr/urunler' : '/en/products'}>
+            <input type="text" placeholder={t('nav.searchPlaceholder', locale)} readonly tabindex="-1" />
             <span class="search-icon">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
             </span>
@@ -585,13 +580,21 @@ const collections = [...new Set(products.map((x) => x.category))]
   const badge = document.getElementById('nav-cart-badge');
   function updateBadge() {
     if (badge) {
-      badge.textContent = String(getCartCount());
+      const n = getCartCount();
+      badge.textContent = String(n);
+      (badge as HTMLElement).hidden = n === 0; // don't show a "0" badge on an empty cart
     }
   }
-  
+
   // Initial count
   updateBadge();
   window.addEventListener('cart-updated', updateBadge);
+
+  // The nav search is a shortcut to the catalog (real search is a later add).
+  const navSearch = document.getElementById('nav-search');
+  const goSearch = () => { const h = navSearch?.getAttribute('data-href'); if (h) window.location.href = h; };
+  navSearch?.addEventListener('click', goSearch);
+  navSearch?.addEventListener('keydown', (e) => { if ((e as KeyboardEvent).key === 'Enter' || (e as KeyboardEvent).key === ' ') { e.preventDefault(); goSearch(); } });
 
   const burger = document.querySelector('[data-burger]') as HTMLButtonElement | null;
   const overlay = document.querySelector('[data-overlay]') as HTMLElement | null;

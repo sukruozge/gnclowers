@@ -213,6 +213,12 @@ const bPos = ['pa--l1', 'pa--r1', 'pa--l2', 'pa--r2', 'pa--l3', 'pa--r3'];
       e.preventDefault();
       const id = btn.getAttribute('data-id');
       if (!id) return;
+      // Varyantlı ürünler seçenek gerektirir — hızlı ekleme yanlış fiyat/seçeneksiz
+      // sipariş oluşturmasın diye ürün sayfasına yönlendir.
+      if (btn.getAttribute('data-opts')) {
+        const href = btn.getAttribute('data-href');
+        if (href) { window.location.href = href; return; }
+      }
       addToCart({ id } as Product, 1);
       showCartToast({ addedLabel: 'Sepete eklendi', goLabel: 'Sepete git', cartHref: '/tr/sepet' });
     });

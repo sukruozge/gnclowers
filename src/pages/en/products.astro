@@ -210,6 +210,12 @@ const bPos = ['pa--l1', 'pa--r1', 'pa--l2', 'pa--r2', 'pa--l3', 'pa--r3'];
       e.preventDefault();
       const id = btn.getAttribute('data-id');
       if (!id) return;
+      // Products with variations must be configured on the product page — quick-add
+      // would otherwise create an order with no color/size and the wrong price.
+      if (btn.getAttribute('data-opts')) {
+        const href = btn.getAttribute('data-href');
+        if (href) { window.location.href = href; return; }
+      }
       addToCart({ id } as Product, 1);
       showCartToast({ addedLabel: 'Added to cart', goLabel: 'Go to cart', cartHref: '/en/cart' });
     });

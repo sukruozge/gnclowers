@@ -74,12 +74,6 @@ const programs = [
   }
 ];
 
-const avatars = [
-  'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=100&h=100&fit=crop&q=80',
-  'https://images.unsplash.com/photo-1502086223501-7ea6ecd79368?w=100&h=100&fit=crop&q=80',
-  'https://images.unsplash.com/photo-1519689680058-324335c77eba?w=100&h=100&fit=crop&q=80',
-  'https://images.unsplash.com/photo-1554151228-14d9def656e4?w=100&h=100&fit=crop&q=80'
-];
 ---
 <section class="hero-pulse">
   <!-- Glowing subtle lights background -->
@@ -121,15 +115,11 @@ const avatars = [
 
       <!-- Social Proof -->
       <div class="hero-pulse__social reveal reveal--fade-up reveal--d4">
-        <div class="avatar-group">
-          {avatars.map((url, index) => (
-            <img src={url} alt="Happy baby" class="avatar-item" style={`--idx: ${index}`} />
-          ))}
-        </div>
+        <div class="avatar-group" aria-hidden="true"><span style="color:#e8a33d;font-size:1.2rem;letter-spacing:3px;line-height:1;">★★★★★</span></div>
         <span class="social-text">
-          {locale === 'tr' 
-            ? 'Dünya genelinde 500+ sipariş ile el emeği ürünlerimizi çocuklarınız ve sizinle paylaşmaktan mutluluk duyuyoruz.' 
-            : 'With 500+ orders worldwide, we are delighted to share our handcrafted creations with you and your children.'}
+          {locale === 'tr'
+            ? 'Etsy’de 5.0★ değerlendirme — dünya geneline gönderilen el emeği amigurumiler.'
+            : '5.0★ rated on Etsy — handmade amigurumi shipped worldwide.'}
         </span>
       </div>
 

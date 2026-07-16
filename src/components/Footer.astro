@@ -2,9 +2,14 @@
 import { t, type Locale } from '@lib/i18n';
 import { LEGAL_ROUTES } from '@lib/legal';
 import Logo from './Logo.astro';
+import settings from '../data/settings.json';
 const { locale } = Astro.props as { locale: Locale };
 const p = (tr: string, en: string) => (locale === 'tr' ? `/tr/${tr}` : `/en/${en}`);
 const year = new Date().getFullYear();
+const s = settings as any;
+const instagram = s.instagram || 'https://www.instagram.com/aselovers/';
+const etsy = s.etsy || 'https://aselovers.etsy.com';
+const pinterest = s.pinterest || 'https://pinterest.com/aselovers';
 ---
 <footer class="foot">
   <div class="container foot__inner">
@@ -20,7 +25,9 @@ const year = new Date().getFullYear();
     </nav>
     <div class="foot__col">
       <h4>{t('footer.follow', locale)}</h4>
-      <a href="https://www.instagram.com/aselovers/" target="_blank" rel="noopener">Instagram</a>
+      <a href={instagram} target="_blank" rel="noopener">Instagram</a>
+      <a href={etsy} target="_blank" rel="noopener">Etsy · 5.0★</a>
+      <a href={pinterest} target="_blank" rel="noopener">Pinterest</a>
     </div>
     <nav class="foot__col" aria-label={t('footer.legal', locale)}>
       <h4>{t('footer.legal', locale)}</h4>
