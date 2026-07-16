@@ -44,7 +44,7 @@ const order = [photos[1], photos[2], photos[0]]; // left, right, center
   .fc:hover { z-index: 6; }
 
   .fc__frame {
-    position: relative; aspect-ratio: 3 / 4; margin-bottom: var(--space-4);
+    position: relative; aspect-ratio: 3 / 4; margin-bottom: var(--space-6);
   }
 
   .fc__ph {
@@ -59,8 +59,8 @@ const order = [photos[1], photos[2], photos[0]]; // left, right, center
 
   /* Rest: a tidy closed fan — three prints stacked with a small tilt so the shape reads. */
   .fc__ph--c { z-index: 3; transform: rotate(0deg); }
-  .fc__ph--l { z-index: 2; transform: rotate(-6deg) translateY(6px); }
-  .fc__ph--r { z-index: 1; transform: rotate(6deg)  translateY(6px); }
+  .fc__ph--l { z-index: 2; transform: rotate(-5deg) translateY(2px); }
+  .fc__ph--r { z-index: 1; transform: rotate(5deg)  translateY(2px); }
 
   /* Hover: bloom wide into a fan, sides cascading out with a stagger. */
   .fc:hover .fc__ph--c { transform: translateY(-10%) scale(1.05) rotate(0deg); box-shadow: 0 26px 44px rgba(28,26,24,.24); }
@@ -99,8 +99,8 @@ const order = [photos[1], photos[2], photos[0]]; // left, right, center
      corners still signal three photos, and the counter badge invites a tap. */
   @media (hover: none) {
     .fc__ph--c { transform: rotate(0deg); }
-    .fc__ph--l { transform: rotate(-7deg) translateY(5px); }
-    .fc__ph--r { transform: rotate(7deg)  translateY(5px); }
+    .fc__ph--l { transform: rotate(-5deg) translateY(2px); }
+    .fc__ph--r { transform: rotate(5deg)  translateY(2px); }
   }
 
   @media (prefers-reduced-motion: reduce) {

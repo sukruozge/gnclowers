@@ -292,7 +292,7 @@ ${sellerBlockEn}` },
 <h2>3. Sipariş iptali</h2>
 <p>Siparişiniz henüz üretime alınmadıysa <a href="mailto:${SELLER.email}">${SELLER.email}</a> veya WhatsApp (${SELLER.whatsapp}) üzerinden ücretsiz iptal edebilirsiniz; ödemeniz iade edilir.</p>
 <h2>4. Ayıplı/hasarlı ürün</h2>
-<p>Ürün hatalı veya kargoda hasar görmüş ulaştıysa, lütfen teslimattan sonra <strong>3 gün içinde</strong> fotoğraflarla bize ulaşın; değişim veya tam iade sağlarız. Bu durumda kargo masrafı bize aittir. (Bu 3 günlük süre yalnızca ayıplı/hasarlı bildirimi içindir; standart ürünlerdeki 14 günlük yasal cayma hakkınız ayrıca saklıdır.)</p>
+<p>Ürünler kişiye özel örüldüğü için değişim mümkün değildir. Ancak ürün hatalı/kusurlu ya da kargoda hasar görmüş ulaştıysa, teslimden itibaren <strong>14 gün içinde</strong> fotoğraflarla bize ulaşın; iade hakkınızı kullanırsınız ve bu durumda kargo masrafı bize aittir.</p>
 <h2>5. İade süreci</h2>
 <ol>
   <li><a href="mailto:${SELLER.email}">${SELLER.email}</a> adresine sipariş numaranızla iade talebinizi iletin.</li>
@@ -308,7 +308,7 @@ ${sellerBlockEn}` },
 <h2>3. Order cancellation</h2>
 <p>If your order has not yet entered production, cancel it free of charge via <a href="mailto:${SELLER.email}">${SELLER.email}</a> or WhatsApp (${SELLER.whatsapp}); you will be refunded.</p>
 <h2>4. Defective/damaged items</h2>
-<p>If your item arrives faulty or damaged in transit, please contact us with photos <strong>within 3 days</strong> of delivery; we will replace it or refund you in full. We cover shipping in this case. (This 3-day window is only for reporting defects/damage; your separate 14-day legal right of withdrawal on standard items still applies.)</p>
+<p>As items are crocheted to order, exchanges aren't possible. However, if your item arrives faulty, defective, or damaged in transit, contact us with photos <strong>within 14 days</strong> of delivery; you may return it and we cover shipping in this case.</p>
 <h2>5. Return process</h2>
 <ol>
   <li>Email <a href="mailto:${SELLER.email}">${SELLER.email}</a> with your order number.</li>
@@ -322,35 +322,35 @@ ${sellerBlockEn}` },
   shipping: {
     tr: { title: 'Teslimat ve Kargo', updated: UPDATED_TR, html: `
 <h2>1. Hazırlık süresi</h2>
-<p>Ürünlerimiz siparişe özel, tek tek elde örülür. Hazırlık süresi ürün ve yoğunluğa göre genellikle <strong>3–7 gün</strong>dür; hazır ürünler 1–3 iş günü içinde kargoya verilir. Özel siparişlerde net süre baştan bildirilir.</p>
+<p>Ürünlerimiz siparişe özel, tek tek elde örülür. Süre sipariş yoğunluğuna göre değişir; Türkiye içinde ürününüz <strong>en geç bir hafta içinde</strong> teslim edilir. Özel siparişlerde net süre baştan bildirilir.</p>
 <h2>2. Kargo bölgeleri ve ücret</h2>
 <p>Türkiye ve yurt dışına gönderim yapıyoruz. Kargo ücreti (varsa) teslimat bölgesine göre <strong>sipariş özetinde</strong> ayrıca gösterilir ve ödeme öncesinde toplamda görünür.</p>
 <table>
   <tr><th>Bölge</th><th>Yöntem</th><th>Tahmini süre</th></tr>
-  <tr><td>Türkiye</td><td>Anlaşmalı kargo</td><td>1–3 iş günü (kargoya verildikten sonra)</td></tr>
-  <tr><td>Yurt dışı</td><td>Uluslararası kargo / Etsy</td><td>7–21 iş günü</td></tr>
+  <tr><td>Türkiye</td><td>Anlaşmalı kargo</td><td>En geç bir hafta içinde teslim</td></tr>
+  <tr><td>Yurt dışı</td><td>ShipEntegra</td><td>7–14 gün içinde teslim</td></tr>
 </table>
 <h2>3. Takip</h2>
-<p>Kargoya verildiğinde takip bilgisi e-posta veya WhatsApp ile paylaşılır.</p>
+<p>Kargoya verildiğinde takip bilgisi e-posta veya WhatsApp ile paylaşılır; gönderinizi kargo takip numarasıyla 7/24 izleyebilirsiniz.</p>
 <h2>4. Teslim alamama</h2>
 <p>Adres hatası veya teslim alınamama nedeniyle iade olan gönderilerde, yeniden gönderim kargo ücreti alıcıya ait olabilir.</p>
 <h2>5. Gümrük</h2>
-<p>Yurt dışı gönderimlerde oluşabilecek gümrük vergisi/harçları alıcının sorumluluğundadır.</p>` },
+<p>Yurt dışı gönderilerimiz ShipEntegra ile yapılır; gümrük işlemleri çözüm ortağımız tarafından yürütülür. Böylece alıcının ek gümrük vergisi ödemesine veya gümrük süreçleriyle uğraşmasına gerek kalmaz.</p>` },
     en: { title: 'Shipping & Delivery', updated: UPDATED_EN, html: `
 <h2>1. Preparation time</h2>
-<p>Our items are crocheted to order, one at a time. Preparation is usually <strong>3–7 days</strong>; ready items ship within 1–3 business days. For custom orders the exact time is confirmed upfront.</p>
+<p>Our items are crocheted to order, one at a time. Timelines vary with order volume; within Türkiye your item is delivered <strong>within a week at most</strong>. For custom orders the exact time is confirmed upfront.</p>
 <h2>2. Regions and fees</h2>
 <p>We ship to Türkiye and internationally. Shipping fee (if any) is shown separately in the <strong>order summary</strong> and included in the total before payment.</p>
 <table>
   <tr><th>Region</th><th>Method</th><th>Estimated time</th></tr>
-  <tr><td>Türkiye</td><td>Contracted courier</td><td>1–3 business days (after dispatch)</td></tr>
-  <tr><td>International</td><td>International courier / Etsy</td><td>7–21 business days</td></tr>
+  <tr><td>Türkiye</td><td>Contracted courier</td><td>Delivered within a week</td></tr>
+  <tr><td>International</td><td>ShipEntegra</td><td>Delivered within 7–14 days</td></tr>
 </table>
 <h2>3. Tracking</h2>
-<p>Tracking info is shared by email or WhatsApp once dispatched.</p>
+<p>Tracking info is shared by email or WhatsApp once dispatched; you can follow your parcel 24/7 with its tracking number.</p>
 <h2>4. Failed delivery</h2>
 <p>For parcels returned due to a wrong address or failure to collect, re-shipping fees may be charged to the buyer.</p>
 <h2>5. Customs</h2>
-<p>Any customs duties/taxes on international orders are the buyer's responsibility.</p>` },
+<p>International orders ship via ShipEntegra and customs clearance is handled by our logistics partner, so there are no extra customs duties to pay and no paperwork on your side.</p>` },
   },
 };
