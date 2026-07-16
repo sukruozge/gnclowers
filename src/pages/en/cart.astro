@@ -96,13 +96,6 @@ const shippingCfg = (settings as any).shipping || {};
   const shippingEl = document.getElementById('cart-shipping');
   const totalEl = document.getElementById('cart-total');
 
-  function calcShipping(subtotal: number): number {
-    const fee = Number(shippingCfg?.tr?.fee ?? 0) || 0;
-    const freeOver = Number(shippingCfg?.tr?.freeOver ?? 0) || 0;
-    if (freeOver > 0 && subtotal >= freeOver) return 0;
-    return fee;
-  }
-
   function renderCart() {
     const cart = getCart();
     if (cart.length === 0) {
@@ -151,15 +144,12 @@ const shippingCfg = (settings as any).shipping || {};
       itemsList?.appendChild(row);
     });
 
-    const shipping = calcShipping(subtotal);
     if (subtotalEl) subtotalEl.textContent = fmt(subtotal);
-    if (shippingEl) {
-      // Destination (and its rate) is chosen on the next step, so show a note here
-      // rather than a misleading "Free" — international orders carry a shipping fee.
-      if (shipping > 0) { shippingEl.textContent = fmt(shipping); shippingEl.classList.remove('txt-success'); }
-      else { shippingEl.textContent = 'Calculated at checkout'; shippingEl.classList.remove('txt-success'); }
-    }
-    if (totalEl) totalEl.textContent = fmt(subtotal + shipping);
+    // Destination (and its per-country rate) is chosen on the next step, so the cart
+    // never guesses a fee — showing the TR domestic rate to an international buyer
+    // would be wrong. Shipping is added on the checkout page.
+    if (shippingEl) { shippingEl.textContent = 'Calculated at checkout'; shippingEl.classList.remove('txt-success'); }
+    if (totalEl) totalEl.textContent = fmt(subtotal);
 
     document.querySelectorAll('.cstep__minus').forEach(btn => btn.addEventListener('click', () => {
       const it = getCart()[Number(btn.getAttribute('data-idx'))];
