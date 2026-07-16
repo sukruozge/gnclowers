@@ -24,7 +24,7 @@
   ],
   "shipping": {
     "tr": {
-      "fee": 0,
+      "fee": 200,
       "freeOver": 0
     },
     "intl": {
