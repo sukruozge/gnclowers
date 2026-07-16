@@ -73,7 +73,7 @@ const shippingCfg = (settings as any).shipping || {};
       </div>
     </section>
   </main>
-  <div id="cart-data" data-products={JSON.stringify(allProducts)} data-shipping={JSON.stringify(shippingCfg)} data-rate-usd={((settings as any).rates?.usd) ?? 47.03} style="display: none;"></div>
+  <div id="cart-data" data-products={JSON.stringify(allProducts.map(p => ({ id: p.id, title_tr: p.title_tr, title_en: p.title_en, image: p.image, price: p.price, priceUsd: p.priceUsd, currency: p.currency, variants: p.variants })))} data-shipping={JSON.stringify(shippingCfg)} data-rate-usd={((settings as any).rates?.usd) ?? 47.03} style="display: none;"></div>
   <Footer locale="en" />
 </Base>
 
