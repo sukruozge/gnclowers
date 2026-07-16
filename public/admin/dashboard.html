@@ -1751,6 +1751,8 @@ async function doLogin() {
   }
 }
 document.getElementById('login-pass').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+// Esc closes any open modal (accessibility).
+document.addEventListener('keydown', e => { if (e.key === 'Escape') document.querySelectorAll('.modal-overlay.open').forEach(m => m.classList.remove('open')); });
 
 async function doLogout() {
   try {
@@ -2300,8 +2302,13 @@ async function saveProduct() {
   const title_en = document.getElementById('p-title-en').value.trim();
   const price = parseFloat(document.getElementById('p-price').value);
   
-  if (!title_tr || !title_en || isNaN(price)) {
-    toast('Lütfen zorunlu alanları (Başlık ve Fiyat) doldurun', 'err');
+  if (!title_tr || !title_en || isNaN(price) || price <= 0) {
+    toast('Başlık (TR/EN) ve 0’dan büyük bir fiyat gerekli', 'err');
+    return;
+  }
+  const usdRaw = document.getElementById('p-price-usd').value.trim();
+  if (usdRaw && (isNaN(parseFloat(usdRaw)) || parseFloat(usdRaw) <= 0)) {
+    toast('USD fiyat geçersiz (boş bırakın ya da 0’dan büyük girin)', 'err');
     return;
   }
   
