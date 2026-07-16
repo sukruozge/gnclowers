@@ -54,30 +54,51 @@ const shippingCfg = (settings as any).shipping || {};
                 </div>
               </div>
 
+              <!-- Country first so the address fields adapt (state / ZIP format). -->
               <div class="form-group">
-                <label for="c-address">Address</label>
-                <textarea id="c-address" name="street-address" autocomplete="street-address" required rows="3" placeholder="Street Address, Apartment, Suite, etc."></textarea>
+                <label for="c-country">Country / Region</label>
+                <div class="select-wrap">
+                  <select id="c-country" name="country" autocomplete="country" required>
+                    <option value="US" selected>United States</option>
+                    <option value="CA">Canada</option>
+                    <option value="AU">Australia</option>
+                    <option value="DE">Germany</option>
+                    <option value="CH">Switzerland</option>
+                    <option value="INTL">Other countries</option>
+                    <option value="TR">Türkiye</option>
+                  </select>
+                  <svg class="select-wrap__caret" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+                </div>
               </div>
 
-              <div class="form-row">
+              <div class="form-group">
+                <label for="c-address">Address line 1</label>
+                <input type="text" id="c-address" name="address-line1" autocomplete="address-line1" required placeholder="Street address, P.O. box, company name" />
+              </div>
+
+              <div class="form-group">
+                <label for="c-address2">Address line 2 <span class="lbl-opt">(optional)</span></label>
+                <input type="text" id="c-address2" name="address-line2" autocomplete="address-line2" placeholder="Apartment, suite, unit, building, floor, etc." />
+              </div>
+
+              <div class="form-row form-row--addr">
                 <div class="form-group flex-1">
-                  <label for="c-city">City / State / Zip</label>
-                  <input type="text" id="c-city" name="address-level2" autocomplete="address-level2" required placeholder="e.g. New York, NY 10001" />
+                  <label for="c-city">City</label>
+                  <input type="text" id="c-city" name="city" autocomplete="address-level2" required placeholder="e.g. New York" />
                 </div>
-                <div class="form-group flex-1">
-                  <label for="c-country">Country / Region</label>
-                  <div class="select-wrap">
-                    <select id="c-country" name="country" autocomplete="country">
-                      <option value="US" selected>United States</option>
-                      <option value="CA">Canada</option>
-                      <option value="AU">Australia</option>
-                      <option value="DE">Germany</option>
-                      <option value="CH">Switzerland</option>
-                      <option value="INTL">Other countries</option>
-                      <option value="TR">Türkiye</option>
+                <div class="form-group flex-1" id="grp-state">
+                  <label for="c-state" id="lbl-state">State</label>
+                  <div class="select-wrap" id="wrap-state-select">
+                    <select id="c-state" name="address-level1" autocomplete="address-level1">
+                      <option value="" disabled selected>Select…</option>
                     </select>
                     <svg class="select-wrap__caret" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
                   </div>
+                  <input type="text" id="c-state-text" autocomplete="address-level1" placeholder="State / Province / Region" style="display:none" />
+                </div>
+                <div class="form-group flex-1">
+                  <label for="c-postal" id="lbl-postal">ZIP code</label>
+                  <input type="text" id="c-postal" name="postal-code" autocomplete="postal-code" inputmode="numeric" required placeholder="e.g. 10001" />
                 </div>
               </div>
 
@@ -222,6 +243,58 @@ const shippingCfg = (settings as any).shipping || {};
   updateTotals();
   countrySelect?.addEventListener('change', updateTotals);
 
+  // ── Country-aware address fields (state picker + ZIP/postal format) ──────
+  const US_STATES: [string, string][] = [
+    ['AL','Alabama'],['AK','Alaska'],['AZ','Arizona'],['AR','Arkansas'],['CA','California'],
+    ['CO','Colorado'],['CT','Connecticut'],['DE','Delaware'],['DC','District of Columbia'],
+    ['FL','Florida'],['GA','Georgia'],['HI','Hawaii'],['ID','Idaho'],['IL','Illinois'],
+    ['IN','Indiana'],['IA','Iowa'],['KS','Kansas'],['KY','Kentucky'],['LA','Louisiana'],
+    ['ME','Maine'],['MD','Maryland'],['MA','Massachusetts'],['MI','Michigan'],['MN','Minnesota'],
+    ['MS','Mississippi'],['MO','Missouri'],['MT','Montana'],['NE','Nebraska'],['NV','Nevada'],
+    ['NH','New Hampshire'],['NJ','New Jersey'],['NM','New Mexico'],['NY','New York'],
+    ['NC','North Carolina'],['ND','North Dakota'],['OH','Ohio'],['OK','Oklahoma'],['OR','Oregon'],
+    ['PA','Pennsylvania'],['RI','Rhode Island'],['SC','South Carolina'],['SD','South Dakota'],
+    ['TN','Tennessee'],['TX','Texas'],['UT','Utah'],['VT','Vermont'],['VA','Virginia'],
+    ['WA','Washington'],['WV','West Virginia'],['WI','Wisconsin'],['WY','Wyoming'],
+  ];
+  type Rule = { state: 'select' | 'text' | 'hide'; stateLabel?: string; stateReq?: boolean;
+    postalLabel: string; postalRe?: RegExp | null; postalReq?: boolean; postalPh?: string };
+  const RULES: Record<string, Rule> = {
+    US: { state: 'select', stateLabel: 'State', stateReq: true, postalLabel: 'ZIP code', postalRe: /^\d{5}(-\d{4})?$/, postalReq: true, postalPh: 'e.g. 10001' },
+    CA: { state: 'text', stateLabel: 'Province', stateReq: true, postalLabel: 'Postal code', postalRe: /^[A-Za-z]\d[A-Za-z][ -]?\d[A-Za-z]\d$/, postalReq: true, postalPh: 'e.g. K1A 0B1' },
+    AU: { state: 'text', stateLabel: 'State / Territory', stateReq: true, postalLabel: 'Postcode', postalRe: /^\d{4}$/, postalReq: true, postalPh: 'e.g. 2000' },
+    DE: { state: 'hide', postalLabel: 'Postal code', postalRe: /^\d{5}$/, postalReq: true, postalPh: 'e.g. 10115' },
+    CH: { state: 'hide', postalLabel: 'Postal code', postalRe: /^\d{4}$/, postalReq: true, postalPh: 'e.g. 8001' },
+    INTL: { state: 'text', stateLabel: 'State / Region', stateReq: false, postalLabel: 'Postal code', postalRe: null, postalReq: true, postalPh: 'Postal / ZIP code' },
+    TR: { state: 'text', stateLabel: 'Province', stateReq: false, postalLabel: 'Postal code', postalRe: null, postalReq: false, postalPh: 'Optional' },
+  };
+  const stateSel = document.getElementById('c-state') as HTMLSelectElement | null;
+  const stateTxt = document.getElementById('c-state-text') as HTMLInputElement | null;
+  const stateWrap = document.getElementById('wrap-state-select');
+  const stateGrp = document.getElementById('grp-state');
+  const stateLbl = document.getElementById('lbl-state');
+  const postalEl = document.getElementById('c-postal') as HTMLInputElement | null;
+  const postalLbl = document.getElementById('lbl-postal');
+  if (stateSel) US_STATES.forEach(([v, n]) => { const o = document.createElement('option'); o.value = v; o.textContent = n; stateSel.appendChild(o); });
+
+  const rule = () => RULES[countrySelect?.value || 'US'] || RULES.INTL;
+  const stateValue = () => {
+    const r = rule();
+    if (r.state === 'hide') return '';
+    return (r.state === 'select' ? stateSel?.value : stateTxt?.value)?.trim() || '';
+  };
+  function applyCountry() {
+    const r = rule();
+    if (stateGrp) stateGrp.style.display = r.state === 'hide' ? 'none' : '';
+    if (r.state !== 'hide' && stateLbl) stateLbl.textContent = r.stateLabel || 'State / Region';
+    if (stateWrap) stateWrap.style.display = r.state === 'select' ? '' : 'none';
+    if (stateTxt) { stateTxt.style.display = r.state === 'text' ? '' : 'none'; stateTxt.placeholder = r.stateLabel || 'State / Province / Region'; }
+    if (postalLbl) postalLbl.textContent = r.postalLabel;
+    if (postalEl) { postalEl.placeholder = r.postalPh || ''; postalEl.inputMode = r.postalRe && r.postalRe.source.startsWith('^\\d') ? 'numeric' : 'text'; }
+  }
+  countrySelect?.addEventListener('change', () => { applyCountry(); clearErr(stateSel); clearErr(stateTxt); clearErr(postalEl); });
+  applyCountry();
+
   const form = document.getElementById('checkout-form') as HTMLFormElement | null;
   const paytrContainer = document.getElementById('paytr-container');
   const iframeWrapper = document.getElementById('paytr-iframe-wrapper');
@@ -247,19 +320,33 @@ const shippingCfg = (settings as any).shipping || {};
   function validate(): boolean {
     let ok = true; let firstBad: HTMLElement | null = null;
     const fail = (id: string, msg: string) => { const el = document.getElementById(id); if (el) { setErr(el, msg); if (!firstBad) firstBad = el; } ok = false; };
+    const failEl = (el: HTMLElement | null, msg: string) => { if (el) { setErr(el, msg); if (!firstBad) firstBad = el; } ok = false; };
     const pass = (id: string) => clearErr(document.getElementById(id));
+    const r = rule();
     const nameV = val('c-name');
     if (nameV.length < 3 || !/\s/.test(nameV)) fail('c-name', 'Please enter your full name.'); else pass('c-name');
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(val('c-email'))) fail('c-email', 'Enter a valid email address.'); else pass('c-email');
     if (val('c-phone').replace(/[^0-9]/g, '').length < 7) fail('c-phone', 'Enter a valid phone number.'); else pass('c-phone');
-    if (val('c-address').length < 10) fail('c-address', 'Please enter your full address.'); else pass('c-address');
-    if (val('c-city').length < 3) fail('c-city', 'Enter your city / state / zip.'); else pass('c-city');
+    if (val('c-address').length < 5) fail('c-address', 'Enter your street address.'); else pass('c-address');
+    if (val('c-city').length < 2) fail('c-city', 'Enter your city.'); else pass('c-city');
+    // State / province — required where the destination country uses one.
+    if (r.state !== 'hide' && r.stateReq) {
+      const stEl = r.state === 'select' ? stateSel : stateTxt;
+      if (!stateValue()) failEl(stEl, (r.state === 'select' ? 'Select your ' : 'Enter your ') + (r.stateLabel || 'state').toLowerCase() + '.');
+      else { clearErr(stateSel); clearErr(stateTxt); }
+    } else { clearErr(stateSel); clearErr(stateTxt); }
+    // ZIP / postal code — required and format-checked per country.
+    const zip = val('c-postal');
+    if (r.postalReq && !zip) fail('c-postal', 'Enter your ' + r.postalLabel.toLowerCase() + '.');
+    else if (zip && r.postalRe && !r.postalRe.test(zip)) fail('c-postal', 'Enter a valid ' + r.postalLabel.toLowerCase() + '.');
+    else pass('c-postal');
     if (firstBad) { (firstBad as HTMLElement).focus({ preventScroll: true }); (firstBad as HTMLElement).scrollIntoView({ behavior: 'smooth', block: 'center' }); }
     return ok;
   }
-  ['c-name', 'c-email', 'c-phone', 'c-address', 'c-city'].forEach((id) => {
+  ['c-name', 'c-email', 'c-phone', 'c-address', 'c-address2', 'c-city', 'c-state-text', 'c-postal'].forEach((id) => {
     document.getElementById(id)?.addEventListener('input', function (this: HTMLElement) { clearErr(this); });
   });
+  stateSel?.addEventListener('change', function (this: HTMLElement) { clearErr(this); });
 
   form?.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -270,13 +357,17 @@ const shippingCfg = (settings as any).shipping || {};
     submitBtn.textContent = 'Opening payment session…';
     if (errorEl) errorEl.style.display = 'none';
 
+    const line1 = (document.getElementById('c-address') as HTMLInputElement).value.trim();
+    const line2 = (document.getElementById('c-address2') as HTMLInputElement).value.trim();
     const payload = {
       name: (document.getElementById('c-name') as HTMLInputElement).value,
       email: (document.getElementById('c-email') as HTMLInputElement).value,
       phone: (document.getElementById('c-phone') as HTMLInputElement).value,
-      address: (document.getElementById('c-address') as HTMLTextAreaElement).value,
+      address: line2 ? `${line1}, ${line2}` : line1,
       city: (document.getElementById('c-city') as HTMLInputElement).value,
-      country: (document.getElementById('c-country') as HTMLSelectElement).value,
+      province: stateValue(),
+      postal: (document.getElementById('c-postal') as HTMLInputElement).value,
+      country: countrySelect?.value || 'US',
       cart: cart.map(x => ({ id: x.id, quantity: x.quantity, options: x.options })),
       currency: currency,
       lang: 'en'
@@ -373,6 +464,7 @@ const shippingCfg = (settings as any).shipping || {};
       box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 16%, transparent);
     }
     .form-row { display: flex; gap: var(--space-4); }
+    .lbl-opt { font-weight: 400; color: color-mix(in srgb, var(--muted) 80%, transparent); font-size: .85em; }
 
     .select-wrap { position: relative; display: flex; }
     .select-wrap select { width: 100%; appearance: none; -webkit-appearance: none; padding-right: 40px; cursor: pointer; }

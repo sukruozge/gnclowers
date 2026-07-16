@@ -191,7 +191,7 @@ export const POST: APIRoute = async (context) => {
       currency: paytrCurrency,
       test_mode,
       user_name: name,
-      user_address: `${address} ${city}`,
+      user_address: [address, cityResolved, province, postal].filter(Boolean).join(', '),
       user_phone: phone,
       merchant_ok_url,
       merchant_fail_url,
