@@ -35,6 +35,7 @@ interface ProductInput {
   description_tr?: unknown;
   description_en?: unknown;
   price?: unknown;
+  priceUsd?: unknown;
   currency?: unknown;
   category?: unknown;
   image?: unknown;
@@ -50,6 +51,7 @@ interface Product {
   description_tr: string;
   description_en: string;
   price: number;
+  priceUsd?: number;
   currency: string;
   category: string;
   image?: string;
@@ -455,6 +457,11 @@ function normalizeProduct(input: ProductInput, id: string): Product | null {
   const title_en = typeof input.title_en === 'string' ? input.title_en.trim() : '';
   const price = typeof input.price === 'number' ? input.price : Number(input.price);
   if (!title_tr || !title_en || !Number.isFinite(price)) return null;
+  // Optional independent USD price for the EN storefront. Empty/0/invalid → undefined
+  // (auto-convert). Always emitted as a key so an update can also CLEAR it.
+  const puRaw = input.priceUsd;
+  const puNum = typeof puRaw === 'number' ? puRaw : (typeof puRaw === 'string' && puRaw.trim() !== '' ? Number(puRaw) : NaN);
+  const priceUsd = Number.isFinite(puNum) && puNum > 0 ? puNum : undefined;
   return {
     id,
     title_tr,
@@ -462,6 +469,7 @@ function normalizeProduct(input: ProductInput, id: string): Product | null {
     description_tr: typeof input.description_tr === 'string' ? input.description_tr : '',
     description_en: typeof input.description_en === 'string' ? input.description_en : '',
     price,
+    priceUsd,
     currency: typeof input.currency === 'string' && input.currency ? input.currency : 'TRY',
     category: typeof input.category === 'string' && input.category ? input.category : 'amigurumi',
     image: typeof input.image === 'string' && input.image ? input.image : undefined,

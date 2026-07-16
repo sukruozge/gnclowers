@@ -1617,8 +1617,12 @@
       </div>
       <div class="form-row" style="display: flex; gap: 12px; margin-bottom: 12px;">
         <div class="form-group" style="flex: 1;">
-          <label>Fiyat</label>
+          <label>Fiyat (₺ / TR)</label>
           <input type="number" id="p-price" step="0.01" placeholder="450.00">
+        </div>
+        <div class="form-group" style="flex: 1;">
+          <label>USD Fiyat (EN) <span style="font-weight:400;opacity:.6">— boşsa kurdan hesaplanır</span></label>
+          <input type="number" id="p-price-usd" step="0.01" placeholder="ör. 59.00">
         </div>
         <div class="form-group" style="flex: 1;">
           <label>Para Birimi</label>
@@ -2174,7 +2178,7 @@ async function toggleProductActive(id, inputEl) {
   const payload = {
     title_tr: p.title_tr, title_en: p.title_en,
     description_tr: p.description_tr || '', description_en: p.description_en || '',
-    price: p.price, currency: p.currency || 'TRY', category: p.category || 'amigurumi',
+    price: p.price, priceUsd: p.priceUsd ?? '', currency: p.currency || 'TRY', category: p.category || 'amigurumi',
     image: p.image || undefined, url: p.url || undefined,
     isActive: desired, isNew: !!p.isNew,
   };
@@ -2203,6 +2207,7 @@ function showAddProduct() {
   document.getElementById('p-desc-tr').value = '';
   document.getElementById('p-desc-en').value = '';
   document.getElementById('p-price').value = '';
+  document.getElementById('p-price-usd').value = '';
   document.getElementById('p-currency').value = 'TRY';
   document.getElementById('p-category').value = 'amigurumi';
   document.getElementById('p-image').value = '';
@@ -2227,6 +2232,7 @@ function editProduct(id) {
   document.getElementById('p-desc-tr').value = p.description_tr || p.description || '';
   document.getElementById('p-desc-en').value = p.description_en || p.description || '';
   document.getElementById('p-price').value = p.price || '';
+  document.getElementById('p-price-usd').value = p.priceUsd || '';
   document.getElementById('p-currency').value = p.currency || 'TRY';
   document.getElementById('p-category').value = p.category || 'amigurumi';
   document.getElementById('p-image').value = p.image || '';
@@ -2253,6 +2259,7 @@ async function saveProduct() {
     description_tr: document.getElementById('p-desc-tr').value.trim(),
     description_en: document.getElementById('p-desc-en').value.trim(),
     price,
+    priceUsd: document.getElementById('p-price-usd').value.trim(),
     currency: document.getElementById('p-currency').value,
     category: document.getElementById('p-category').value,
     image: document.getElementById('p-image').value.trim() || undefined,

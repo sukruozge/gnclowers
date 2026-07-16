@@ -81,6 +81,7 @@ const shippingCfg = (settings as any).shipping || {};
   import { getCart, updateCartQuantity, removeFromCart } from '@lib/cart';
   import { resolveVariantPrice } from '@lib/variants';
   import { optionsLine } from '@lib/optionLabels';
+  import { effectiveUsdRate } from '@lib/currency';
 
   const allProducts = JSON.parse(document.getElementById('cart-data')?.getAttribute('data-products') || '[]');
   const shippingCfg = JSON.parse(document.getElementById('cart-data')?.getAttribute('data-shipping') || '{}');
@@ -107,13 +108,14 @@ const shippingCfg = (settings as any).shipping || {};
     if (contentDiv) contentDiv.style.display = 'grid';
     if (itemsList) itemsList.innerHTML = '';
 
-    let subtotal = 0;
-    const fmt = (n: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(n / usdRate);
+    let subtotal = 0; // in USD — each item converted at its own rate (custom USD price or FX)
+    const fmt = (usd: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(usd);
+    const toUsd = (tryAmt: number, prod: any) => tryAmt / effectiveUsdRate(Number(prod.price), prod.priceUsd, usdRate);
 
     cart.forEach((item, idx) => {
       const prod = allProducts.find(p => p.id === item.id);
       if (!prod) return;
-      const unit = resolveVariantPrice(prod, item.options);
+      const unit = toUsd(resolveVariantPrice(prod, item.options), prod);
       subtotal += unit * item.quantity;
       const optLine = optsText(item.options);
 

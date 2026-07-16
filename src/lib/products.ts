@@ -12,8 +12,12 @@ export interface Product {
   title_tr: string;
   description_en: string;
   description_tr: string;
-  price: number;
+  price: number;        // base price in TRY (shown on the TR storefront)
   currency: string;
+  // Optional independent USD price for the EN storefront. When set, EN shows/charges
+  // exactly this instead of converting `price` at the daily FX rate; variant prices
+  // scale proportionally. When absent, EN falls back to auto-conversion.
+  priceUsd?: number;
   image: string | null;
   images: string[];
   url: string;

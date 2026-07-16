@@ -9,7 +9,7 @@ import RatingBadge from '../../../components/RatingBadge.astro';
 import { loadProducts, localizedTitle, productSlug, type Product } from '@lib/products';
 import { productJsonLd, breadcrumbJsonLd } from '@lib/jsonld';
 import { loadReviews } from '@lib/reviews';
-import { displayPrice, FALLBACK_RATES } from '@lib/currency';
+import { displayPrice, FALLBACK_RATES, productRates, effectiveUsdRate } from '@lib/currency';
 import { optName, optValue } from '@lib/optionLabels';
 import settings from '../../../data/settings.json';
 
@@ -23,10 +23,11 @@ const selfPath = `product/${productSlug(product, 'en')}`;
 const trSlug = productSlug(product, 'tr');
 const title = localizedTitle(product, 'en');
 const rates = (settings as any).rates ?? FALLBACK_RATES;
-const price = displayPrice(product.price, 'en', rates);
+const price = displayPrice(product.price, 'en', productRates(product.price, product.priceUsd, rates));
+const enUsdRate = effectiveUsdRate(product.price, product.priceUsd, rates.usd);
 const related = loadProducts().filter((x) => x.category === product.category && x.id !== product.id).slice(0, 4);
 const shop = loadReviews().shop;
-const ld = productJsonLd(product, 'en', `${site}/en/${selfPath}`, shop.rating ? { value: shop.rating, count: shop.count } : undefined, rates);
+const ld = productJsonLd(product, 'en', `${site}/en/${selfPath}`, shop.rating ? { value: shop.rating, count: shop.count } : undefined, productRates(product.price, product.priceUsd, rates));
 const crumbLd = breadcrumbJsonLd([
   { name: 'Home', url: `${site}/en` },
   { name: 'Products', url: `${site}/en/products` },
@@ -64,7 +65,7 @@ const crumbLd = breadcrumbJsonLd([
 
             <div class="buybox">
               <div class="buybox__pricerow">
-                <span class="detail__price" id="detail-price" data-usd-rate={rates.usd}>{price}</span>
+                <span class="detail__price" id="detail-price" data-usd-rate={enUsdRate}>{price}</span>
                 <span class="detail__vat">VAT included</span>
                 <span class="handmade-tag">
                   <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 21s-8-4.5-8-10a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 11c0 5.5-8 10-8 10z"/></svg>

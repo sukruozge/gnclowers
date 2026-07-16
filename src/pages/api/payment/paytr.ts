@@ -4,6 +4,7 @@ import productsData from '../../../data/products.json';
 import settings from '../../../data/settings.json';
 import { shippingFeeTry } from '@lib/shipping';
 import { resolveVariantPrice } from '@lib/variants';
+import { effectiveUsdRate } from '@lib/currency';
 
 export const prerender = false;
 
@@ -82,6 +83,16 @@ export const POST: APIRoute = async (context) => {
     const fxRate = currency === 'USD' ? (Number(rates.usd) || 47.03)
       : currency === 'EUR' ? (Number(rates.eur) || 53.65) : 1;
     const conv = (tryAmt: number) => currency === 'TRY' ? tryAmt : Math.round((tryAmt / fxRate) * 100) / 100;
+    // Per-item conversion: for USD orders each item uses its OWN rate — a product's
+    // custom USD price (priceUsd) or the daily FX rate as fallback. EUR/other use the
+    // global rate. Shipping stays on the global rate (it isn't product-specific).
+    const convItem = (tryAmt: number, prod: any) => {
+      if (currency === 'TRY') return tryAmt;
+      const rate = currency === 'USD'
+        ? effectiveUsdRate(Number(prod.price), prod.priceUsd, Number(rates.usd) || 47.03)
+        : fxRate;
+      return Math.round((tryAmt / rate) * 100) / 100;
+    };
 
     for (const item of cart) {
       const prod = products.find((p: any) => String(p.id) === String(item.id));
@@ -103,7 +114,7 @@ export const POST: APIRoute = async (context) => {
       // Price ALWAYS resolved server-side from products.json — never trust client.
       // Then converted to the order currency (TRY→USD/EUR) if needed.
       const priceTry = resolveVariantPrice(prod as any, options);
-      const price = conv(priceTry);
+      const price = convItem(priceTry, prod);
       // Bound quantity to a sane positive range: `parseInt(...)||1` alone would
       // let a negative quantity through (-1 || 1 === -1) and skew the basket.
       const qty = Math.min(Math.max(parseInt(item.quantity, 10) || 1, 1), 99);

@@ -12,6 +12,20 @@ export function localeCurrency(locale: 'tr' | 'en'): Currency {
   return locale === 'tr' ? 'TRY' : 'USD';
 }
 
+// A product may carry an independent USD price. We express it as a per-product
+// TRY→USD rate (base TRY ÷ USD price): converting the base TRY yields exactly the
+// custom USD price, and any variant's TRY converts proportionally. Falls back to
+// the global daily rate when no custom price is set.
+export function effectiveUsdRate(priceTry: number, priceUsd: number | undefined, globalUsd: number): number {
+  return (priceUsd && priceUsd > 0 && priceTry > 0) ? priceTry / priceUsd : (globalUsd || FALLBACK_RATES.usd);
+}
+
+// Rates object scoped to one product — drop-in for displayPrice/toCurrency so the
+// EN price reflects the product's own USD price when it has one.
+export function productRates(priceTry: number, priceUsd: number | undefined, rates: Rates): Rates {
+  return { usd: effectiveUsdRate(priceTry, priceUsd, rates.usd), eur: rates.eur };
+}
+
 // Convert a TRY amount into the target currency.
 export function toCurrency(tryAmount: number, cur: Currency, rates: Rates): number {
   if (cur === 'USD') return tryAmount / (rates.usd || FALLBACK_RATES.usd);

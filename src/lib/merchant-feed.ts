@@ -1,5 +1,6 @@
 import { loadProducts, productSlug } from './products';
 import { canonical } from './seo';
+import { effectiveUsdRate } from './currency';
 
 // Google Merchant Center product feed (RSS 2.0 + g: namespace). Enables free
 // product listings in Google Shopping. Turkish/TRY, matching the shop currency.
@@ -39,9 +40,10 @@ export function buildMerchantFeed(site: string, opts: FeedOptions = {}): string 
     const link = isEn
       ? canonical(site, 'en', `product/${productSlug(p, 'en')}`)
       : canonical(site, 'tr', `urun/${productSlug(p, 'tr')}`);
-    // TR feed = TRY; EN feed = USD (converted from the TRY base price).
+    // TR feed = TRY; EN feed = USD — the product's own USD price when set, else
+    // converted from the TRY base at the daily rate.
     const price = isEn
-      ? `${(Number(p.price) / usdRate).toFixed(2)} USD`
+      ? `${(Number(p.price) / effectiveUsdRate(Number(p.price), p.priceUsd, usdRate)).toFixed(2)} USD`
       : `${Number(p.price).toFixed(2)} ${p.currency || 'TRY'}`;
 
     const lines = [

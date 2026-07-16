@@ -301,6 +301,7 @@ async function main(): Promise<void> {
         description_tr: existing.description_tr !== undefined ? existing.description_tr : mapped.description_tr,
         description_en: existing.description_en !== undefined ? existing.description_en : mapped.description_en,
         price: existing.price !== undefined ? existing.price : mapped.price,
+        priceUsd: (existing as any).priceUsd !== undefined ? (existing as any).priceUsd : (mapped as any).priceUsd,
         currency: existing.currency !== undefined ? existing.currency : mapped.currency,
         image: existing.image !== undefined ? existing.image : mapped.image,
         category: existing.category !== undefined ? existing.category : mapped.category,

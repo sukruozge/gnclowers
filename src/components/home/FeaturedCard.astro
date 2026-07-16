@@ -1,7 +1,7 @@
 ---
 import { type Locale } from '@lib/i18n';
 import { localizedTitle, productSlug, type Product } from '@lib/products';
-import { displayPrice, FALLBACK_RATES } from '@lib/currency';
+import { displayPrice, FALLBACK_RATES, productRates } from '@lib/currency';
 import settings from '../../data/settings.json';
 
 const { product, locale } = Astro.props as { product: Product; locale: Locale };
@@ -10,7 +10,7 @@ const href = locale === 'tr'
   ? `/tr/urun/${productSlug(product, 'tr')}`
   : `/en/product/${productSlug(product, 'en')}`;
 const rates = (settings as any).rates ?? FALLBACK_RATES;
-const price = displayPrice(product.price, locale, rates);
+const price = displayPrice(product.price, locale, productRates(product.price, product.priceUsd, rates));
 
 // Pick 3 representative photos (first / middle / last for variety), padded if fewer.
 const pool = (product.images && product.images.length ? product.images : (product.image ? [product.image] : []))
