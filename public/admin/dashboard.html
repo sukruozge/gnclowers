@@ -1248,9 +1248,13 @@
       <div class="okpis" id="okpis"></div>
 
       <div class="card">
-        <div class="card-header" style="display:flex; justify-content:space-between; align-items:center;">
+        <div class="card-header" style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;">
           <div class="card-title">Sipariş Listesi</div>
-          <div id="orders-count" style="font-size:.8rem;color:var(--muted-foreground)">0 sipariş</div>
+          <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+            <input id="order-search" type="search" placeholder="Ara — isim, e-posta, sipariş no…" oninput="onOrderSearch()" autocomplete="off" style="padding:7px 10px;border:1px solid var(--border);border-radius:8px;background:transparent;color:inherit;font-size:.82rem;min-width:200px;">
+            <button class="btn btn-sm btn-outline" onclick="exportOrdersCSV()" title="Siparişleri CSV olarak indir">⬇ CSV</button>
+            <span id="orders-count" style="font-size:.8rem;color:var(--muted-foreground)">0 sipariş</span>
+          </div>
         </div>
         <div class="card-body" style="padding:0">
           <div class="pfilter">
@@ -3193,6 +3197,34 @@ function changeChartFilter(type) {
 let _orders = [];
 let _orderStatus = 'all'; // 'all' | 'completed' | 'failed'
 let _orderPeriod = 'all'; // 'today' | '7d' | '30d' | 'all'
+let _orderQuery = '';
+
+function onOrderSearch() {
+  const e = document.getElementById('order-search');
+  _orderQuery = e ? e.value : '';
+  renderOrders();
+}
+
+// Export every order (all periods/filters) to a UTF-8 CSV for accounting / shipping.
+function exportOrdersCSV() {
+  if (!_orders.length) { toast('Dışa aktarılacak sipariş yok', 'err'); return; }
+  const cols = ['orderId', 'createdAt', 'status', 'fulfillment', 'currency', 'amount', 'shipping', 'name', 'email', 'phone', 'country', 'city', 'postal', 'address', 'tracking', 'items'];
+  const cell = (v) => { v = v == null ? '' : String(v); return /[",\n\r]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; };
+  const lines = [cols.join(',')];
+  for (const o of _orders) {
+    const c = o.customer || {};
+    const items = (o.items || []).map(it => `${it.qty || 1}x ${it.title || ''}${it.options ? ' (' + Object.entries(it.options).map(([k, v]) => k + ':' + v).join(', ') + ')' : ''}`).join(' | ');
+    const row = { orderId: o.orderId, createdAt: o.createdAt, status: o.status, fulfillment: o.fulfillment || 'new', currency: o.currency || 'TRY', amount: o.amount, shipping: o.shipping, name: c.name, email: c.email, phone: c.phone, country: c.country, city: c.city, postal: c.postal, address: c.address, tracking: o.tracking || '', items };
+    lines.push(cols.map(k => cell(row[k])).join(','));
+  }
+  const blob = new Blob(['﻿' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'aselovers-siparisler-' + new Date().toISOString().slice(0, 10) + '.csv';
+  document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(url);
+  toast('✅ CSV indirildi (' + _orders.length + ' sipariş)', 'ok');
+}
 
 async function loadOrdersPage() {
   const listEl = document.getElementById('orders-list');
@@ -3376,8 +3408,11 @@ function renderOrders() {
   OFULF_STEPS.forEach(k => setN('osegn-' + k, inPeriod.filter(o => ofulf(o) === k).length));
   setN('osegn-problem', inPeriod.filter(o => o.status !== 'completed' || o.fulfillment === 'cancelled').length);
 
-  const filtered = inPeriod.filter(o => matchOrderFilter(o, _orderStatus));
-  countEl.textContent = _orderStatus === 'all' ? `${inPeriod.length} sipariş` : `${filtered.length} / ${inPeriod.length} sipariş`;
+  let filtered = inPeriod.filter(o => matchOrderFilter(o, _orderStatus));
+  const oq = _norm(_orderQuery);
+  if (oq) filtered = filtered.filter(o => { const c = o.customer || {}; return _norm(`${c.name || ''} ${c.email || ''} ${c.phone || ''} ${o.orderId || ''}`).includes(oq); });
+  const filtering = _orderStatus !== 'all' || !!oq;
+  countEl.textContent = filtering ? `${filtered.length} / ${inPeriod.length} sipariş` : `${inPeriod.length} sipariş`;
 
   if (!filtered.length) {
     listEl.innerHTML = '';
@@ -3420,7 +3455,8 @@ function orderCardHTML(o) {
     return `<div class="ofulfil"><div class="ofulfil-steps">${steps}${cancelBtn}</div>` +
       `<div class="ofulfil-track"><span class="oftrack-label">Kargo takip</span>` +
       `<input class="oftrack-input" placeholder="Takip numarası" value="${esc(o.tracking || '')}" onblur="saveOrderTracking('${o.orderId}',this)" onkeydown="if(event.key==='Enter'){this.blur();}">` +
-      `<span class="ofsaved" id="ofsaved-${esc(o.orderId)}">kaydedildi</span></div></div>`;
+      `<span class="ofsaved" id="ofsaved-${esc(o.orderId)}">kaydedildi</span></div>` +
+      `<div class="ofulfil-note" style="margin-top:8px;"><textarea class="oftrack-input" style="width:100%;min-height:40px;resize:vertical;font-family:inherit;" placeholder="Sipariş notu (yalnızca yönetim için)" onblur="saveOrderNote('${o.orderId}',this)">${esc(o.note || '')}</textarea></div></div>`;
   })() : '';
 
   const items = (o.items && o.items.length)
@@ -3581,6 +3617,16 @@ async function saveOrderTracking(orderId, inputEl) {
   if (await updateOrderStatus(orderId, { tracking: val })) {
     const s = document.getElementById('ofsaved-' + orderId);
     if (s) { s.classList.add('show'); setTimeout(() => s.classList.remove('show'), 1600); }
+  }
+}
+
+async function saveOrderNote(orderId, el) {
+  const o = _orders.find(x => x.orderId === orderId);
+  const val = (el.value || '').slice(0, 500);
+  if (o && (o.note || '') === val) return; // no change
+  if (await updateOrderStatus(orderId, { note: val })) {
+    if (o) o.note = val;
+    toast('📝 Sipariş notu kaydedildi', 'ok');
   }
 }
 
