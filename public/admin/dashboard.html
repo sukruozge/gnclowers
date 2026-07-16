@@ -796,29 +796,9 @@
     <div class="topbar">
       <button class="topbar-toggle-sidebar" onclick="toggleSidebar()" title="Menüyü Daralt/Genişlet">☰</button>
       <div class="topbar-title" id="topbar-title">Dashboard</div>
-      
-      <!-- Topbar search bar matching demo -->
-      <div class="top-search-bar" style="margin-left: 20px;">
-        <span class="search-icon">🔍</span>
-        <input class="form-control" type="search" placeholder="Ara..." aria-label="Search">
-      </div>
 
       <div class="topbar-right">
         <div class="topbar-date" id="topbar-date"></div>
-
-        <!-- Quick Apps Grid Dropdown -->
-        <div class="dropdown">
-          <button class="notifications-btn" onclick="toggleDropdown(event, 'apps-dropdown')" title="Hızlı Uygulamalar">⚙️</button>
-          <div class="dropdown-menu apps-dropdown" id="apps-dropdown">
-            <div class="dropdown-header"><h6>Hızlı Uygulamalar</h6></div>
-            <div class="apps-grid">
-              <a href="#" class="app-item"><span class="app-icon">📅</span><span>Takvim</span></a>
-              <a href="#" class="app-item"><span class="app-icon">✉️</span><span>E-posta</span></a>
-              <a href="#" class="app-item"><span class="app-icon">📝</span><span>Dosyalar</span></a>
-              <a href="#" class="app-item"><span class="app-icon">📊</span><span>Analiz</span></a>
-            </div>
-          </div>
-        </div>
 
         <!-- Notifications Dropdown -->
         <div class="dropdown">
@@ -833,33 +813,8 @@
           </div>
         </div>
 
-        <!-- Messages Dropdown -->
-        <div class="dropdown">
-          <button class="notifications-btn" onclick="toggleDropdown(event, 'messages-dropdown')" title="Mesajlar">✉️</button>
-          <div class="dropdown-menu messages-dropdown" id="messages-dropdown">
-            <div class="dropdown-header"><h6>Mesajlar</h6></div>
-            <div class="message-list">
-              <div class="message-item">
-                <img src="https://ui-avatars.com/api/?name=Ayse+Kaya&background=5969ff&color=fff" alt="User">
-                <div class="message-item-content">
-                  <p>Ayşe Kaya</p>
-                  <small>Özel amigurumi siparişi verebilir miyim?</small>
-                  <br><small style="color:var(--primary)">5 dakika önce</small>
-                </div>
-              </div>
-              <div class="message-item">
-                <img src="https://ui-avatars.com/api/?name=Mehmet+Can&background=28a745&color=fff" alt="User">
-                <div class="message-item-content">
-                  <p>Mehmet Can</p>
-                  <small>Kargo takip numarası hakkında bilgi...</small>
-                  <br><small style="color:var(--primary)">2 saat önce</small>
-                </div>
-              </div>
-            </div>
-            <div class="dropdown-divider"></div>
-            <a href="#" class="dropdown-item text-center" style="color:var(--primary);font-weight:600;text-align:center;">Tüm Mesajları Gör</a>
-          </div>
-        </div>
+        <!-- Messages → real inbox page -->
+        <button class="notifications-btn" onclick="showPage('messages')" title="Mesajlar (gelen kutusu)">✉️</button>
 
         <button class="theme-toggle-btn" onclick="toggleTheme()" title="Karanlık/Aydınlık Mod">🌙</button>
 
@@ -869,7 +824,7 @@
           <div class="dropdown-menu nav-user-dropdown" id="user-dropdown">
             <div class="nav-user-info">
               <h6>Aselovers Yönetici</h6>
-              <small>admin@aselovers.com</small>
+              <small>Yönetim Paneli</small>
             </div>
             <button class="dropdown-item" onclick="showPage('settings'); closeAllDropdowns();">⚙️ Ayarlar</button>
             <button class="dropdown-item" onclick="showPage('content'); closeAllDropdowns();">✏️ İçerik Yönetimi</button>
@@ -888,63 +843,14 @@
 
             <div class="stats-grid" id="dash-stats"></div>
 
-      <!-- Performance Analytics Chart Section -->
+      <!-- Commerce snapshot (real data) -->
       <div class="card" style="margin-bottom: 24px;">
         <div class="card-header">
-          <div class="card-title">Mağaza Performans Analizi (Concept Mock)</div>
-          <div class="tabs" style="border: none; margin: 0; gap: 4px;">
-            <button class="tab-btn active btn-sm" onclick="changeChartFilter('weekly')">Haftalık</button>
-            <button class="tab-btn btn-sm" onclick="changeChartFilter('monthly')">Aylık</button>
-          </div>
+          <div class="card-title">Ticaret Özeti</div>
+          <button class="btn btn-sm btn-outline" onclick="showPage('orders', document.querySelector('[onclick*=orders]'))">Siparişlere Git</button>
         </div>
         <div class="card-body">
-          <div class="chart-container" id="svg-chart-wrap">
-            <!-- SVG LINE CHART -->
-            <svg viewBox="0 0 600 220" width="100%" height="100%">
-              <!-- Grid lines -->
-              <line class="chart-grid" x1="50" y1="30" x2="550" y2="30" stroke="var(--border)" />
-              <line class="chart-grid" x1="50" y1="75" x2="550" y2="75" stroke="var(--border)" />
-              <line class="chart-grid" x1="50" y1="120" x2="550" y2="120" stroke="var(--border)" />
-              <line class="chart-grid" x1="50" y1="165" x2="550" y2="165" stroke="var(--border)" />
-              
-              <!-- Axis lines -->
-              <line x1="50" y1="165" x2="550" y2="165" stroke="var(--border)" stroke-width="2" />
-              <line x1="50" y1="10" x2="50" y2="165" stroke="var(--border)" stroke-width="2" />
-              
-              <!-- Chart line: Ziyaretler (Primary Blue) -->
-              <path class="chart-line" stroke="var(--primary)" fill="none" stroke-width="3" d="M 50 140 L 133 90 L 216 110 L 299 50 L 382 80 L 465 30 L 550 60" />
-              <path class="chart-line-bg" stroke="var(--primary)" fill="none" stroke-width="3" d="M 50 140 L 133 90 L 216 110 L 299 50 L 382 80 L 465 30 L 550 60" />
-              
-              <!-- Chart line: Siparişler (Pink-Red) -->
-              <path class="chart-line" stroke="#ff407b" fill="none" stroke-width="3" d="M 50 155 L 133 140 L 216 145 L 299 110 L 382 130 L 465 90 L 550 105" />
-              <path class="chart-line-bg" stroke="#ff407b" fill="none" stroke-width="3" d="M 50 155 L 133 140 L 216 145 L 299 110 L 382 130 L 465 90 L 550 105" />
-              
-              <!-- Interactive Dots for Ziyaretler -->
-              <circle class="chart-dot" cx="50" cy="140" r="4" fill="#ffffff" stroke="var(--primary)" stroke-width="2" onclick="showChartTooltip(event, 'Pzt: 120 Ziyaret')" />
-              <circle class="chart-dot" cx="133" cy="90" r="4" fill="#ffffff" stroke="var(--primary)" stroke-width="2" onclick="showChartTooltip(event, 'Sal: 280 Ziyaret')" />
-              <circle class="chart-dot" cx="216" cy="110" r="4" fill="#ffffff" stroke="var(--primary)" stroke-width="2" onclick="showChartTooltip(event, 'Çar: 200 Ziyaret')" />
-              <circle class="chart-dot" cx="299" cy="50" r="4" fill="#ffffff" stroke="var(--primary)" stroke-width="2" onclick="showChartTooltip(event, 'Per: 410 Ziyaret')" />
-              <circle class="chart-dot" cx="382" cy="80" r="4" fill="#ffffff" stroke="var(--primary)" stroke-width="2" onclick="showChartTooltip(event, 'Cum: 320 Ziyaret')" />
-              <circle class="chart-dot" cx="465" cy="30" r="4" fill="#ffffff" stroke="var(--primary)" stroke-width="2" onclick="showChartTooltip(event, 'Cmt: 500 Ziyaret')" />
-              <circle class="chart-dot" cx="550" cy="60" r="4" fill="#ffffff" stroke="var(--primary)" stroke-width="2" onclick="showChartTooltip(event, 'Paz: 380 Ziyaret')" />
-
-              <!-- X-Axis Labels -->
-              <text x="50" y="185" fill="#71748d" font-size="10" text-anchor="middle">Pzt</text>
-              <text x="133" y="185" fill="#71748d" font-size="10" text-anchor="middle">Sal</text>
-              <text x="216" y="185" fill="#71748d" font-size="10" text-anchor="middle">Çar</text>
-              <text x="299" y="185" fill="#71748d" font-size="10" text-anchor="middle">Per</text>
-              <text x="382" y="185" fill="#71748d" font-size="10" text-anchor="middle">Cum</text>
-              <text x="465" y="185" fill="#71748d" font-size="10" text-anchor="middle">Cmt</text>
-              <text x="550" y="185" fill="#71748d" font-size="10" text-anchor="middle">Paz</text>
-
-              <!-- Legend -->
-              <circle cx="80" cy="205" r="4" fill="var(--primary)" />
-              <text x="90" y="208" fill="#71748d" font-size="10">Mağaza Ziyaretleri</text>
-              <circle cx="200" cy="205" r="4" fill="#ff407b" />
-              <text x="210" y="208" fill="#71748d" font-size="10">Etsy Siparişleri</text>
-            </svg>
-            <div class="chart-tooltip" id="chart-tooltip-box"></div>
-          </div>
+          <div id="dash-commerce" class="stats-grid"><div style="opacity:.55;font-size:.85rem;padding:8px;">Sipariş verileri yükleniyor…</div></div>
         </div>
       </div>
 
@@ -1750,7 +1656,6 @@ initTheme();
 initSidebarPref();
 
 // ── DATA STORE ──────────────────────────────────────────────
-const DEFAULT_PASS = 'aselovers2024';
 let _products = [];
 let _blogPosts = [];
 let _content = {};
@@ -1762,7 +1667,7 @@ let _productSort = 'default';
 // Turkish-aware lowercase so "İ/ı" and "I/i" match as users expect when searching.
 function _norm(s) { return String(s || '').toLocaleLowerCase('tr').trim(); }
 
-function getPass() { return localStorage.getItem('ase_admin_pass') || DEFAULT_PASS; }
+function getPass() { return localStorage.getItem('ase_admin_pass') || ''; }
 function getEtsyConfig() {
   try { return JSON.parse(localStorage.getItem('ase_etsy_config') || '{}'); } catch { return {}; }
 }
@@ -1827,14 +1732,8 @@ async function doLogin() {
     errEl.textContent = data.error || 'Hatalı şifre.';
     document.getElementById('login-pass').value = '';
     return;
-  } catch {}
-
-  // Fallback: client-side check (server offline)
-  if (pass === getPass()) {
-    sessionStorage.setItem('ase_authed', '1');
-    showApp();
-  } else {
-    errEl.textContent = 'Hatalı şifre.';
+  } catch {
+    errEl.textContent = 'Sunucuya ulaşılamadı, tekrar deneyin.';
     document.getElementById('login-pass').value = '';
   }
 }
@@ -1969,6 +1868,38 @@ function showPage(pageId, btn) {
 }
 
 // ── DASHBOARD ─────────────────────────────────────────────
+// Real commerce KPIs on the dashboard (revenue, orders, pending shipments).
+let _dashCommerceAt = 0;
+async function loadDashCommerce() {
+  const el = document.getElementById('dash-commerce');
+  if (!el) return;
+  try {
+    const res = await fetch('/api/admin/orders', { headers: ADM_HDR, credentials: 'include' });
+    if (!res.ok) throw new Error('fail');
+    const orders = await res.json();
+    const list = Array.isArray(orders) ? orders : [];
+    const done = list.filter(o => o.status === 'completed' && o.fulfillment !== 'cancelled');
+    const revenue = done.reduce((s, o) => s + (Number(o.amount) || 0), 0);
+    const pending = done.filter(o => !o.fulfillment || o.fulfillment === 'new' || o.fulfillment === 'preparing').length;
+    const failed = list.filter(o => o.status !== 'completed').length;
+    const fmt = (n) => Math.round(n).toLocaleString('tr-TR');
+    const card = (label, val, icon, meta, color) => `<div class="stat-card"><div class="stat-header"><span class="stat-label">${label}</span><span class="stat-icon">${icon}</span></div><div class="stat-val"${color ? ` style="color:${color}"` : ''}>${val}</div><div class="stat-progress-wrap"><div class="stat-meta"><span>${meta}</span></div></div></div>`;
+    el.innerHTML =
+      card('Toplam Ciro', '₺' + fmt(revenue), '💰', done.length + ' başarılı sipariş', '#16a34a') +
+      card('Sipariş', String(done.length), '🧾', 'Tamamlanan ödemeler') +
+      card('Kargolanacak', String(pending), '📦', 'Hazırlanmayı bekleyen', pending ? '#B0532E' : '') +
+      card('Sorunlu', String(failed), '⚠️', 'Başarısız / iptal', failed ? '#dc2626' : '');
+  } catch {
+    el.innerHTML = '<div style="opacity:.6;font-size:.85rem;padding:8px;">Sipariş verileri alınamadı.</div>';
+  }
+}
+function maybeLoadDashCommerce() {
+  const now = Date.now();
+  if (now - _dashCommerceAt < 15000) return;
+  _dashCommerceAt = now;
+  loadDashCommerce();
+}
+
 function renderDashboard() {
   const posts = getBlogPosts();
   const publishedCount = posts.filter(p => p.published).length;
@@ -2045,6 +1976,9 @@ function renderDashboard() {
 
   // Sync status
   renderSyncStatus();
+
+  // Real commerce KPIs (throttled fetch of orders)
+  maybeLoadDashCommerce();
 }
 
 function renderSyncStatus() {
