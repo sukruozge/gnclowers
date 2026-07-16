@@ -68,7 +68,12 @@ const shippingCfg = (settings as any).shipping || {};
                   <label for="c-country">Country / Region</label>
                   <div class="select-wrap">
                     <select id="c-country" name="country" autocomplete="country">
-                      <option value="INTL" selected>International</option>
+                      <option value="US" selected>United States</option>
+                      <option value="CA">Canada</option>
+                      <option value="AU">Australia</option>
+                      <option value="DE">Germany</option>
+                      <option value="CH">Switzerland</option>
+                      <option value="INTL">Other countries</option>
                       <option value="TR">Türkiye</option>
                     </select>
                     <svg class="select-wrap__caret" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
@@ -149,6 +154,7 @@ const shippingCfg = (settings as any).shipping || {};
   import { getCart } from '@lib/cart';
   import { resolveVariantPrice } from '@lib/variants';
   import { optionsLine } from '@lib/optionLabels';
+  import { intlFeeNative } from '@lib/shipping';
 
   const allProducts = JSON.parse(document.getElementById('cart-data')?.getAttribute('data-products') || '[]');
   const shippingCfg = JSON.parse(document.getElementById('cart-data')?.getAttribute('data-shipping') || '{}');
@@ -188,6 +194,11 @@ const shippingCfg = (settings as any).shipping || {};
   const countrySelect = document.getElementById('c-country') as HTMLSelectElement | null;
   const fmt = (n: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(n / usdRate);
 
+  // Total units in the cart — extra items add a % of the base shipping fee.
+  const itemCount = cart.reduce((s, i) => s + (Number(i.quantity) || 1), 0);
+
+  // Returns the fee in TRY (item prices are TRY here); `fmt` converts to USD for display,
+  // mirroring the server so the amount shown equals the amount charged.
   function calcShipping(country: string): number {
     const isTr = (country || 'TR') === 'TR';
     if (isTr) {
@@ -196,7 +207,7 @@ const shippingCfg = (settings as any).shipping || {};
       if (freeOver > 0 && totalAmount >= freeOver) return 0;
       return fee;
     }
-    return Number(shippingCfg?.intl?.fee ?? 0) || 0;
+    return intlFeeNative(shippingCfg, country, itemCount) * usdRate;
   }
 
   function updateTotals() {

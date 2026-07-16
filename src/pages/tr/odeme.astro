@@ -174,17 +174,20 @@ const shippingCfg = (settings as any).shipping || {};
       </div>
     </section>
   </main>
-  <div id="cart-data" data-products={JSON.stringify(allProducts)} data-shipping={JSON.stringify(shippingCfg)} data-cities={JSON.stringify(trCities)} style="display: none;"></div>
+  <div id="cart-data" data-products={JSON.stringify(allProducts)} data-shipping={JSON.stringify(shippingCfg)} data-cities={JSON.stringify(trCities)} data-rate-usd={((settings as any).rates?.usd) ?? 47.03} style="display: none;"></div>
   <Footer locale="tr" />
 
 <script>
   import { getCart } from '@lib/cart';
   import { resolveVariantPrice } from '@lib/variants';
   import { optionsLine } from '@lib/optionLabels';
+  import { intlFeeNative } from '@lib/shipping';
 
   const allProducts = JSON.parse(document.getElementById('cart-data')?.getAttribute('data-products') || '[]');
   const optsText = (o?: Record<string, string>) => optionsLine(o, 'tr');
   const shippingCfg = JSON.parse(document.getElementById('cart-data')?.getAttribute('data-shipping') || '{}');
+  // International fees are stored in USD; convert to TRY (the TR checkout currency).
+  const usdRate = Number(document.getElementById('cart-data')?.getAttribute('data-rate-usd')) || 47.03;
   const cart = getCart();
 
   if (cart.length === 0) { window.location.href = '/tr/sepet'; }
@@ -219,6 +222,9 @@ const shippingCfg = (settings as any).shipping || {};
   const countrySelect = document.getElementById('c-country') as HTMLSelectElement | null;
   const fmt = (n: number) => new Intl.NumberFormat('tr-TR', { style: 'currency', currency }).format(n);
 
+  // Total units — extra items add a % of the base shipping fee.
+  const itemCount = cart.reduce((s, i) => s + (Number(i.quantity) || 1), 0);
+
   function calcShipping(country: string): number {
     const isTr = (country || 'TR') === 'TR';
     if (isTr) {
@@ -227,7 +233,9 @@ const shippingCfg = (settings as any).shipping || {};
       if (freeOver > 0 && totalAmount >= freeOver) return 0;
       return fee;
     }
-    return Number(shippingCfg?.intl?.fee ?? 0) || 0;
+    // TR storefront charges TRY; convert the USD intl fee. "Yurt dışı" maps to the
+    // default rate (no per-country picker here — that lives on the EN checkout).
+    return intlFeeNative(shippingCfg, country, itemCount) * usdRate;
   }
 
   function updateTotals() {

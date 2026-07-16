@@ -2,7 +2,7 @@ import type { APIRoute } from 'astro';
 import { createHmac } from 'node:crypto';
 import productsData from '../../../data/products.json';
 import settings from '../../../data/settings.json';
-import { shippingFee } from '@lib/shipping';
+import { shippingFeeTry } from '@lib/shipping';
 import { resolveVariantPrice } from '@lib/variants';
 
 export const prerender = false;
@@ -71,6 +71,7 @@ export const POST: APIRoute = async (context) => {
     const products = productsData.products || [];
     let totalAmount = 0; // in the order currency (converted)
     let subtotalTry = 0; // TRY base, for the TRY-denominated free-shipping threshold
+    let itemCount = 0;   // total units — extra items add a % of the base shipping fee
     const basket: [string, string, number][] = [];
     const items: { id: string; title: string; qty: number; price: number; image?: string; options?: Record<string, string> }[] = [];
 
@@ -108,6 +109,7 @@ export const POST: APIRoute = async (context) => {
       const qty = Math.min(Math.max(parseInt(item.quantity, 10) || 1, 1), 99);
       totalAmount += price * qty;
       subtotalTry += priceTry * qty;
+      itemCount += qty;
       const baseTitle = prod.title_tr || prod.title_en;
       const optSuffix = options ? ' (' + Object.keys(options).map((k) => `${k}: ${options![k]}`).join(', ') + ')' : '';
       basket.push([baseTitle + optSuffix, String(price), qty]);
@@ -115,9 +117,12 @@ export const POST: APIRoute = async (context) => {
     }
 
     // Region-based shipping, computed server-side (never trust the client),
-    // then converted to the order currency to match the item prices.
+    // then converted to the order currency to match the item prices. International
+    // fees are stored in USD; shippingFeeTry normalises them to TRY via the USD
+    // rate so `conv()` lands them in the order currency exactly like item prices.
     const subtotal = totalAmount;
-    const shipping = conv(shippingFee((settings as any).shipping, country, subtotalTry));
+    const usdRate = Number(rates.usd) || 47.03;
+    const shipping = conv(shippingFeeTry((settings as any).shipping, country, { subtotalTry, itemCount, usdRate }));
     if (shipping > 0) basket.push(['Kargo', String(shipping), 1]);
     const grandTotal = subtotal + shipping;
 

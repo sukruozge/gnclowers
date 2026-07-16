@@ -50,7 +50,7 @@ const shippingCfg = (settings as any).shipping || {};
               </div>
               <div class="summary-row">
                 <span>Shipping</span>
-                <span id="cart-shipping" class="txt-success">Free</span>
+                <span id="cart-shipping">Calculated at checkout</span>
               </div>
               <div class="stitch" aria-hidden="true">
                 <svg viewBox="0 0 240 8" preserveAspectRatio="none" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-dasharray="7 5"><path d="M2 4 Q10 -1 20 4 T40 4 T60 4 T80 4 T100 4 T120 4 T140 4 T160 4 T180 4 T200 4 T220 4 T238 4"/></svg>
@@ -154,8 +154,10 @@ const shippingCfg = (settings as any).shipping || {};
     const shipping = calcShipping(subtotal);
     if (subtotalEl) subtotalEl.textContent = fmt(subtotal);
     if (shippingEl) {
+      // Destination (and its rate) is chosen on the next step, so show a note here
+      // rather than a misleading "Free" — international orders carry a shipping fee.
       if (shipping > 0) { shippingEl.textContent = fmt(shipping); shippingEl.classList.remove('txt-success'); }
-      else { shippingEl.textContent = 'Free'; shippingEl.classList.add('txt-success'); }
+      else { shippingEl.textContent = 'Calculated at checkout'; shippingEl.classList.remove('txt-success'); }
     }
     if (totalEl) totalEl.textContent = fmt(subtotal + shipping);
 

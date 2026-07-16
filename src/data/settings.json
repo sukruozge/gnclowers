@@ -28,7 +28,16 @@
       "freeOver": 0
     },
     "intl": {
-      "fee": 0
+      "currency": "USD",
+      "default": 40,
+      "extraItemPct": 25,
+      "byCountry": {
+        "US": 28,
+        "CA": 32,
+        "AU": 36,
+        "DE": 32,
+        "CH": 36
+      }
     }
   },
   "categoryCovers": {
