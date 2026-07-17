@@ -1580,8 +1580,8 @@
             </div>
           </div>
           <div class="form-group" style="margin-bottom: 12px;">
-            <label>Ödeme / Shopier Linki (İsteğe Bağlı)</label>
-            <input type="url" id="p-url" placeholder="https://www.shopier.com/...">
+            <label>Görsel Alt Metni (SEO) <span style="font-weight:400;opacity:.6">— boşsa ürün başlığı kullanılır</span></label>
+            <input type="text" id="p-imagealt" maxlength="140" placeholder="ör. El yapımı örgü tavşan perde tutucu">
           </div>
           <div class="form-row" style="display: flex; gap: 20px; margin-bottom: 12px;">
             <div class="form-group" style="display: flex; align-items: center; gap: 8px;">
@@ -2297,7 +2297,7 @@ function showAddProduct() {
   document.getElementById('p-currency').value = 'TRY';
   document.getElementById('p-category').value = 'amigurumi';
   document.getElementById('p-image').value = '';
-  document.getElementById('p-url').value = '';
+  document.getElementById('p-imagealt').value = '';
   document.getElementById('p-active').checked = true;
   document.getElementById('p-new').checked = true;
   _pImages = []; _pTags = []; _pOptions = []; _pVariants = []; _pOptionImages = {};
@@ -2324,7 +2324,7 @@ function editProduct(id) {
   document.getElementById('p-currency').value = p.currency || 'TRY';
   document.getElementById('p-category').value = p.category || 'amigurumi';
   document.getElementById('p-image').value = p.image || '';
-  document.getElementById('p-url').value = p.url || '';
+  document.getElementById('p-imagealt').value = p.imageAlt || '';
   document.getElementById('p-active').checked = p.isActive !== false;
   document.getElementById('p-new').checked = !!p.isNew;
   _pImages = Array.isArray(p.images) && p.images.length ? p.images.slice() : (p.image ? [p.image] : []);
@@ -2367,7 +2367,7 @@ async function saveProduct() {
     options: _pOptions,
     variants: _pVariants,
     optionImages: _pOptionImages,
-    url: document.getElementById('p-url').value.trim() || undefined,
+    imageAlt: document.getElementById('p-imagealt').value.trim(),
     isActive: document.getElementById('p-active').checked,
     isNew: document.getElementById('p-new').checked
   };
@@ -2400,7 +2400,7 @@ async function saveProduct() {
         options: payload.options,
         variants: payload.variants,
         optionImages: payload.optionImages,
-        url: payload.url,
+        imageAlt: payload.imageAlt,
         isActive: payload.isActive,
         isNew: payload.isNew,
       };

@@ -15,7 +15,7 @@ const addLabel = locale === 'tr' ? 'Sepete ekle' : 'Add to cart';
 ---
 <div class="card">
   <div class="card__media">
-    {product.image && <img class="card__img" src={product.image} alt={title} loading="lazy" />}
+    {product.image && <img class="card__img" src={product.image} alt={product.imageAlt || title} loading="lazy" />}
     {altImg && <img class="card__img card__img--alt" src={altImg} alt="" aria-hidden="true" loading="lazy" />}
     {product.isNew && <span class="card__new">{locale === 'tr' ? 'Yeni' : 'New'}</span>}
     {quickAdd && (

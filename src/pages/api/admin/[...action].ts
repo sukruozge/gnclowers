@@ -44,6 +44,7 @@ interface ProductInput {
   options?: unknown;
   variants?: unknown;
   optionImages?: unknown;
+  imageAlt?: unknown;
   url?: unknown;
   isActive?: unknown;
   isNew?: unknown;
@@ -68,6 +69,7 @@ interface Product {
   options?: ProductOptionGroup[];
   variants?: ProductVariant[];
   optionImages?: Record<string, string>;
+  imageAlt?: string;
   url?: string;
   isActive: boolean;
   isNew: boolean;
@@ -486,10 +488,13 @@ function normalizeProduct(input: ProductInput, id: string): Product | null {
     currency: typeof input.currency === 'string' && input.currency ? input.currency : 'TRY',
     category: typeof input.category === 'string' && input.category ? input.category : 'amigurumi',
     image: typeof input.image === 'string' && input.image ? input.image : undefined,
-    url: typeof input.url === 'string' && input.url ? input.url : undefined,
     isActive: input.isActive !== false,
     isNew: input.isNew === true,
   };
+  // url (Etsy source ref) + imageAlt are only touched when the caller sends them,
+  // so the removed-from-UI Shopier field and partial PUTs don't wipe existing values.
+  if (typeof input.url === 'string') out.url = input.url.trim() || undefined;
+  if (typeof input.imageAlt === 'string') out.imageAlt = input.imageAlt.trim() || undefined;
   // Rich fields are only touched when the caller actually sends them — a partial PUT
   // (e.g. the active/featured toggle) omits them, so `{...existing, ...updated}` keeps
   // the current values instead of wiping variants/images the form didn't include.

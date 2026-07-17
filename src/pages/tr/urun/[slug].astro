@@ -48,7 +48,7 @@ const crumbLd = breadcrumbJsonLd([
 
         <div class="detail">
           <div class="detail__gallery">
-            <ProductGallery images={gallery} alt={title} />
+            <ProductGallery images={gallery} alt={product.imageAlt || title} />
           </div>
 
           <div class="detail__info">
