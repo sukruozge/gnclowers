@@ -8,7 +8,6 @@ const p = (tr: string, en: string) => (locale === 'tr' ? `/tr/${tr}` : `/en/${en
 const year = new Date().getFullYear();
 const s = settings as any;
 const instagram = s.instagram || 'https://www.instagram.com/aselovers/';
-const etsy = s.etsy || 'https://aselovers.etsy.com';
 const pinterest = s.pinterest || 'https://pinterest.com/aselovers';
 ---
 <footer class="foot">
@@ -26,7 +25,6 @@ const pinterest = s.pinterest || 'https://pinterest.com/aselovers';
     <div class="foot__col">
       <h4>{t('footer.follow', locale)}</h4>
       <a href={instagram} target="_blank" rel="noopener">Instagram</a>
-      <a href={etsy} target="_blank" rel="noopener">Etsy · 5.0★</a>
       <a href={pinterest} target="_blank" rel="noopener">Pinterest</a>
     </div>
     <nav class="foot__col" aria-label={t('footer.legal', locale)}>

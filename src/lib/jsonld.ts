@@ -29,7 +29,6 @@ export function organizationJsonLd(site: string): string {
     sameAs: [
       'https://www.instagram.com/aselovers/',
       'https://pinterest.com/aselovers',
-      'https://aselovers.etsy.com',
     ],
   });
 }

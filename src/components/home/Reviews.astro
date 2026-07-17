@@ -16,7 +16,7 @@ interface Testimonial {
 
 // Real, verifiable Etsy reviews (src/data/reviews.json) — no invented names/roles.
 const PALETTE = ['#B0532E', '#6F8B6A', '#5E7A9B', '#C08552', '#A9746E', '#8D7BA5', '#5F8A86', '#C0873E', '#B0708F'];
-const buyerLabel = locale === 'tr' ? 'Etsy Alıcısı' : 'Etsy Buyer';
+const buyerLabel = locale === 'tr' ? 'Doğrulanmış Alıcı' : 'Verified buyer';
 const verifiedLabel = locale === 'tr' ? 'Doğrulanmış satın alma' : 'Verified purchase';
 const fmtDate = (d: string) => { try { return new Date(d).toLocaleDateString(locale === 'tr' ? 'tr-TR' : 'en-US', { month: 'short', year: 'numeric' }); } catch { return ''; } };
 const realReviews = pickReviews(loadReviews().reviews, locale, 9);
@@ -48,8 +48,8 @@ const initials = (_name: string) => '★';
       <h2 id="testimonials-heading">{t('reviews.title', locale)}</h2>
       <p class="subtitle">
         {locale === 'tr'
-          ? 'Etsy’de 5.0★ — alıcılarımızın kendi sözleriyle, doğrulanmış satın almalar.'
-          : '5.0★ on Etsy — in our buyers’ own words, from verified purchases.'}
+          ? 'Müşterilerimizin 5.0★ değerlendirmesi — kendi sözleriyle, doğrulanmış satın almalar.'
+          : 'Rated 5.0★ by our customers — in their own words, from verified purchases.'}
       </p>
     </div>
 
