@@ -526,6 +526,11 @@
     .modal-title { font-size: 1.25rem; font-weight: 700; color: var(--foreground); margin-bottom: 12px; letter-spacing: -0.01em; }
     .modal-body { font-size: .9rem; color: var(--muted-foreground); margin-bottom: 28px; line-height: 1.5; }
     .modal-footer { display: flex; gap: 12px; justify-content: flex-end; }
+    .pedit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: start; }
+    @media (max-width: 900px) { .pedit-grid { grid-template-columns: 1fr; gap: 4px; } }
+    .pedit-col { min-width: 0; }
+    .pedit-sec-h { font-size: .74rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--muted-foreground); margin: 2px 0 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+    .pedit-col > .pedit-sec-h:not(:first-child) { margin-top: 20px; }
 
     /* REVIEW CARD IN ADMIN */
     .review-admin-card { border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; margin-bottom: 16px; background: var(--card); box-shadow: var(--shadow); }
@@ -1520,92 +1525,101 @@
 
 <!-- PRODUCT EDIT MODAL -->
 <div class="modal-overlay" id="product-modal">
-  <div class="modal" style="max-width: 720px; width: 92%;">
+  <div class="modal" style="max-width: 1180px; width: 96vw; max-height: 94vh; display: flex; flex-direction: column;">
     <div class="modal-title" id="product-modal-title">Yeni Ürün Ekle</div>
-    <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+    <div class="modal-body" style="flex: 1; overflow-y: auto; max-height: none;">
       <input type="hidden" id="p-id">
-      <div class="form-row" style="display: flex; gap: 12px; margin-bottom: 12px;">
-        <div class="form-group" style="flex: 1;">
-          <label>Ürün Adı (TR)</label>
-          <input type="text" id="p-title-tr" placeholder="Tığ İşi Tavşan">
+      <div class="pedit-grid">
+        <div class="pedit-col">
+          <div class="pedit-sec-h">Temel Bilgiler</div>
+          <div class="form-row" style="display: flex; gap: 12px; margin-bottom: 12px;">
+            <div class="form-group" style="flex: 1;">
+              <label>Ürün Adı (TR)</label>
+              <input type="text" id="p-title-tr" placeholder="Tığ İşi Tavşan">
+            </div>
+            <div class="form-group" style="flex: 1;">
+              <label>Ürün Adı (EN)</label>
+              <input type="text" id="p-title-en" placeholder="Crochet Bunny">
+            </div>
+          </div>
+          <div class="form-group" style="margin-bottom: 12px;">
+            <label>Açıklama (TR)</label>
+            <textarea id="p-desc-tr" rows="6" placeholder="Ürün açıklaması Türkçe..." style="width: 100%; border: 1px solid var(--border); border-radius: 6px; padding: 8px; font-family: inherit; font-size: .84rem; background: var(--cream); color: var(--ink); resize: vertical;"></textarea>
+          </div>
+          <div class="form-group" style="margin-bottom: 12px;">
+            <label>Açıklama (EN)</label>
+            <textarea id="p-desc-en" rows="6" placeholder="Product description English..." style="width: 100%; border: 1px solid var(--border); border-radius: 6px; padding: 8px; font-family: inherit; font-size: .84rem; background: var(--cream); color: var(--ink); resize: vertical;"></textarea>
+          </div>
+          <div class="pedit-sec-h">Fiyatlandırma</div>
+          <div class="form-row" style="display: flex; gap: 12px; margin-bottom: 12px; flex-wrap: wrap;">
+            <div class="form-group" style="flex: 1; min-width: 120px;">
+              <label>Fiyat (₺ / TR)</label>
+              <input type="number" id="p-price" step="0.01" placeholder="450.00">
+            </div>
+            <div class="form-group" style="flex: 1; min-width: 120px;">
+              <label>USD Fiyat (EN) <span style="font-weight:400;opacity:.6">— boşsa kurdan</span></label>
+              <input type="number" id="p-price-usd" step="0.01" placeholder="ör. 59.00">
+            </div>
+            <div class="form-group" style="flex: 1; min-width: 110px;">
+              <label>Para Birimi</label>
+              <select id="p-currency">
+                <option value="TRY">TRY (₺)</option>
+                <option value="USD">USD ($)</option>
+                <option value="EUR">EUR (€)</option>
+                <option value="GBP">GBP (£)</option>
+              </select>
+            </div>
+            <div class="form-group" style="flex: 1; min-width: 120px;">
+              <label>Kategori</label>
+              <select id="p-category">
+                <option value="amigurumi">amigurumi</option>
+                <option value="bag">bag</option>
+                <option value="decor">decor</option>
+                <option value="accessory">accessory</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group" style="margin-bottom: 12px;">
+            <label>Ödeme / Shopier Linki (İsteğe Bağlı)</label>
+            <input type="url" id="p-url" placeholder="https://www.shopier.com/...">
+          </div>
+          <div class="form-row" style="display: flex; gap: 20px; margin-bottom: 12px;">
+            <div class="form-group" style="display: flex; align-items: center; gap: 8px;">
+              <input type="checkbox" id="p-active" checked style="width: auto; margin: 0; cursor: pointer;">
+              <label for="p-active" style="margin: 0; cursor: pointer; font-size: .84rem; font-weight: 500;">Ürün Aktif (Satışta)</label>
+            </div>
+            <div class="form-group" style="display: flex; align-items: center; gap: 8px;">
+              <input type="checkbox" id="p-new" checked style="width: auto; margin: 0; cursor: pointer;">
+              <label for="p-new" style="margin: 0; cursor: pointer; font-size: .84rem; font-weight: 500;">Yeni Ürün Rozeti</label>
+            </div>
+          </div>
         </div>
-        <div class="form-group" style="flex: 1;">
-          <label>Ürün Adı (EN)</label>
-          <input type="text" id="p-title-en" placeholder="Crochet Bunny">
-        </div>
-      </div>
-      <div class="form-row" style="display: flex; gap: 12px; margin-bottom: 12px;">
-        <div class="form-group" style="flex: 1;">
-          <label>Açıklama (TR)</label>
-          <textarea id="p-desc-tr" rows="4" placeholder="Ürün açıklaması Türkçe..." style="width: 100%; border: 1px solid var(--border); border-radius: 6px; padding: 8px; font-family: inherit; font-size: .84rem; background: var(--cream); color: var(--ink); resize: vertical;"></textarea>
-        </div>
-        <div class="form-group" style="flex: 1;">
-          <label>Açıklama (EN)</label>
-          <textarea id="p-desc-en" rows="4" placeholder="Product description English..." style="width: 100%; border: 1px solid var(--border); border-radius: 6px; padding: 8px; font-family: inherit; font-size: .84rem; background: var(--cream); color: var(--ink); resize: vertical;"></textarea>
-        </div>
-      </div>
-      <div class="form-row" style="display: flex; gap: 12px; margin-bottom: 12px;">
-        <div class="form-group" style="flex: 1;">
-          <label>Fiyat (₺ / TR)</label>
-          <input type="number" id="p-price" step="0.01" placeholder="450.00">
-        </div>
-        <div class="form-group" style="flex: 1;">
-          <label>USD Fiyat (EN) <span style="font-weight:400;opacity:.6">— boşsa kurdan hesaplanır</span></label>
-          <input type="number" id="p-price-usd" step="0.01" placeholder="ör. 59.00">
-        </div>
-        <div class="form-group" style="flex: 1;">
-          <label>Para Birimi</label>
-          <select id="p-currency">
-            <option value="TRY">TRY (₺)</option>
-            <option value="USD">USD ($)</option>
-            <option value="EUR">EUR (€)</option>
-            <option value="GBP">GBP (£)</option>
-          </select>
-        </div>
-        <div class="form-group" style="flex: 1;">
-          <label>Kategori</label>
-          <select id="p-category">
-            <option value="amigurumi">amigurumi</option>
-            <option value="bag">bag</option>
-            <option value="decor">decor</option>
-            <option value="accessory">accessory</option>
-          </select>
-        </div>
-      </div>
-      <div class="form-group" style="margin-bottom: 12px;">
-        <label>Görseller <span style="font-weight:400;opacity:.6">— ilk görsel ana görseldir; sürükle-oynat için ◀ ▶</span></label>
-        <input type="hidden" id="p-image">
-        <div id="p-gallery"></div>
-        <div style="display:flex; gap:8px; margin-top:8px;">
-          <input type="url" id="p-image-add" placeholder="https://... görsel URL'i ekle" style="flex:1;" onkeydown="if(event.key==='Enter'){event.preventDefault();pAddImageUrl();}">
-          <button type="button" class="btn btn-outline" onclick="pAddImageUrl()" style="white-space:nowrap;">+ Görsel</button>
-        </div>
-      </div>
-      <div class="form-group" style="margin-bottom: 12px;">
-        <label>Varyantlar & Fiyatları <span style="font-weight:400;opacity:.6">— her varyantın ₺ fiyatını ayrı ayarla</span></label>
-        <div id="p-variants"></div>
-      </div>
-      <div class="form-group" style="margin-bottom: 12px;">
-        <label>Etiketler (SEO)</label>
-        <div id="p-tags"></div>
-        <input type="text" id="p-tag-add" placeholder="Etiket yaz, Enter'a bas" style="margin-top:6px;" onkeydown="if(event.key==='Enter'){event.preventDefault();pAddTag();}">
-      </div>
-      <div class="form-group" style="margin-bottom: 12px;">
-        <label>Ödeme / Shopier Linki (İsteğe Bağlı)</label>
-        <input type="url" id="p-url" placeholder="https://www.shopier.com/...">
-      </div>
-      <div class="form-row" style="display: flex; gap: 20px; margin-bottom: 12px;">
-        <div class="form-group" style="display: flex; align-items: center; gap: 8px;">
-          <input type="checkbox" id="p-active" checked style="width: auto; margin: 0; cursor: pointer;">
-          <label for="p-active" style="margin: 0; cursor: pointer; font-size: .84rem; font-weight: 500;">Ürün Aktif (Satışta)</label>
-        </div>
-        <div class="form-group" style="display: flex; align-items: center; gap: 8px;">
-          <input type="checkbox" id="p-new" checked style="width: auto; margin: 0; cursor: pointer;">
-          <label for="p-new" style="margin: 0; cursor: pointer; font-size: .84rem; font-weight: 500;">Yeni Ürün Rozeti</label>
+
+        <div class="pedit-col">
+          <div class="pedit-sec-h">Görseller</div>
+          <div class="form-group" style="margin-bottom: 16px;">
+            <label>Görseller <span style="font-weight:400;opacity:.6">— ilk görsel ana; sırala ◀ ▶, ana yap ★</span></label>
+            <input type="hidden" id="p-image">
+            <div id="p-gallery"></div>
+            <div style="display:flex; gap:8px; margin-top:8px;">
+              <input type="url" id="p-image-add" placeholder="https://... görsel URL'i ekle" style="flex:1;" onkeydown="if(event.key==='Enter'){event.preventDefault();pAddImageUrl();}">
+              <button type="button" class="btn btn-outline" onclick="pAddImageUrl()" style="white-space:nowrap;">+ Görsel</button>
+            </div>
+          </div>
+          <div class="pedit-sec-h">Varyantlar & Fiyatları</div>
+          <div class="form-group" style="margin-bottom: 16px;">
+            <label style="font-weight:400;opacity:.6;font-size:.8rem;">Her varyantın ₺ fiyatını ayrı ayarlayın</label>
+            <div id="p-variants"></div>
+          </div>
+          <div class="pedit-sec-h">Etiketler (SEO)</div>
+          <div class="form-group" style="margin-bottom: 12px;">
+            <div id="p-tags"></div>
+            <input type="text" id="p-tag-add" placeholder="Etiket yaz, Enter'a bas" style="margin-top:6px;" onkeydown="if(event.key==='Enter'){event.preventDefault();pAddTag();}">
+          </div>
         </div>
       </div>
     </div>
-    <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 16px;">
+    <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 16px; flex-shrink: 0;">
       <button class="btn btn-outline" onclick="closeProductModal()">İptal</button>
       <button class="btn btn-primary" onclick="saveProduct()">💾 Kaydet</button>
     </div>
