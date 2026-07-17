@@ -6,16 +6,19 @@ export interface CartItem {
   product?: Product;
   // Selected Etsy variation options, e.g. { Model: "Lion" }. Absent for plain products.
   options?: Record<string, string>;
+  // Personalization name / gift note tied to this specific line (kept OUT of `options`
+  // so it never breaks variant price matching or gets stripped by the server).
+  note?: string;
 }
 
-// Two cart lines are the "same" only if product id AND chosen options match, so
-// a Lion and a Giraffe of the same listing stay as separate lines.
+// Two cart lines are the "same" only if product id, chosen options AND personalization
+// note match, so a Lion and a Giraffe — or an "Emily" and a "Jack" teddy — stay separate.
 function optionsKey(options?: Record<string, string>): string {
   if (!options) return '';
   return Object.keys(options).sort().map((k) => `${k}=${options[k]}`).join('|');
 }
-function sameLine(a: CartItem, b: { id: string; options?: Record<string, string> }): boolean {
-  return a.id === b.id && optionsKey(a.options) === optionsKey(b.options);
+function sameLine(a: CartItem, b: { id: string; options?: Record<string, string>; note?: string }): boolean {
+  return a.id === b.id && optionsKey(a.options) === optionsKey(b.options) && (a.note || '') === (b.note || '');
 }
 
 export function getCart(): CartItem[] {
@@ -33,28 +36,31 @@ export function saveCart(cart: CartItem[]): void {
   window.dispatchEvent(new Event('cart-updated'));
 }
 
-export function addToCart(product: Product, quantity: number = 1, options?: Record<string, string>): void {
+export function addToCart(product: Product, quantity: number = 1, options?: Record<string, string>, note?: string): void {
   const cart = getCart();
-  const existing = cart.find((item) => sameLine(item, { id: product.id, options }));
+  const existing = cart.find((item) => sameLine(item, { id: product.id, options, note }));
   if (existing) {
     existing.quantity += quantity;
   } else {
-    cart.push(options ? { id: product.id, quantity, options } : { id: product.id, quantity });
+    const item: CartItem = { id: product.id, quantity };
+    if (options) item.options = options;
+    if (note) item.note = note;
+    cart.push(item);
   }
   saveCart(cart);
 }
 
-export function updateCartQuantity(productId: string, quantity: number, options?: Record<string, string>): void {
+export function updateCartQuantity(productId: string, quantity: number, options?: Record<string, string>, note?: string): void {
   const cart = getCart();
-  const existing = cart.find((item) => sameLine(item, { id: productId, options }));
+  const existing = cart.find((item) => sameLine(item, { id: productId, options, note }));
   if (existing) {
     existing.quantity = Math.max(1, quantity);
     saveCart(cart);
   }
 }
 
-export function removeFromCart(productId: string, options?: Record<string, string>): void {
-  const cart = getCart().filter((item) => !sameLine(item, { id: productId, options }));
+export function removeFromCart(productId: string, options?: Record<string, string>, note?: string): void {
+  const cart = getCart().filter((item) => !sameLine(item, { id: productId, options, note }));
   saveCart(cart);
 }
 

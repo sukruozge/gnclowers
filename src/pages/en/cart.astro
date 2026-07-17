@@ -127,6 +127,7 @@ const shippingCfg = (settings as any).shipping || {};
           <div class="citem__info">
             <h3 class="citem__title">${esc(prod.title_en || prod.title_tr)}</h3>
             ${optLine ? `<span class="citem__opts">${esc(optLine)}</span>` : ''}
+            ${item.note ? `<span class="citem__opts" style="color:#B0532E;font-weight:600;">✎ ${esc(item.note)}</span>` : ''}
             <span class="citem__unit">${fmt(unit)}</span>
             <button class="citem__remove" data-idx="${idx}">
               <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>
@@ -155,15 +156,15 @@ const shippingCfg = (settings as any).shipping || {};
 
     document.querySelectorAll('.cstep__minus').forEach(btn => btn.addEventListener('click', () => {
       const it = getCart()[Number(btn.getAttribute('data-idx'))];
-      if (it && it.quantity > 1) { updateCartQuantity(it.id, it.quantity - 1, it.options); renderCart(); }
+      if (it && it.quantity > 1) { updateCartQuantity(it.id, it.quantity - 1, it.options, it.note); renderCart(); }
     }));
     document.querySelectorAll('.cstep__plus').forEach(btn => btn.addEventListener('click', () => {
       const it = getCart()[Number(btn.getAttribute('data-idx'))];
-      if (it) { updateCartQuantity(it.id, it.quantity + 1, it.options); renderCart(); }
+      if (it) { updateCartQuantity(it.id, it.quantity + 1, it.options, it.note); renderCart(); }
     }));
     document.querySelectorAll('.citem__remove').forEach(btn => btn.addEventListener('click', () => {
       const it = getCart()[Number(btn.getAttribute('data-idx'))];
-      if (it) { removeFromCart(it.id, it.options); renderCart(); }
+      if (it) { removeFromCart(it.id, it.options, it.note); renderCart(); }
     }));
   }
 

@@ -78,7 +78,7 @@ export const POST: APIRoute = async (context) => {
     let subtotalTry = 0; // TRY base, for the TRY-denominated free-shipping threshold
     let itemCount = 0;   // total units — extra items add a % of the base shipping fee
     const basket: [string, string, number][] = [];
-    const items: { id: string; title: string; qty: number; price: number; image?: string; options?: Record<string, string> }[] = [];
+    const items: { id: string; title: string; qty: number; price: number; image?: string; options?: Record<string, string>; note?: string }[] = [];
 
     // Product prices are stored in TRY. When the order is placed in USD/EUR (the
     // EN storefront), convert every amount server-side with the settings rate so
@@ -126,9 +126,11 @@ export const POST: APIRoute = async (context) => {
       subtotalTry += priceTry * qty;
       itemCount += qty;
       const baseTitle = prod.title_tr || prod.title_en;
+      const noteClean = clip(item.note, 60); // personalization name / gift note for this line
       const optSuffix = options ? ' (' + Object.keys(options).map((k) => `${k}: ${options![k]}`).join(', ') + ')' : '';
-      basket.push([baseTitle + optSuffix, String(price), qty]);
-      items.push({ id: String(prod.id), title: baseTitle, qty, price, image: prod.image, ...(options ? { options } : {}) });
+      const noteSuffix = noteClean ? ` [${noteClean}]` : '';
+      basket.push([baseTitle + optSuffix + noteSuffix, String(price), qty]);
+      items.push({ id: String(prod.id), title: baseTitle, qty, price, image: prod.image, ...(options ? { options } : {}), ...(noteClean ? { note: noteClean } : {}) });
     }
 
     // Region-based shipping, computed server-side (never trust the client),

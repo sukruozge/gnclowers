@@ -217,7 +217,7 @@ const shippingCfg = (settings as any).shipping || {};
     row.className = 'summary-item';
     row.innerHTML = `
       <span class="summary-item__media"><img src="${img}" alt="" loading="lazy" /><span class="summary-item__qty">${item.quantity}</span></span>
-      <span class="summary-item__title">${prod.title_tr || prod.title_en}${optLine ? `<span class="summary-item__opts">${optLine}</span>` : ''}</span>
+      <span class="summary-item__title">${prod.title_tr || prod.title_en}${optLine ? `<span class="summary-item__opts">${optLine}</span>` : ''}${item.note ? `<span class="summary-item__opts" style="color:#B0532E;">✎ ${item.note}</span>` : ''}</span>
       <span class="summary-item__price">${formattedPrice}</span>
     `;
     summaryList?.appendChild(row);
@@ -373,7 +373,7 @@ const shippingCfg = (settings as any).shipping || {};
       city: intl ? [val('c-city-intl'), val('c-country-name')].filter(Boolean).join(', ') : '',
       postal: val('c-postal'),
       note: val('c-note'),
-      cart: cart.map(x => ({ id: x.id, quantity: x.quantity, options: x.options })),
+      cart: cart.map(x => ({ id: x.id, quantity: x.quantity, options: x.options, note: x.note })),
       currency: currency,
       lang: 'tr'
     };

@@ -96,6 +96,12 @@ const crumbLd = breadcrumbJsonLd([
                 </div>
               )}
 
+              <div class="personalize" id="personalize" hidden>
+                <label class="variation__label" for="personalize-name">İşlenecek isim ✎</label>
+                <input type="text" id="personalize-name" maxlength="30" autocomplete="off" placeholder="Örn: Emily" />
+                <p class="variation__err" id="personalize-err" hidden>Lütfen işlenecek ismi yazın.</p>
+              </div>
+
               <div class="detail__buy">
                 <div class="qtystep" role="group" aria-label="Adet seçimi">
                   <button type="button" class="qtystep__btn" id="qty-minus" aria-label="Adedi azalt">−</button>
@@ -174,8 +180,24 @@ const crumbLd = breadcrumbJsonLd([
     const sel = allChosen() ? selected() : undefined;
     priceEl.textContent = fmtPrice(resolveVariantPrice(prod, sel));
   }
-  sels.forEach((s) => s.addEventListener('change', () => { if (errEl) errEl.hidden = true; refreshPrice(); }));
+  // Kişiselleştirme: "Kişiselleştirilmiş" seçilince isim alanını göster.
+  const personalizeEl = document.getElementById('personalize');
+  const nameEl = document.getElementById('personalize-name') as HTMLInputElement | null;
+  const nameErr = document.getElementById('personalize-err');
+  function isPersonalized(): boolean {
+    return sels.some((s) => /personal|kişisel|isim|name/i.test(s.value || ''));
+  }
+  function updatePersonalize() {
+    if (!personalizeEl) return;
+    const on = isPersonalized();
+    personalizeEl.hidden = !on;
+    if (!on && nameEl) nameEl.value = '';
+  }
+  nameEl?.addEventListener('input', () => { if (nameErr) nameErr.hidden = true; });
+
+  sels.forEach((s) => s.addEventListener('change', () => { if (errEl) errEl.hidden = true; refreshPrice(); updatePersonalize(); }));
   refreshPrice();
+  updatePersonalize();
 
   function render() { if (valEl) valEl.textContent = String(qty); if (minus) (minus as HTMLButtonElement).disabled = qty <= 1; }
   minus?.addEventListener('click', () => { if (qty > 1) { qty--; render(); } });
@@ -189,8 +211,14 @@ const crumbLd = breadcrumbJsonLd([
       firstEmpty?.focus();
       return;
     }
+    const name = (personalizeEl && !personalizeEl.hidden) ? (nameEl?.value || '').trim() : '';
+    if (personalizeEl && !personalizeEl.hidden && !name) {
+      if (nameErr) nameErr.hidden = false;
+      nameEl?.focus();
+      return;
+    }
     const opts = sels.length ? selected() : undefined;
-    addToCart(prod, qty, opts);
+    addToCart(prod, qty, opts, name || undefined);
     showCartToast({ addedLabel: 'Sepete eklendi', goLabel: 'Sepete git', cartHref: '/tr/sepet' });
   });
 </script>
@@ -213,6 +241,9 @@ const crumbLd = breadcrumbJsonLd([
     .buybox__pricerow { display: flex; align-items: baseline; gap: var(--space-3); flex-wrap: wrap; }
 
     .variations { display: flex; flex-direction: column; gap: var(--space-3); margin: var(--space-4) 0; }
+    .personalize { display: flex; flex-direction: column; gap: 6px; margin: var(--space-3) 0 var(--space-4); padding: var(--space-3); background: color-mix(in srgb, var(--accent) 6%, var(--surface)); border: 1px dashed color-mix(in srgb, var(--accent) 40%, var(--line)); border-radius: var(--radius); }
+    .personalize input { font-family: inherit; font-size: 0.95rem; min-height: 46px; padding: 10px 14px; border: 1.5px solid var(--line); border-radius: 10px; background: var(--bg); color: var(--ink); }
+    .personalize input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 16%, transparent); }
     .variation { display: flex; flex-direction: column; gap: 6px; }
     .variation__label { font-size: .85rem; font-weight: 600; color: var(--ink); }
     .variation .select-wrap { position: relative; display: flex; }

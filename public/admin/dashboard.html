@@ -3495,8 +3495,9 @@ function orderCardHTML(o) {
         const optLine = (it.options && typeof it.options === 'object')
           ? Object.keys(it.options).map(k => `${esc(k)}: ${esc(it.options[k])}`).join(' · ')
           : '';
+        const noteLine = it.note ? `<div class="oi-note" style="font-size:.8rem;color:#B0532E;font-weight:700;margin-top:2px;">✎ İsim/not: ${esc(it.note)}</div>` : '';
         return `<div class="order-item"><div class="oi-media">${thumb}<span class="oi-qty">×${esc(it.qty)}</span></div>` +
-          `<div class="oi-info"><div class="oi-title">${esc(it.title)}</div>${optLine ? `<div class="oi-opts">${optLine}</div>` : ''}<div class="oi-sub">${lineSub}</div></div></div>`;
+          `<div class="oi-info"><div class="oi-title">${esc(it.title)}</div>${optLine ? `<div class="oi-opts">${optLine}</div>` : ''}${noteLine}<div class="oi-sub">${lineSub}</div></div></div>`;
       }).join('')
     : '<div class="order-item"><div class="oi-title" style="color:var(--muted-foreground)">Ürün bilgisi kaydedilmemiş</div></div>';
 
