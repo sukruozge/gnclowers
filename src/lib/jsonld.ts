@@ -87,6 +87,22 @@ export function articleJsonLd(post: Post, locale: Locale, url: string, site: str
   });
 }
 
+/** Catalog page schema — tells Google the listing is a curated product collection. */
+export function itemListJsonLd(name: string, items: Array<{ name: string; url: string }>): string {
+  return encode({
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name,
+    numberOfItems: items.length,
+    itemListElement: items.map((it, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: it.name,
+      url: it.url,
+    })),
+  });
+}
+
 /** Breadcrumb trail — shows navigation path in search results. */
 export function breadcrumbJsonLd(items: Array<{ name: string; url: string }>): string {
   return encode({
@@ -135,6 +151,11 @@ export function productJsonLd(
       seller: { '@type': 'Organization', name: BRAND },
     },
   };
+  // Turkish tags become schema keywords on the TR locale only — the EN listing
+  // copy comes from Etsy and must stay untouched.
+  if (locale === 'tr' && product.tags?.length) {
+    data.keywords = product.tags.slice(0, 13).join(', ');
+  }
   // Real, verified seller rating from Etsy (shop-wide) — only when we have it.
   if (rating && rating.count > 0 && rating.value > 0) {
     data.aggregateRating = {

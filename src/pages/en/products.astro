@@ -3,9 +3,19 @@ import Base from '../../layouts/Base.astro';
 import Nav from '../../components/Nav.astro';
 import Footer from '../../components/Footer.astro';
 import ProductCard from '../../components/ProductCard.astro';
-import { loadProducts } from '@lib/products';
+import { loadProducts, productSlug } from '@lib/products';
 import { categoryLabel } from '@lib/categories';
+import { itemListJsonLd, breadcrumbJsonLd } from '@lib/jsonld';
 const products = loadProducts();
+const site = Astro.site!.toString().replace(/\/+$/, '');
+const listLd = itemListJsonLd('Crochet Toys & Amigurumi', products.slice(0, 48).map((p) => ({
+  name: p.title_en || p.title_tr,
+  url: `${site}/en/product/${productSlug(p, 'en')}`,
+})));
+const crumbLd = breadcrumbJsonLd([
+  { name: 'Home', url: `${site}/en` },
+  { name: 'Products', url: `${site}/en/products` },
+]);
 const cats = ['all', ...new Set(products.map((p) => p.category))];
 // "all" is localized; every other category uses its admin-editable EN name.
 const catName = (c: string) => (c === 'all' ? 'All' : categoryLabel(c, 'en'));
@@ -26,6 +36,8 @@ const bPos = ['pa--l1', 'pa--r1', 'pa--l2', 'pa--r2', 'pa--l3', 'pa--r3'];
 <Base locale="en" title="Crochet Toys & Amigurumi — All Handmade Products | Aselovers"
   description="Handmade crochet toys, amigurumi animals, baby gifts and nursery décor. Crocheted to order from soft cotton yarn — ships to Türkiye and worldwide."
   pathSelf="products" pathsAlt={{ tr: 'urunler', en: 'products' }}>
+  <script type="application/ld+json" set:html={listLd} slot="head" />
+  <script type="application/ld+json" set:html={crumbLd} slot="head" />
   <Nav locale="en" />
   <main>
     <section class="section catalog">

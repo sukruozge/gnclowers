@@ -4,7 +4,10 @@ const { images, alt } = Astro.props;
 ---
 {images.length > 0 && (
   <div class="gallery">
-    <div class="gallery__main"><img id="gallery-main" src={images[0]} alt={alt} /></div>
+    <div class="gallery__main">
+      <img id="gallery-main" src={images[0]} alt={alt} draggable="false" />
+      <span class="gallery__wm" aria-hidden="true">ASELOVERS</span>
+    </div>
     {images.length > 1 && (
       <div class="gallery__thumbs">
         {images.map((src, i) => (
@@ -18,8 +21,17 @@ const { images, alt } = Astro.props;
 )}
 <style>
   .gallery { position: sticky; top: 92px; }
-  .gallery__main { aspect-ratio: 1 / 1; overflow: hidden; border-radius: var(--radius); background: var(--section); }
-  .gallery__main img { width: 100%; height: 100%; object-fit: cover; }
+  .gallery__main { position: relative; aspect-ratio: 1 / 1; overflow: hidden; border-radius: var(--radius); background: var(--section); }
+  .gallery__main img { width: 100%; height: 100%; object-fit: cover; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+  /* Subtle brand watermark — deters casual screenshot/save without hiding the product. */
+  .gallery__wm {
+    position: absolute; right: 12px; bottom: 10px; pointer-events: none;
+    font-family: var(--font-heading, inherit); font-size: .72rem; font-weight: 600;
+    letter-spacing: .22em; color: rgba(255, 255, 255, .8);
+    text-shadow: 0 1px 6px rgba(0, 0, 0, .45);
+    padding: 4px 10px; border-radius: 999px;
+    background: rgba(0, 0, 0, .18); backdrop-filter: blur(3px);
+  }
   .gallery__thumbs { display: grid; grid-template-columns: repeat(auto-fill, minmax(64px, 1fr)); gap: var(--space-2); margin-top: var(--space-3); }
   .gallery__thumb { padding: 0; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; cursor: pointer; aspect-ratio: 1 / 1; background: var(--section); transition: border-color var(--dur) var(--ease); }
   .gallery__thumb:hover { border-color: var(--accent); }
@@ -35,5 +47,9 @@ const { images, alt } = Astro.props;
       if (main && t.dataset.src) main.src = t.dataset.src;
       thumbs.forEach((x) => x.classList.toggle('is-active', x === t));
     }));
+    // Casual-save deterrent only (source URLs stay reachable; this is not DRM).
+    g.addEventListener('contextmenu', (e) => {
+      if ((e.target as HTMLElement).tagName === 'IMG') e.preventDefault();
+    });
   });
 </script>
