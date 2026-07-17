@@ -747,7 +747,7 @@
         </button>
         <div class="sidebar-submenu" id="submenu-products">
           <button class="sidebar-submenu-item" onclick="showPage('products', this)">Ürün Listesi</button>
-          <button class="sidebar-submenu-item" onclick="showPage('products'); saveQuickApiKey();">Hızlı API Girişi</button>
+          <button class="sidebar-submenu-item" onclick="showCategories(this)">Kategoriler</button>
         </div>
       </div>
 
@@ -3171,6 +3171,16 @@ async function saveProductCategories() {
     _content.categoryCovers = covers;
     toast('✅ Kategoriler kaydedildi (yayına 1-2 dk sürebilir)', 'ok');
   } catch { toast('⚠️ Kategoriler kaydedilemedi, tekrar deneyin.', 'err'); }
+}
+
+// Sidebar "Kategoriler" → open the products page and jump to the category manager.
+function showCategories(el) {
+  showPage('products', el);
+  setTimeout(() => {
+    const c = document.getElementById('products-cat-list');
+    const card = c ? c.closest('.card') : null;
+    if (card) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 120);
 }
 
 function promptAddCategory() {
