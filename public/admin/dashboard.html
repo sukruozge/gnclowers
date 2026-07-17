@@ -927,9 +927,9 @@
           </select>
         </div>
         <div class="card-body" style="padding:0">
-          <div class="table-wrap" style="max-height: 62vh; overflow: auto;">
+          <div class="table-wrap">
             <table>
-              <thead style="position: sticky; top: 0; z-index: 2; background: var(--card, #fff);">
+              <thead>
                 <tr>
                   <th>Görsel</th>
                   <th>Ürün Adı (TR / EN)</th>
@@ -949,10 +949,15 @@
           </div>
         </div>
       </div>
+    </div>
 
-      <div class="card" style="margin-top: 20px;">
+    <!-- CATEGORIES PAGE (separate from the product list) -->
+    <div class="page" id="page-categories">
+      <div class="page-title">Kategori Yönetimi</div>
+      <div class="page-subtitle">Kategori kapak görselleri, isimleri ve yeni kategoriler</div>
+      <div class="card">
         <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
-          <div class="card-title">Kategori Yönetimi</div>
+          <div class="card-title">Kategoriler</div>
           <div style="display:flex;gap:8px;flex-wrap:wrap;">
             <button class="btn btn-sm btn-outline" onclick="promptAddCategory()">+ Yeni Kategori</button>
             <button class="btn btn-sm btn-gold" onclick="saveProductCategories()">💾 Kategorileri Kaydet</button>
@@ -1912,6 +1917,7 @@ function showPage(pageId, btn) {
   const titles = {
     dashboard: 'Dashboard',
     products: 'Ürün Yönetimi',
+    categories: 'Kategori Yönetimi',
     content: 'İçerik Yönetimi',
     blog: 'Blog Yönetimi',
     settings: 'Ayarlar',
@@ -1926,6 +1932,7 @@ function showPage(pageId, btn) {
   else if (pageId === 'messages') loadMessagesPage();
   else if (pageId === 'subscribers') loadSubscribersPage();
   else if (pageId === 'analytics') loadAnalyticsPage();
+  else if (pageId === 'categories') renderProductCategories();
 }
 
 // ── DASHBOARD ─────────────────────────────────────────────
@@ -2199,8 +2206,6 @@ function renderProducts() {
       </td>
     </tr>`;
   }).join('');
-
-  renderProductCategories();
 }
 
 function onProductFilter() {
@@ -3173,14 +3178,9 @@ async function saveProductCategories() {
   } catch { toast('⚠️ Kategoriler kaydedilemedi, tekrar deneyin.', 'err'); }
 }
 
-// Sidebar "Kategoriler" → open the products page and jump to the category manager.
+// Sidebar "Kategoriler" → its own page, separate from the product list.
 function showCategories(el) {
-  showPage('products', el);
-  setTimeout(() => {
-    const c = document.getElementById('products-cat-list');
-    const card = c ? c.closest('.card') : null;
-    if (card) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }, 120);
+  showPage('categories', el);
 }
 
 function promptAddCategory() {
