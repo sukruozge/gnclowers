@@ -14,12 +14,21 @@ describe('productJsonLd', () => {
     expect(obj['@type']).toBe('Product');
     expect(obj.name).toBe('Bunny');
   });
-  it('has a correct offer', () => {
-    expect(obj.offers['@type']).toBe('Offer');
-    expect(obj.offers.price).toBe('1912.50');
-    expect(obj.offers.priceCurrency).toBe('TRY');
-    expect(obj.offers.availability).toBe('https://schema.org/InStock');
+  it('has a correct TRY offer on the /tr page', () => {
+    const trObj = JSON.parse(productJsonLd(p, 'tr', 'https://aseloves.com/tr/urun/tavsan-9'));
+    expect(trObj.offers['@type']).toBe('Offer');
+    expect(trObj.offers.price).toBe('1912.50');
+    expect(trObj.offers.priceCurrency).toBe('TRY');
+    expect(trObj.offers.availability).toBe('https://schema.org/InStock');
     // Offer URL points to the on-site canonical product page (not an external marketplace).
+    expect(trObj.offers.url).toBe('https://aseloves.com/tr/urun/tavsan-9');
+  });
+  it('converts the offer to USD on the /en page so currency matches the shown price', () => {
+    // EN storefront charges USD; declaring TRY here would be a Google Merchant mismatch.
+    expect(obj.offers['@type']).toBe('Offer');
+    expect(obj.offers.priceCurrency).toBe('USD');
+    expect(Number(obj.offers.price)).toBeGreaterThan(0);
+    expect(Number(obj.offers.price)).toBeLessThan(p.price);
     expect(obj.offers.url).toBe('https://aseloves.com/en/product/bunny-9');
   });
   it('omits image when the product has no image', () => {
