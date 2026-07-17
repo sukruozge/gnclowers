@@ -1263,6 +1263,7 @@
           <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
             <input id="order-search" type="search" placeholder="Ara — isim, e-posta, sipariş no…" oninput="onOrderSearch()" autocomplete="off" style="padding:7px 10px;border:1px solid var(--border);border-radius:8px;background:transparent;color:inherit;font-size:.82rem;min-width:200px;">
             <button class="btn btn-sm btn-outline" onclick="exportOrdersCSV()" title="Siparişleri CSV olarak indir">⬇ CSV</button>
+            <button class="btn btn-sm btn-danger" onclick="clearAllOrders()" title="Test siparişlerini temizle (tümünü sil)">🧹 Temizle</button>
             <span id="orders-count" style="font-size:.8rem;color:var(--muted-foreground)">0 sipariş</span>
           </div>
         </div>
@@ -3263,6 +3264,32 @@ function onOrderSearch() {
   renderOrders();
 }
 
+// Delete a single order (KV) with optimistic UI.
+async function deleteOrder(orderId) {
+  openModal('Siparişi Sil', 'Bu siparişi kalıcı olarak silmek istediğinize emin misiniz?', async () => {
+    try {
+      const res = await fetch('/api/admin/order-delete', { method: 'POST', headers: ADM_HDR, credentials: 'include', body: JSON.stringify({ orderId }) });
+      if (!res.ok) throw new Error();
+      _orders = _orders.filter(o => o.orderId !== orderId);
+      renderOrders(); renderDashboard();
+      toast('🗑️ Sipariş silindi', 'ok');
+    } catch { toast('⚠️ Silinemedi, tekrar deneyin.', 'err'); }
+  });
+}
+
+// Clear ALL orders — used once when going live to drop the test orders.
+async function clearAllOrders() {
+  openModal('Tüm Siparişleri Temizle', `Toplam ${_orders.length} siparişin TAMAMI kalıcı olarak silinecek. Bu işlem geri alınamaz. (Canlıya geçişte test siparişlerini temizlemek için.)`, async () => {
+    try {
+      const res = await fetch('/api/admin/order-delete', { method: 'POST', headers: ADM_HDR, credentials: 'include', body: JSON.stringify({ all: true }) });
+      if (!res.ok) throw new Error();
+      _orders = [];
+      renderOrders(); renderDashboard();
+      toast('✅ Tüm siparişler temizlendi', 'ok');
+    } catch { toast('⚠️ Temizlenemedi, tekrar deneyin.', 'err'); }
+  });
+}
+
 // Export every order (all periods/filters) to a UTF-8 CSV for accounting / shipping.
 function exportOrdersCSV() {
   if (!_orders.length) { toast('Dışa aktarılacak sipariş yok', 'err'); return; }
@@ -3569,6 +3596,7 @@ function orderCardHTML(o) {
     </div>
     ${fulfilBar}
     ${!ok && o.failedReason ? `<div class="order-fail">Ödeme başarısız — ${esc(o.failedReason)}</div>` : ''}
+    <div style="display:flex;justify-content:flex-end;padding:0 18px 12px;"><button class="btn btn-sm" onclick="deleteOrder('${esc(o.orderId)}')" style="color:#ef4444;background:transparent;border:1px solid rgba(239,68,68,.35);font-size:.78rem;">🗑️ Siparişi sil</button></div>
   </article>`;
 }
 

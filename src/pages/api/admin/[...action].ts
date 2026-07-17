@@ -756,6 +756,24 @@ async function router(method: string, context: APIContext): Promise<Response> {
       return json({ ok: true, order: o }, 200);
     }
 
+    // Delete a single order, or clear all of them (going-live cleanup of test orders).
+    if (method === 'POST' && action === 'order-delete') {
+      if (!(await isAuthed(request, env))) return json({ error: 'invalid' }, 401);
+      const kv = env.ADMIN_KV;
+      if (!kv) return json({ error: 'no-kv' }, 500);
+      const body = await readBody(request);
+      const raw = await kv.get('orders');
+      const orders = raw ? JSON.parse(raw) : [];
+      if (body?.all === true) {
+        await kv.put('orders', JSON.stringify([]));
+        return json({ ok: true, cleared: orders.length }, 200);
+      }
+      if (!body || typeof body.orderId !== 'string') return json({ error: 'invalid' }, 400);
+      const next = orders.filter((x: any) => x.orderId !== body.orderId);
+      await kv.put('orders', JSON.stringify(next));
+      return json({ ok: true, removed: orders.length - next.length }, 200);
+    }
+
     if (method === 'POST' && action === 'products') return await handleProductCreate(request, env);
     if (action.startsWith('products/')) {
       const id = decodeURIComponent(action.slice('products/'.length));

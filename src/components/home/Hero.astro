@@ -79,28 +79,10 @@ const programs = [
   <!-- Glowing subtle lights background -->
   <div class="hero-pulse__glow animate-glow" aria-hidden="true"></div>
 
-  <!-- Background texture video — not eagerly loaded (it was a 15 MB autoplay download
-       on the LCP-critical hero, at 18% opacity). Lazily played after load only on
-       fast connections & when reduced-motion is not requested. -->
-  <video class="hero-pulse__video" preload="none" loop muted playsinline aria-hidden="true" data-hero-video>
+  <!-- Background texture video (18% opacity). Autoplays, muted & looping. -->
+  <video class="hero-pulse__video" autoplay loop muted playsinline preload="auto" aria-hidden="true">
     <source src="/images/hero-crochet.mp4" type="video/mp4" />
   </video>
-  <script>
-    // Progressive enhancement: fetch/play the ambient hero video only after the page
-    // has settled, only if the visitor isn't on a slow/save-data connection and hasn't
-    // asked for reduced motion. Keeps the initial load light on mobile.
-    (() => {
-      const v = document.querySelector('[data-hero-video]');
-      if (!(v instanceof HTMLVideoElement)) return;
-      const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-      const conn = (navigator as any).connection;
-      const slow = conn && (conn.saveData || /2g/.test(conn.effectiveType || ''));
-      if (reduce || slow) return;
-      const start = () => { v.preload = 'auto'; v.play().catch(() => {}); };
-      if ('requestIdleCallback' in window) (window as any).requestIdleCallback(start, { timeout: 3000 });
-      else setTimeout(start, 2000);
-    })();
-  </script>
 
   <!-- Content Centered Top Row -->
   <div class="container hero-pulse__content-wrapper">
