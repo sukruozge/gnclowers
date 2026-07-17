@@ -4,10 +4,11 @@ import Nav from '../../components/Nav.astro';
 import Footer from '../../components/Footer.astro';
 import ProductCard from '../../components/ProductCard.astro';
 import { loadProducts } from '@lib/products';
+import { categoryLabel } from '@lib/categories';
 const products = loadProducts();
 const cats = ['all', ...new Set(products.map((p) => p.category))];
-// Categories come from Etsy shop sections (real seller titles), shown as-is; only "all" is localized.
-const catLabel: Record<string, string> = { all: 'Tümü' };
+// "all" is localized; every other category uses its admin-editable TR name.
+const catName = (c: string) => (c === 'all' ? 'Tümü' : categoryLabel(c, 'tr'));
 const catCount = (c: string) => (c === 'all' ? products.length : products.filter((p) => p.category === c).length);
 const catImage = (c: string) => (c === 'all' ? null : products.find((p) => p.category === c)?.image ?? null);
 const allImages = products.map((p) => p.image).filter(Boolean).slice(0, 4) as string[];
@@ -49,14 +50,14 @@ const bPos = ['pa--l1', 'pa--r1', 'pa--l2', 'pa--r2', 'pa--l3', 'pa--r3'];
         <div class="filterbar">
           <div class="cats" role="tablist" aria-label="Kategoriler">
             {cats.map((c) => (
-              <button class="cat" role="tab" data-cat={c} aria-label={`${catLabel[c] ?? c} (${catCount(c)})`}>
+              <button class="cat" role="tab" data-cat={c} aria-label={`${catName(c)} (${catCount(c)})`}>
                 <span class="cat__img">
                   {c === 'all'
                     ? <span class="cat__collage">{allImages.map((src) => <img src={src} alt="" loading="lazy" />)}</span>
-                    : (catImage(c) ? <img src={catImage(c)} alt={`${catLabel[c] ?? c} — el yapımı örgü amigurumi`} loading="lazy" /> : <span class="cat__ph" />)}
+                    : (catImage(c) ? <img src={catImage(c)} alt={`${catName(c)} — el yapımı örgü amigurumi`} loading="lazy" /> : <span class="cat__ph" />)}
                   <span class="cat__n">{catCount(c)}</span>
                 </span>
-                <span class="cat__name">{catLabel[c] ?? c}</span>
+                <span class="cat__name">{catName(c)}</span>
               </button>
             ))}
           </div>

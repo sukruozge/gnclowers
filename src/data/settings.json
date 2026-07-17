@@ -52,5 +52,18 @@
     "Baby Shower": "/images/categories/giftsets.png",
     "Crochet Hair Clips": "/images/categories/hairclips.png",
     "Wedding Dolls": "/images/categories/dolls.png"
+  },
+  "categoryNames": {
+    "Crochet Bags": { "tr": "Örgü Çantalar", "en": "Crochet Bags" },
+    "Safari Animals": { "tr": "Safari Hayvanları", "en": "Safari Animals" },
+    "Curtain Tiebacks": { "tr": "Perde Tutacakları", "en": "Curtain Tiebacks" },
+    "Amigurumi Toys": { "tr": "Amigurumi Oyuncaklar", "en": "Amigurumi Toys" },
+    "Baby Gift Sets": { "tr": "Bebek Hediye Setleri", "en": "Baby Gift Sets" },
+    "Stuffed Animals": { "tr": "Peluş Oyuncaklar", "en": "Stuffed Animals" },
+    "Crochet Dolls": { "tr": "Örgü Bebekler", "en": "Crochet Dolls" },
+    "Bunny Rabbits Toys": { "tr": "Örgü Tavşanlar", "en": "Bunny Rabbits Toys" },
+    "Baby Shower": { "tr": "Bebek Partisi", "en": "Baby Shower" },
+    "Crochet Hair Clips": { "tr": "Örgü Saç Tokaları", "en": "Crochet Hair Clips" },
+    "Wedding Dolls": { "tr": "Düğün Bebekleri", "en": "Wedding Dolls" }
   }
 }

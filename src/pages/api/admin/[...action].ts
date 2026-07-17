@@ -287,6 +287,18 @@ async function handleSettingsPut(request: Request, env: Record<string, any>): Pr
     if (body.categoryCovers && typeof body.categoryCovers === 'object') {
       data.categoryCovers = { ...data.categoryCovers, ...body.categoryCovers };
     }
+    // Bilingual category display names: { "<key>": { tr, en } }
+    if (body.categoryNames && typeof body.categoryNames === 'object') {
+      const clean: Record<string, { tr?: string; en?: string }> = { ...(data.categoryNames || {}) };
+      for (const [key, val] of Object.entries(body.categoryNames as Record<string, any>)) {
+        if (!key || typeof val !== 'object' || val === null) continue;
+        const entry: { tr?: string; en?: string } = {};
+        if (typeof val.tr === 'string') entry.tr = val.tr.trim().slice(0, 80);
+        if (typeof val.en === 'string') entry.en = val.en.trim().slice(0, 80);
+        clean[key] = entry;
+      }
+      data.categoryNames = clean;
+    }
 
     // Rename category globally across covers & products if requested
     if (body.renameCategory && typeof body.renameCategory === 'object') {
@@ -296,6 +308,11 @@ async function handleSettingsPut(request: Request, env: Record<string, any>): Pr
         if (data.categoryCovers && data.categoryCovers[oldName] !== undefined) {
           data.categoryCovers[newName] = data.categoryCovers[oldName];
           delete data.categoryCovers[oldName];
+        }
+        // 1b. Carry bilingual names to the new key
+        if (data.categoryNames && data.categoryNames[oldName] !== undefined) {
+          data.categoryNames[newName] = data.categoryNames[oldName];
+          delete data.categoryNames[oldName];
         }
         // 2. Load and update products
         try {

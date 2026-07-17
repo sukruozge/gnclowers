@@ -3150,8 +3150,12 @@ function renderProductCategories() {
   const fromProducts = [...new Set(_products.map(p => p.category))].filter(Boolean);
   const fromCovers = Object.keys((_content && _content.categoryCovers) || {});
   const all = [...new Set(['amigurumi', 'bag', 'decor', 'accessory', ...fromProducts, ...fromCovers])];
+  const names = (_content && _content.categoryNames) || {};
   el.innerHTML = all.map(cat => {
     const cover = (_content.categoryCovers && _content.categoryCovers[cat]) || '';
+    const nm = names[cat] || {};
+    const nmTr = typeof nm.tr === 'string' ? nm.tr : '';
+    const nmEn = typeof nm.en === 'string' ? nm.en : '';
     const slug = slugify(cat);
     const count = _products.filter(p => p.category === cat).length;
     const prev = cover
@@ -3161,6 +3165,10 @@ function renderProductCategories() {
     return `<div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:10px;border:1px solid var(--border);border-radius:8px;">
       ${prev}
       <div style="min-width:120px;font-weight:600;">${esc(cat)} <span style="opacity:.5;font-weight:400;font-size:.8rem;">(${count})</span></div>
+      <div style="flex:1;min-width:260px;display:flex;flex-wrap:wrap;gap:6px;">
+        <label style="flex:1;min-width:120px;display:flex;flex-direction:column;gap:2px;font-size:.68rem;opacity:.7;">🇹🇷 Türkçe ad<input type="text" value="${esc(nmTr)}" placeholder="Türkçe ad" class="pcat-tr-input" data-cat="${esc(cat)}" style="font-size:.82rem;"></label>
+        <label style="flex:1;min-width:120px;display:flex;flex-direction:column;gap:2px;font-size:.68rem;opacity:.7;">🇬🇧 İngilizce ad<input type="text" value="${esc(nmEn)}" placeholder="English name" class="pcat-en-input" data-cat="${esc(cat)}" style="font-size:.82rem;"></label>
+      </div>
       <div style="flex:1;min-width:220px;display:flex;gap:8px;"><input type="text" id="pcat-cover-${slug}" value="${esc(cover)}" placeholder="Kapak görsel URL" class="pcat-cover-input" data-cat="${esc(cat)}" style="flex:1;font-size:.82rem;"><button class="btn btn-outline btn-sm" onclick="triggerFileUpload('pcat-cover-${slug}','public/images/categories/${slug}[ext]',true)" style="white-space:nowrap;">📁 Yükle</button></div>
       <div style="display:flex;gap:6px;"><button class="btn btn-outline btn-sm" onclick="promptRenameCategory('${catJs}')" title="Yeniden adlandır">✏️</button><button class="btn btn-danger btn-sm" onclick="deleteCategory('${catJs}')" title="Sil">🗑️</button></div>
     </div>`;
@@ -3170,10 +3178,14 @@ function renderProductCategories() {
 async function saveProductCategories() {
   const covers = (_content && _content.categoryCovers) || {};
   document.querySelectorAll('.pcat-cover-input').forEach(inp => { const c = inp.getAttribute('data-cat'); if (c != null) covers[c] = inp.value.trim(); });
+  const names = (_content && _content.categoryNames) || {};
+  document.querySelectorAll('.pcat-tr-input').forEach(inp => { const c = inp.getAttribute('data-cat'); if (c == null) return; names[c] = names[c] || {}; names[c].tr = inp.value.trim(); });
+  document.querySelectorAll('.pcat-en-input').forEach(inp => { const c = inp.getAttribute('data-cat'); if (c == null) return; names[c] = names[c] || {}; names[c].en = inp.value.trim(); });
   try {
-    const res = await fetch('/api/admin/settings', { method: 'PUT', headers: ADM_HDR, credentials: 'include', body: JSON.stringify({ categoryCovers: covers }) });
+    const res = await fetch('/api/admin/settings', { method: 'PUT', headers: ADM_HDR, credentials: 'include', body: JSON.stringify({ categoryCovers: covers, categoryNames: names }) });
     if (!res.ok) throw new Error();
     _content.categoryCovers = covers;
+    _content.categoryNames = names;
     toast('✅ Kategoriler kaydedildi (yayına 1-2 dk sürebilir)', 'ok');
   } catch { toast('⚠️ Kategoriler kaydedilemedi, tekrar deneyin.', 'err'); }
 }
@@ -3227,6 +3239,10 @@ function promptRenameCategory(oldName) {
         _content.categoryCovers[trimmed] = _content.categoryCovers[oldName] || '';
         delete _content.categoryCovers[oldName];
       }
+      if (_content.categoryNames && _content.categoryNames[oldName] !== undefined) {
+        _content.categoryNames[trimmed] = _content.categoryNames[oldName];
+        delete _content.categoryNames[oldName];
+      }
       _products.forEach(p => {
         if (p.category === oldName) p.category = trimmed;
       });
@@ -3248,6 +3264,9 @@ function deleteCategory(catName) {
   openModal('Kategoriyi Sil', `"${catName}" kategorisini kapak listesinden silmek istediğinizden emin misiniz? (Ürünlerdeki kategoriler etkilenmez)`, () => {
     if (_content.categoryCovers) {
       delete _content.categoryCovers[catName];
+    }
+    if (_content.categoryNames) {
+      delete _content.categoryNames[catName];
     }
     renderSettings();
     renderProductCategories();

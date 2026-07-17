@@ -1,26 +1,13 @@
 ---
 import { t, type Locale } from '@lib/i18n';
 import { loadProducts } from '@lib/products';
+import { categoryLabel } from '@lib/categories';
 import SectionHeading from '../SectionHeading.astro';
 import Ambient from '../Ambient.astro';
 import settings from '../../data/settings.json';
 
 const { locale } = Astro.props as { locale: Locale };
 const products = loadProducts();
-
-const catLabels: Record<string, Record<Locale, string>> = {
-  'Crochet Bags': { tr: 'Örgü Çantalar', en: 'Crochet Bags' },
-  'Safari Animals': { tr: 'Safari Hayvanları', en: 'Safari Animals' },
-  'Curtain Tiebacks': { tr: 'Perde Tutacakları', en: 'Curtain Tiebacks' },
-  'Amigurumi Toys': { tr: 'Amigurumi Oyuncaklar', en: 'Amigurumi Toys' },
-  'Baby Gift Sets': { tr: 'Bebek Hediye Setleri', en: 'Baby Gift Sets' },
-  'Stuffed Animals': { tr: 'Peluş Oyuncaklar', en: 'Stuffed Animals' },
-  'Crochet Dolls': { tr: 'Örgü Bebekler', en: 'Crochet Dolls' },
-  'Bunny Rabbits Toys': { tr: 'Örgü Tavşanlar', en: 'Bunny Rabbits Toys' },
-  'Baby Shower': { tr: 'Bebek Partisi', en: 'Baby Shower' },
-  'Crochet Hair Clips': { tr: 'Örgü Saç Tokaları', en: 'Crochet Hair Clips' },
-  'Wedding Dolls': { tr: 'Düğün Bebekleri', en: 'Wedding Dolls' }
-};
 
 const REPRESENTATIVE_IMAGES: Record<string, string> = {
   'Crochet Bags': settings.categoryCovers?.['Crochet Bags'] || '/images/categories/bags.png',
@@ -41,7 +28,7 @@ const cats = [...new Set(products.map((p) => p.category))]
     const items = products.filter((p) => p.category === c);
     const sample = items.find((p) => p.image);
     const chosenImage = REPRESENTATIVE_IMAGES[c] ?? sample?.image;
-    const label = catLabels[c]?.[locale] ?? c;
+    const label = categoryLabel(c, locale);
     return { c, label, img: chosenImage, alt: label, count: items.length };
   })
   .filter((cat) => cat.img)

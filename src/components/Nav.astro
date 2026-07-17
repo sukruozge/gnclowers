@@ -1,6 +1,7 @@
 ---
 import { t, type Locale } from '@lib/i18n';
 import { loadProducts } from '@lib/products';
+import { categoryLabel } from '@lib/categories';
 import Logo from './Logo.astro';
 
 const { locale } = Astro.props as { locale: Locale };
@@ -18,24 +19,10 @@ const links = [
 
 const products = loadProducts();
 
-const catLabels: Record<string, Record<Locale, string>> = {
-  'Crochet Bags': { tr: 'Örgü Çantalar', en: 'Crochet Bags' },
-  'Safari Animals': { tr: 'Safari Hayvanları', en: 'Safari Animals' },
-  'Curtain Tiebacks': { tr: 'Perde Tutacakları', en: 'Curtain Tiebacks' },
-  'Amigurumi Toys': { tr: 'Amigurumi Oyuncaklar', en: 'Amigurumi Toys' },
-  'Baby Gift Sets': { tr: 'Bebek Hediye Setleri', en: 'Baby Gift Sets' },
-  'Stuffed Animals': { tr: 'Peluş Oyuncaklar', en: 'Stuffed Animals' },
-  'Crochet Dolls': { tr: 'Örgü Bebekler', en: 'Crochet Dolls' },
-  'Bunny Rabbits Toys': { tr: 'Örgü Tavşanlar', en: 'Bunny Rabbits Toys' },
-  'Baby Shower': { tr: 'Bebek Partisi', en: 'Baby Shower' },
-  'Crochet Hair Clips': { tr: 'Örgü Saç Tokaları', en: 'Crochet Hair Clips' },
-  'Wedding Dolls': { tr: 'Düğün Bebekleri', en: 'Wedding Dolls' }
-};
-
 const collections = [...new Set(products.map((x) => x.category))]
   .map((c) => ({
     c,
-    label: catLabels[c]?.[locale] ?? c
+    label: categoryLabel(c, locale)
   }))
   .slice(0, 8);
 ---
