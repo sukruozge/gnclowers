@@ -32,8 +32,10 @@ export const POST: APIRoute = async (context) => {
   const PAYTR_MERCHANT_ID = env.PAYTR_MERCHANT_ID || 'test_merchant_id';
   const PAYTR_MERCHANT_KEY = env.PAYTR_MERCHANT_KEY || 'test_merchant_key';
   const PAYTR_MERCHANT_SALT = env.PAYTR_MERCHANT_SALT || 'test_merchant_salt';
-  // LIVE by default (real charges). Test mode only if PAYTR_TEST_MODE is explicitly '1'.
-  const PAYTR_TEST_MODE = env.PAYTR_TEST_MODE === '1' ? '1' : '0';
+  // LIVE — real charges. Hardcoded '0' on purpose so a stale Cloudflare
+  // PAYTR_TEST_MODE='1' secret can't silently keep the shop in test mode.
+  // To go back to test payments, change this to '1' and redeploy.
+  const PAYTR_TEST_MODE: string = '0';
   const credsConfigured = Boolean(env.PAYTR_MERCHANT_ID && env.PAYTR_MERCHANT_KEY && env.PAYTR_MERCHANT_SALT);
 
   try {
