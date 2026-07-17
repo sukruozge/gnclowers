@@ -24,7 +24,9 @@ function sameLine(a: CartItem, b: { id: string; options?: Record<string, string>
 export function getCart(): CartItem[] {
   if (typeof window === 'undefined') return [];
   try {
-    return JSON.parse(localStorage.getItem('ase_cart') || '[]');
+    const parsed = JSON.parse(localStorage.getItem('ase_cart') || '[]');
+    // Corrupted/foreign storage must degrade to an empty cart, not crash checkout.
+    return Array.isArray(parsed) ? parsed : [];
   } catch {
     return [];
   }

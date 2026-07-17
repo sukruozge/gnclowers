@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
   <title>Aselovers Admin</title>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,400;1,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -1522,19 +1523,14 @@
               <span style="font-size:1.1rem;line-height:1;">⚠️</span>
               <div>Gerçek giriş şifresi sunucuda güvenli (hash) saklanır; buradan <strong>kalıcı olarak değiştirilemez</strong>. Şifreyi değiştirmek için Cloudflare ortam değişkeni <code>ADMIN_PASSWORD_HASH</code> güncellenmelidir — bana söyleyin, birlikte yapalım.</div>
             </div>
-            <div class="form-group">
-              <label>Mevcut Şifre</label>
-              <input type="password" id="s-curr-pass" placeholder="Mevcut şifre">
+            <div style="font-size:.86rem;color:var(--muted-foreground);line-height:1.6;">
+              <strong>Şifre nasıl değiştirilir?</strong>
+              <ol style="margin:8px 0 0 18px;">
+                <li>Yeni şifrenin PBKDF2 hash'ini üretin (<code>src/lib/admin/auth.ts</code> içindeki yardımcıyla).</li>
+                <li>Cloudflare Pages → Settings → Environment variables → <code>ADMIN_PASSWORD_HASH</code> değerini güncelleyin.</li>
+                <li>Yeniden deploy edin; eski oturumlar en geç 24 saat içinde düşer.</li>
+              </ol>
             </div>
-            <div class="form-group">
-              <label>Yeni Şifre</label>
-              <input type="password" id="s-new-pass" placeholder="Yeni şifre (min 6 karakter)">
-            </div>
-            <div class="form-group">
-              <label>Yeni Şifre Tekrar</label>
-              <input type="password" id="s-new-pass2" placeholder="Yeni şifre tekrar">
-            </div>
-            <button class="btn btn-primary" onclick="changePassword()">🔐 Şifreyi Güncelle</button>
           </div>
         </div>
       </div>
@@ -1724,7 +1720,6 @@ let _productSort = 'default';
 // Turkish-aware lowercase so "İ/ı" and "I/i" match as users expect when searching.
 function _norm(s) { return String(s || '').toLocaleLowerCase('tr').trim(); }
 
-function getPass() { return localStorage.getItem('ase_admin_pass') || ''; }
 function getEtsyConfig() {
   try { return JSON.parse(localStorage.getItem('ase_etsy_config') || '{}'); } catch { return {}; }
 }
@@ -2699,8 +2694,8 @@ function renderReviewsAdmin() {
           <button class="btn-icon" onclick="confirmDeleteReview(${i})" title="Sil">🗑️</button>
         </div>
       </div>
-      <div class="review-admin-text">"${r.text}"</div>
-      <div class="review-admin-meta">${r.author} · ${r.location} · ${r.product}</div>
+      <div class="review-admin-text">"${esc(r.text)}"</div>
+      <div class="review-admin-meta">${esc(r.author)} · ${esc(r.location)} · ${esc(r.product)}</div>
     </div>`).join('');
 }
 
@@ -3038,18 +3033,6 @@ async function saveSettings(section) {
   } catch (err) {
     toast('Ayarlar yerel kaydedildi (sunucu bağlantısı yok)', 'ok');
   }
-}
-
-function changePassword() {
-  const curr = document.getElementById('s-curr-pass').value;
-  const newP = document.getElementById('s-new-pass').value;
-  const newP2 = document.getElementById('s-new-pass2').value;
-  if (curr !== getPass()) { toast('Mevcut şifre yanlış', 'err'); return; }
-  if (newP.length < 6) { toast('Yeni şifre en az 6 karakter olmalı', 'err'); return; }
-  if (newP !== newP2) { toast('Şifreler eşleşmiyor', 'err'); return; }
-  localStorage.setItem('ase_admin_pass', newP);
-  toast('✅ Şifre güncellendi', 'ok');
-  ['s-curr-pass','s-new-pass','s-new-pass2'].forEach(id => setVal(id,''));
 }
 
 function switchSettingsTab(tab, btn) {
@@ -3399,7 +3382,12 @@ async function clearAllOrders() {
 function exportOrdersCSV() {
   if (!_orders.length) { toast('Dışa aktarılacak sipariş yok', 'err'); return; }
   const cols = ['orderId', 'createdAt', 'status', 'fulfillment', 'currency', 'amount', 'shipping', 'name', 'email', 'phone', 'country', 'city', 'postal', 'address', 'tracking', 'items'];
-  const cell = (v) => { v = v == null ? '' : String(v); return /[",\n\r]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; };
+  const cell = (v) => {
+    v = v == null ? '' : String(v);
+    // Formula-injection guard: customer-typed fields must not execute in Excel/Sheets.
+    if (/^[=+\-@\t\r]/.test(v)) v = "'" + v;
+    return /[",\n\r]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v;
+  };
   const lines = [cols.join(',')];
   for (const o of _orders) {
     const c = o.customer || {};

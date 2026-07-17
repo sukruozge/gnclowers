@@ -29,9 +29,11 @@ export const POST: APIRoute = async (context) => {
   const runtime = (locals as any).runtime;
   const env = runtime?.env ?? {};
 
-  const PAYTR_MERCHANT_ID = env.PAYTR_MERCHANT_ID || 'test_merchant_id';
-  const PAYTR_MERCHANT_KEY = env.PAYTR_MERCHANT_KEY || 'test_merchant_key';
-  const PAYTR_MERCHANT_SALT = env.PAYTR_MERCHANT_SALT || 'test_merchant_salt';
+  // No test-credential fallbacks: missing keys must surface as the 503 below
+  // (credsConfigured), never as a silent test-mode payment attempt.
+  const PAYTR_MERCHANT_ID = env.PAYTR_MERCHANT_ID || '';
+  const PAYTR_MERCHANT_KEY = env.PAYTR_MERCHANT_KEY || '';
+  const PAYTR_MERCHANT_SALT = env.PAYTR_MERCHANT_SALT || '';
   // LIVE — real charges. Hardcoded '0' on purpose so a stale Cloudflare
   // PAYTR_TEST_MODE='1' secret can't silently keep the shop in test mode.
   // To go back to test payments, change this to '1' and redeploy.

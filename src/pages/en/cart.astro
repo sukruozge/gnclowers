@@ -8,7 +8,7 @@ import settings from '../../data/settings.json';
 const allProducts = loadProducts();
 const shippingCfg = (settings as any).shipping || {};
 ---
-<Base locale="en" title="Shopping Cart — Aselovers" description="Check the items in your shopping cart and proceed to checkout." pathSelf="cart" pathsAlt={{ tr: 'sepet', en: 'cart' }}>
+<Base locale="en" title="Shopping Cart — Aselovers" description="Check the items in your shopping cart and proceed to checkout." pathSelf="cart" pathsAlt={{ tr: 'sepet', en: 'cart' }} noindex>
   <Nav locale="en" />
   <main>
     <section class="section cart-section">

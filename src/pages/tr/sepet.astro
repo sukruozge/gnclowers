@@ -8,7 +8,7 @@ import settings from '../../data/settings.json';
 const allProducts = loadProducts();
 const shippingCfg = (settings as any).shipping || {};
 ---
-<Base locale="tr" title="Sepetim — Aselovers" description="Sepetinizdeki ürünleri kontrol edin ve ödeme adımına geçin." pathSelf="sepet" pathsAlt={{ tr: 'sepet', en: 'cart' }}>
+<Base locale="tr" title="Sepetim — Aselovers" description="Sepetinizdeki ürünleri kontrol edin ve ödeme adımına geçin." pathSelf="sepet" pathsAlt={{ tr: 'sepet', en: 'cart' }} noindex>
   <Nav locale="tr" />
   <main>
     <section class="section cart-section">

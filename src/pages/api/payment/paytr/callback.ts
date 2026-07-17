@@ -49,7 +49,10 @@ export const POST: APIRoute = async (context) => {
       try {
         const rawPending = await kv.get(`pending_order:${merchant_oid}`);
         pending = rawPending ? JSON.parse(rawPending) : null;
-      } catch { /* ignore */ }
+      } catch (e) {
+        // Degrades to an order without customer/items — log so it's diagnosable.
+        console.warn('pending_order read/parse failed', merchant_oid, e);
+      }
 
       const rawOrders = await kv.get('orders');
       const orders = rawOrders ? JSON.parse(rawOrders) : [];
@@ -76,6 +79,10 @@ export const POST: APIRoute = async (context) => {
 
       if (existing) Object.assign(existing, order);
       else orders.push(order);
+      // Durable per-order record FIRST: the aggregate `orders` list below is a
+      // read-modify-write and can lose an entry under concurrent callbacks; this
+      // key makes every completed order individually recoverable.
+      try { await kv.put(`order:${merchant_oid}`, JSON.stringify(order)); } catch (e) { console.warn('per-order KV write failed', merchant_oid, e); }
       await kv.put('orders', JSON.stringify(orders));
 
       const rawActivity = await kv.get('activity');

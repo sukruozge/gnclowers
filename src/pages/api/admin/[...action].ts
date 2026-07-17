@@ -18,6 +18,7 @@
 import type { APIContext, APIRoute } from 'astro';
 import { verifyPassword, signJwt, verifyJwt } from '@lib/admin/auth';
 import { ghGetFile, ghPutFile, ghDispatchWorkflow, ghGetFileSha, ghPutBinaryFile, type Gh } from '@lib/admin/github';
+import { sanitizeHtml } from '@lib/sanitize';
 
 export const prerender = false;
 
@@ -26,6 +27,7 @@ const JWT_TTL_SECONDS = 86400;
 const RATE_LIMIT_MAX = 10;
 const RATE_LIMIT_TTL_SECONDS = 900;
 const MAX_BODY_BYTES = 512 * 1024;
+const UPLOAD_ALLOWED_EXT = /\.(jpe?g|png|webp|avif|gif|svg|ico|mp4|webm)$/i;
 const PRODUCTS_PATH = 'src/data/products.json';
 const DEFAULT_REPO = 'sukruozge/gnclowers';
 
@@ -367,6 +369,19 @@ async function handleUpload(request: Request, env: Record<string, any>): Promise
     return json({ error: 'Geçersiz dosya yolu (yalnızca public/ altına yükleme yapılabilir).' }, 400);
   }
 
+  // Within public/, still block Cloudflare Pages control files (_headers/_redirects
+  // would let a hijacked session strip security headers or redirect traffic) and
+  // the admin panel itself, and only accept static media types.
+  const lowerPath = filePath.toLowerCase();
+  if (
+    lowerPath === 'public/_headers' ||
+    lowerPath === 'public/_redirects' ||
+    lowerPath.startsWith('public/admin/') ||
+    !UPLOAD_ALLOWED_EXT.test(lowerPath)
+  ) {
+    return json({ error: 'İzin verilmeyen dosya türü veya yolu (yalnızca görsel/video dosyaları yüklenebilir).' }, 400);
+  }
+
   // Strip base64 metadata prefix if exists
   const commaIdx = base64.indexOf(',');
   if (commaIdx !== -1) {
@@ -411,8 +426,10 @@ async function handleBlogCreate(request: Request, env: Record<string, any>): Pro
     title_en: typeof body.title_en === 'string' ? body.title_en : (body.title || ''),
     excerpt_tr: typeof body.excerpt_tr === 'string' ? body.excerpt_tr : (body.excerpt || ''),
     excerpt_en: typeof body.excerpt_en === 'string' ? body.excerpt_en : (body.excerpt || ''),
-    bodyHtml_tr: typeof body.bodyHtml_tr === 'string' ? body.bodyHtml_tr : (body.content || ''),
-    bodyHtml_en: typeof body.bodyHtml_en === 'string' ? body.bodyHtml_en : (body.content || ''),
+    // Sanitized at write time: these fields are rendered with set:html on the
+    // public blog, so stored markup must never carry executable content.
+    bodyHtml_tr: sanitizeHtml(typeof body.bodyHtml_tr === 'string' ? body.bodyHtml_tr : (body.content || '')),
+    bodyHtml_en: sanitizeHtml(typeof body.bodyHtml_en === 'string' ? body.bodyHtml_en : (body.content || '')),
     category: typeof body.category === 'string' ? body.category : 'General',
     cover: typeof body.cover === 'string' ? body.cover : '',
     metaTitle: typeof body.metaTitle === 'string' ? body.metaTitle : '',
@@ -452,8 +469,8 @@ async function handleBlogUpdate(slug: string, request: Request, env: Record<stri
       title_en: typeof body.title_en === 'string' ? body.title_en : (body.title || data[idx].title_en),
       excerpt_tr: typeof body.excerpt_tr === 'string' ? body.excerpt_tr : (body.excerpt || data[idx].excerpt_tr),
       excerpt_en: typeof body.excerpt_en === 'string' ? body.excerpt_en : (body.excerpt || data[idx].excerpt_en),
-      bodyHtml_tr: typeof body.bodyHtml_tr === 'string' ? body.bodyHtml_tr : (body.content || data[idx].bodyHtml_tr),
-      bodyHtml_en: typeof body.bodyHtml_en === 'string' ? body.bodyHtml_en : (body.content || data[idx].bodyHtml_en),
+      bodyHtml_tr: sanitizeHtml(typeof body.bodyHtml_tr === 'string' ? body.bodyHtml_tr : (body.content || data[idx].bodyHtml_tr)),
+      bodyHtml_en: sanitizeHtml(typeof body.bodyHtml_en === 'string' ? body.bodyHtml_en : (body.content || data[idx].bodyHtml_en)),
       category: typeof body.category === 'string' ? body.category : (data[idx].category || 'General'),
       cover: typeof body.cover === 'string' ? body.cover : (data[idx].cover || ''),
       metaTitle: typeof body.metaTitle === 'string' ? body.metaTitle : (data[idx].metaTitle || ''),

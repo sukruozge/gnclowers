@@ -17,6 +17,16 @@ export const POST: APIRoute = async (context) => {
   const kv = env.ADMIN_KV;
   if (!kv) return json({ ok: true, note: 'no KV binding' }, 200);
 
+  // Per-IP throttle (same pattern as /api/messages): an unauthenticated caller
+  // must not be able to inflate totalViews or rack up KV writes without bound.
+  try {
+    const ip = request.headers.get('CF-Connecting-IP') || 'unknown';
+    const rlKey = `an_rl:${ip}`;
+    const n = parseInt((await kv.get(rlKey)) || '0', 10) || 0;
+    if (n >= 60) return json({ error: 'rate-limited' }, 429);
+    await kv.put(rlKey, String(n + 1), { expirationTtl: 60 });
+  } catch { /* limiter must never break tracking */ }
+
   try {
     const body = await request.json().catch(() => null);
     if (!body) return json({ error: 'invalid' }, 400);

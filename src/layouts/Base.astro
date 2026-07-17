@@ -14,8 +14,10 @@ interface Props {
   pathSelf: string;
   pathsAlt: Record<Locale, string>;
   ogImage?: string;
+  /** Cart/checkout/payment-result pages: keep them out of search results. */
+  noindex?: boolean;
 }
-const { locale, title, description, pathSelf, pathsAlt, ogImage } = Astro.props;
+const { locale, title, description, pathSelf, pathsAlt, ogImage, noindex = false } = Astro.props;
 const site = Astro.site!.toString().replace(/\/+$/, '');
 const canon = canonical(site, locale, pathSelf);
 const alts = alternates(site, pathsAlt);
@@ -29,8 +31,11 @@ const alts = alternates(site, pathsAlt);
     <meta name="description" content={description} />
     <link rel="canonical" href={canon} />
     {alts.map((a) => <link rel="alternate" hreflang={a.hreflang} href={a.href} />)}
-    <!-- Let Google & AI crawlers show full snippets and large image previews. -->
-    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <!-- Let Google & AI crawlers show full snippets and large image previews.
+         Transactional pages (cart/checkout/payment results) opt out via `noindex`. -->
+    {noindex
+      ? <meta name="robots" content="noindex, nofollow" />
+      : <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />}
     <meta name="theme-color" content="#B0532E" />
     <meta name="msvalidate.01" content="0547F7F70DADC85E4B336B2FBB0D3E94" />
     <meta property="og:site_name" content="Aselovers" />

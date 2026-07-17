@@ -19,4 +19,7 @@ describe('buildSitemap', () => {
     expect(xml).toContain('/tr/blog/');
     expect(xml).toContain('/en/blog/');
   });
+  it('adds lastmod freshness signal to blog post urls', () => {
+    expect(xml).toMatch(/<url><loc>[^<]*\/tr\/blog\/[^<]*<\/loc><lastmod>\d{4}-\d{2}-\d{2}<\/lastmod><\/url>/);
+  });
 });
