@@ -32,6 +32,9 @@ export interface Product {
   // Optional map of an option value (e.g. a colour) → image URL, so picking that
   // option on the product page swaps the main gallery image. Admin-managed.
   optionImages?: Record<string, string>;
+  // Merchant-defined customer input boxes shown on the product page (e.g. "Name to
+  // embroider", "Gift note"). Their filled values travel with the order as a note.
+  customFields?: { label: string; required?: boolean }[];
 }
 
 export function hasVariations(p: Product): boolean {

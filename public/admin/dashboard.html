@@ -1617,6 +1617,12 @@
             <label style="font-weight:400;opacity:.6;font-size:.8rem;">Bir renk/seçenek seçilince ürün sayfasında gösterilecek görseli eşleyin</label>
             <div id="p-optimages"></div>
           </div>
+          <div class="pedit-sec-h">Müşteri Alanları (Kişiselleştirme)</div>
+          <div class="form-group" style="margin-bottom: 16px;">
+            <label style="font-weight:400;opacity:.6;font-size:.8rem;">Müşterinin dolduracağı kutular — ör. "İşlenecek isim", "Hediye notu". Dolan değerler siparişe not olarak gider.</label>
+            <div id="p-customfields"></div>
+            <button type="button" class="btn btn-outline btn-sm" onclick="pAddCustomField()" style="margin-top:6px;">+ Alan Ekle</button>
+          </div>
           <div class="pedit-sec-h">Etiketler (SEO)</div>
           <div class="form-group" style="margin-bottom: 12px;">
             <div id="p-tags"></div>
@@ -2226,7 +2232,7 @@ async function toggleProductActive(id, inputEl) {
 }
 
 // ── Product editor: images / variants / tags (in-modal state) ──────────────
-let _pImages = [], _pTags = [], _pOptions = [], _pVariants = [], _pOptionImages = {}, _pOptValues = [];
+let _pImages = [], _pTags = [], _pOptions = [], _pVariants = [], _pOptionImages = {}, _pOptValues = [], _pCustomFields = [];
 function _escA(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
 function syncPrimaryImage(){ const el=document.getElementById('p-image'); if(el) el.value = _pImages[0] || ''; }
@@ -2283,7 +2289,22 @@ function renderPOptionImages(){
 }
 function pSetOptionImage(vi,imgIdx){ const v=_pOptValues[vi]; if(v==null) return; if(imgIdx==='' ) delete _pOptionImages[v]; else _pOptionImages[v]=_pImages[Number(imgIdx)]; renderPOptionImages(); }
 
-function renderProductRich(){ renderPGallery(); renderPVariants(); renderPTags(); renderPOptionImages(); }
+function renderPCustomFields(){
+  const el=document.getElementById('p-customfields'); if(!el) return;
+  if(!_pCustomFields.length){ el.innerHTML='<div style="opacity:.55;font-size:.8rem;">Alan yok. İsimli/kişiye özel ürünlerde "+ Alan Ekle" ile kutu ekleyin.</div>'; return; }
+  el.innerHTML=_pCustomFields.map((f,i)=>
+    '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">'
+    +'<input type="text" value="'+_escA(f.label||'')+'" placeholder="Alan adı (ör. İşlenecek isim)" oninput="pSetCustomFieldLabel('+i+',this.value)" style="flex:1;font-size:.82rem;">'
+    +'<label style="display:flex;align-items:center;gap:4px;font-size:.75rem;white-space:nowrap;"><input type="checkbox" '+(f.required?'checked':'')+' onchange="pToggleCustomFieldReq('+i+',this.checked)" style="width:auto;">Zorunlu</label>'
+    +'<button type="button" title="Sil" onclick="pRemoveCustomField('+i+')" style="border:0;background:none;cursor:pointer;color:#ef4444;font-size:1rem;">✕</button>'
+    +'</div>').join('');
+}
+function pAddCustomField(){ _pCustomFields.push({label:'',required:false}); renderPCustomFields(); }
+function pRemoveCustomField(i){ _pCustomFields.splice(i,1); renderPCustomFields(); }
+function pSetCustomFieldLabel(i,v){ if(_pCustomFields[i]) _pCustomFields[i].label=v; }
+function pToggleCustomFieldReq(i,c){ if(_pCustomFields[i]) _pCustomFields[i].required=c; }
+
+function renderProductRich(){ renderPGallery(); renderPVariants(); renderPTags(); renderPOptionImages(); renderPCustomFields(); }
 
 function showAddProduct() {
   populateProductCategories();
@@ -2301,7 +2322,7 @@ function showAddProduct() {
   document.getElementById('p-imagealt').value = '';
   document.getElementById('p-active').checked = true;
   document.getElementById('p-new').checked = true;
-  _pImages = []; _pTags = []; _pOptions = []; _pVariants = []; _pOptionImages = {};
+  _pImages = []; _pTags = []; _pOptions = []; _pVariants = []; _pOptionImages = {}; _pCustomFields = [];
   renderProductRich();
   document.getElementById('product-modal').classList.add('open');
 }
@@ -2333,6 +2354,7 @@ function editProduct(id) {
   _pOptions = Array.isArray(p.options) ? JSON.parse(JSON.stringify(p.options)) : [];
   _pVariants = Array.isArray(p.variants) ? JSON.parse(JSON.stringify(p.variants)) : [];
   _pOptionImages = (p.optionImages && typeof p.optionImages === 'object') ? { ...p.optionImages } : {};
+  _pCustomFields = Array.isArray(p.customFields) ? JSON.parse(JSON.stringify(p.customFields)) : [];
   renderProductRich();
   document.getElementById('product-modal').classList.add('open');
 }
@@ -2368,6 +2390,7 @@ async function saveProduct() {
     options: _pOptions,
     variants: _pVariants,
     optionImages: _pOptionImages,
+    customFields: _pCustomFields.filter(f => (f.label || '').trim()).map(f => ({ label: f.label.trim(), required: !!f.required })),
     imageAlt: document.getElementById('p-imagealt').value.trim(),
     isActive: document.getElementById('p-active').checked,
     isNew: document.getElementById('p-new').checked
@@ -2401,6 +2424,7 @@ async function saveProduct() {
         options: payload.options,
         variants: payload.variants,
         optionImages: payload.optionImages,
+        customFields: payload.customFields,
         imageAlt: payload.imageAlt,
         isActive: payload.isActive,
         isNew: payload.isNew,

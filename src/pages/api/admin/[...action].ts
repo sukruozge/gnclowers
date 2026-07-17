@@ -44,6 +44,7 @@ interface ProductInput {
   options?: unknown;
   variants?: unknown;
   optionImages?: unknown;
+  customFields?: unknown;
   imageAlt?: unknown;
   url?: unknown;
   isActive?: unknown;
@@ -69,6 +70,7 @@ interface Product {
   options?: ProductOptionGroup[];
   variants?: ProductVariant[];
   optionImages?: Record<string, string>;
+  customFields?: { label: string; required?: boolean }[];
   imageAlt?: string;
   url?: string;
   isActive: boolean;
@@ -534,6 +536,11 @@ function normalizeProduct(input: ProductInput, id: string): Product | null {
       if (typeof k === 'string' && typeof v === 'string' && v.trim() !== '') map[k] = v;
     }
     out.optionImages = map;
+  }
+  if (Array.isArray(input.customFields)) {
+    out.customFields = (input.customFields as any[])
+      .map((f) => ({ label: typeof f?.label === 'string' ? f.label.trim().slice(0, 60) : '', required: f?.required === true }))
+      .filter((f) => f.label);
   }
   return out;
 }

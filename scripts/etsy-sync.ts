@@ -312,6 +312,7 @@ async function main(): Promise<void> {
         variants: (existing as any).variants !== undefined ? (existing as any).variants : (mapped as any).variants,
         optionImages: (existing as any).optionImages !== undefined ? (existing as any).optionImages : (mapped as any).optionImages,
         imageAlt: (existing as any).imageAlt !== undefined ? (existing as any).imageAlt : (mapped as any).imageAlt,
+        customFields: (existing as any).customFields !== undefined ? (existing as any).customFields : (mapped as any).customFields,
         category: existing.category !== undefined ? existing.category : mapped.category,
         isActive: existing.isActive !== undefined ? existing.isActive : mapped.isActive,
         isNew: existing.isNew !== undefined ? existing.isNew : mapped.isNew,

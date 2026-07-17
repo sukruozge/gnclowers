@@ -106,6 +106,18 @@ const crumbLd = breadcrumbJsonLd([
                 <p class="variation__err" id="personalize-err" hidden>Please enter the name to embroider.</p>
               </div>
 
+              {product.customFields && product.customFields.length > 0 && (
+                <div class="personalize" id="custom-fields">
+                  {product.customFields.map((f, i) => (
+                    <div class="cfield">
+                      <label class="variation__label" for={`cfield-${i}`}>{f.label}{f.required ? ' *' : ''}</label>
+                      <input type="text" id={`cfield-${i}`} data-label={f.label} data-required={f.required ? '1' : ''} maxlength="60" autocomplete="off" />
+                    </div>
+                  ))}
+                  <p class="variation__err" id="cfield-err" hidden>Please fill in the required fields.</p>
+                </div>
+              )}
+
               <div class="detail__buy">
                 <div class="qtystep" role="group" aria-label="Quantity">
                   <button type="button" class="qtystep__btn" id="qty-minus" aria-label="Decrease quantity">−</button>
@@ -185,20 +197,38 @@ const crumbLd = breadcrumbJsonLd([
     priceEl.textContent = fmtPrice(resolveVariantPrice(prod, sel));
   }
 
-  // Personalization: reveal a name field when a "Personalized" option is chosen.
+  // Merchant-defined custom fields (name to embroider, gift note…) take precedence;
+  // otherwise fall back to auto-revealing a single name box for "Personalized" options.
+  const cfInputs = Array.from(document.querySelectorAll<HTMLInputElement>('#custom-fields input'));
+  const cfErr = document.getElementById('cfield-err');
+  const hasCustomFields = cfInputs.length > 0;
+  cfInputs.forEach((inp) => inp.addEventListener('input', () => { if (cfErr) cfErr.hidden = true; }));
+
   const personalizeEl = document.getElementById('personalize');
   const nameEl = document.getElementById('personalize-name') as HTMLInputElement | null;
   const nameErr = document.getElementById('personalize-err');
   function isPersonalized(): boolean {
-    return sels.some((s) => /personal|kişisel|kişisel|isim|name/i.test(s.value || ''));
+    return sels.some((s) => /personal|kişisel|isim|name/i.test(s.value || ''));
   }
   function updatePersonalize() {
     if (!personalizeEl) return;
-    const on = isPersonalized();
+    const on = !hasCustomFields && isPersonalized();
     personalizeEl.hidden = !on;
     if (!on && nameEl) nameEl.value = '';
   }
   nameEl?.addEventListener('input', () => { if (nameErr) nameErr.hidden = true; });
+
+  // Collect the personalization note (custom fields or the single name box).
+  function collectNote(): { ok: boolean; note: string } {
+    if (hasCustomFields) {
+      const parts: string[] = []; let missing: HTMLInputElement | null = null;
+      for (const inp of cfInputs) { const v = (inp.value || '').trim(); if (inp.dataset.required && !v) { if (!missing) missing = inp; continue; } if (v) parts.push((inp.dataset.label || '') + ': ' + v); }
+      if (missing) { if (cfErr) cfErr.hidden = false; missing.focus(); return { ok: false, note: '' }; }
+      return { ok: true, note: parts.join(' · ') };
+    }
+    if (personalizeEl && !personalizeEl.hidden) { const nm = (nameEl?.value || '').trim(); if (!nm) { if (nameErr) nameErr.hidden = false; nameEl?.focus(); return { ok: false, note: '' }; } return { ok: true, note: nm }; }
+    return { ok: true, note: '' };
+  }
 
   // Colour → image: if a chosen option value has a mapped image, swap the gallery main.
   const galleryMain = document.getElementById('gallery-main') as HTMLImageElement | null;
@@ -224,14 +254,10 @@ const crumbLd = breadcrumbJsonLd([
       firstEmpty?.focus();
       return;
     }
-    const name = (personalizeEl && !personalizeEl.hidden) ? (nameEl?.value || '').trim() : '';
-    if (personalizeEl && !personalizeEl.hidden && !name) {
-      if (nameErr) nameErr.hidden = false;
-      nameEl?.focus();
-      return;
-    }
+    const nr = collectNote();
+    if (!nr.ok) return;
     const opts = sels.length ? selected() : undefined;
-    addToCart(prod, qty, opts, name || undefined);
+    addToCart(prod, qty, opts, nr.note || undefined);
     showCartToast({ addedLabel: 'Added to cart', goLabel: 'Go to cart', cartHref: '/en/cart' });
   });
 </script>
@@ -257,6 +283,8 @@ const crumbLd = breadcrumbJsonLd([
     .personalize { display: flex; flex-direction: column; gap: 6px; margin: var(--space-3) 0 var(--space-4); padding: var(--space-3); background: color-mix(in srgb, var(--accent) 6%, var(--surface)); border: 1px dashed color-mix(in srgb, var(--accent) 40%, var(--line)); border-radius: var(--radius); }
     .personalize input { font-family: inherit; font-size: 0.95rem; min-height: 46px; padding: 10px 14px; border: 1.5px solid var(--line); border-radius: 10px; background: var(--bg); color: var(--ink); }
     .personalize input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 16%, transparent); }
+    .cfield { display: flex; flex-direction: column; gap: 6px; }
+    .cfield + .cfield { margin-top: 10px; }
     .variation { display: flex; flex-direction: column; gap: 6px; }
     .variation__label { font-size: .85rem; font-weight: 600; color: var(--ink); }
     .variation .select-wrap { position: relative; display: flex; }
