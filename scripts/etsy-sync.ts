@@ -310,6 +310,7 @@ async function main(): Promise<void> {
         tags: (existing as any).tags !== undefined ? (existing as any).tags : (mapped as any).tags,
         options: (existing as any).options !== undefined ? (existing as any).options : (mapped as any).options,
         variants: (existing as any).variants !== undefined ? (existing as any).variants : (mapped as any).variants,
+        optionImages: (existing as any).optionImages !== undefined ? (existing as any).optionImages : (mapped as any).optionImages,
         category: existing.category !== undefined ? existing.category : mapped.category,
         isActive: existing.isActive !== undefined ? existing.isActive : mapped.isActive,
         isNew: existing.isNew !== undefined ? existing.isNew : mapped.isNew,

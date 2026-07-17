@@ -29,6 +29,9 @@ export interface Product {
   // chosen combination to its price. Absent for listings without variations.
   options?: ProductOptionGroup[];
   variants?: ProductVariant[];
+  // Optional map of an option value (e.g. a colour) → image URL, so picking that
+  // option on the product page swaps the main gallery image. Admin-managed.
+  optionImages?: Record<string, string>;
 }
 
 export function hasVariations(p: Product): boolean {

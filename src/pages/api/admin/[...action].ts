@@ -43,6 +43,7 @@ interface ProductInput {
   tags?: unknown;
   options?: unknown;
   variants?: unknown;
+  optionImages?: unknown;
   url?: unknown;
   isActive?: unknown;
   isNew?: unknown;
@@ -66,6 +67,7 @@ interface Product {
   tags?: string[];
   options?: ProductOptionGroup[];
   variants?: ProductVariant[];
+  optionImages?: Record<string, string>;
   url?: string;
   isActive: boolean;
   isNew: boolean;
@@ -520,6 +522,13 @@ function normalizeProduct(input: ProductInput, id: string): Product | null {
         return { values, price: Number.isFinite(vp) && vp > 0 ? vp : price };
       })
       .filter((v) => Object.keys(v.values).length > 0);
+  }
+  if (input.optionImages && typeof input.optionImages === 'object' && !Array.isArray(input.optionImages)) {
+    const map: Record<string, string> = {};
+    for (const [k, v] of Object.entries(input.optionImages as Record<string, unknown>)) {
+      if (typeof k === 'string' && typeof v === 'string' && v.trim() !== '') map[k] = v;
+    }
+    out.optionImages = map;
   }
   return out;
 }

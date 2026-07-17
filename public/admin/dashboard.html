@@ -1611,6 +1611,11 @@
             <label style="font-weight:400;opacity:.6;font-size:.8rem;">Her varyantın ₺ fiyatını ayrı ayarlayın</label>
             <div id="p-variants"></div>
           </div>
+          <div class="pedit-sec-h">Seçenek → Görsel</div>
+          <div class="form-group" style="margin-bottom: 16px;">
+            <label style="font-weight:400;opacity:.6;font-size:.8rem;">Bir renk/seçenek seçilince ürün sayfasında gösterilecek görseli eşleyin</label>
+            <div id="p-optimages"></div>
+          </div>
           <div class="pedit-sec-h">Etiketler (SEO)</div>
           <div class="form-group" style="margin-bottom: 12px;">
             <div id="p-tags"></div>
@@ -2220,7 +2225,7 @@ async function toggleProductActive(id, inputEl) {
 }
 
 // ── Product editor: images / variants / tags (in-modal state) ──────────────
-let _pImages = [], _pTags = [], _pOptions = [], _pVariants = [];
+let _pImages = [], _pTags = [], _pOptions = [], _pVariants = [], _pOptionImages = {}, _pOptValues = [];
 function _escA(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
 function syncPrimaryImage(){ const el=document.getElementById('p-image'); if(el) el.value = _pImages[0] || ''; }
@@ -2239,10 +2244,10 @@ function renderPGallery(){
     +'</div></div>').join('')+'</div>';
   syncPrimaryImage();
 }
-function pAddImageUrl(){ const inp=document.getElementById('p-image-add'); const v=(inp.value||'').trim(); if(!v) return; if(!/^https?:\/\//i.test(v)){ toast('Geçerli bir URL girin (http...)','err'); return; } _pImages.push(v); inp.value=''; renderPGallery(); }
-function pRemoveImage(i){ _pImages.splice(i,1); renderPGallery(); }
-function pSetPrimary(i){ const s=_pImages.splice(i,1)[0]; _pImages.unshift(s); renderPGallery(); }
-function pMoveImage(i,dir){ const j=i+dir; if(j<0||j>=_pImages.length) return; const t=_pImages[i]; _pImages[i]=_pImages[j]; _pImages[j]=t; renderPGallery(); }
+function pAddImageUrl(){ const inp=document.getElementById('p-image-add'); const v=(inp.value||'').trim(); if(!v) return; if(!/^https?:\/\//i.test(v)){ toast('Geçerli bir URL girin (http...)','err'); return; } _pImages.push(v); inp.value=''; renderPGallery(); renderPOptionImages(); }
+function pRemoveImage(i){ _pImages.splice(i,1); renderPGallery(); renderPOptionImages(); }
+function pSetPrimary(i){ const s=_pImages.splice(i,1)[0]; _pImages.unshift(s); renderPGallery(); renderPOptionImages(); }
+function pMoveImage(i,dir){ const j=i+dir; if(j<0||j>=_pImages.length) return; const t=_pImages[i]; _pImages[i]=_pImages[j]; _pImages[j]=t; renderPGallery(); renderPOptionImages(); }
 
 function renderPVariants(){
   const el=document.getElementById('p-variants'); if(!el) return;
@@ -2264,7 +2269,20 @@ function renderPTags(){
 function pAddTag(){ const inp=document.getElementById('p-tag-add'); const v=(inp.value||'').trim(); if(!v) return; if(!_pTags.includes(v)) _pTags.push(v); inp.value=''; renderPTags(); }
 function pRemoveTag(i){ _pTags.splice(i,1); renderPTags(); }
 
-function renderProductRich(){ renderPGallery(); renderPVariants(); renderPTags(); }
+function renderPOptionImages(){
+  const el=document.getElementById('p-optimages'); if(!el) return;
+  _pOptValues=[...new Set((_pOptions||[]).flatMap(o=>o.values||[]))];
+  if(!_pOptValues.length || !_pImages.length){ el.innerHTML='<div style="opacity:.55;font-size:.8rem;">Önce varyant seçeneği ve görsel ekleyin.</div>'; return; }
+  el.innerHTML=_pOptValues.map((v,vi)=>{
+    const cur=_pOptionImages[v]||'';
+    const opts='<option value="">— görsel yok —</option>'+_pImages.map((src,i)=>'<option value="'+i+'"'+(src===cur?' selected':'')+'>Görsel '+(i+1)+'</option>').join('');
+    const prev=cur?'<img src="'+_escA(cur)+'" style="width:34px;height:34px;object-fit:cover;border-radius:6px;border:1px solid var(--border);flex-shrink:0;">':'<span style="width:34px;flex-shrink:0;"></span>';
+    return '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><span style="min-width:96px;font-size:.8rem;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+_escA(v)+'</span><select onchange="pSetOptionImage('+vi+',this.value)" style="flex:1;font-size:.8rem;">'+opts+'</select>'+prev+'</div>';
+  }).join('');
+}
+function pSetOptionImage(vi,imgIdx){ const v=_pOptValues[vi]; if(v==null) return; if(imgIdx==='' ) delete _pOptionImages[v]; else _pOptionImages[v]=_pImages[Number(imgIdx)]; renderPOptionImages(); }
+
+function renderProductRich(){ renderPGallery(); renderPVariants(); renderPTags(); renderPOptionImages(); }
 
 function showAddProduct() {
   populateProductCategories();
@@ -2282,7 +2300,7 @@ function showAddProduct() {
   document.getElementById('p-url').value = '';
   document.getElementById('p-active').checked = true;
   document.getElementById('p-new').checked = true;
-  _pImages = []; _pTags = []; _pOptions = []; _pVariants = [];
+  _pImages = []; _pTags = []; _pOptions = []; _pVariants = []; _pOptionImages = {};
   renderProductRich();
   document.getElementById('product-modal').classList.add('open');
 }
@@ -2313,6 +2331,7 @@ function editProduct(id) {
   _pTags = Array.isArray(p.tags) ? p.tags.slice() : [];
   _pOptions = Array.isArray(p.options) ? JSON.parse(JSON.stringify(p.options)) : [];
   _pVariants = Array.isArray(p.variants) ? JSON.parse(JSON.stringify(p.variants)) : [];
+  _pOptionImages = (p.optionImages && typeof p.optionImages === 'object') ? { ...p.optionImages } : {};
   renderProductRich();
   document.getElementById('product-modal').classList.add('open');
 }
@@ -2347,6 +2366,7 @@ async function saveProduct() {
     tags: _pTags.slice(),
     options: _pOptions,
     variants: _pVariants,
+    optionImages: _pOptionImages,
     url: document.getElementById('p-url').value.trim() || undefined,
     isActive: document.getElementById('p-active').checked,
     isNew: document.getElementById('p-new').checked
@@ -2379,6 +2399,7 @@ async function saveProduct() {
         tags: payload.tags,
         options: payload.options,
         variants: payload.variants,
+        optionImages: payload.optionImages,
         url: payload.url,
         isActive: payload.isActive,
         isNew: payload.isNew,

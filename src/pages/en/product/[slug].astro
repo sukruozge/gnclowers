@@ -200,9 +200,17 @@ const crumbLd = breadcrumbJsonLd([
   }
   nameEl?.addEventListener('input', () => { if (nameErr) nameErr.hidden = true; });
 
-  sels.forEach((s) => s.addEventListener('change', () => { if (errEl) errEl.hidden = true; refreshPrice(); updatePersonalize(); }));
+  // Colour → image: if a chosen option value has a mapped image, swap the gallery main.
+  const galleryMain = document.getElementById('gallery-main') as HTMLImageElement | null;
+  function updateColorImage() {
+    if (!galleryMain || !prod.optionImages) return;
+    for (const s of sels) { const url = prod.optionImages[s.value]; if (url) { galleryMain.src = url; return; } }
+  }
+
+  sels.forEach((s) => s.addEventListener('change', () => { if (errEl) errEl.hidden = true; refreshPrice(); updatePersonalize(); updateColorImage(); }));
   refreshPrice();
   updatePersonalize();
+  updateColorImage();
 
   function render() { if (valEl) valEl.textContent = String(qty); if (minus) (minus as HTMLButtonElement).disabled = qty <= 1; }
   minus?.addEventListener('click', () => { if (qty > 1) { qty--; render(); } });
