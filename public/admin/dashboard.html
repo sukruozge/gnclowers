@@ -949,6 +949,19 @@
           </div>
         </div>
       </div>
+
+      <div class="card" style="margin-top: 20px;">
+        <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
+          <div class="card-title">Kategori Yönetimi</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button class="btn btn-sm btn-outline" onclick="promptAddCategory()">+ Yeni Kategori</button>
+            <button class="btn btn-sm btn-gold" onclick="saveProductCategories()">💾 Kategorileri Kaydet</button>
+          </div>
+        </div>
+        <div class="card-body">
+          <div id="products-cat-list" style="display:flex;flex-direction:column;gap:8px;"></div>
+        </div>
+      </div>
     </div>
 
     <!-- CONTENT PAGE -->
@@ -2186,6 +2199,8 @@ function renderProducts() {
       </td>
     </tr>`;
   }).join('');
+
+  renderProductCategories();
 }
 
 function onProductFilter() {
@@ -3123,6 +3138,41 @@ function triggerFileUpload(targetInputId, defaultPath, isCategory = false) {
   input.click();
 }
 
+// Category manager shown under the products list (covers, rename, delete, add).
+function renderProductCategories() {
+  const el = document.getElementById('products-cat-list');
+  if (!el) return;
+  const fromProducts = [...new Set(_products.map(p => p.category))].filter(Boolean);
+  const fromCovers = Object.keys((_content && _content.categoryCovers) || {});
+  const all = [...new Set(['amigurumi', 'bag', 'decor', 'accessory', ...fromProducts, ...fromCovers])];
+  el.innerHTML = all.map(cat => {
+    const cover = (_content.categoryCovers && _content.categoryCovers[cat]) || '';
+    const slug = slugify(cat);
+    const count = _products.filter(p => p.category === cat).length;
+    const prev = cover
+      ? `<img src="${esc(cover)}" style="width:46px;height:46px;object-fit:cover;border-radius:8px;border:1px solid var(--border);flex-shrink:0;">`
+      : '<div style="width:46px;height:46px;border-radius:8px;border:1px dashed var(--border);display:grid;place-items:center;opacity:.5;flex-shrink:0;">🖼️</div>';
+    const catJs = cat.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+    return `<div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:10px;border:1px solid var(--border);border-radius:8px;">
+      ${prev}
+      <div style="min-width:120px;font-weight:600;">${esc(cat)} <span style="opacity:.5;font-weight:400;font-size:.8rem;">(${count})</span></div>
+      <div style="flex:1;min-width:220px;display:flex;gap:8px;"><input type="text" id="pcat-cover-${slug}" value="${esc(cover)}" placeholder="Kapak görsel URL" class="pcat-cover-input" data-cat="${esc(cat)}" style="flex:1;font-size:.82rem;"><button class="btn btn-outline btn-sm" onclick="triggerFileUpload('pcat-cover-${slug}','public/images/categories/${slug}[ext]',true)" style="white-space:nowrap;">📁 Yükle</button></div>
+      <div style="display:flex;gap:6px;"><button class="btn btn-outline btn-sm" onclick="promptRenameCategory('${catJs}')" title="Yeniden adlandır">✏️</button><button class="btn btn-danger btn-sm" onclick="deleteCategory('${catJs}')" title="Sil">🗑️</button></div>
+    </div>`;
+  }).join('');
+}
+
+async function saveProductCategories() {
+  const covers = (_content && _content.categoryCovers) || {};
+  document.querySelectorAll('.pcat-cover-input').forEach(inp => { const c = inp.getAttribute('data-cat'); if (c != null) covers[c] = inp.value.trim(); });
+  try {
+    const res = await fetch('/api/admin/settings', { method: 'PUT', headers: ADM_HDR, credentials: 'include', body: JSON.stringify({ categoryCovers: covers }) });
+    if (!res.ok) throw new Error();
+    _content.categoryCovers = covers;
+    toast('✅ Kategoriler kaydedildi (yayına 1-2 dk sürebilir)', 'ok');
+  } catch { toast('⚠️ Kategoriler kaydedilemedi, tekrar deneyin.', 'err'); }
+}
+
 function promptAddCategory() {
   const name = prompt('Yeni kategori adı:');
   if (!name) return;
@@ -3137,7 +3187,8 @@ function promptAddCategory() {
   
   _content.categoryCovers[trimmed] = '';
   renderSettings();
-  toast('Kategori eklendi. Kaydetmek için sayfanın altındaki Kaydet butonuna basın.', 'ok');
+  renderProductCategories();
+  toast('Kategori eklendi. "💾 Kategorileri Kaydet" ile kaydedin.', 'ok');
 }
 
 function promptRenameCategory(oldName) {
@@ -3189,7 +3240,8 @@ function deleteCategory(catName) {
       delete _content.categoryCovers[catName];
     }
     renderSettings();
-    toast('Kategori silindi. Değişiklikleri kaydetmek için sayfanın altındaki Kaydet butonuna basın.', 'ok');
+    renderProductCategories();
+    toast('Kategori silindi. "💾 Kategorileri Kaydet" ile kaydedin.', 'ok');
   });
 }
 
