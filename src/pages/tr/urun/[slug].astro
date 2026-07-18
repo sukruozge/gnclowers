@@ -30,7 +30,7 @@ const crumbLd = breadcrumbJsonLd([
   { name: title, url: `${site}/tr/${selfPath}` },
 ]);
 ---
-<Base locale="tr" title={`${title} — Aselovers`} description={product.description_tr || title}
+<Base locale="tr" title={`${title} — Aselovers`} description={(product.description_tr || title).split('\n')[0]}
   pathSelf={selfPath} pathsAlt={{ tr: selfPath, en: `product/${enSlug}` }} ogImage={product.image ?? undefined}>
   <Fragment slot="head">
     <script type="application/ld+json" set:html={ld} />
