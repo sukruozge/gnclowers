@@ -1,0 +1,4 @@
+# Nested category pages are only served at the trailing-slash URL because the
+# parent path (urunler/products) is itself a page — redirect the slashless form.
+/tr/urunler/:cat  /tr/urunler/:cat/  308
+/en/products/:cat /en/products/:cat/ 308

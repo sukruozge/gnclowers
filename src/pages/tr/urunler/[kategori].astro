@@ -91,11 +91,13 @@ const listLd = itemListJsonLd(name, products.map((p) => ({
 const crumbLd = breadcrumbJsonLd([
   { name: 'Ana Sayfa', url: `${site}/tr` },
   { name: 'Ürünler', url: `${site}/tr/urunler` },
-  { name, url: `${site}/tr/urunler/${trSlug}` },
+  { name, url: `${site}/tr/urunler/${trSlug}/` },
 ]);
 ---
+{/* Trailing slashes are load-bearing: Cloudflare serves nested dir pages only at
+    the slashed URL when the parent path is itself a page (see public/_redirects). */}
 <Base locale="tr" title={`${meta.title} | Aselovers`} description={meta.desc}
-  pathSelf={`urunler/${trSlug}`} pathsAlt={{ tr: `urunler/${trSlug}`, en: `products/${enSlug}` }}>
+  pathSelf={`urunler/${trSlug}/`} pathsAlt={{ tr: `urunler/${trSlug}/`, en: `products/${enSlug}/` }}>
   <script type="application/ld+json" set:html={listLd} slot="head" />
   <script type="application/ld+json" set:html={crumbLd} slot="head" />
   <Nav locale="tr" />

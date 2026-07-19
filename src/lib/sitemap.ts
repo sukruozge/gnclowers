@@ -18,9 +18,11 @@ export function buildSitemap(site: string): string {
     urls.push({ loc: canonical(site, 'en', r.en) });
   }
   const products = loadProducts();
+  // Trailing slash required: Cloudflare only serves these nested pages at the
+  // slashed URL because the parent path (urunler/products) is itself a page.
   for (const c of new Set(products.map((p) => p.category))) {
-    urls.push({ loc: canonical(site, 'tr', `urunler/${categorySlug(c, 'tr')}`) });
-    urls.push({ loc: canonical(site, 'en', `products/${categorySlug(c, 'en')}`) });
+    urls.push({ loc: canonical(site, 'tr', `urunler/${categorySlug(c, 'tr')}/`) });
+    urls.push({ loc: canonical(site, 'en', `products/${categorySlug(c, 'en')}/`) });
   }
   for (const p of products) {
     urls.push({ loc: canonical(site, 'tr', `urun/${productSlug(p, 'tr')}`) });

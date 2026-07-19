@@ -46,7 +46,7 @@ const exploreLabel = locale === 'tr' ? 'Keşfet' : 'Explore';
     </div>
     <div class="cats">
       {cats.map((cat, idx) => (
-        <a class={`cat reveal reveal--fade-up reveal--d${(idx % 4) + 1}`} href={`${catalog}/${categorySlug(cat.c, locale)}`}>
+        <a class={`cat reveal reveal--fade-up reveal--d${(idx % 4) + 1}`} href={`${catalog}/${categorySlug(cat.c, locale)}/`}>
           <div class="cat__media">
             {cat.img && <img src={cat.img} alt={cat.alt} loading="lazy" />}
             <div class="cat__overlay">
