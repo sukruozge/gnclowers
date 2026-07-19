@@ -19,6 +19,10 @@ describe('buildSitemap', () => {
     expect(xml).toContain('/tr/blog/');
     expect(xml).toContain('/en/blog/');
   });
+  it('includes category landing pages in both locales', () => {
+    expect(xml).toMatch(/\/tr\/urunler\/[a-z0-9-]+<\/loc>/);
+    expect(xml).toMatch(/\/en\/products\/[a-z0-9-]+<\/loc>/);
+  });
   it('adds lastmod freshness signal to blog post urls', () => {
     expect(xml).toMatch(/<url><loc>[^<]*\/tr\/blog\/[^<]*<\/loc><lastmod>\d{4}-\d{2}-\d{2}<\/lastmod><\/url>/);
   });

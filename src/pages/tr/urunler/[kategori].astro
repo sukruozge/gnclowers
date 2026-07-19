@@ -1,0 +1,138 @@
+---
+import Base from '../../../layouts/Base.astro';
+import Nav from '../../../components/Nav.astro';
+import Footer from '../../../components/Footer.astro';
+import ProductCard from '../../../components/ProductCard.astro';
+import { loadProducts, productSlug } from '@lib/products';
+import { categoryLabel, categorySlug } from '@lib/categories';
+import { itemListJsonLd, breadcrumbJsonLd } from '@lib/jsonld';
+
+export function getStaticPaths() {
+  const cats = [...new Set(loadProducts().map((p) => p.category))];
+  return cats.map((catKey) => ({ params: { kategori: categorySlug(catKey, 'tr') }, props: { catKey } }));
+}
+
+interface Props { catKey: string }
+const { catKey } = Astro.props;
+const products = loadProducts().filter((p) => p.category === catKey);
+const name = categoryLabel(catKey, 'tr');
+const trSlug = categorySlug(catKey, 'tr');
+const enSlug = categorySlug(catKey, 'en');
+
+// Search-intent title/description per category; generic fallback for the rest.
+const SEO: Record<string, { title: string; desc: string; sub: string }> = {
+  'Amigurumi Toys': {
+    title: 'Amigurumi Oyuncaklar — El Örgüsü Oyuncak Modelleri',
+    desc: 'El örgüsü amigurumi oyuncaklar: ayıcık, tavşan ve sevimli hayvan figürleri. Siparişe göre tek tek örülür; isimli ve kişiye özel seçenekler.',
+    sub: 'Siparişe göre tek tek örülen, isimli ve kişiye özel amigurumi oyuncaklar.',
+  },
+  'Stuffed Animals': {
+    title: 'Uyku Arkadaşları — Örgü Uyku Arkadaşı Modelleri',
+    desc: 'Bebekler için el örgüsü uyku arkadaşları: yumuşacık örgü hayvanlar, isimli seçenekler. Hoş geldin bebek ve yenidoğan hediyesinin en sevimli hali.',
+    sub: 'Yumuşacık el örgüsü uyku arkadaşları — bebeklerin ilk yol arkadaşı.',
+  },
+  'Crochet Dolls': {
+    title: 'Örgü Bebekler — Amigurumi Bebek Modelleri',
+    desc: 'El örgüsü amigurumi bebekler: kıyafetli, isimli ve kişiye özel örgü bebek modelleri. Kız bebek hediyesi arayanların favorisi.',
+    sub: 'Kıyafetli, isimli, tamamen elde örülen amigurumi bebekler.',
+  },
+  'Bunny Rabbits Toys': {
+    title: 'Örgü Tavşanlar — Amigurumi Tavşan Modelleri',
+    desc: 'El örgüsü amigurumi tavşanlar: uyku arkadaşı tavşanlar, isimli tavşan bebekler. Hoş geldin bebek ve baby shower hediyesi için ideal.',
+    sub: 'Uzun kulaklı, yumuşacık el örgüsü tavşanlar — her biri tek tek örülür.',
+  },
+  'Baby Gift Sets': {
+    title: 'Bebek Hediye Setleri — El Yapımı Yenidoğan Setleri',
+    desc: 'El yapımı bebek hediye setleri: örgü oyuncak, çıngırak ve aksesuar kombinleri. Hastane çıkışı ve hoş geldin bebek hediyesinin en özeli.',
+    sub: 'Özenle hazırlanan el yapımı hediye setleri — hediyeye hazır paketiyle.',
+  },
+  'Baby Shower': {
+    title: 'Baby Shower Hediyeleri — El Yapımı Bebek Partisi Hediyesi',
+    desc: 'Baby shower ve bebek mevlidi için el yapımı hediyeler: mini amigurumiler, örgü figürler ve isimli hatıralar.',
+    sub: 'Bebek partisinin en sevimli hediyeleri — el emeğiyle.',
+  },
+  'Crochet Hair Clips': {
+    title: 'Örgü Saç Tokaları — Kız Çocuk El Yapımı Toka Modelleri',
+    desc: 'El örgüsü saç tokaları: çiçek, meyve ve hayvan motifli kız çocuk tokaları. El yapımı, yumuşak ve saç dostu.',
+    sub: 'Renkli motifli, el örgüsü saç tokaları.',
+  },
+  'Wedding Dolls': {
+    title: 'Düğün Bebekleri — El Yapımı Gelin Damat Amigurumi',
+    desc: 'El örgüsü düğün bebekleri: gelin-damat amigurumi setleri. Nişan, düğün ve yıldönümü için kişiye özel hediye.',
+    sub: 'Gelin ve damada özel, elde örülen hatıra bebekler.',
+  },
+  'Crochet Bags': {
+    title: 'Örgü Çantalar — El Yapımı Çanta Modelleri',
+    desc: 'El örgüsü çantalar: günlük ve çocuk boyu örgü çanta modelleri. Her biri tek tek elde örülür.',
+    sub: 'Tek tek elde örülen, karakterli örgü çantalar.',
+  },
+  'Safari Animals': {
+    title: 'Safari Hayvanları — Amigurumi Safari Oyuncakları',
+    desc: 'El örgüsü safari hayvanları: aslan, zürafa, fil ve arkadaşları. Safari temalı bebek odasının amigurumi kadrosu.',
+    sub: 'Aslan, zürafa, fil… safari temalı bebek odasının örgü kadrosu.',
+  },
+  'Curtain Tiebacks': {
+    title: 'Perde Tutacakları — Örgü Bebek Odası Perde Süsü',
+    desc: 'El örgüsü perde tutacakları: hayvan figürlü bebek odası perde süsleri. Bebek odası dekorasyonuna el emeği dokunuşu.',
+    sub: 'Hayvan figürlü, el örgüsü perde tutacakları.',
+  },
+};
+const meta = SEO[catKey] ?? {
+  title: `${name} — El Yapımı Örgü Modeller`,
+  desc: `${name}: el yapımı örgü ve amigurumi modeller. Siparişe göre tek tek örülür; Türkiye ve dünyaya kargo.`,
+  sub: `El yapımı ${name.toLowerCase()} modelleri — her biri tek tek örülür.`,
+};
+
+const site = Astro.site!.toString().replace(/\/+$/, '');
+const listLd = itemListJsonLd(name, products.map((p) => ({
+  name: p.title_tr || p.title_en,
+  url: `${site}/tr/urun/${productSlug(p, 'tr')}`,
+})));
+const crumbLd = breadcrumbJsonLd([
+  { name: 'Ana Sayfa', url: `${site}/tr` },
+  { name: 'Ürünler', url: `${site}/tr/urunler` },
+  { name, url: `${site}/tr/urunler/${trSlug}` },
+]);
+---
+<Base locale="tr" title={`${meta.title} | Aselovers`} description={meta.desc}
+  pathSelf={`urunler/${trSlug}`} pathsAlt={{ tr: `urunler/${trSlug}`, en: `products/${enSlug}` }}>
+  <script type="application/ld+json" set:html={listLd} slot="head" />
+  <script type="application/ld+json" set:html={crumbLd} slot="head" />
+  <Nav locale="tr" />
+  <main>
+    <section class="section">
+      <div class="container">
+        <nav class="crumbs" aria-label="Sayfa yolu">
+          <a href="/tr">Ana Sayfa</a> <span aria-hidden="true">›</span>
+          <a href="/tr/urunler">Ürünler</a> <span aria-hidden="true">›</span>
+          <span>{name}</span>
+        </nav>
+        <header class="cathead">
+          <h1 class="cathead__title">{name}</h1>
+          <p class="cathead__sub">{meta.sub}</p>
+          <p class="cathead__count">{products.length} ürün</p>
+        </header>
+        <div class="grid">
+          {products.map((p) => <div class="grid__item"><ProductCard product={p} locale="tr" quickAdd /></div>)}
+        </div>
+        <p class="alllink"><a href="/tr/urunler">← Tüm ürünlere göz at</a></p>
+      </div>
+    </section>
+  </main>
+  <Footer locale="tr" />
+
+  <style>
+    .crumbs { font-size: .85rem; color: var(--muted); margin-bottom: var(--space-4); display: flex; gap: 8px; flex-wrap: wrap; }
+    .crumbs a { color: var(--muted); text-decoration: none; }
+    .crumbs a:hover { color: var(--accent); }
+    .cathead { text-align: center; margin-bottom: var(--space-6); }
+    .cathead__title { font-family: var(--font-display); font-size: clamp(2rem, 4.6vw, 3.1rem); margin: 0 0 var(--space-2); }
+    .cathead__sub { color: var(--muted); max-width: 56ch; margin: 0 auto var(--space-2); }
+    .cathead__count { font-size: .85rem; color: var(--muted); margin: 0; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: var(--space-5); }
+    .alllink { margin-top: var(--space-6); text-align: center; }
+    .alllink a { color: var(--accent); text-decoration: none; }
+    .alllink a:hover { text-decoration: underline; }
+    @media (max-width: 640px) { .grid { grid-template-columns: repeat(2, 1fr); gap: var(--space-3); } }
+  </style>
+</Base>

@@ -11,7 +11,8 @@
     "test:watch": "vitest",
     "sync": "tsx scripts/etsy-sync.ts",
     "etsy-auth": "tsx scripts/etsy-oauth.ts",
-    "blog-publish": "tsx scripts/blog-publish.ts"
+    "blog-publish": "tsx scripts/blog-publish.ts",
+    "indexnow": "node scripts/indexnow.mjs"
   },
   "engines": {
     "node": ">=18.0.0"

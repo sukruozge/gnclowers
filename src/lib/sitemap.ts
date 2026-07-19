@@ -1,6 +1,7 @@
 import { canonical } from './seo';
 import { loadProducts, productSlug } from './products';
 import { loadPosts } from './blog';
+import { categorySlug } from './categories';
 
 const STATIC: Array<{ tr: string; en: string }> = [
   { tr: '', en: '' },
@@ -16,7 +17,12 @@ export function buildSitemap(site: string): string {
     urls.push({ loc: canonical(site, 'tr', r.tr) });
     urls.push({ loc: canonical(site, 'en', r.en) });
   }
-  for (const p of loadProducts()) {
+  const products = loadProducts();
+  for (const c of new Set(products.map((p) => p.category))) {
+    urls.push({ loc: canonical(site, 'tr', `urunler/${categorySlug(c, 'tr')}`) });
+    urls.push({ loc: canonical(site, 'en', `products/${categorySlug(c, 'en')}`) });
+  }
+  for (const p of products) {
     urls.push({ loc: canonical(site, 'tr', `urun/${productSlug(p, 'tr')}`) });
     urls.push({ loc: canonical(site, 'en', `product/${productSlug(p, 'en')}`) });
   }

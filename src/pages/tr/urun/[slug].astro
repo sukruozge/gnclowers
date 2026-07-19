@@ -8,7 +8,7 @@ import ProductGallery from '../../../components/ProductGallery.astro';
 import RatingBadge from '../../../components/RatingBadge.astro';
 import { loadProducts, localizedTitle, productSlug, type Product } from '@lib/products';
 import { productJsonLd, breadcrumbJsonLd } from '@lib/jsonld';
-import { loadReviews } from '@lib/reviews';
+import { loadReviews, pickReviews, formatRating } from '@lib/reviews';
 import { optName, optValue } from '@lib/optionLabels';
 
 export function getStaticPaths() {
@@ -22,7 +22,10 @@ const enSlug = productSlug(product, 'en');
 const title = localizedTitle(product, 'tr');
 const price = new Intl.NumberFormat('tr-TR', { style: 'currency', currency: product.currency }).format(product.price);
 const related = loadProducts().filter((x) => x.category === product.category && x.id !== product.id).slice(0, 4);
-const shop = loadReviews().shop;
+const reviewsData = loadReviews();
+const shop = reviewsData.shop;
+// Verified Etsy shop reviews, TR-language first — strong buy-signal below the description.
+const shopReviews = pickReviews(reviewsData.reviews, 'tr', 4);
 const ld = productJsonLd(product, 'tr', `${site}/tr/${selfPath}`, shop.rating ? { value: shop.rating, count: shop.count } : undefined);
 const crumbLd = breadcrumbJsonLd([
   { name: 'Ana sayfa', url: `${site}/tr` },
@@ -148,6 +151,24 @@ const crumbLd = breadcrumbJsonLd([
           <section class="pdesc">
             <h2 class="pdesc__h">Ürün Açıklaması</h2>
             <div class="pdesc__body prose" style="white-space: pre-line">{product.description_tr}</div>
+          </section>
+        )}
+
+        {shopReviews.length > 0 && (
+          <section class="previews">
+            <h2 class="previews__h">Müşteri Yorumları</h2>
+            {shop.rating && shop.count > 0 && (
+              <p class="previews__meta">★ {formatRating(shop.rating)} · {shop.count} doğrulanmış mağaza değerlendirmesi</p>
+            )}
+            <div class="previews__grid">
+              {shopReviews.map((r) => (
+                <figure class="previews__card">
+                  <div class="previews__stars" aria-label={`${r.rating} yıldız`}>{'★'.repeat(r.rating)}</div>
+                  <blockquote class="previews__text">“{r.text}”</blockquote>
+                  <figcaption class="previews__date">{r.date}</figcaption>
+                </figure>
+              ))}
+            </div>
           </section>
         )}
 
@@ -308,6 +329,14 @@ const crumbLd = breadcrumbJsonLd([
     .assure__item strong { font-size: .9rem; color: var(--ink); font-weight: 600; }
     .assure__item span { font-size: .82rem; color: var(--muted); line-height: 1.4; }
 
+    .previews { margin-top: var(--space-7); padding-top: var(--space-6); border-top: 1px solid var(--line); }
+    .previews__h { font-family: var(--font-display); font-size: var(--step-h3); margin-bottom: var(--space-2); }
+    .previews__meta { color: var(--muted); font-size: .9rem; margin: 0 0 var(--space-4); }
+    .previews__grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: var(--space-4); }
+    .previews__card { margin: 0; padding: var(--space-4); border: 1px solid var(--line); border-radius: var(--radius); background: var(--section); }
+    .previews__stars { color: #d99a2b; letter-spacing: 2px; margin-bottom: var(--space-2); }
+    .previews__text { margin: 0 0 var(--space-2); color: var(--muted); font-size: .92rem; line-height: 1.55; }
+    .previews__date { font-size: .78rem; color: var(--muted); opacity: .7; }
     .pdesc { margin-top: var(--space-7); padding-top: var(--space-6); border-top: 1px solid var(--line); }
     .pdesc__h { font-family: var(--font-display); font-size: var(--step-h3); margin-bottom: var(--space-4); display: inline-block; padding-bottom: var(--space-2); border-bottom: 2px dashed color-mix(in srgb, var(--accent) 40%, var(--line)); }
     .pdesc__body { max-width: 70ch; color: var(--muted); }

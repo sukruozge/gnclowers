@@ -1,7 +1,7 @@
 ---
 import { t, type Locale } from '@lib/i18n';
 import { loadProducts } from '@lib/products';
-import { categoryLabel } from '@lib/categories';
+import { categoryLabel, categorySlug } from '@lib/categories';
 import SectionHeading from '../SectionHeading.astro';
 import Ambient from '../Ambient.astro';
 import settings from '../../data/settings.json';
@@ -46,7 +46,7 @@ const exploreLabel = locale === 'tr' ? 'Keşfet' : 'Explore';
     </div>
     <div class="cats">
       {cats.map((cat, idx) => (
-        <a class={`cat reveal reveal--fade-up reveal--d${(idx % 4) + 1}`} href={`${catalog}?cat=${encodeURIComponent(cat.c)}`}>
+        <a class={`cat reveal reveal--fade-up reveal--d${(idx % 4) + 1}`} href={`${catalog}/${categorySlug(cat.c, locale)}`}>
           <div class="cat__media">
             {cat.img && <img src={cat.img} alt={cat.alt} loading="lazy" />}
             <div class="cat__overlay">

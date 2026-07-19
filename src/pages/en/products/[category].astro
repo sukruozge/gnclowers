@@ -1,0 +1,137 @@
+---
+import Base from '../../../layouts/Base.astro';
+import Nav from '../../../components/Nav.astro';
+import Footer from '../../../components/Footer.astro';
+import ProductCard from '../../../components/ProductCard.astro';
+import { loadProducts, productSlug } from '@lib/products';
+import { categoryLabel, categorySlug } from '@lib/categories';
+import { itemListJsonLd, breadcrumbJsonLd } from '@lib/jsonld';
+
+export function getStaticPaths() {
+  const cats = [...new Set(loadProducts().map((p) => p.category))];
+  return cats.map((catKey) => ({ params: { category: categorySlug(catKey, 'en') }, props: { catKey } }));
+}
+
+interface Props { catKey: string }
+const { catKey } = Astro.props;
+const products = loadProducts().filter((p) => p.category === catKey);
+const name = categoryLabel(catKey, 'en');
+const trSlug = categorySlug(catKey, 'tr');
+const enSlug = categorySlug(catKey, 'en');
+
+const SEO: Record<string, { title: string; desc: string; sub: string }> = {
+  'Amigurumi Toys': {
+    title: 'Amigurumi Toys — Handmade Crochet Toy Collection',
+    desc: 'Handmade amigurumi toys: teddy bears, bunnies and cute animal friends. Crocheted to order, with personalized name options.',
+    sub: 'Crocheted to order, one by one — with personalized name options.',
+  },
+  'Stuffed Animals': {
+    title: 'Crochet Stuffed Animals — Handmade Sleep Buddies',
+    desc: "Handmade crochet stuffed animals and sleep buddies for babies. Soft, huggable and made to order with name personalization.",
+    sub: "Soft, huggable crochet companions — a baby's first best friend.",
+  },
+  'Crochet Dolls': {
+    title: 'Crochet Dolls — Handmade Amigurumi Dolls',
+    desc: 'Handmade amigurumi dolls with outfits and name personalization. A favorite baby girl gift, crocheted stitch by stitch.',
+    sub: 'Dressed, personalized, entirely hand-crocheted dolls.',
+  },
+  'Bunny Rabbits Toys': {
+    title: 'Crochet Bunnies — Handmade Amigurumi Rabbits',
+    desc: 'Handmade amigurumi bunnies: sleep buddy rabbits and personalized bunny dolls. Perfect for baby showers and welcome-baby gifts.',
+    sub: 'Long-eared, soft crochet bunnies — each one unique.',
+  },
+  'Baby Gift Sets': {
+    title: 'Baby Gift Sets — Handmade Newborn Sets',
+    desc: 'Handmade baby gift sets combining crochet toys, rattles and accessories. The most special welcome-baby and hospital-exit gift.',
+    sub: 'Thoughtful handmade sets — gift-ready packaging included.',
+  },
+  'Baby Shower': {
+    title: 'Baby Shower Gifts — Handmade Keepsakes',
+    desc: 'Handmade baby shower gifts: mini amigurumi, crochet figures and personalized keepsakes.',
+    sub: 'The sweetest handmade party gifts.',
+  },
+  'Crochet Hair Clips': {
+    title: 'Crochet Hair Clips — Handmade Girls Accessories',
+    desc: 'Handmade crochet hair clips with flower, fruit and animal motifs. Soft, hair-friendly and made by hand.',
+    sub: 'Colorful, hand-crocheted hair clips.',
+  },
+  'Wedding Dolls': {
+    title: 'Wedding Dolls — Handmade Bride & Groom Amigurumi',
+    desc: 'Handmade wedding dolls: bride and groom amigurumi sets. A personalized keepsake for engagements, weddings and anniversaries.',
+    sub: 'Custom bride-and-groom keepsake dolls.',
+  },
+  'Crochet Bags': {
+    title: 'Crochet Bags — Handmade Bag Collection',
+    desc: 'Handmade crochet bags in everyday and kid sizes, crocheted one by one.',
+    sub: 'Characterful bags, crocheted one at a time.',
+  },
+  'Safari Animals': {
+    title: 'Safari Animals — Amigurumi Safari Collection',
+    desc: 'Handmade crochet safari animals: lions, giraffes, elephants and friends for a safari-themed nursery.',
+    sub: 'Lion, giraffe, elephant… the crochet cast of a safari nursery.',
+  },
+  'Curtain Tiebacks': {
+    title: 'Curtain Tiebacks — Crochet Nursery Decor',
+    desc: 'Handmade crochet curtain tiebacks with animal figures — a handcrafted touch for the nursery.',
+    sub: 'Animal-figure crochet tiebacks for the nursery.',
+  },
+};
+const meta = SEO[catKey] ?? {
+  title: `${name} — Handmade Crochet Collection`,
+  desc: `${name}: handmade crochet and amigurumi pieces, made to order. Ships worldwide from Istanbul.`,
+  sub: `Handmade ${name.toLowerCase()}, crocheted to order.`,
+};
+
+const site = Astro.site!.toString().replace(/\/+$/, '');
+const listLd = itemListJsonLd(name, products.map((p) => ({
+  name: p.title_en || p.title_tr,
+  url: `${site}/en/product/${productSlug(p, 'en')}`,
+})));
+const crumbLd = breadcrumbJsonLd([
+  { name: 'Home', url: `${site}/en` },
+  { name: 'Products', url: `${site}/en/products` },
+  { name, url: `${site}/en/products/${enSlug}` },
+]);
+---
+<Base locale="en" title={`${meta.title} | Aselovers`} description={meta.desc}
+  pathSelf={`products/${enSlug}`} pathsAlt={{ tr: `urunler/${trSlug}`, en: `products/${enSlug}` }}>
+  <script type="application/ld+json" set:html={listLd} slot="head" />
+  <script type="application/ld+json" set:html={crumbLd} slot="head" />
+  <Nav locale="en" />
+  <main>
+    <section class="section">
+      <div class="container">
+        <nav class="crumbs" aria-label="Breadcrumb">
+          <a href="/en">Home</a> <span aria-hidden="true">›</span>
+          <a href="/en/products">Products</a> <span aria-hidden="true">›</span>
+          <span>{name}</span>
+        </nav>
+        <header class="cathead">
+          <h1 class="cathead__title">{name}</h1>
+          <p class="cathead__sub">{meta.sub}</p>
+          <p class="cathead__count">{products.length} products</p>
+        </header>
+        <div class="grid">
+          {products.map((p) => <div class="grid__item"><ProductCard product={p} locale="en" quickAdd /></div>)}
+        </div>
+        <p class="alllink"><a href="/en/products">← Browse all products</a></p>
+      </div>
+    </section>
+  </main>
+  <Footer locale="en" />
+
+  <style>
+    .crumbs { font-size: .85rem; color: var(--muted); margin-bottom: var(--space-4); display: flex; gap: 8px; flex-wrap: wrap; }
+    .crumbs a { color: var(--muted); text-decoration: none; }
+    .crumbs a:hover { color: var(--accent); }
+    .cathead { text-align: center; margin-bottom: var(--space-6); }
+    .cathead__title { font-family: var(--font-display); font-size: clamp(2rem, 4.6vw, 3.1rem); margin: 0 0 var(--space-2); }
+    .cathead__sub { color: var(--muted); max-width: 56ch; margin: 0 auto var(--space-2); }
+    .cathead__count { font-size: .85rem; color: var(--muted); margin: 0; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: var(--space-5); }
+    .alllink { margin-top: var(--space-6); text-align: center; }
+    .alllink a { color: var(--accent); text-decoration: none; }
+    .alllink a:hover { text-decoration: underline; }
+    @media (max-width: 640px) { .grid { grid-template-columns: repeat(2, 1fr); gap: var(--space-3); } }
+  </style>
+</Base>

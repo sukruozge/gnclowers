@@ -1,5 +1,6 @@
 import settings from '../data/settings.json';
 import type { Locale } from './i18n';
+import { slugBase } from './slug';
 
 // Fallback bilingual labels for the category keys stored on each product.
 // The editable source of truth is settings.categoryNames (admin-managed);
@@ -29,4 +30,9 @@ export function categoryLabel(category: string, locale: Locale): string {
   const edited = custom?.[locale];
   if (typeof edited === 'string' && edited.trim()) return edited.trim();
   return CATEGORY_LABELS[category]?.[locale] ?? category;
+}
+
+/** URL slug for a category's landing page (from its localized display name). */
+export function categorySlug(category: string, locale: Locale): string {
+  return slugBase(categoryLabel(category, locale)) || slugBase(category) || 'kategori';
 }
