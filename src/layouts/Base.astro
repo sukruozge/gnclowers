@@ -90,7 +90,9 @@ const alts = alternates(site, pathsAlt);
           body: JSON.stringify({
             productId: pageId,
             productName: isProductPage ? title : 'Ana Sayfa',
-            referrer: document.referrer || 'direct'
+            referrer: document.referrer || 'direct',
+            lang: path.startsWith('/en') ? 'en' : 'tr',
+            utm: new URLSearchParams(window.location.search).get('utm_source') || ''
           })
         }).catch(() => {});
       } catch {}

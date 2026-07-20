@@ -1381,6 +1381,27 @@
           </div>
           <div class="stat-val" id="analytics-total-views">0</div>
         </div>
+        <div class="stat-card">
+          <div class="stat-header">
+            <span class="stat-label">İnsan Ziyareti</span>
+            <span class="stat-icon">🧑</span>
+          </div>
+          <div class="stat-val" id="analytics-human">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-header">
+            <span class="stat-label">Bot / AI Ajanı</span>
+            <span class="stat-icon">🤖</span>
+          </div>
+          <div class="stat-val" id="analytics-bot">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-header">
+            <span class="stat-label">TR / EN Ziyaret</span>
+            <span class="stat-icon">🌐</span>
+          </div>
+          <div class="stat-val" id="analytics-langs" style="font-size:1.1rem;">–</div>
+        </div>
       </div>
 
       <div class="grid-2">
@@ -1413,6 +1434,49 @@
                   </tr>
                 </thead>
                 <tbody id="analytics-products-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-2" style="margin-top: 24px;">
+        <div class="card">
+          <div class="card-header"><div class="card-title">Ülkelere Göre Ziyaret</div></div>
+          <div class="card-body" style="padding: 0;">
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Ülke</th><th>Ziyaret</th></tr></thead>
+                <tbody id="analytics-countries-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Son 14 Gün</div></div>
+          <div class="card-body" id="analytics-daily" style="display:flex;flex-direction:column;gap:6px;"></div>
+        </div>
+      </div>
+
+      <div class="grid-2" style="margin-top: 24px;">
+        <div class="card">
+          <div class="card-header"><div class="card-title">Tespit Edilen Botlar / AI Ajanları</div></div>
+          <div class="card-body" style="padding: 0;">
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Ajan</th><th>İstek</th></tr></thead>
+                <tbody id="analytics-bots-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Kampanya (UTM) Kaynakları</div></div>
+          <div class="card-body" style="padding: 0;">
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>utm_source</th><th>Ziyaret</th></tr></thead>
+                <tbody id="analytics-utm-tbody"></tbody>
               </table>
             </div>
           </div>
@@ -3956,7 +4020,47 @@ async function loadAnalyticsPage() {
     const data = await res.json();
     
     viewsEl.textContent = data.totalViews || 0;
-    
+
+    // Visitor-origin panels (human/bot, langs, countries, daily, bots, utm)
+    const v = data.visitors || { human: 0, bot: 0 };
+    document.getElementById('analytics-human').textContent = v.human || 0;
+    document.getElementById('analytics-bot').textContent = v.bot || 0;
+    const lg = data.langs || {};
+    document.getElementById('analytics-langs').textContent = `TR ${lg.tr || 0} / EN ${lg.en || 0}`;
+
+    const fillTable = (tbodyId, obj, labelFn) => {
+      const tb = document.getElementById(tbodyId);
+      if (!tb) return;
+      const entries = Object.entries(obj || {}).sort((a, b) => b[1] - a[1]).slice(0, 15);
+      tb.innerHTML = entries.length
+        ? ''
+        : '<tr><td colspan="2" style="text-align:center;color:var(--muted-foreground)">Henüz veri yok</td></tr>';
+      entries.forEach(([k, val]) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `<td><strong>${esc(labelFn ? labelFn(k) : k)}</strong></td><td>${esc(val)}</td>`;
+        tb.appendChild(row);
+      });
+    };
+    const COUNTRY_NAMES = { TR: '🇹🇷 Türkiye', US: '🇺🇸 ABD', DE: '🇩🇪 Almanya', GB: '🇬🇧 İngiltere', FR: '🇫🇷 Fransa', NL: '🇳🇱 Hollanda', CA: '🇨🇦 Kanada', AU: '🇦🇺 Avustralya', CH: '🇨🇭 İsviçre', AT: '🇦🇹 Avusturya', XX: 'Bilinmiyor' };
+    fillTable('analytics-countries-tbody', data.countries, (c) => COUNTRY_NAMES[c] || c);
+    fillTable('analytics-bots-tbody', data.bots);
+    fillTable('analytics-utm-tbody', data.utm);
+
+    const dailyEl = document.getElementById('analytics-daily');
+    if (dailyEl) {
+      const days = Object.entries(data.daily || {}).sort((a, b) => a[0].localeCompare(b[0])).slice(-14);
+      const max = Math.max(1, ...days.map(([, n]) => n));
+      dailyEl.innerHTML = days.length ? '' : '<div style="color:var(--muted-foreground);text-align:center;">Henüz veri yok</div>';
+      days.forEach(([d, n]) => {
+        const row = document.createElement('div');
+        row.style.cssText = 'display:flex;align-items:center;gap:8px;font-size:.8rem;';
+        row.innerHTML = `<span style="width:74px;color:var(--muted-foreground)">${esc(d.slice(5))}</span>` +
+          `<span style="flex:1;background:var(--secondary,#eee);border-radius:4px;overflow:hidden;"><span style="display:block;height:10px;width:${Math.round((n / max) * 100)}%;background:var(--primary,#B0532E);border-radius:4px;"></span></span>` +
+          `<span style="width:36px;text-align:right;">${esc(n)}</span>`;
+        dailyEl.appendChild(row);
+      });
+    }
+
     refTbody.innerHTML = '';
     const referrers = Object.entries(data.referrers || {}).sort((a,b) => b[1] - a[1]);
     if (!referrers.length) {
