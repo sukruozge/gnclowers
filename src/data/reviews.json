@@ -1,9 +1,15 @@
 {
   "shop": {
     "rating": 5,
-    "count": 7
+    "count": 8
   },
   "reviews": [
+    {
+      "rating": 5,
+      "text": "Very good quality and well crafted.",
+      "language": "en",
+      "date": "2026-07-19"
+    },
     {
       "rating": 5,
       "text": "Exactly as described. Beautiful. Well crafted",
