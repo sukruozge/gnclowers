@@ -151,7 +151,7 @@
       "title_tr": "Amigurumi Örgü Ejderha Uyku Arkadaşı – El Yapımı Hediye",
       "description_en": "✨ Meet your little dragon friend… 🤍\n\nThis crochet dragon plush is a handmade amigurumi toy designed as a soft baby gift and cozy nursery decor piece.\nWith its tiny wings, soft cotton texture, and gentle handmade details, this little dragon is created to bring comfort, imagination, and warmth into your child’s world.\n\nMore than just a toy, it becomes a comforting companion and a special keepsake your little one can grow up with.\n\n🧸 PRODUCT DETAILS\n\n• 100% handmade crochet dragon\n• Made with premium cotton yarn\n• Filled with soft fiber\n• Lightweight and easy to carry\n• Secure locked safety eyes\n• Soft wings and tail details\n\n📏 Size\n\nApprox. 23–25 cm (9–10 inches)\n\n🌿 WHY PARENTS LOVE THIS\n\n• Soft and natural cotton texture\n• Gentle on sensitive baby skin\n• No harmful chemicals\n• Supports imaginative play and emotional bonding\n• Minimal and timeless nursery decor style\n• Handmade alternative to mass-produced toys\n\n💝 PERFECT FOR\n\n• Baby gift\n• Newborn gift\n• Baby shower gift\n• Nursery decor\n• Dragon lover gift\n• Handmade keepsake toy\n• Toddler comfort toy\n\n🧵 HANDMADE WITH LOVE\n\nEach dragon is carefully crocheted stitch by stitch with love and attention to detail.\nNo mass production — every piece is individually handmade, making every dragon unique.\n\n🧼 CARE INSTRUCTIONS\n\n• Machine washable at 30°C\n• Lay flat to dry\n• Durable and long-lasting\n\n⚠️ NOTE\n\nEach product is handmade, so slight variations may occur.\nThis makes every dragon truly one of a kind 🤍",
       "description_tr": "El örgüsü ejderha, yumuşak pamuklu dokusuyla tek tek elde örülür — hayal gücü geniş minikler için bebek hediyesinin en eğlenceli hali. Minik kanatları ve özenle işlenmiş detaylarıyla hem bebek odasında sevimli bir dekor parçası hem de kucaklanası bir uyku arkadaşıdır. Sıradan bir oyuncaktan öte, çocuğunuzun birlikte büyüyeceği rahatlatıcı bir dost ve el emeği bir hatıradır. Hoş geldin bebek, doğum günü ya da yılbaşı sürprizi olarak küçük bir kahramana hediye edin.\n\n🧸 ÜRÜN DETAYLARI\n\n• %100 el örgüsü ejderha\n• Birinci sınıf pamuk iplikle örülür\n• Yumuşak elyaf dolgu\n• Hafif, taşıması kolay\n• Güvenle kilitlenen güvenlik gözleri\n• Yumuşak kanat ve kuyruk detayları\n\n📏 BOY\n\nYaklaşık 23–25 cm\n\n🌿 ANNE BABALAR NEDEN SEVİYOR\n\n• Yumuşak, doğal pamuk dokusu\n• Hassas bebek ciltlerine karşı naziktir\n• Zararlı kimyasal içermez\n• Hayal gücünü ve duygusal bağ kurmayı destekler\n• Sade, zamansız bebek odası dekor stili\n• Seri üretim oyuncaklara el emeği bir alternatif\n\n💝 ŞUNLAR İÇİN MÜKEMMEL\n\n• Bebek hediyesi\n• Yenidoğan hediyesi\n• Baby shower hediyesi\n• Bebek odası dekoru\n• Ejderha sevenlere hediye\n• El yapımı hatıra oyuncak\n• Miniklere rahatlatıcı bir uyku arkadaşı\n\n🧵 SEVGİYLE ELDE ÖRÜLDÜ\n\nHer ejderha, sevgiyle ve detaylara özen gösterilerek ilmek ilmek elde örülür. Seri üretim yoktur — her parça tek tek elde hazırlanır ve her ejderha benzersizdir.\n\n🧼 BAKIM\n\n• 30°C'de makinede yıkanabilir\n• Düz bir zeminde sererek kurutun\n• Dayanıklı ve uzun ömürlüdür\n\n⚠️ NOT\n\nHer ürün elde örüldüğü için küçük farklılıklar olabilir. Her ejderhayı gerçekten benzersiz kılan da budur 🤍",
-      "price": 2911,
+      "price": 1500,
       "currency": "TRY",
       "image": "https://i.etsystatic.com/65409401/r/il/4a2a2f/8036729087/il_570xN.8036729087_50du.jpg",
       "images": [
@@ -207,23 +207,30 @@
           "values": {
             "Choose Your Model": "Standard"
           },
-          "price": 2911
+          "price": 1500
         },
         {
           "values": {
             "Choose Your Model": "Customizable"
           },
-          "price": 3699
+          "price": 1750
         },
         {
           "values": {
             "Choose Your Model": "Customizable Extra"
           },
-          "price": 4338
+          "price": 2100
         }
       ],
       "imageAlt_tr": "El örgüsü amigurumi örgü ejderha uyku arkadaşı, el yapımı hediye",
-      "imageAlt": "Crochet Dragon Plush — handmade amigurumi by Aselovers"
+      "priceUsd": 55,
+      "optionImages": {},
+      "customFields": [
+        {
+          "label": "Kişiselleştirme Notları :",
+          "required": false
+        }
+      ]
     },
     {
       "id": "4540350627",
