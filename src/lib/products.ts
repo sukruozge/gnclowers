@@ -35,6 +35,9 @@ export interface Product {
   // Merchant-defined customer input boxes shown on the product page (e.g. "Name to
   // embroider", "Gift note"). Their filled values travel with the order as a note.
   customFields?: { label: string; required?: boolean }[];
+  /** Image alt text (EN, admin-editable) and its Turkish counterpart for /tr pages. */
+  imageAlt?: string;
+  imageAlt_tr?: string;
 }
 
 export function hasVariations(p: Product): boolean {

@@ -31,7 +31,7 @@ const order = [photos[1], photos[2], photos[0]]; // left, right, center
     <span class="fc__count" aria-hidden="true">{photos.length} 📷</span>
     {order.map((src, i) => (
       <span class={`fc__ph ${slots[i]}`}>
-        <img src={src} alt={i === 2 ? (product.imageAlt || title) : ''} loading="lazy" decoding="async" aria-hidden={i === 2 ? undefined : 'true'} />
+        <img src={src} alt={i === 2 ? ((locale === 'tr' && product.imageAlt_tr) || product.imageAlt || title) : ''} loading="lazy" decoding="async" aria-hidden={i === 2 ? undefined : 'true'} />
       </span>
     ))}
   </div>
