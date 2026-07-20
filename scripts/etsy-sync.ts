@@ -271,54 +271,37 @@ async function main(): Promise<void> {
     console.warn('Could not fetch shop sections (falling back to keyword categories):', err instanceof Error ? err.message : err);
   }
   const listings = await getListings(shopId);
-  await attachImages(listings);
-  // Variations require OAuth. If a refresh token is configured, pull inventory
-  // (options + per-variant prices); otherwise skip it without failing the sync.
-  if (ETSY_REFRESH_TOKEN) {
+  const prev = loadPrevious();
+
+  // Once a product has been pulled, it is frozen locally: the site (admin panel
+  // + SEO edits) is the source of truth and nightly syncs must never touch it
+  // again. Only listings we have never seen get fetched in full and added.
+  // (To force a re-pull of one product, delete it from products.json — the
+  // next sync re-imports it as new.)
+  const newListings = listings.filter((l) => !prev.has(String(l.listing_id)));
+  console.log(`Listings: ${listings.length} on Etsy, ${newListings.length} new, ${listings.length - newListings.length} existing (frozen).`);
+
+  // Images + variations are only needed for NEW listings — big rate-limit saving.
+  await attachImages(newListings);
+  if (ETSY_REFRESH_TOKEN && newListings.length > 0) {
     try {
       const token = await getAccessToken();
-      await attachInventory(listings, token);
-      console.log('Inventory (variations) fetched via OAuth.');
+      await attachInventory(newListings, token);
+      console.log('Inventory (variations) fetched via OAuth for new listings.');
     } catch (err) {
       console.warn('Could not fetch inventory (variations):', err instanceof Error ? err.message : err);
     }
-  } else {
+  } else if (!ETSY_REFRESH_TOKEN) {
     console.log('ETSY_REFRESH_TOKEN not set — skipping product variations (options).');
   }
-  const prev = loadPrevious();
-  const matchedIds = new Set<string>();
 
+  const matchedIds = new Set<string>();
   const syncedProducts = listings.map((l) => {
-    const mapped = mapListing(l, Date.now(), sections);
-    matchedIds.add(mapped.id);
-    const existing = prev.get(mapped.id);
-    if (existing) {
-      // Preserve local manual changes!
-      return {
-        ...mapped,
-        title_tr: existing.title_tr !== undefined ? existing.title_tr : mapped.title_tr,
-        title_en: existing.title_en !== undefined ? existing.title_en : mapped.title_en,
-        description_tr: existing.description_tr !== undefined ? existing.description_tr : mapped.description_tr,
-        description_en: existing.description_en !== undefined ? existing.description_en : mapped.description_en,
-        price: existing.price !== undefined ? existing.price : mapped.price,
-        priceUsd: (existing as any).priceUsd !== undefined ? (existing as any).priceUsd : (mapped as any).priceUsd,
-        currency: existing.currency !== undefined ? existing.currency : mapped.currency,
-        image: existing.image !== undefined ? existing.image : mapped.image,
-        // Panel is the editing surface for these — manual curation (gallery order,
-        // variant prices, tags) wins over the nightly Etsy pull, like titles/price do.
-        images: (existing as any).images !== undefined ? (existing as any).images : (mapped as any).images,
-        tags: (existing as any).tags !== undefined ? (existing as any).tags : (mapped as any).tags,
-        options: (existing as any).options !== undefined ? (existing as any).options : (mapped as any).options,
-        variants: (existing as any).variants !== undefined ? (existing as any).variants : (mapped as any).variants,
-        optionImages: (existing as any).optionImages !== undefined ? (existing as any).optionImages : (mapped as any).optionImages,
-        imageAlt: (existing as any).imageAlt !== undefined ? (existing as any).imageAlt : (mapped as any).imageAlt,
-        customFields: (existing as any).customFields !== undefined ? (existing as any).customFields : (mapped as any).customFields,
-        category: existing.category !== undefined ? existing.category : mapped.category,
-        isActive: existing.isActive !== undefined ? existing.isActive : mapped.isActive,
-        isNew: existing.isNew !== undefined ? existing.isNew : mapped.isNew,
-      };
-    }
-    return mapped;
+    const id = String(l.listing_id);
+    matchedIds.add(id);
+    const existing = prev.get(id);
+    if (existing) return existing; // frozen — returned verbatim
+    return mapListing(l, Date.now(), sections);
   });
 
   // Append manual products and any products that exist locally but were not returned by Etsy
