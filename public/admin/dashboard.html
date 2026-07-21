@@ -1602,116 +1602,196 @@
   </div>
 </div>
 
-<!-- PRODUCT EDIT MODAL -->
+<!-- PRODUCT EDIT — full-screen professional editor (all ids/functions preserved) -->
+<style>
+  #product-modal.modal-overlay { padding: 0; }
+  #product-modal .pedit-shell {
+    width: 100vw; height: 100dvh; max-width: none; max-height: none;
+    border-radius: 0; margin: 0; padding: 0;
+    display: flex; flex-direction: column; background: var(--background, #efeff6);
+  }
+  .pedit-topbar {
+    position: sticky; top: 0; z-index: 30; flex-shrink: 0;
+    display: flex; align-items: center; gap: 16px;
+    padding: 14px 28px; background: var(--card, #fff);
+    border-bottom: 1px solid var(--border); box-shadow: 0 1px 8px rgba(20,20,40,.05);
+  }
+  .pedit-topbar .pedit-crumb { font-size: .78rem; color: var(--muted-foreground); }
+  .pedit-topbar .modal-title { margin: 0; font-size: 1.15rem; line-height: 1.25; }
+  .pedit-topbar .pedit-actions { margin-left: auto; display: flex; gap: 10px; }
+  .pedit-topbar .btn { min-height: 44px; padding: 0 22px; }
+  .pedit-scroll { flex: 1; overflow-y: auto; }
+  .pedit-wrap {
+    display: grid; grid-template-columns: 400px minmax(0, 1fr);
+    gap: 24px; align-items: start;
+    max-width: 1480px; margin: 0 auto; padding: 24px 28px 64px;
+  }
+  .pedit-media { position: sticky; top: 24px; }
+  .pedit-card {
+    background: var(--card, #fff); border: 1px solid var(--border);
+    border-radius: 14px; padding: 20px; margin-bottom: 20px;
+  }
+  .pedit-card-h {
+    display: flex; align-items: baseline; gap: 8px;
+    font-weight: 650; font-size: .95rem; margin-bottom: 4px;
+  }
+  .pedit-card-sub { font-size: .78rem; color: var(--muted-foreground); margin-bottom: 14px; }
+  .pedit-card .form-group label { font-size: .8rem; font-weight: 600; }
+  .pedit-card input[type="text"], .pedit-card input[type="number"],
+  .pedit-card input[type="url"], .pedit-card select { min-height: 42px; }
+  .pedit-card textarea {
+    width: 100%; border: 1px solid var(--border); border-radius: 8px; padding: 12px;
+    font-family: inherit; font-size: .86rem; line-height: 1.55;
+    background: var(--cream); color: var(--ink); resize: vertical;
+  }
+  .pedit-row { display: flex; gap: 14px; flex-wrap: wrap; }
+  .pedit-row .form-group { flex: 1; min-width: 150px; margin-bottom: 12px; }
+  .pedit-toggle {
+    display: flex; align-items: center; gap: 10px; cursor: pointer;
+    border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px;
+    min-height: 44px; font-size: .84rem; font-weight: 500; user-select: none;
+  }
+  .pedit-toggle input { width: 18px; height: 18px; margin: 0; cursor: pointer; accent-color: var(--primary, #B0532E); }
+  @media (max-width: 1080px) {
+    .pedit-wrap { grid-template-columns: 1fr; padding: 16px 14px 56px; }
+    .pedit-media { position: static; }
+    .pedit-topbar { padding: 10px 14px; }
+  }
+</style>
 <div class="modal-overlay" id="product-modal">
-  <div class="modal" style="max-width: 1180px; width: 96vw; max-height: 94vh; display: flex; flex-direction: column;">
-    <div class="modal-title" id="product-modal-title">Yeni Ürün Ekle</div>
-    <div class="modal-body" style="flex: 1; overflow-y: auto; max-height: none;">
+  <div class="modal pedit-shell">
+    <div class="pedit-topbar">
+      <div>
+        <div class="pedit-crumb">Ürünler / Düzenle</div>
+        <div class="modal-title" id="product-modal-title">Yeni Ürün Ekle</div>
+      </div>
+      <div class="pedit-actions">
+        <button class="btn btn-outline" onclick="closeProductModal()">İptal</button>
+        <button class="btn btn-primary" onclick="saveProduct()">💾 Kaydet</button>
+      </div>
+    </div>
+    <div class="pedit-scroll">
       <input type="hidden" id="p-id">
-      <div class="pedit-grid">
-        <div class="pedit-col">
-          <div class="pedit-sec-h">Temel Bilgiler</div>
-          <div class="form-row" style="display: flex; gap: 12px; margin-bottom: 12px;">
-            <div class="form-group" style="flex: 1;">
-              <label>Ürün Adı (TR)</label>
-              <input type="text" id="p-title-tr" placeholder="Tığ İşi Tavşan">
-            </div>
-            <div class="form-group" style="flex: 1;">
-              <label>Ürün Adı (EN)</label>
-              <input type="text" id="p-title-en" placeholder="Crochet Bunny">
-            </div>
-          </div>
-          <div class="form-group" style="margin-bottom: 12px;">
-            <label>Açıklama (TR)</label>
-            <textarea id="p-desc-tr" rows="6" placeholder="Ürün açıklaması Türkçe..." style="width: 100%; border: 1px solid var(--border); border-radius: 6px; padding: 8px; font-family: inherit; font-size: .84rem; background: var(--cream); color: var(--ink); resize: vertical;"></textarea>
-          </div>
-          <div class="form-group" style="margin-bottom: 12px;">
-            <label>Açıklama (EN)</label>
-            <textarea id="p-desc-en" rows="6" placeholder="Product description English..." style="width: 100%; border: 1px solid var(--border); border-radius: 6px; padding: 8px; font-family: inherit; font-size: .84rem; background: var(--cream); color: var(--ink); resize: vertical;"></textarea>
-          </div>
-          <div class="pedit-sec-h">Fiyatlandırma</div>
-          <div class="form-row" style="display: flex; gap: 12px; margin-bottom: 12px; flex-wrap: wrap;">
-            <div class="form-group" style="flex: 1; min-width: 120px;">
-              <label>Fiyat (₺ / TR)</label>
-              <input type="number" id="p-price" step="0.01" placeholder="450.00">
-            </div>
-            <div class="form-group" style="flex: 1; min-width: 120px;">
-              <label>USD Fiyat (EN) <span style="font-weight:400;opacity:.6">— boşsa kurdan</span></label>
-              <input type="number" id="p-price-usd" step="0.01" placeholder="ör. 59.00">
-            </div>
-            <div class="form-group" style="flex: 1; min-width: 110px;">
-              <label>Para Birimi</label>
-              <select id="p-currency">
-                <option value="TRY">TRY (₺)</option>
-                <option value="USD">USD ($)</option>
-                <option value="EUR">EUR (€)</option>
-                <option value="GBP">GBP (£)</option>
-              </select>
-            </div>
-            <div class="form-group" style="flex: 1; min-width: 120px;">
-              <label>Kategori</label>
-              <select id="p-category">
-                <option value="amigurumi">amigurumi</option>
-                <option value="bag">bag</option>
-                <option value="decor">decor</option>
-                <option value="accessory">accessory</option>
-              </select>
-            </div>
-          </div>
-          <div class="form-group" style="margin-bottom: 12px;">
-            <label>Görsel Alt Metni (SEO) <span style="font-weight:400;opacity:.6">— boşsa ürün başlığı kullanılır</span></label>
-            <input type="text" id="p-imagealt" maxlength="140" placeholder="ör. El yapımı örgü tavşan perde tutucu">
-          </div>
-          <div class="form-row" style="display: flex; gap: 20px; margin-bottom: 12px;">
-            <div class="form-group" style="display: flex; align-items: center; gap: 8px;">
-              <input type="checkbox" id="p-active" checked style="width: auto; margin: 0; cursor: pointer;">
-              <label for="p-active" style="margin: 0; cursor: pointer; font-size: .84rem; font-weight: 500;">Ürün Aktif (Satışta)</label>
-            </div>
-            <div class="form-group" style="display: flex; align-items: center; gap: 8px;">
-              <input type="checkbox" id="p-new" checked style="width: auto; margin: 0; cursor: pointer;">
-              <label for="p-new" style="margin: 0; cursor: pointer; font-size: .84rem; font-weight: 500;">Yeni Ürün Rozeti</label>
-            </div>
-          </div>
-        </div>
+      <div class="pedit-wrap">
 
-        <div class="pedit-col">
-          <div class="pedit-sec-h">Görseller</div>
-          <div class="form-group" style="margin-bottom: 16px;">
-            <label>Görseller <span style="font-weight:400;opacity:.6">— ilk görsel ana; sırala ◀ ▶, ana yap ★</span></label>
+        <div class="pedit-media">
+          <div class="pedit-card">
+            <div class="pedit-card-h">🖼️ Görseller</div>
+            <div class="pedit-card-sub">İlk görsel ana görseldir · ◀ ▶ sırala · ★ ana yap</div>
             <input type="hidden" id="p-image">
             <div id="p-gallery"></div>
-            <div style="display:flex; gap:8px; margin-top:8px;">
+            <div style="display:flex; gap:8px; margin-top:10px;">
               <input type="url" id="p-image-add" placeholder="https://... görsel URL'i ekle" style="flex:1;" onkeydown="if(event.key==='Enter'){event.preventDefault();pAddImageUrl();}">
               <button type="button" class="btn btn-outline" onclick="pAddImageUrl()" style="white-space:nowrap;">+ Görsel</button>
             </div>
           </div>
-          <div class="pedit-sec-h">Varyantlar & Fiyatları</div>
-          <div class="form-group" style="margin-bottom: 16px;">
-            <label style="font-weight:400;opacity:.6;font-size:.8rem;">Her varyantın ₺ fiyatını ayrı ayarlayın</label>
-            <div id="p-variants"></div>
-          </div>
-          <div class="pedit-sec-h">Seçenek → Görsel</div>
-          <div class="form-group" style="margin-bottom: 16px;">
-            <label style="font-weight:400;opacity:.6;font-size:.8rem;">Bir renk/seçenek seçilince ürün sayfasında gösterilecek görseli eşleyin</label>
+          <div class="pedit-card">
+            <div class="pedit-card-h">🎯 Seçenek → Görsel</div>
+            <div class="pedit-card-sub">Renk/seçenek seçilince ürün sayfasında gösterilecek görseli tıklayarak eşleyin</div>
             <div id="p-optimages"></div>
           </div>
-          <div class="pedit-sec-h">Müşteri Alanları (Kişiselleştirme)</div>
-          <div class="form-group" style="margin-bottom: 16px;">
-            <label style="font-weight:400;opacity:.6;font-size:.8rem;">Müşterinin dolduracağı kutular — ör. "İşlenecek isim", "Hediye notu". Dolan değerler siparişe not olarak gider.</label>
-            <div id="p-customfields"></div>
-            <button type="button" class="btn btn-outline btn-sm" onclick="pAddCustomField()" style="margin-top:6px;">+ Alan Ekle</button>
+        </div>
+
+        <div class="pedit-main">
+          <div class="pedit-card">
+            <div class="pedit-card-h">📝 Temel Bilgiler</div>
+            <div class="pedit-card-sub">Başlıklar arama sonuçlarında görünür — 60 karakteri geçmeyin</div>
+            <div class="pedit-row">
+              <div class="form-group">
+                <label>Ürün Adı (TR)</label>
+                <input type="text" id="p-title-tr" maxlength="90" placeholder="Amigurumi Örgü Tavşan Oyuncak – Kişiye Özel Hediye">
+              </div>
+              <div class="form-group">
+                <label>Ürün Adı (EN)</label>
+                <input type="text" id="p-title-en" placeholder="Personalized Crochet Bunny — Handmade Amigurumi">
+              </div>
+            </div>
+            <div class="pedit-row">
+              <div class="form-group">
+                <label>Kategori</label>
+                <select id="p-category">
+                  <option value="amigurumi">amigurumi</option>
+                  <option value="bag">bag</option>
+                  <option value="decor">decor</option>
+                  <option value="accessory">accessory</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Durum</label>
+                <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                  <label class="pedit-toggle" for="p-active"><input type="checkbox" id="p-active" checked>Satışta</label>
+                  <label class="pedit-toggle" for="p-new"><input type="checkbox" id="p-new" checked>“Yeni” rozeti</label>
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="pedit-sec-h">Etiketler (SEO)</div>
-          <div class="form-group" style="margin-bottom: 12px;">
-            <div id="p-tags"></div>
-            <input type="text" id="p-tag-add" placeholder="Etiket yaz, Enter'a bas" style="margin-top:6px;" onkeydown="if(event.key==='Enter'){event.preventDefault();pAddTag();}">
+
+          <div class="pedit-card">
+            <div class="pedit-card-h">💰 Fiyatlandırma</div>
+            <div class="pedit-card-sub">TR vitrini ₺ fiyatı gösterir; EN vitrini USD fiyatı (boşsa günlük kurdan çevrilir)</div>
+            <div class="pedit-row">
+              <div class="form-group">
+                <label>Fiyat (₺ / TR)</label>
+                <input type="number" id="p-price" step="0.01" placeholder="450.00">
+              </div>
+              <div class="form-group">
+                <label>USD Fiyat (EN)</label>
+                <input type="number" id="p-price-usd" step="0.01" placeholder="ör. 59.00">
+              </div>
+              <div class="form-group">
+                <label>Para Birimi</label>
+                <select id="p-currency">
+                  <option value="TRY">TRY (₺)</option>
+                  <option value="USD">USD ($)</option>
+                  <option value="EUR">EUR (€)</option>
+                  <option value="GBP">GBP (£)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="pedit-card">
+            <div class="pedit-card-h">📄 Açıklamalar</div>
+            <div class="pedit-card-sub">İlk paragraf Google'da meta açıklama olarak görünür; satır sonları sayfada korunur</div>
+            <div class="form-group" style="margin-bottom:14px;">
+              <label>Açıklama (TR)</label>
+              <textarea id="p-desc-tr" rows="10" placeholder="Ürün açıklaması Türkçe..."></textarea>
+            </div>
+            <div class="form-group">
+              <label>Açıklama (EN)</label>
+              <textarea id="p-desc-en" rows="10" placeholder="Product description English..."></textarea>
+            </div>
+          </div>
+
+          <div class="pedit-card">
+            <div class="pedit-card-h">🧶 Varyantlar & Fiyatları</div>
+            <div class="pedit-card-sub">Her varyantın ₺ fiyatını ayrı ayarlayın</div>
+            <div id="p-variants"></div>
+          </div>
+
+          <div class="pedit-card">
+            <div class="pedit-card-h">✍️ Müşteri Alanları (Kişiselleştirme)</div>
+            <div class="pedit-card-sub">Müşterinin dolduracağı kutular — ör. “İşlenecek isim”, “Hediye notu”. Değerler siparişe not olarak düşer</div>
+            <div id="p-customfields"></div>
+            <button type="button" class="btn btn-outline btn-sm" onclick="pAddCustomField()" style="margin-top:8px;">+ Alan Ekle</button>
+          </div>
+
+          <div class="pedit-card">
+            <div class="pedit-card-h">🔍 SEO</div>
+            <div class="pedit-card-sub">Etiketler TR ürün sayfasının anahtar kelimelerini besler; alt metin görsel aramada görünür</div>
+            <div class="form-group" style="margin-bottom:14px;">
+              <label>Görsel Alt Metni <span style="font-weight:400;opacity:.6">— boşsa ürün başlığı kullanılır</span></label>
+              <input type="text" id="p-imagealt" maxlength="140" placeholder="ör. El örgüsü amigurumi tavşan, kişiye özel bebek hediyesi">
+            </div>
+            <div class="form-group">
+              <label>Etiketler</label>
+              <div id="p-tags"></div>
+              <input type="text" id="p-tag-add" placeholder="Etiket yaz, Enter'a bas" style="margin-top:8px;" onkeydown="if(event.key==='Enter'){event.preventDefault();pAddTag();}">
+            </div>
           </div>
         </div>
+
       </div>
-    </div>
-    <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 16px; flex-shrink: 0;">
-      <button class="btn btn-outline" onclick="closeProductModal()">İptal</button>
-      <button class="btn btn-primary" onclick="saveProduct()">💾 Kaydet</button>
     </div>
   </div>
 </div>
