@@ -2355,18 +2355,33 @@ function renderPTags(){
 function pAddTag(){ const inp=document.getElementById('p-tag-add'); const v=(inp.value||'').trim(); if(!v) return; if(!_pTags.includes(v)) _pTags.push(v); inp.value=''; renderPTags(); }
 function pRemoveTag(i){ _pTags.splice(i,1); renderPTags(); }
 
+let _pOptPickerOpen = null; // which option row's thumbnail picker is expanded
 function renderPOptionImages(){
   const el=document.getElementById('p-optimages'); if(!el) return;
   _pOptValues=[...new Set((_pOptions||[]).flatMap(o=>o.values||[]))];
   if(!_pOptValues.length || !_pImages.length){ el.innerHTML='<div style="opacity:.55;font-size:.8rem;">Önce varyant seçeneği ve görsel ekleyin.</div>'; return; }
   el.innerHTML=_pOptValues.map((v,vi)=>{
     const cur=_pOptionImages[v]||'';
-    const opts='<option value="">— görsel yok —</option>'+_pImages.map((src,i)=>'<option value="'+i+'"'+(src===cur?' selected':'')+'>Görsel '+(i+1)+'</option>').join('');
-    const prev=cur?'<img src="'+_escA(cur)+'" style="width:34px;height:34px;object-fit:cover;border-radius:6px;border:1px solid var(--border);flex-shrink:0;">':'<span style="width:34px;flex-shrink:0;"></span>';
-    return '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><span style="min-width:96px;font-size:.8rem;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+_escA(v)+'</span><select onchange="pSetOptionImage('+vi+',this.value)" style="flex:1;font-size:.8rem;">'+opts+'</select>'+prev+'</div>';
+    const curIdx=_pImages.indexOf(cur);
+    const btn = cur
+      ? '<img src="'+_escA(cur)+'" title="Değiştirmek için tıklayın" style="width:44px;height:44px;object-fit:cover;border-radius:8px;border:2px solid var(--primary,#B0532E);cursor:pointer;flex-shrink:0;" onclick="pToggleOptPicker('+vi+')">'
+      : '<button type="button" onclick="pToggleOptPicker('+vi+')" title="Görsel seç" style="width:44px;height:44px;border-radius:8px;border:1px dashed var(--border);background:none;cursor:pointer;font-size:1.1rem;flex-shrink:0;">🖼️</button>';
+    const label='<span style="min-width:96px;font-size:.8rem;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+_escA(v)+'</span>';
+    const hint='<span style="font-size:.75rem;color:var(--muted-foreground);">'+(cur?('Görsel '+(curIdx+1)):'görsel seçilmedi — 🖼️ tıklayın')+'</span>';
+    let picker='';
+    if(_pOptPickerOpen===vi){
+      picker='<div style="display:flex;flex-wrap:wrap;gap:6px;padding:8px;border:1px solid var(--border);border-radius:10px;margin:6px 0 4px;background:var(--secondary,#f6f6f9);">'
+        + _pImages.map((src,i)=>'<div onclick="pSetOptionImage('+vi+','+i+')" style="cursor:pointer;text-align:center;">'
+          + '<img src="'+_escA(src)+'" style="width:64px;height:64px;object-fit:cover;border-radius:8px;border:2px solid '+(src===cur?'var(--primary,#B0532E)':'transparent')+';display:block;">'
+          + '<span style="font-size:.68rem;color:var(--muted-foreground);">'+(i+1)+'</span></div>').join('')
+        + (cur?'<div onclick="pSetOptionImage('+vi+',-1)" title="Eşleştirmeyi kaldır" style="cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;width:64px;height:64px;border:1px dashed var(--border);border-radius:8px;font-size:.7rem;color:var(--muted-foreground);">✕ kaldır</div>':'')
+        + '</div>';
+    }
+    return '<div style="margin-bottom:8px;"><div style="display:flex;align-items:center;gap:10px;">'+btn+label+hint+'</div>'+picker+'</div>';
   }).join('');
 }
-function pSetOptionImage(vi,imgIdx){ const v=_pOptValues[vi]; if(v==null) return; if(imgIdx==='' ) delete _pOptionImages[v]; else _pOptionImages[v]=_pImages[Number(imgIdx)]; renderPOptionImages(); }
+function pToggleOptPicker(vi){ _pOptPickerOpen=(_pOptPickerOpen===vi)?null:vi; renderPOptionImages(); }
+function pSetOptionImage(vi,imgIdx){ const v=_pOptValues[vi]; if(v==null) return; if(imgIdx===-1||imgIdx===''){ delete _pOptionImages[v]; } else { _pOptionImages[v]=_pImages[Number(imgIdx)]; } _pOptPickerOpen=null; renderPOptionImages(); }
 
 function renderPCustomFields(){
   const el=document.getElementById('p-customfields'); if(!el) return;
@@ -2401,7 +2416,7 @@ function showAddProduct() {
   document.getElementById('p-imagealt').value = '';
   document.getElementById('p-active').checked = true;
   document.getElementById('p-new').checked = true;
-  _pImages = []; _pTags = []; _pOptions = []; _pVariants = []; _pOptionImages = {}; _pCustomFields = [];
+  _pImages = []; _pTags = []; _pOptions = []; _pVariants = []; _pOptionImages = {}; _pCustomFields = []; _pOptPickerOpen = null;
   renderProductRich();
   document.getElementById('product-modal').classList.add('open');
 }
