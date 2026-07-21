@@ -1340,7 +1340,7 @@
       "title_tr": "Amigurumi Elbiseli Tavşan Uyku Arkadaşı – Kişiye Özel Hediye",
       "description_en": "Some toys are played with for a season. This little bunny is the kind that gets kept forever. 🐰🌼\n\nHandmade stitch by stitch from 100% soft cotton yarn, she wears a sweet yellow dress with a white daisy, a matching flower tucked behind her ear, and those irresistibly long floppy ears that little hands love to hold onto. Her gentle face and soft handmade texture make her more than a toy — she&#39;s a first friend, a bedtime companion, and a nursery keepsake all in one.\n\nStanding about 9.8 inches (25 cm) tall and beautifully lightweight, she&#39;s easy for tiny arms to carry, hug, and love every single day.\n\nLooking for a personalized baby girl gift, a bunny for an Easter basket, or a baby shower gift that actually feels special? This is the one that gets remembered. 🤍\n\n🌸 Make Her Yours — Custom Options:\n\nDress color\nDaisy flower color\nHeadband color\nOptional name personalization — hand-crocheted onto the bunny&#39;s ear\n\nSimply leave your preferences in the personalization box when ordering.\n✨ Example:\nName: Emma | Dress: Yellow | Flower: White | Headband: Yellow\nPlease note: the bunny design stays the same — customization applies to colors and optional name only.\n🧶 Details:\n\nSize: ~9.8 inches / 25 cm\nMaterial: 100% cotton yarn\nSoft filling\nLong floppy bunny ears\nLightweight — easy for little hands to hold\nHand wash gently, lay flat to dry\nMade to order — no mass production, every piece has its own handmade character 🤍\n\n🎁 Perfect for:\n\nBaby shower gifts & newborn arrivals\nBaby girl gifts & first birthdays\nEaster basket gifts\nNursery decor & baby keepsakes\nAnyone who loves handmade things\n\n💬 Have a special request? A different color combination or a custom idea? Just send us a message — we&#39;d love to make her one of a kind, just like your little one!\n\n💡 Looking for the perfect gift?\n\nIf you&#39;re searching for the best personalized baby girl gift, unique Easter bunny gifts, handmade stuffed animals for babies, custom crochet dolls with name, or a soft keepsake toy for a newborn — this little bunny is exactly what you&#39;re looking for. Handmade with love, one stitch at a time.",
       "description_tr": "İsimli el örgüsü tavşan, %100 yumuşak pamuk iplik ile tek tek elde dikilir — kız bebek hediyesinin en zarif hali. Beyaz papatya desenli sarı elbisesi, kulağının arkasındaki çiçeği ve küçük ellerin tutmaya bayıldığı uzun sarkık kulaklarıyla bir oyuncaktan çok ilk arkadaştır. Bazı oyuncaklarla bir sezon oynanır; bu tavşan ise büyüyünce bile saklanacak türdendir. Hoş geldin bebek, baby shower ya da doğum günü için isme özel sipariş edebilirsiniz.\n\n🌸 ONU SİZE ÖZEL YAPALIM — KİŞİSELLEŞTİRME SEÇENEKLERİ\n\n• Elbise rengi\n• Papatya çiçeğinin rengi\n• Saç bandı rengi\n• İsteğe bağlı isim — tavşanın kulağına elde örülerek işlenir\n\nSipariş verirken tercihlerinizi kişiselleştirme kutusuna yazmanız yeterlidir.\n✨ Örnek: İsim: Elif | Elbise: Sarı | Çiçek: Beyaz | Bant: Sarı\n\nLütfen unutmayın: tavşanın tasarımı aynı kalır — kişiselleştirme yalnızca renkler ve isteğe bağlı isim için geçerlidir.\n\n🧶 ÜRÜN DETAYLARI\n\n• Boy: yaklaşık 25 cm\n• Malzeme: %100 pamuk iplik\n• Yumuşak dolgu\n• Uzun, sarkık tavşan kulakları\n• Hafiftir — minik ellerin taşıması kolaydır\n• Elde nazikçe yıkayın, düz sererek kurutun\n• Siparişe özel üretilir — seri üretim yoktur, her parçanın kendine has el emeği karakteri vardır 🤍\n\n🎁 ŞUNLAR İÇİN MÜKEMMEL\n\n• Baby shower ve hoş geldin bebek hediyeleri\n• Kız bebek hediyeleri ve ilk yaş günleri\n• Bayram ve özel gün sepetleri\n• Bebek odası dekoru ve bebek hatıraları\n• El yapımı şeyleri seven herkes\n\n💬 Özel bir isteğiniz mi var? Farklı bir renk kombinasyonu ya da size özel bir fikir? Bize mesaj gönderin — onu da tıpkı miniğiniz gibi eşsiz yapmak isteriz!",
-      "price": 2500,
+      "price": 1400,
       "currency": "TRY",
       "image": "https://i.etsystatic.com/65409401/r/il/784b92/8044445855/il_570xN.8044445855_2mrm.jpg",
       "images": [
@@ -1392,17 +1392,23 @@
           "values": {
             "Select Model": "Standard"
           },
-          "price": 2500
+          "price": 1400
         },
         {
           "values": {
             "Select Model": "Customizable"
           },
-          "price": 2850
+          "price": 1650
         }
       ],
       "imageAlt_tr": "El örgüsü amigurumi elbiseli tavşan uyku arkadaşı, kişiye özel hediye",
-      "imageAlt": "Crochet Bunny Doll in Dress — handmade amigurumi by Aselovers"
+      "imageAlt": "Crochet Bunny Doll in Dress — handmade amigurumi by Aselovers",
+      "priceUsd": 40,
+      "optionImages": {
+        "Standard": "https://i.etsystatic.com/65409401/r/il/784b92/8044445855/il_570xN.8044445855_2mrm.jpg",
+        "Customizable": "https://i.etsystatic.com/65409401/r/il/3d6999/7996551656/il_570xN.7996551656_olqs.jpg"
+      },
+      "customFields": []
     },
     {
       "id": "4509236939",
