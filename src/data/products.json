@@ -221,7 +221,7 @@
       "title_tr": "Amigurumi Elbiseli Tavşan Oyuncak – Kişiye Özel Hediye",
       "description_en": "Personalized Crochet Bunny Plush Doll with removable dress and custom name embroidery. Handmade from 100% cotton yarn, this adorable 25 cm rabbit doll can be customized with your chosen name and dress color, making it a unique keepsake for birthdays, baby showers, nurseries, and special occasions.\n\nThis charming crochet bunny is carefully handmade with attention to every detail. The dress features functional buttons, allowing it to be easily removed and changed. A personalized name can be embroidered on the skirt, creating a one-of-a-kind gift that will be treasured for years.\n\nFeatures\n\n• Handmade crochet bunny plush doll\n• Personalized name embroidery available\n• Removable buttoned dress\n• Custom dress color upon request\n• Soft and durable 100% cotton yarn\n• Suitable for nursery decor and gentle play\n• Thoughtful gift for birthdays, baby showers, and newborn celebrations\n\nProduct Details\n\nDimensions: 25 cm (9.8 inches)\nMaterial: 100% cotton yarn, polyester fiber filling, safety eyes\nPersonalization: Name embroidery available on the skirt\nHandmade: Each bunny is individually crocheted by hand\n\nCare Instructions\n\n• Machine washable at 30°C (86°F)\n• Do not use fabric softener\n• Do not use spin cycle\n• Lay flat to dry for best results\n\nPersonalization Available Options:\nStandard\n• Name embroidery included\n• Dress color as shown\n\nCustomizable\n• Name embroidery included\n• Choose your dress color",
       "description_tr": "İsimli el örgüsü tavşan bebek, %100 pamuk iplikle ilmek ilmek elde örülür — kız bebek hediyesinin en zarif ve kişisel hali. Yaklaşık 25 cm boyundaki tavşanın işlevsel düğmeli elbisesi çıkarılıp takılabilir; bebeğinizin ismi isteğe göre elbiseye nakışla işlenir ve elbise rengini siz seçersiniz. Doğum günü, hoş geldin bebek, baby shower ve bebek mevlidi kutlamalarında eşi olmayan bir hediye sunar. Her ayrıntısı el emeğiyle hazırlanan bu tavşan, yıllarca saklanacak tatlı bir hatıradır.\n\n✨ ÖZELLİKLER\n• El örgüsü tavşan bebek\n• İsim nakışı seçeneği\n• Çıkarılabilir, düğmeli elbise\n• İstek üzerine farklı elbise rengi\n• Yumuşak ve dayanıklı %100 pamuk iplik\n• Bebek odası dekoru ve nazik oyunlar için uygundur\n• Doğum günü, baby shower ve yenidoğan kutlamaları için düşünceli bir hediye\n\n✨ ÜRÜN DETAYLARI\n📏 Boy: 25 cm\n🧶 Malzeme: %100 pamuk iplik, polyester elyaf dolgu, güvenlik gözleri\n🪡 Kişiselleştirme: Eteğe isim nakışı yapılabilir\n🤍 Her tavşan tek tek elde örülür\n\n🧶 KİŞİSELLEŞTİRME SEÇENEKLERİ\nStandart\n• İsim nakışı dahildir\n• Elbise rengi fotoğraftaki gibidir\n\nKişiselleştirilebilir\n• İsim nakışı dahildir\n• Elbise rengini siz seçersiniz\nElbise, işlevsel düğmeleri sayesinde kolayca çıkarılıp değiştirilebilir. Eteğe işlenen isimle birlikte, yıllarca saklanacak eşi benzeri olmayan bir hediye ortaya çıkar.\n\n🧼 BAKIM\n• 30°C'de makinede yıkanabilir\n• Yumuşatıcı kullanmayın\n• Sıkma programı kullanmayın\n• En iyi sonuç için düz zeminde kurutun",
-      "price": 2550,
+      "price": 1400,
       "currency": "TRY",
       "image": "https://i.etsystatic.com/65409401/r/il/0a28d4/8107536487/il_570xN.8107536487_c15v.jpg",
       "images": [
@@ -274,17 +274,19 @@
           "values": {
             "Choose Your Model": "Standard"
           },
-          "price": 2550
+          "price": 1400
         },
         {
           "values": {
             "Choose Your Model": "Customizable"
           },
-          "price": 2750
+          "price": 1600
         }
       ],
       "imageAlt_tr": "El örgüsü amigurumi elbiseli tavşan oyuncak, kişiye özel hediye",
-      "imageAlt": "Personalized Crochet Bunny Doll with Name — handmade amigurumi by Aselovers"
+      "imageAlt": "Personalized Crochet Bunny Doll with Name — handmade amigurumi by Aselovers",
+      "optionImages": {},
+      "customFields": []
     },
     {
       "id": "4523296373",
