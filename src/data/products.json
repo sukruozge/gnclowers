@@ -3165,17 +3165,22 @@
           "values": {
             "Select Model": "Standard"
           },
-          "price": 2800
+          "price": 1199
         },
         {
           "values": {
             "Select Model": "Customizable"
           },
-          "price": 3200
+          "price": 1499
         }
       ],
       "imageAlt_tr": "El örgüsü amigurumi örgü ördek uyku arkadaşı, baby shower hediyesi",
-      "imageAlt": "Crochet Chick Plush Toy — handmade amigurumi by Aselovers"
+      "imageAlt": "Crochet Chick Plush Toy — handmade amigurumi by Aselovers",
+      "optionImages": {
+        "Standard": "https://i.etsystatic.com/65409401/r/il/108dea/8217731555/il_570xN.8217731555_1riz.jpg",
+        "Customizable": "https://i.etsystatic.com/65409401/r/il/69a5e4/8054667979/il_570xN.8054667979_ak90.jpg"
+      },
+      "customFields": []
     },
     {
       "id": "4525952683",
