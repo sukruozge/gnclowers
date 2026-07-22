@@ -1,9 +1,15 @@
 {
   "shop": {
     "rating": 5,
-    "count": 8
+    "count": 9
   },
   "reviews": [
+    {
+      "rating": 5,
+      "text": "This is the cutest gift! I bought for my daughter’s shower and the seller shipped it quickly. Very high quality! It’s perfect!",
+      "language": "en",
+      "date": "2026-07-22"
+    },
     {
       "rating": 5,
       "text": "Very good quality and well crafted.",
