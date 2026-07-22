@@ -2955,7 +2955,7 @@
       "title_tr": "Amigurumi Örgü Robot Oyuncak – Kişiye Özel Hediye",
       "description_en": "This handmade crochet robot is the perfect personalized gift for kids who deserve something truly one-of-a-kind. 🤖✨\n\nEvery part of this little robot is crocheted by hand using 100% soft cotton yarn — from the bold striped arms and legs to the round smiley face. What makes it extra special? We embroider your child&#39;s name right on the chest, turning this crochet amigurumi toy into a keepsake they&#39;ll treasure for years.\nStanding about 12–14 inches (30–35 cm) tall, it&#39;s chunky, huggable, and sized perfectly for little arms.\nLooking for a personalized baby gift, a toddler gift for a boy or girl, or a unique kids birthday gift that nobody else will have? This crochet stuffed plush delivers that &quot;wow&quot; moment every single time. 🎁\n\n🤖 Choose Your Model:\nStandard — The robot just as you see it. Cute, huggable, and ready to gift — no name, no customization. Perfect if you&#39;re looking for a sweet handmade toy without the wait.\nCustomizable — Add your child&#39;s name embroidered right on the chest. Just send us the name after purchase and we&#39;ll stitch it on with love. A truly one-of-a-kind keepsake. 🤍\n\n\n🎁 Perfect for:\n\nPersonalized baby shower gifts & newborn arrivals\nBaby boy gifts & baby girl gifts\nToddler gifts & kids&#39; birthdays\nHoliday gifting & Christmas stockings\nAnyone who loves handmade things\n\n🧶 Details:\n\nSize: ~12–14 inches / 30–35 cm\nMaterial: 100% cotton yarn\nPersonalized name embroidered on chest\nSecure safety eyes (not suitable for children under 3)\nsoft polyfill stuffing\nHand wash, 30°C\nMade to order — every robot is unique 🤍\n\n💬 Want to personalize yours? Just send us your child&#39;s name after purchase and we&#39;ll stitch it on with love. Have a color request or special idea? Message us anytime — we&#39;re happy to make it just for you!\n\n💡 Looking for the perfect gift idea?\n\nIf you&#39;re asking &quot;what should I get for a baby shower?&quot;, &quot;best personalized gifts for toddlers&quot;, &quot;unique birthday gifts for boys&quot;, &quot;what to buy for a 1 year old&quot;, &quot;thoughtful handmade gifts for kids&quot;, or &quot;custom toys with name for children&quot; — this handmade crochet robot checks every box. Soft, safe, personalized, and made by hand. A gift that stands out, gets remembered, and never ends up forgotten in a drawer.",
       "description_tr": "İsimli el örgüsü robot, %100 yumuşak pamuk iplik ile tek tek elde örülür — sıra dışı bir hediyeyi hak eden çocuklar için kişiye özel bir arkadaş. Çizgili kolları ve bacaklarından yuvarlak gülen yüzüne kadar her parçası elde işlenir; göğsüne çocuğunuzun adı nakışla eklenir. Yaklaşık 30–35 cm boyuyla hem oyun hem raf arkadaşıdır. Doğum günü, yılbaşı ya da hoş geldin bebek hediyesi olarak verildiğinde yıllarca saklanacak el emeği bir hatıraya dönüşür.\n\n🤖 MODELİNİZİ SEÇİN\n\n• Standart — robot gördüğünüz haliyle. Sevimli, kucaklanası ve hediye etmeye hazır — isimsiz, kişiselleştirmesiz. Beklemeden tatlı bir el yapımı oyuncak isteyenler için ideal.\n• Kişiye özel — çocuğunuzun adı göğsüne nakışla işlenir. Satın aldıktan sonra ismi bize iletmeniz yeterli; sevgiyle işleyelim. Gerçekten eşsiz bir hatıra. 🤍\n\n🧶 ÜRÜN DETAYLARI\n\n• Boy: yaklaşık 30–35 cm\n• Malzeme: %100 pamuk iplik\n• Göğsüne işlenen kişiye özel isim\n• Güvenle sabitlenen güvenlik gözleri (3 yaş altı çocuklar için uygun değildir)\n• Yumuşak elyaf dolgu\n• 30°C'de elde yıkayın\n• Siparişe özel üretilir — her robot benzersizdir 🤍\n\n🎁 ŞUNLAR İÇİN MÜKEMMEL\n\n• Kişiye özel baby shower ve hoş geldin bebek hediyeleri\n• Erkek bebek ve kız bebek hediyeleri\n• Miniklere hediye ve çocuk doğum günleri\n• Yılbaşı ve özel gün sürprizleri\n• El yapımı şeyleri seven herkes\n\n💬 Kişiselleştirmek mi istiyorsunuz? Satın aldıktan sonra çocuğunuzun adını bize gönderin, sevgiyle işleyelim. Renk isteğiniz ya da özel bir fikriniz mi var? Bize dilediğiniz zaman mesaj atın — sizin için üretmekten mutluluk duyarız!",
-      "price": 2700,
+      "price": 1499,
       "currency": "TRY",
       "image": "https://i.etsystatic.com/65409401/r/il/ad8799/8225482901/il_570xN.8225482901_q28z.jpg",
       "images": [
@@ -3011,17 +3011,22 @@
           "values": {
             "Choose Your Model": "Standard"
           },
-          "price": 2700
+          "price": 1499
         },
         {
           "values": {
             "Choose Your Model": "Customizable"
           },
-          "price": 3100
+          "price": 1699
         }
       ],
       "imageAlt_tr": "El örgüsü amigurumi örgü robot oyuncak, kişiye özel hediye",
-      "imageAlt": "Personalized Crochet Robot Toy with Name — handmade amigurumi by Aselovers"
+      "imageAlt": "Personalized Crochet Robot Toy with Name — handmade amigurumi by Aselovers",
+      "optionImages": {
+        "Standard": "https://i.etsystatic.com/65409401/r/il/d75989/8177550010/il_570xN.8177550010_7srx.jpg",
+        "Customizable": "https://i.etsystatic.com/65409401/r/il/ad8799/8225482901/il_570xN.8225482901_q28z.jpg"
+      },
+      "customFields": []
     },
     {
       "id": "4499665986",
