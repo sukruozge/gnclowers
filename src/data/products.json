@@ -5052,113 +5052,115 @@
           "values": {
             "Choose Your Model": "Bunny Ears"
           },
-          "price": 483
+          "price": 200
         },
         {
           "values": {
             "Choose Your Model": "Avocado"
           },
-          "price": 500
+          "price": 300
         },
         {
           "values": {
             "Choose Your Model": "Orange Slice"
           },
-          "price": 483
+          "price": 200
         },
         {
           "values": {
             "Choose Your Model": "Daisy Flower"
           },
-          "price": 483
+          "price": 200
         },
         {
           "values": {
             "Choose Your Model": "Mushroom"
           },
-          "price": 483
+          "price": 200
         },
         {
           "values": {
             "Choose Your Model": "Rainbow"
           },
-          "price": 500
+          "price": 300
         },
         {
           "values": {
             "Choose Your Model": "Strawberry"
           },
-          "price": 483
+          "price": 200
         },
         {
           "values": {
             "Choose Your Model": "Ladybug"
           },
-          "price": 483
+          "price": 200
         },
         {
           "values": {
             "Choose Your Model": "Bunny Carrot"
           },
-          "price": 536
+          "price": 350
         },
         {
           "values": {
             "Choose Your Model": "Cherry"
           },
-          "price": 483
+          "price": 200
         },
         {
           "values": {
             "Choose Your Model": "Sunflower"
           },
-          "price": 500
+          "price": 375
         },
         {
           "values": {
             "Choose Your Model": "Lavender"
           },
-          "price": 483
+          "price": 200
         },
         {
           "values": {
             "Choose Your Model": "Red Flower"
           },
-          "price": 483
+          "price": 200
         },
         {
           "values": {
             "Choose Your Model": "Daisy Set"
           },
-          "price": 1699
+          "price": 650
         },
         {
           "values": {
             "Choose Your Model": "3 Pairs Set"
           },
-          "price": 1399
+          "price": 500
         },
         {
           "values": {
             "Choose Your Model": "5 Pairs Set"
           },
-          "price": 1999
+          "price": 1000
         },
         {
           "values": {
             "Choose Your Model": "Full Collection"
           },
-          "price": 3999
+          "price": 2500
         },
         {
           "values": {
             "Choose Your Model": "Daisy Headband"
           },
-          "price": 749
+          "price": 350
         }
       ],
       "imageAlt_tr": "El örgüsü örgü toka, tavşan, meyve ve çiçek saç tokası",
-      "imageAlt": "Crochet Hair Clips Set — handmade amigurumi by Aselovers"
+      "imageAlt": "Crochet Hair Clips Set — handmade amigurumi by Aselovers",
+      "optionImages": {},
+      "customFields": []
     },
     {
       "id": "4500203725",
