@@ -3345,17 +3345,19 @@
           "values": {
             "Choose Your Model": "Standard"
           },
-          "price": 2150
+          "price": 1250
         },
         {
           "values": {
             "Choose Your Model": "Customizable"
           },
-          "price": 2322
+          "price": 1499
         }
       ],
       "imageAlt_tr": "El örgüsü amigurumi örgü ördek uyku arkadaşı, kişiye özel hediye",
-      "imageAlt": "Personalized Crochet Duck Plush with Name — handmade amigurumi by Aselovers"
+      "imageAlt": "Personalized Crochet Duck Plush with Name — handmade amigurumi by Aselovers",
+      "optionImages": {},
+      "customFields": []
     },
     {
       "id": "4524545901",
