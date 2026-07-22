@@ -2549,7 +2549,7 @@
         "uyku arkadaşı"
       ],
       "isNew": true,
-      "isActive": true,
+      "isActive": false,
       "options": [
         {
           "name": "Choose Your Model",
