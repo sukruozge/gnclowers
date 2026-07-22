@@ -2883,7 +2883,7 @@
       "title_tr": "Örgü Hobo Omuz Çantası – El Yapımı Kağıt İp Çanta",
       "description_en": "This handmade crochet shoulder bag is the perfect everyday accessory for anyone who loves something that&#39;s both beautiful and built to last. 👜\n\nCrocheted by hand using sturdy paper yarn, it&#39;s surprisingly lightweight while holding its shape beautifully — no sagging, no fuss. The warm camel tone goes with absolutely everything in your summer wardrobe, from linen dresses to casual jeans. Simple, elegant, and timeless enough for all ages.\nThe open hobo silhouette makes it effortlessly practical for daily use — toss in your essentials and go. It&#39;s the kind of bag you reach for without thinking, every single day.\n\nLooking for a handmade boho bag, a crochet shoulder bag for summer, or a unique handmade gift for her? This is that bag. 🌿\n\n🛍️ Choose Your Model:\nStandard (Unlined) — Natural, lightweight, and open. Perfect for beach days, markets, and casual outings where you want something breathable and effortless.\nLined — Same beautiful bag with a fabric lining inside. Keeps smaller items secure, adds a polished everyday-carry feel. Perfect as a daily handbag.\n\n🧶 Details:\n\nSize: ~13.7 in wide × 23.6 in tall / 35 × 60 cm (handles included)\nMaterial: Paper yarn (sturdy, structured finish)\nColor: Camel\nAvailable lined or unlined\nSpot clean recommended\nMade to order — each one is unique 🤍\n\n💬 Want something custom? Different color, size, or lining preference? Just send us a message — we&#39;d love to make it just for you!\n💡 Looking for the perfect bag or gift?\n\nIf you&#39;re searching for the best handmade bag for women, unique boho shoulder bags, crochet hobo bags for summer, natural paper yarn tote bags, or a thoughtful handmade gift for her — this is exactly what you&#39;re looking for. Structured, stylish, and made with love one stitch at a time.",
       "description_tr": "El örgüsü hobo omuz çantası, sağlam kağıt iplik ile elde örülür; şaşırtıcı derecede hafiftir ve formunu sarkmadan korur. Sıcak kamel tonu, keten elbiselerden gündelik kot kombinlerine kadar yaz gardırobundaki her şeyle uyum sağlar. Açık hobo silueti günlük kullanım için pratik bir hacim sunar; dilerseniz astarlı modelini seçebilirsiniz. Hem güzel hem dayanıklı aksesuarları sevenlere — kendinize ya da hediye olarak — zamansız, el emeği bir parça.\n\n🛍️ MODELİNİZİ SEÇİN\n\n• Standart (Astarsız) — doğal, hafif ve açık. Plaj günleri, pazar gezmeleri ve günlük dışarı çıkışlar için nefes alan, zahmetsiz bir seçim.\n• Astarlı — aynı güzel çantanın içi kumaş astarlı hali. Küçük eşyalarınızı güvende tutar, günlük kullanıma daha derli toplu bir his katar. Her gün taşınacak el çantası olarak birebir.\n\n🧶 ÜRÜN DETAYLARI\n\n• Ölçü: yaklaşık 35 cm genişlik × 60 cm yükseklik (saplar dahil)\n• Malzeme: kağıt iplik (sağlam, formunu koruyan doku)\n• Renk: Kamel\n• Astarlı ya da astarsız seçilebilir\n• Gerektiğinde yalnızca lekeli bölgeyi temizleyin\n• Siparişe özel üretilir — her biri benzersizdir 🤍\n\n💬 Size özel bir şey mi istiyorsunuz? Farklı bir renk, boyut ya da astar tercihi için bize mesaj gönderin — sizin için üretmekten mutluluk duyarız!",
-      "price": 2705,
+      "price": 1499,
       "currency": "TRY",
       "image": "https://i.etsystatic.com/65409401/r/il/c8f2ac/8181220012/il_570xN.8181220012_6yog.jpg",
       "images": [
@@ -2932,17 +2932,22 @@
           "values": {
             "Choose Your Model": "Standard"
           },
-          "price": 2705
+          "price": 1499
         },
         {
           "values": {
             "Choose Your Model": "Lined"
           },
-          "price": 2905
+          "price": 1599
         }
       ],
       "imageAlt_tr": "El örgüsü örgü hobo omuz çantası, el yapımı kağıt ip çanta",
-      "imageAlt": "Crochet Shoulder Bag — handmade amigurumi by Aselovers"
+      "imageAlt": "Crochet Shoulder Bag — handmade amigurumi by Aselovers",
+      "optionImages": {
+        "Standard": "https://i.etsystatic.com/65409401/r/il/c8f2ac/8181220012/il_570xN.8181220012_6yog.jpg",
+        "Lined": "https://i.etsystatic.com/65409401/r/il/2e3ede/8229128175/il_570xN.8229128175_d4yo.jpg"
+      },
+      "customFields": []
     },
     {
       "id": "4527854128",
