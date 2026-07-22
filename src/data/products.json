@@ -5195,7 +5195,7 @@
         "el yapımı oyuncak"
       ],
       "isNew": true,
-      "isActive": true,
+      "isActive": false,
       "options": [
         {
           "name": "Select Model",
