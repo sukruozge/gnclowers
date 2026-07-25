@@ -31,6 +31,7 @@ const alts = alternates(site, pathsAlt);
     <meta name="description" content={description} />
     <link rel="canonical" href={canon} />
     {alts.map((a) => <link rel="alternate" hreflang={a.hreflang} href={a.href} />)}
+    <link rel="alternate" type="application/rss+xml" title="Aselovers Blog" href={`${site}/${locale}/rss.xml`} />
     <!-- Let Google & AI crawlers show full snippets and large image previews.
          Transactional pages (cart/checkout/payment results) opt out via `noindex`. -->
     {noindex
