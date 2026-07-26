@@ -1,9 +1,15 @@
 {
   "shop": {
     "rating": 5,
-    "count": 9
+    "count": 10
   },
   "reviews": [
+    {
+      "rating": 5,
+      "text": "Beautiful craftsmanship; Melissa is extremely flexible in accommodating special requests, and communication is flawless. I will definitely recommend this shop to my friends.",
+      "language": "en",
+      "date": "2026-07-25"
+    },
     {
       "rating": 5,
       "text": "This is the cutest gift! I bought for my daughter’s shower and the seller shipped it quickly. Very high quality! It’s perfect!",
