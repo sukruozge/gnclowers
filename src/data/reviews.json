@@ -1,9 +1,15 @@
 {
   "shop": {
     "rating": 5,
-    "count": 10
+    "count": 11
   },
   "reviews": [
+    {
+      "rating": 5,
+      "text": "Seller made sure I was happy before they sent it.",
+      "language": "en",
+      "date": "2026-08-02"
+    },
     {
       "rating": 5,
       "text": "Beautiful craftsmanship; Melissa is extremely flexible in accommodating special requests, and communication is flawless. I will definitely recommend this shop to my friends.",
