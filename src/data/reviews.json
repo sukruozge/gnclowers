@@ -1,9 +1,15 @@
 {
   "shop": {
     "rating": 5,
-    "count": 11
+    "count": 12
   },
   "reviews": [
+    {
+      "rating": 5,
+      "text": "Melissa was absolutely amazing to deal with. She is great with communication as she informed me during and even sent pictures of bear throughout the process. Shipment was quick and packaged nicely as well. Will definitely be ordering from her again!",
+      "language": "en",
+      "date": "2026-08-02"
+    },
     {
       "rating": 5,
       "text": "Seller made sure I was happy before they sent it.",
