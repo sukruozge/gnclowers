@@ -1,9 +1,15 @@
 {
   "shop": {
     "rating": 5,
-    "count": 17
+    "count": 18
   },
   "reviews": [
+    {
+      "rating": 5,
+      "text": "Great customer service. Considerate seller with good communication.",
+      "language": "en",
+      "date": "2026-08-10"
+    },
     {
       "rating": 5,
       "text": "What a beautiful addition to the baby gift and sure to be treasured for years by the little one. It is clear that Melissa takes pride in her craft.  Do not hesitate to order from this shop.",
