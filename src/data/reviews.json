@@ -1,9 +1,21 @@
 {
   "shop": {
     "rating": 5,
-    "count": 19
+    "count": 21
   },
   "reviews": [
+    {
+      "rating": 5,
+      "text": "Absolutely totally adorable!!! Some much so that I will order more!!  Exquisite quality",
+      "language": "en",
+      "date": "2026-08-12"
+    },
+    {
+      "rating": 5,
+      "text": "envoyé ma ma petite fille",
+      "language": "en",
+      "date": "2026-08-12"
+    },
     {
       "rating": 5,
       "text": "Exactly what I was looking for! I could not have asked for better. Perfectly made.",
