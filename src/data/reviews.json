@@ -1,9 +1,15 @@
 {
   "shop": {
     "rating": 5,
-    "count": 21
+    "count": 22
   },
   "reviews": [
+    {
+      "rating": 5,
+      "text": "beautiful doll, excellent 👍 customer 💖 service 🤩. I highly recommend this seller ☺️",
+      "language": "en",
+      "date": "2026-08-16"
+    },
     {
       "rating": 5,
       "text": "Absolutely totally adorable!!! Some much so that I will order more!!  Exquisite quality",
