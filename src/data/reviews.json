@@ -1,9 +1,15 @@
 {
   "shop": {
     "rating": 5,
-    "count": 22
+    "count": 23
   },
   "reviews": [
+    {
+      "rating": 5,
+      "text": "superbe mimi",
+      "language": "en",
+      "date": "2026-08-16"
+    },
     {
       "rating": 5,
       "text": "beautiful doll, excellent 👍 customer 💖 service 🤩. I highly recommend this seller ☺️",
