@@ -1,9 +1,15 @@
 {
   "shop": {
     "rating": 5,
-    "count": 23
+    "count": 24
   },
   "reviews": [
+    {
+      "rating": 5,
+      "text": "Wonderful customer service and very friendly and quick communication! We really love the little giraffe that was made for us. Also shipment was quicker than expected. Thanks a lot!",
+      "language": "en",
+      "date": "2026-08-20"
+    },
     {
       "rating": 5,
       "text": "superbe mimi",
