@@ -1,9 +1,27 @@
 {
   "shop": {
     "rating": 5,
-    "count": 29
+    "count": 32
   },
   "reviews": [
+    {
+      "rating": 5,
+      "text": "Einfach goldig! Kundenservice ist hervorragend und auf individuelle Wünsche wurde sehr sorgfältig geachtet und alles konnte erfüllt werden. Es war eine riesige Überraschung und ich freue mich auf zukünftige Bestellungen.",
+      "language": "en",
+      "date": "2026-08-27"
+    },
+    {
+      "rating": 5,
+      "text": "Beautiful items, high quality and made with love feel ❤️ fantastic customer service and communication from the seller. Highly recommended!",
+      "language": "en",
+      "date": "2026-08-27"
+    },
+    {
+      "rating": 5,
+      "text": "stunning 🥰 doll and beautiful dresses 👗👗👗. customer service excellent too, I highly recommend this seller ☺️.",
+      "language": "en",
+      "date": "2026-08-27"
+    },
     {
       "rating": 5,
       "text": "beautiful doll, very cute 🥰",
