@@ -139,11 +139,11 @@ const igHref = instagramUrl();
                 <div class="dmbuy">
                   <div class="dmbuy__row">
                     <a class="dmbuy__btn dmbuy__btn--wa" id="wa-btn" href={waHref} data-title={title} data-url={`${site}/tr/${selfPath}`} target="_blank" rel="noopener">
-                      <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M12.04 2c-5.46 0-9.9 4.44-9.9 9.9 0 1.75.46 3.45 1.32 4.95L2 22l5.3-1.38a9.86 9.86 0 0 0 4.73 1.2c5.46 0 9.9-4.44 9.9-9.9 0-2.64-1.03-5.13-2.9-7A9.82 9.82 0 0 0 12.04 2Zm3.47 12.02c-.2.56-1.17 1.08-1.64 1.15-.42.06-.95.08-1.53-.1-.35-.11-.8-.26-1.38-.51-2.44-1.04-4.02-3.48-4.14-3.64-.12-.16-.99-1.31-.99-2.51 0-1.19.63-1.78.85-2.02.22-.24.48-.3.64-.3h.46c.17.01.36.01.54.43.22.48.7 1.68.76 1.8.06.12.1.26.02.42-.08.16-.12.26-.24.4-.12.14-.25.31-.36.42-.12.12-.25.25-.11.49.15.24.63 1.04 1.35 1.68.93.82 1.71 1.08 1.95 1.2.24.12.38.1.52-.06.14-.16.61-.71.77-.95.17-.24.33-.2.55-.12.22.08 1.42.67 1.66.79.24.12.4.18.46.28.06.1.06.58-.14 1.15Z"/></svg>
+                      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M12.04 2c-5.46 0-9.9 4.44-9.9 9.9 0 1.75.46 3.45 1.32 4.95L2 22l5.3-1.38a9.86 9.86 0 0 0 4.73 1.2c5.46 0 9.9-4.44 9.9-9.9 0-2.64-1.03-5.13-2.9-7A9.82 9.82 0 0 0 12.04 2Zm3.47 12.02c-.2.56-1.17 1.08-1.64 1.15-.42.06-.95.08-1.53-.1-.35-.11-.8-.26-1.38-.51-2.44-1.04-4.02-3.48-4.14-3.64-.12-.16-.99-1.31-.99-2.51 0-1.19.63-1.78.85-2.02.22-.24.48-.3.64-.3h.46c.17.01.36.01.54.43.22.48.7 1.68.76 1.8.06.12.1.26.02.42-.08.16-.12.26-.24.4-.12.14-.25.31-.36.42-.12.12-.25.25-.11.49.15.24.63 1.04 1.35 1.68.93.82 1.71 1.08 1.95 1.2.24.12.38.1.52-.06.14-.16.61-.71.77-.95.17-.24.33-.2.55-.12.22.08 1.42.67 1.66.79.24.12.4.18.46.28.06.1.06.58-.14 1.15Z"/></svg>
                       WhatsApp’tan sor
                     </a>
                     <a class="dmbuy__btn dmbuy__btn--ig" href={igHref} target="_blank" rel="noopener">
-                      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"/></svg>
+                      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"/></svg>
                       Instagram’dan yaz
                     </a>
                   </div>
@@ -372,12 +372,21 @@ const igHref = instagramUrl();
     .askprice__label { font-family: var(--font-display); font-size: 1.55rem; color: var(--accent-ink); line-height: 1.1; }
     .dmbuy { display: flex; flex-direction: column; gap: 10px; margin: var(--space-4) 0; }
     .dmbuy__row { display: flex; gap: 10px; flex-wrap: wrap; }
-    .dmbuy__btn { flex: 1 1 180px; display: inline-flex; align-items: center; justify-content: center; gap: 9px; min-height: 54px; padding: 0 18px; border-radius: var(--radius-pill); font: inherit; font-weight: 600; font-size: 1rem; text-decoration: none; border: 1.5px solid transparent; transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease), background var(--dur) var(--ease); }
+    /* Buton etiketi tipografisi:
+       - line-height 1: etiket tek satır, dikey ortalama flex + min-height ile
+         yapılıyor. Gövdeden miras 1.7 görünmez bir dikey şişkinlik bırakıyordu.
+       - letter-spacing -.011em: Inter 600 ağırlıkta bu boyutta optik olarak
+         dağınık duruyor; hafif sıkı tracking etiketi tek bir blok gibi okutuyor.
+       - nowrap: "WhatsApp’tan" gibi marka adları satır sonunda asla bölünmemeli. */
+    .dmbuy__btn { flex: 1 1 180px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 54px; padding: 0 20px; border-radius: var(--radius-pill); font-family: inherit; font-size: .95rem; font-weight: 600; line-height: 1; letter-spacing: -.011em; white-space: nowrap; text-decoration: none; border: 1.5px solid transparent; transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease), background var(--dur) var(--ease), border-color var(--dur) var(--ease), color var(--dur) var(--ease); }
+    .dmbuy__btn svg { flex-shrink: 0; }
     .dmbuy__btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-hover); }
     .dmbuy__btn--wa { background: #25D366; color: #06331a; }
-    .dmbuy__btn--ig { background: var(--surface); color: var(--ink); border-color: var(--line); }
+    /* İkincil eylem: dolgu yerine çerçeve + bir kademe hafif ağırlık, böylece
+       görsel hiyerarşi tipografiyle de tutarlı olur (birincil 600, ikincil 500). */
+    .dmbuy__btn--ig { background: var(--surface); color: var(--ink); border-color: var(--line); font-weight: 500; }
     .dmbuy__btn--ig:hover { border-color: #C13584; color: #C13584; }
-    .dmbuy__hint { font-size: .82rem; color: var(--muted); margin: 0; }
+    .dmbuy__hint { font-size: .8rem; line-height: 1.5; letter-spacing: 0; color: var(--muted); margin: 0; max-width: 42ch; }
     .ordernote { display: flex; flex-direction: column; gap: 6px; margin: var(--space-3) 0 var(--space-4); padding: var(--space-3); background: var(--section); border: 1px solid var(--line); border-radius: var(--radius); }
     .ordernote__opt { font-weight: 400; color: var(--muted); }
     .ordernote textarea { font-family: inherit; font-size: .95rem; padding: 10px 14px; border: 1.5px solid var(--line); border-radius: 10px; background: var(--bg); color: var(--ink); resize: vertical; min-height: 76px; }
