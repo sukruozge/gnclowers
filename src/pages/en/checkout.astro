@@ -21,8 +21,8 @@ const igHref = instagramUrl();
         <h1>Message us for the price</h1>
         <p>We are taking orders over WhatsApp and Instagram at the moment. Send us the link of the piece you like and we will share its price and preparation time right away.</p>
         <div class="dmnotice__row">
-          <a class="dmnotice__btn dmnotice__btn--wa" href={waHref} target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M12.04 2c-5.46 0-9.9 4.44-9.9 9.9 0 1.75.46 3.45 1.32 4.95L2 22l5.3-1.38a9.86 9.86 0 0 0 4.73 1.2c5.46 0 9.9-4.44 9.9-9.9 0-2.64-1.03-5.13-2.9-7A9.82 9.82 0 0 0 12.04 2Zm3.47 12.02c-.2.56-1.17 1.08-1.64 1.15-.42.06-.95.08-1.53-.1-.35-.11-.8-.26-1.38-.51-2.44-1.04-4.02-3.48-4.14-3.64-.12-.16-.99-1.31-.99-2.51 0-1.19.63-1.78.85-2.02.22-.24.48-.3.64-.3h.46c.17.01.36.01.54.43.22.48.7 1.68.76 1.8.06.12.1.26.02.42-.08.16-.12.26-.24.4-.12.14-.25.31-.36.42-.12.12-.25.25-.11.49.15.24.63 1.04 1.35 1.68.93.82 1.71 1.08 1.95 1.2.24.12.38.1.52-.06.14-.16.61-.71.77-.95.17-.24.33-.2.55-.12.22.08 1.42.67 1.66.79.24.12.4.18.46.28.06.1.06.58-.14 1.15Z"/></svg> Message on WhatsApp</a>
-          <a class="dmnotice__btn dmnotice__btn--ig" href={igHref} target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"/></svg> Message on Instagram</a>
+          <a class="dmnotice__btn dmnotice__btn--wa" href={waHref} target="_blank" rel="noopener"><svg class="seam" aria-hidden="true"><rect/></svg><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M12.04 2c-5.46 0-9.9 4.44-9.9 9.9 0 1.75.46 3.45 1.32 4.95L2 22l5.3-1.38a9.86 9.86 0 0 0 4.73 1.2c5.46 0 9.9-4.44 9.9-9.9 0-2.64-1.03-5.13-2.9-7A9.82 9.82 0 0 0 12.04 2Zm3.47 12.02c-.2.56-1.17 1.08-1.64 1.15-.42.06-.95.08-1.53-.1-.35-.11-.8-.26-1.38-.51-2.44-1.04-4.02-3.48-4.14-3.64-.12-.16-.99-1.31-.99-2.51 0-1.19.63-1.78.85-2.02.22-.24.48-.3.64-.3h.46c.17.01.36.01.54.43.22.48.7 1.68.76 1.8.06.12.1.26.02.42-.08.16-.12.26-.24.4-.12.14-.25.31-.36.42-.12.12-.25.25-.11.49.15.24.63 1.04 1.35 1.68.93.82 1.71 1.08 1.95 1.2.24.12.38.1.52-.06.14-.16.61-.71.77-.95.17-.24.33-.2.55-.12.22.08 1.42.67 1.66.79.24.12.4.18.46.28.06.1.06.58-.14 1.15Z"/></svg> Message on WhatsApp</a>
+          <a class="dmnotice__btn dmnotice__btn--ig" href={igHref} target="_blank" rel="noopener"><svg class="seam" aria-hidden="true"><rect/></svg><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"/></svg> Message on Instagram</a>
         </div>
         <a class="btn btn--primary" href="/en/products">Browse products</a>
       </div>
@@ -599,7 +599,26 @@ const igHref = instagramUrl();
   .dmnotice p { color: var(--muted); margin: 0 0 var(--space-6); line-height: 1.6; }
   .dmnotice__row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: var(--space-5); }
   .dmnotice__btn { display: inline-flex; align-items: center; gap: 8px; min-height: 54px; padding: 0 24px; border-radius: var(--radius-pill); font-size: .95rem; font-weight: 600; line-height: 1; letter-spacing: -.011em; white-space: nowrap; text-decoration: none; border: 1.5px solid transparent; transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease); }
-  .dmnotice__btn svg { flex-shrink: 0; }
+  .dmnotice__btn > svg { flex-shrink: 0; }
+  /* Ürün sayfasındaki dikiş imzasının aynısı — site genelinde tek dil. */
+  .dmnotice__btn { position: relative; overflow: visible; }
+  .seam { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
+  .seam rect { x: 2px; y: 2px; width: calc(100% - 4px); height: calc(100% - 4px); rx: 25px;
+    fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round;
+    stroke-dasharray: 5 4.5; opacity: .3;
+    transition: opacity var(--dur) var(--ease), stroke-dasharray var(--dur) var(--ease), stroke var(--dur) var(--ease); }
+  @keyframes seam-run { to { stroke-dashoffset: -19; } }
+  .dmnotice__btn--wa:hover .seam rect, .dmnotice__btn--wa:focus-visible .seam rect { opacity: .55; animation: seam-run 1.1s linear infinite; }
+  .dmnotice__btn--ig { border-color: transparent; }
+  .dmnotice__btn--ig .seam rect { opacity: .42; }
+  .dmnotice__btn--ig:hover .seam rect, .dmnotice__btn--ig:focus-visible .seam rect { stroke-dasharray: 6.5 2; opacity: 1; stroke: #C13584; }
+  .dmnotice__btn--ig:hover, .dmnotice__btn--ig:focus-visible { color: #C13584; }
+  .dmnotice__btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  @media (prefers-reduced-motion: reduce) {
+    .dmnotice__btn--wa:hover .seam rect, .dmnotice__btn--wa:focus-visible .seam rect { animation: none; }
+    .dmnotice__btn:hover { transform: none; }
+  }
+
   .dmnotice__btn--ig { font-weight: 500; }
   .dmnotice__btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-hover); }
   .dmnotice__btn--wa { background: #25D366; color: #06331a; }

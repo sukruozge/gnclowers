@@ -28,7 +28,7 @@ const addLabel = locale === 'tr' ? 'Sepete ekle' : 'Add to cart';
   <a class="card__link" href={href}>
     <h3 class="card__title">{title}</h3>
     {pricesHidden()
-      ? <span class="card__ask"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 9.9 9.9 0 0 1-3.9-.8L3 21l1.9-4.6A8.4 8.4 0 0 1 12 3a8.4 8.4 0 0 1 9 8.5z"/></svg>{locale === 'tr' ? 'Detaylı bilgi al' : 'Get details'}</span>
+      ? <span class="card__ask"><svg class="seam" aria-hidden="true"><rect/></svg><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 9.9 9.9 0 0 1-3.9-.8L3 21l1.9-4.6A8.4 8.4 0 0 1 12 3a8.4 8.4 0 0 1 9 8.5z"/></svg>{locale === 'tr' ? 'Detaylı bilgi al' : 'Get details'}</span>
       : <span class="card__price price-amt" data-try={product.price} data-cur={product.currency}>{price}</span>}
   </a>
 </div>
@@ -63,7 +63,18 @@ const addLabel = locale === 'tr' ? 'Sepete ekle' : 'Add to cart';
     color: var(--on-accent); font-size: .88rem; font-weight: 600; letter-spacing: .01em;
     box-shadow: 0 6px 16px color-mix(in srgb, var(--accent) 28%, transparent);
     transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease); }
-  .card__ask svg { flex-shrink: 0; }
+  .card__ask > svg { flex-shrink: 0; }
+  /* Rozetin kenarına da aynı dikiş; kartın üstüne gelince teyel ilerliyor.
+     Rozet 36px yüksekliğinde olduğu için rx 17px — hap formu korunuyor. */
+  .card__ask { position: relative; overflow: visible; }
+  .card__ask .seam { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
+  .card__ask .seam rect { x: 2px; y: 2px; width: calc(100% - 4px); height: calc(100% - 4px); rx: 17px;
+    fill: none; stroke: currentColor; stroke-width: 1.3; stroke-linecap: round;
+    stroke-dasharray: 4 3.5; opacity: .38; transition: opacity var(--dur) var(--ease); }
+  @keyframes seam-run { to { stroke-dashoffset: -15; } }
+  .card:hover .card__ask .seam rect { opacity: .75; animation: seam-run 1.05s linear infinite; }
+  @media (prefers-reduced-motion: reduce) { .card:hover .card__ask .seam rect { animation: none; } }
+
   .card:hover .card__ask { transform: translateY(-2px); box-shadow: 0 10px 22px color-mix(in srgb, var(--accent) 38%, transparent); }
   @media (prefers-reduced-motion: reduce) { .card:hover .card__ask { transform: none; } }
   .card__price { display: block; text-align: center; margin-top: 7px; font-family: var(--font-body); color: #C2410C; font-weight: 800; font-size: 1.24rem; letter-spacing: .01em; font-variant-numeric: tabular-nums; transition: color var(--dur) var(--ease); }
