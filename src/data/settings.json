@@ -103,8 +103,8 @@
       "en": "Wedding Dolls"
     },
     "amigurumi": {
-      "tr": "",
-      "en": ""
+      "tr": "Amigurumi",
+      "en": "Amigurumi"
     },
     "bag": {
       "tr": "",
@@ -117,6 +117,22 @@
     "accessory": {
       "tr": "",
       "en": ""
+    },
+    "Halloween Crochet": {
+      "tr": "Cadılar Bayramı Örgüleri",
+      "en": "Halloween Crochet"
+    },
+    "Crochet Loveys": {
+      "tr": "Örgü Sarılma Oyuncakları",
+      "en": "Crochet Loveys"
+    },
+    "Baby Mobile": {
+      "tr": "Örgü Bebek Mobilleri",
+      "en": "Baby Mobiles"
+    },
+    "Crochet Keychains": {
+      "tr": "Örgü Anahtarlıklar",
+      "en": "Crochet Keychains"
     }
   }
 }

@@ -2,3 +2,71 @@
 # parent path (urunler/products) is itself a page — redirect the slashless form.
 /tr/urunler/:cat  /tr/urunler/:cat/  308
 /en/products/:cat /en/products/:cat/ 308
+
+# TR product titles were rewritten for Turkish search intent (2026-08-28).
+# Slugs derive from the title, so every renamed product moved — 301 the old URL
+# so indexed links and any shared links keep working.
+/tr/urun/siyah-tavsan-pelus-tig-4563585853  /tr/urun/amigurumi-siyah-tavsan-4563585853  301
+/tr/urun/isim-islemeli-koala-pelus-4563533011  /tr/urun/amigurumi-koala-uyku-arkadasi-4563533011  301
+/tr/urun/isimli-kisisellestirilmis-sevimli-oyuncak-4562961011  /tr/urun/amigurumi-ordek-sarilma-oyuncagi-4562961011  301
+/tr/urun/basortulu-ve-namaz-halisi-4555669758  /tr/urun/orgu-bebek-basortulu-4555669758  301
+/tr/urun/tig-isi-kabak-kedisi-4562943650  /tr/urun/amigurumi-balkabagi-kedi-4562943650  301
+/tr/urun/pembe-etekli-tig-isi-4561640962  /tr/urun/amigurumi-ordek-pembe-etekli-4561640962  301
+/tr/urun/safari-hayvanlari-desenli-tig-4561076215  /tr/urun/orgu-perde-tutacagi-safari-4561076215  301
+/tr/urun/zurafalar-ve-ponponlu-tig-4560559431  /tr/urun/orgu-bebek-mobili-zurafali-4560559431  301
+/tr/urun/penguenler-bulutlar-ve-yildizlarla-4559896291  /tr/urun/orgu-bebek-mobili-penguenli-4559896291  301
+/tr/urun/safari-hayvanlari-desenli-tig-4559886669  /tr/urun/orgu-bebek-mobili-safari-4559886669  301
+/tr/urun/isim-nakisli-kisiye-ozel-4559865588  /tr/urun/orgu-bebek-nakisli-4559865588  301
+/tr/urun/aycicegi-elbiseli-ve-tacli-4559356939  /tr/urun/orgu-prenses-bebek-aycicegi-4559356939  301
+/tr/urun/hareketli-kollu-ve-cikarilabilir-4558630780  /tr/urun/orgu-kovboy-bebek-4558630780  301
+/tr/urun/kizlar-icin-tig-isi-4550332810  /tr/urun/orgu-bebek-poz-verilebilen-4550332810  301
+/tr/urun/ayicik-yildizlar-ve-fiyonklarla-4558025932  /tr/urun/orgu-bebek-mobili-ayicikli-4558025932  301
+/tr/urun/kiz-bebekler-icin-tig-4557864793  /tr/urun/orgu-tavsan-hediye-seti-4557864793  301
+/tr/urun/erkek-bebek-hediye-seti-4557375068  /tr/urun/orgu-ayicik-hediye-seti-4557375068  301
+/tr/urun/amigurumi-isimli-tavsan-oyuncak-4489515776  /tr/urun/amigurumi-tavsan-oyuncak-4489515776  301
+/tr/urun/kiz-bebek-hediye-seti-4556283630  /tr/urun/orgu-tavsan-hediye-kutusu-4556283630  301
+/tr/urun/metalik-makrome-iplikten-tig-4555704690  /tr/urun/orgu-el-cantasi-metalik-4555704690  301
+/tr/urun/siyah-sacli-kadife-tig-4555664849  /tr/urun/orgu-bebek-kadife-siyah-4555664849  301
+/tr/urun/mor-sacli-tig-isi-4555620979  /tr/urun/amigurumi-cadi-bebek-mor-4555620979  301
+/tr/urun/tig-isi-palyaco-bebek-4555255371  /tr/urun/amigurumi-palyaco-bebek-4555255371  301
+/tr/urun/cikarilabilir-tulumlu-tig-isi-4554506277  /tr/urun/amigurumi-kuzu-cikarilabilir-tulumlu-4554506277  301
+/tr/urun/isimli-kisisellestirilmis-oyuncak-ayi-4553843060  /tr/urun/amigurumi-ayicik-oyuncak-4553843060  301
+/tr/urun/tig-isi-ari-perde-4553746735  /tr/urun/orgu-ari-perde-tutacagi-4553746735  301
+/tr/urun/tig-isi-gotik-tavsan-4553681000  /tr/urun/amigurumi-gotik-tavsan-4553681000  301
+/tr/urun/kalpli-tig-isi-tavsan-4553182788  /tr/urun/orgu-tavsan-kalpli-4553182788  301
+/tr/urun/tig-isi-siyah-kedi-4553151163  /tr/urun/amigurumi-siyah-kedi-cadi-4553151163  301
+/tr/urun/tig-isi-kedi-perde-4552308119  /tr/urun/orgu-kedi-perde-tutacagi-4552308119  301
+/tr/urun/tig-isi-cadilar-bayrami-4551491101  /tr/urun/orgu-cadilar-bayrami-dekor-4551491101  301
+/tr/urun/tig-isi-kabak-yigini-4551449663  /tr/urun/amigurumi-balkabagi-kulesi-4551449663  301
+/tr/urun/kisiye-ozel-tig-isi-4551294250  /tr/urun/amigurumi-zurafa-oyuncak-4551294250  301
+/tr/urun/tig-isi-panda-pelus-4550945769  /tr/urun/amigurumi-panda-oyuncak-4550945769  301
+/tr/urun/cadilar-bayrami-tig-isi-4550902048  /tr/urun/amigurumi-hayalet-cadi-sapkali-4550902048  301
+/tr/urun/ozel-pelus-bebek-kiz-4550600938  /tr/urun/orgu-bebek-kiz-4550600938  301
+/tr/urun/cadilar-bayrami-sapkasi-takmis-4544894400  /tr/urun/amigurumi-kedi-balkabagi-tutan-4544894400  301
+/tr/urun/kabak-sapkali-cadilar-bayrami-4549601902  /tr/urun/amigurumi-cadi-bebek-balkabagi-4549601902  301
+/tr/urun/tig-isi-kurbaga-kapi-4549014419  /tr/urun/orgu-kurbaga-kapi-tutucu-4549014419  301
+/tr/urun/kisiye-ozel-aslan-bebek-4542037786  /tr/urun/orgu-aslan-bebek-hediye-4542037786  301
+/tr/urun/isim-bas-harfi-islemeli-4548650354  /tr/urun/amigurumi-kadife-ayicik-4548650354  301
+/tr/urun/tig-isi-cadi-bebek-4547993836  /tr/urun/amigurumi-cadi-bebek-4547993836  301
+/tr/urun/kisiye-ozel-tig-isi-4547463426  /tr/urun/amigurumi-rock-bebek-4547463426  301
+/tr/urun/kisiye-ozel-tig-isi-4547433923  /tr/urun/orgu-bebek-kiz-4547433923  301
+/tr/urun/hicapli-kisiye-ozel-tig-4546669234  /tr/urun/orgu-bebek-basortulu-4546669234  301
+/tr/urun/cocuklar-icin-tig-isi-4546169921  /tr/urun/orgu-balkabagi-seker-cantasi-4546169921  301
+/tr/urun/tig-isi-zurafa-perde-4546161060  /tr/urun/orgu-zurafa-perde-tutacagi-4546161060  301
+/tr/urun/el-yapimi-tig-isi-4545504282  /tr/urun/amigurumi-palyaco-bebek-kirmizi-4545504282  301
+/tr/urun/cadi-sapkali-tig-isi-4544893461  /tr/urun/amigurumi-balkabagi-adam-4544893461  301
+/tr/urun/cadi-sapkali-tig-isi-4544857341  /tr/urun/amigurumi-balkabagi-cadi-sapkali-4544857341  301
+/tr/urun/umut-bebek-canta-susu-4544765604  /tr/urun/orgu-bebek-anahtarlik-4544765604  301
+/tr/urun/kelebek-desenli-perde-tutacagi-4543813639  /tr/urun/orgu-kelebek-perde-tutacagi-4543813639  301
+/tr/urun/4-renk-secenegiyle-12-4543548472  /tr/urun/amigurumi-zurafa-oyuncak-30-4543548472  301
+/tr/urun/kisiye-ozel-tig-isi-4542636353  /tr/urun/orgu-tavsan-ve-cingirak-4542636353  301
+/tr/urun/tig-isi-ayicik-pelus-4541998325  /tr/urun/amigurumi-ayicik-30-cm-4541998325  301
+/tr/urun/tig-isi-ayicik-pelus-4541410815  /tr/urun/amigurumi-ayicik-30-cm-4541410815  301
+/tr/urun/tig-isi-palyaco-bebek-4540831479  /tr/urun/amigurumi-palyaco-bebek-4540831479  301
+/tr/urun/amigurumi-orgu-ordek-uyku-4526751350  /tr/urun/amigurumi-ordek-uyku-arkadasi-4526751350  301
+/tr/urun/amigurumi-orgu-bebek-4510244060  /tr/urun/orgu-bebek-amigurumi-4510244060  301
+/tr/urun/mor-sacli-tig-isi-4545451153  /tr/urun/amigurumi-cadi-bebek-mor-4545451153  301
+
+# Etsy shipping-upgrade listing, wrongly imported as a product — retired.
+/tr/urun/amerika-birlesik-devletleri-ne-ekspres-4552145899  /tr/urunler  301
+/en/product/united-states-express-shipping-4552145899  /en/products  301
