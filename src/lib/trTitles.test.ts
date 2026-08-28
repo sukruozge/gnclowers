@@ -98,3 +98,41 @@ describe('category names', () => {
     expect(missing).toEqual([]);
   });
 });
+
+describe('duplicate listings', () => {
+  // Etsy sellers relist the same item (different market, different price), and
+  // the sync imports each listing as its own product. Two entries for one toy
+  // split reviews, confuse shoppers and can show two prices for the same thing.
+  // Shared photos are the reliable signal — titles are formulaic and similar
+  // titles are usually genuinely different animals.
+  const imageKey = (url: string) => url.split('?')[0].replace(/^https?:/, '');
+
+  it('has no two active products sharing most of their photos', () => {
+    const sets = products.map((p) => ({ p, imgs: new Set((p.images ?? []).map(imageKey)) }));
+    const dupes: string[] = [];
+
+    for (let i = 0; i < sets.length; i++) {
+      for (let j = i + 1; j < sets.length; j++) {
+        const a = sets[i];
+        const b = sets[j];
+        if (!a.imgs.size || !b.imgs.size) continue;
+        const shared = [...a.imgs].filter((u) => b.imgs.has(u)).length;
+        const overlap = shared / Math.min(a.imgs.size, b.imgs.size);
+        if (overlap >= 0.5) {
+          dupes.push(`${a.p.id} ↔ ${b.p.id} (${Math.round(overlap * 100)}% ortak) — ${a.p.title_tr} / ${b.p.title_tr}`);
+        }
+      }
+    }
+    expect(dupes).toEqual([]);
+  });
+
+  it('lists no product twice under the same Etsy listing url', () => {
+    const seen = new Map<string, string[]>();
+    for (const p of products) {
+      if (!p.url) continue;
+      seen.set(p.url, [...(seen.get(p.url) ?? []), p.id]);
+    }
+    const dupes = [...seen.entries()].filter(([, ids]) => ids.length > 1).map(([u, ids]) => `${ids.join(',')} → ${u}`);
+    expect(dupes).toEqual([]);
+  });
+});

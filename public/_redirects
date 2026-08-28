@@ -38,7 +38,7 @@
 /tr/urun/tig-isi-kedi-perde-4552308119  /tr/urun/orgu-kedi-perde-tutacagi-4552308119  301
 /tr/urun/tig-isi-cadilar-bayrami-4551491101  /tr/urun/orgu-cadilar-bayrami-dekor-4551491101  301
 /tr/urun/tig-isi-kabak-yigini-4551449663  /tr/urun/amigurumi-balkabagi-kulesi-4551449663  301
-/tr/urun/kisiye-ozel-tig-isi-4551294250  /tr/urun/amigurumi-zurafa-oyuncak-4551294250  301
+/tr/urun/kisiye-ozel-tig-isi-4551294250  /tr/urun/amigurumi-orgu-zurafa-oyuncak-4527315673  301
 /tr/urun/tig-isi-panda-pelus-4550945769  /tr/urun/amigurumi-panda-oyuncak-4550945769  301
 /tr/urun/cadilar-bayrami-tig-isi-4550902048  /tr/urun/amigurumi-hayalet-cadi-sapkali-4550902048  301
 /tr/urun/ozel-pelus-bebek-kiz-4550600938  /tr/urun/orgu-bebek-kiz-4550600938  301
@@ -70,3 +70,6 @@
 # Etsy shipping-upgrade listing, wrongly imported as a product — retired.
 /tr/urun/amerika-birlesik-devletleri-ne-ekspres-4552145899  /tr/urunler  301
 /en/product/united-states-express-shipping-4552145899  /en/products  301
+
+# Duplicate US relist of the same giraffe — point its EN page at the one we kept.
+/en/product/personalized-crochet-giraffe-custom-4551294250  /en/product/personalized-crochet-giraffe-with-4527315673  301
