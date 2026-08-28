@@ -11,6 +11,7 @@ import { productJsonLd, breadcrumbJsonLd } from '@lib/jsonld';
 import { loadReviews, pickReviews, formatRating } from '@lib/reviews';
 import { optName, optValue } from '@lib/optionLabels';
 import { categoryLabel } from '@lib/categories';
+import { pricesHidden, whatsappUrl, instagramUrl } from '@lib/pricing';
 
 export function getStaticPaths() {
   return loadProducts().map((p) => ({ params: { slug: productSlug(p, 'tr') }, props: { product: p } }));
@@ -33,6 +34,9 @@ const crumbLd = breadcrumbJsonLd([
   { name: 'Ürünler', url: `${site}/tr/urunler` },
   { name: title, url: `${site}/tr/${selfPath}` },
 ]);
+const hideP = pricesHidden();
+const waHref = whatsappUrl(title, `${site}/tr/${selfPath}`, 'tr');
+const igHref = instagramUrl();
 ---
 <Base locale="tr" title={`${title} — Aselovers`} description={(product.description_tr || title).split('\n')[0]}
   pathSelf={selfPath} pathsAlt={{ tr: selfPath, en: `product/${enSlug}` }} ogImage={product.image ?? undefined}>
@@ -64,6 +68,11 @@ const crumbLd = breadcrumbJsonLd([
             </div>
 
             <div class="buybox">
+              {hideP ? (
+                <div class="askprice">
+                  <span class="askprice__label">Fiyat bilgisi için bize yazın</span>
+                </div>
+              ) : (
               <div class="buybox__pricerow">
                 <span class="detail__price" id="detail-price">{price}</span>
                 <span class="detail__vat">KDV dahil</span>
@@ -72,6 +81,7 @@ const crumbLd = breadcrumbJsonLd([
                   El emeği
                 </span>
               </div>
+              )}
 
               <div class="stitch" aria-hidden="true">
                 <svg viewBox="0 0 240 8" preserveAspectRatio="none" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-dasharray="7 5"><path d="M2 4 Q10 -1 20 4 T40 4 T60 4 T80 4 T100 4 T120 4 T140 4 T160 4 T180 4 T200 4 T220 4 T238 4"/></svg>
@@ -125,6 +135,21 @@ const crumbLd = breadcrumbJsonLd([
                 <p class="ordernote__hint"><span id="order-note-count">0</span>/300 · Notunuz siparişinizle birlikte bize ulaşır.</p>
               </div>
 
+              {hideP ? (
+                <div class="dmbuy">
+                  <div class="dmbuy__row">
+                    <a class="dmbuy__btn dmbuy__btn--wa" id="wa-btn" href={waHref} data-title={title} data-url={`${site}/tr/${selfPath}`} target="_blank" rel="noopener">
+                      <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M12.04 2c-5.46 0-9.9 4.44-9.9 9.9 0 1.75.46 3.45 1.32 4.95L2 22l5.3-1.38a9.86 9.86 0 0 0 4.73 1.2c5.46 0 9.9-4.44 9.9-9.9 0-2.64-1.03-5.13-2.9-7A9.82 9.82 0 0 0 12.04 2Zm3.47 12.02c-.2.56-1.17 1.08-1.64 1.15-.42.06-.95.08-1.53-.1-.35-.11-.8-.26-1.38-.51-2.44-1.04-4.02-3.48-4.14-3.64-.12-.16-.99-1.31-.99-2.51 0-1.19.63-1.78.85-2.02.22-.24.48-.3.64-.3h.46c.17.01.36.01.54.43.22.48.7 1.68.76 1.8.06.12.1.26.02.42-.08.16-.12.26-.24.4-.12.14-.25.31-.36.42-.12.12-.25.25-.11.49.15.24.63 1.04 1.35 1.68.93.82 1.71 1.08 1.95 1.2.24.12.38.1.52-.06.14-.16.61-.71.77-.95.17-.24.33-.2.55-.12.22.08 1.42.67 1.66.79.24.12.4.18.46.28.06.1.06.58-.14 1.15Z"/></svg>
+                      WhatsApp’tan sor
+                    </a>
+                    <a class="dmbuy__btn dmbuy__btn--ig" href={igHref} target="_blank" rel="noopener">
+                      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"/></svg>
+                      Instagram’dan yaz
+                    </a>
+                  </div>
+                  <p class="dmbuy__hint">Notunuzu yukarıya yazarsanız mesaja otomatik eklenir.</p>
+                </div>
+              ) : (
               <div class="detail__buy">
                 <div class="qtystep" role="group" aria-label="Adet seçimi">
                   <button type="button" class="qtystep__btn" id="qty-minus" aria-label="Adedi azalt">−</button>
@@ -136,6 +161,7 @@ const crumbLd = breadcrumbJsonLd([
                   Sepete Ekle
                 </button>
               </div>
+              )}
 
               <ul class="assure">
                 <li class="assure__item">
@@ -144,7 +170,9 @@ const crumbLd = breadcrumbJsonLd([
                 </li>
                 <li class="assure__item">
                   <span class="assure__ic"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 2l8 3v6c0 5-3.4 9-8 11-4.6-2-8-6-8-11V5z"/><path d="M9 12l2 2 4-4"/></svg></span>
-                  <div><strong>Güvenli ödeme</strong><span>PayTR altyapısı — kart bilgileriniz bizde saklanmaz</span></div>
+                  <div>{hideP
+                    ? <><strong>Hızlı yanıt</strong><span>WhatsApp veya Instagram’dan kısa sürede dönüş</span></>
+                    : <><strong>Güvenli ödeme</strong><span>PayTR altyapısı — kart bilgileriniz bizde saklanmaz</span></>}</div>
                 </li>
                 <li class="assure__item">
                   <span class="assure__ic"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 3v5h-7z"/><circle cx="5.5" cy="18.5" r="2"/><circle cx="18.5" cy="18.5" r="2"/></svg></span>
@@ -262,6 +290,29 @@ const crumbLd = breadcrumbJsonLd([
   }
 
   // Renk → görsel: seçilen değerin eşlenmiş görseli varsa ana galeri görselini değiştir.
+  // Fiyatlar gizliyken satın alma yok: WhatsApp mesajını müşterinin yazdığı not
+  // ve seçtiği varyantlarla canlı güncelle, böylece tek dokunuşla gönderebilsin.
+  const NL = String.fromCharCode(10); // satır sonu — WhatsApp mesajını satırlara böler
+  const waBtn = document.getElementById('wa-btn') as HTMLAnchorElement | null;
+  if (waBtn) {
+    const rebuild = () => {
+      const t = waBtn.dataset.title || '';
+      const u = waBtn.dataset.url || location.href;
+      const chosen = sels.filter((x) => x.value).map((x) => `${x.dataset.name}: ${x.value}`).join(', ');
+      const note = (orderNoteEl?.value || '').trim();
+      const lines = [
+        `Merhaba! "${t}" ürününün fiyatını öğrenebilir miyim?`,
+        chosen && `Seçim: ${chosen}`,
+        note && `Özel isteğim: ${note}`,
+        u,
+      ].filter(Boolean);
+      waBtn.href = 'https://wa.me/905067927685?text=' + encodeURIComponent(lines.join(NL));
+    };
+    orderNoteEl?.addEventListener('input', rebuild);
+    sels.forEach((x) => x.addEventListener('change', rebuild));
+    rebuild();
+  }
+
   const galleryMain = document.getElementById('gallery-main') as HTMLImageElement | null;
   function updateColorImage() {
     if (!galleryMain || !prod.optionImages) return;
@@ -317,6 +368,16 @@ const crumbLd = breadcrumbJsonLd([
     .buybox__pricerow { display: flex; align-items: baseline; gap: var(--space-3); flex-wrap: wrap; }
 
     .variations { display: flex; flex-direction: column; gap: var(--space-3); margin: var(--space-4) 0; }
+    .askprice { display: flex; align-items: baseline; gap: var(--space-3); flex-wrap: wrap; }
+    .askprice__label { font-family: var(--font-display); font-size: 1.55rem; color: var(--accent-ink); line-height: 1.1; }
+    .dmbuy { display: flex; flex-direction: column; gap: 10px; margin: var(--space-4) 0; }
+    .dmbuy__row { display: flex; gap: 10px; flex-wrap: wrap; }
+    .dmbuy__btn { flex: 1 1 180px; display: inline-flex; align-items: center; justify-content: center; gap: 9px; min-height: 54px; padding: 0 18px; border-radius: var(--radius-pill); font: inherit; font-weight: 600; font-size: 1rem; text-decoration: none; border: 1.5px solid transparent; transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease), background var(--dur) var(--ease); }
+    .dmbuy__btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-hover); }
+    .dmbuy__btn--wa { background: #25D366; color: #06331a; }
+    .dmbuy__btn--ig { background: var(--surface); color: var(--ink); border-color: var(--line); }
+    .dmbuy__btn--ig:hover { border-color: #C13584; color: #C13584; }
+    .dmbuy__hint { font-size: .82rem; color: var(--muted); margin: 0; }
     .ordernote { display: flex; flex-direction: column; gap: 6px; margin: var(--space-3) 0 var(--space-4); padding: var(--space-3); background: var(--section); border: 1px solid var(--line); border-radius: var(--radius); }
     .ordernote__opt { font-weight: 400; color: var(--muted); }
     .ordernote textarea { font-family: inherit; font-size: .95rem; padding: 10px 14px; border: 1.5px solid var(--line); border-radius: 10px; background: var(--bg); color: var(--ink); resize: vertical; min-height: 76px; }

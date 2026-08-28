@@ -1,4 +1,5 @@
 import { loadProducts, productSlug } from './products';
+import { pricesHidden } from './pricing';
 import { canonical } from './seo';
 import { effectiveUsdRate } from './currency';
 
@@ -31,7 +32,10 @@ export function buildMerchantFeed(site: string, opts: FeedOptions = {}): string 
   const usdRate = opts.usdRate ?? 47.03;
   const isEn = locale === 'en';
 
-  const items = loadProducts().map((p) => {
+  // Merchant Center requires a price and matches it against the landing page.
+  // While prices are hidden we publish an empty feed instead of prices nobody
+  // can see — a mismatched feed risks the whole account being suspended.
+  const items = (pricesHidden() ? [] : loadProducts()).map((p) => {
     const imgs = (p.images && p.images.length ? p.images : (p.image ? [p.image] : [])).filter(Boolean) as string[];
     if (!imgs.length) return ''; // Merchant Center requires an image_link
 

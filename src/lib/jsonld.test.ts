@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { productJsonLd, websiteJsonLd } from '@lib/jsonld';
+import { pricesHidden } from '@lib/pricing';
 import type { Product } from '@lib/products';
 
 const p: Product = {
@@ -14,7 +15,7 @@ describe('productJsonLd', () => {
     expect(obj['@type']).toBe('Product');
     expect(obj.name).toBe('Bunny');
   });
-  it('has a correct TRY offer on the /tr page', () => {
+  it.skipIf(pricesHidden())('has a correct TRY offer on the /tr page', () => {
     const trObj = JSON.parse(productJsonLd(p, 'tr', 'https://aseloves.com/tr/urun/tavsan-9'));
     expect(trObj.offers['@type']).toBe('Offer');
     expect(trObj.offers.price).toBe('1912.50');
@@ -23,7 +24,7 @@ describe('productJsonLd', () => {
     // Offer URL points to the on-site canonical product page (not an external marketplace).
     expect(trObj.offers.url).toBe('https://aseloves.com/tr/urun/tavsan-9');
   });
-  it('converts the offer to USD on the /en page so currency matches the shown price', () => {
+  it.skipIf(pricesHidden())('converts the offer to USD on the /en page so currency matches the shown price', () => {
     // EN storefront charges USD; declaring TRY here would be a Google Merchant mismatch.
     expect(obj.offers['@type']).toBe('Offer');
     expect(obj.offers.priceCurrency).toBe('USD');
@@ -31,6 +32,13 @@ describe('productJsonLd', () => {
     expect(Number(obj.offers.price)).toBeLessThan(p.price);
     expect(obj.offers.url).toBe('https://aseloves.com/en/product/bunny-9');
   });
+
+  it.runIf(pricesHidden())('publishes no offer while prices are hidden', () => {
+    // Advertising a price to Google that the page does not show is a mismatch;
+    // Merchant Center can disapprove the item for it.
+    expect('offers' in obj).toBe(false);
+  });
+
   it('omits image when the product has no image', () => {
     const noImg = { ...p, image: null, images: [] };
     const obj2 = JSON.parse(productJsonLd(noImg, 'en', 'https://x/y'));

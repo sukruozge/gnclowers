@@ -2,6 +2,7 @@ import type { Product } from './products';
 import { localizedTitle } from './products';
 import type { Locale } from './i18n';
 import type { Post } from './blog';
+import { pricesHidden } from './pricing';
 import { localeCurrency, toCurrency, FALLBACK_RATES, type Rates } from './currency';
 
 const BRAND = 'Aselovers';
@@ -150,7 +151,12 @@ export function productJsonLd(
     brand: { '@type': 'Brand', name: BRAND },
     category: product.category,
     itemCondition: 'https://schema.org/NewCondition',
-    offers: {
+  };
+  // A price in structured data that the page does not show is a mismatch —
+  // Google flags it and Merchant Center can disapprove the item. While prices
+  // are hidden the Product simply carries no offer.
+  if (!pricesHidden()) {
+    data.offers = {
       '@type': 'Offer',
       price: price.toFixed(2),
       priceCurrency: cur,
@@ -158,8 +164,8 @@ export function productJsonLd(
       url,
       availability: 'https://schema.org/InStock',
       seller: { '@type': 'Organization', name: BRAND },
-    },
-  };
+    };
+  }
   // Turkish tags become schema keywords on the TR locale only — the EN listing
   // copy comes from Etsy and must stay untouched.
   if (locale === 'tr' && product.tags?.length) {

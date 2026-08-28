@@ -3,12 +3,15 @@ import { t, type Locale } from '@lib/i18n';
 import { loadProducts } from '@lib/products';
 import { categoryLabel } from '@lib/categories';
 import Logo from './Logo.astro';
+import { pricesHidden } from '@lib/pricing';
 
 const { locale } = Astro.props as { locale: Locale };
 const p = (tr: string, en: string) => (locale === 'tr' ? `/tr/${tr}` : `/en/${en}`);
 const other = locale === 'tr' ? '/en' : '/tr';
 const catalog = locale === 'tr' ? '/tr/urunler' : '/en/products';
 const searchAction = locale === 'tr' ? '/tr/arama' : '/en/search';
+// Fiyatlar gizliyken satın alma kapalı — sepet ikonu boş bir sayfaya götürürdü.
+const showCart = !pricesHidden();
 
 const links = [
   { href: `/${locale}`, label: t('nav.home', locale) },
@@ -42,10 +45,12 @@ const collections = [...new Set(products.map((x) => x.category))]
       <!-- Right Actions -->
       <div class="nav__actions">
         <!-- Cart Icon -->
+        {showCart && (
         <a class="nav__icon-btn cart-btn" href={locale === 'tr' ? '/tr/sepet' : '/en/cart'} aria-label={locale === 'tr' ? 'Sepet' : 'Cart'}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
           <span class="cart-badge" id="nav-cart-badge" hidden>0</span>
         </a>
+        )}
 
         <!-- Lang toggle -->
         <a class="nav__lang" href={other} aria-label={locale === 'tr' ? 'English' : 'Türkçe'}>

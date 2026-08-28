@@ -3,6 +3,7 @@ import { type Locale } from '@lib/i18n';
 import { localizedTitle, productSlug, type Product } from '@lib/products';
 import { displayPrice, FALLBACK_RATES, productRates } from '@lib/currency';
 import settings from '../../data/settings.json';
+import { pricesHidden, priceLabel } from '@lib/pricing';
 
 const { product, locale } = Astro.props as { product: Product; locale: Locale };
 const title = localizedTitle(product, locale);
@@ -36,7 +37,9 @@ const order = [photos[1], photos[2], photos[0]]; // left, right, center
     ))}
   </div>
   <h3 class="fc__title">{title}</h3>
-  <span class="fc__price price-amt" data-try={product.price} data-cur={product.currency}>{price}</span>
+  {pricesHidden()
+    ? <span class="fc__price fc__price--ask">{priceLabel(locale)}</span>
+    : <span class="fc__price price-amt" data-try={product.price} data-cur={product.currency}>{price}</span>}
 </a>
 
 <style>
@@ -88,6 +91,7 @@ const order = [photos[1], photos[2], photos[0]]; // left, right, center
     min-height: 2.7em;
   }
   /* Centered, high-appeal price — a vivid warm tone that pulls the eye. */
+  .fc__price--ask { color: var(--muted) !important; font-weight: 700 !important; font-size: 1rem !important; }
   .fc__price {
     display: block; text-align: center; font-family: var(--font-body); color: #C2410C;
     font-weight: 800; font-size: 1.28rem; letter-spacing: .01em; font-variant-numeric: tabular-nums;
