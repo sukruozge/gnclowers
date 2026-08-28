@@ -169,7 +169,7 @@ ${sellerBlockEn}` },
 <h2>3. Sipariş ve fiyatlar</h2>
 <p>Fiyatlar Türk Lirası (₺) cinsindendir ve KDV dahildir. Fiyat ve ürün bilgilerinde hata olması halinde ${SELLER.brand} siparişi iptal etme hakkını saklı tutar; bu durumda ödemeniz iade edilir.</p>
 <h2>4. Sipariş süreci</h2>
-<p>Ürünler siparişe özel elde örüldüğü için <strong>7–10 günlük bir hazırlık süresi</strong> vardır; kargo süresi bunun üstüne eklenir. Ödeme, güvenli PayTR altyapısı ile alınır.</p>
+<p>Ürünler siparişe özel elde örüldüğü için ortalama <strong>7–10 günlük bir hazırlık süresi</strong> vardır; sonrasında Türkiye geneline kargo 1–3 günde teslim edilir. Ödeme, güvenli PayTR altyapısı ile alınır.</p>
 <h2>5. Sorumluluğun sınırı</h2>
 <p>${SELLER.brand}, mücbir sebepler (doğal afet, kargo aksaklıkları vb.) kaynaklı gecikmelerden sorumlu tutulamaz. Ürünler oyuncak olarak tasarlanmıştır; küçük çocuklarda yetişkin gözetimi önerilir.</p>
 <h2>6. Değişiklikler</h2>
@@ -210,7 +210,7 @@ ${sellerBlockTr}
 <h2>3. Ürün ve ödeme</h2>
 <p>Ürünlerin temel nitelikleri ve KDV dahil satış fiyatı ilgili ürün sayfasında ve sipariş özetinde yer alır. Ödeme, PayTR sanal POS altyapısı ile kredi/banka kartından tahsil edilir. Kargo ücreti (varsa) sipariş özetinde ayrıca gösterilir.</p>
 <h2>4. Teslimat</h2>
-<p>Ürün, siparişe özel hazırlandıktan sonra Alıcının bildirdiği adrese kargo ile teslim edilir. <strong>Hazırlık süresi 7–10 gündür</strong>; kargo süresi bunun üstüne eklenir (Türkiye içi toplam 9–13 gün, yurt dışı 14–24 gün). Ayrıntı için <a href="/tr/teslimat">Teslimat ve Kargo</a> sayfasına bakınız. Yasal azami teslim süresi 30 gündür.</p>
+<p>Ürün, siparişe özel hazırlandıktan sonra Alıcının bildirdiği adrese kargo ile teslim edilir. <strong>Hazırlık süresi ortalama 7–10 gündür</strong>; kargo süresi bunun üstüne eklenir (Türkiye içi kargo 1–3 gün, toplam 8–13 gün; yurt dışı toplam 14–24 gün). Ayrıntı için <a href="/tr/teslimat">Teslimat ve Kargo</a> sayfasına bakınız. Yasal azami teslim süresi 30 gündür.</p>
 <h2>5. Cayma hakkı</h2>
 <p>Alıcı, teslim tarihinden itibaren <strong>14 gün</strong> içinde gerekçe göstermeden cayma hakkına sahiptir. Ancak <strong>Alıcının istekleri doğrultusunda kişiye özel hazırlanan</strong> (isim, özel renk/tasarım vb.) ürünlerde, Mesafeli Sözleşmeler Yönetmeliği md.15 gereği cayma hakkı kullanılamaz. Ayrıntı için <a href="/tr/iade-iptal">İade ve İptal</a> sayfasına bakınız.</p>
 <h2>6. Cayma usulü ve iade</h2>
@@ -229,7 +229,7 @@ ${sellerBlockEn}
 <h2>3. Product and payment</h2>
 <p>Essential product features and the VAT-inclusive price are shown on the product page and order summary. Payment is collected from a credit/debit card via the PayTR virtual POS. Shipping fee (if any) is shown separately in the summary.</p>
 <h2>4. Delivery</h2>
-<p>After the made-to-order item is prepared, it is delivered by courier to the address provided. <strong>Preparation takes 7–10 days</strong>; transit time is added on top (9–13 days total within Türkiye, 14–24 days internationally). See the <a href="/en/shipping">Shipping &amp; Delivery</a> page for details. The legal maximum delivery period is 30 days.</p>
+<p>After the made-to-order item is prepared, it is delivered by courier to the address provided. <strong>Preparation takes 7–10 days</strong> on average; transit is added on top (1–3 days within Türkiye, 8–13 days total; 14–24 days internationally). See the <a href="/en/shipping">Shipping &amp; Delivery</a> page for details. The legal maximum delivery period is 30 days.</p>
 <h2>5. Right of withdrawal</h2>
 <p>The Buyer may withdraw within <strong>14 days</strong> of delivery without cause. However, for <strong>personalised items made to the Buyer's specifications</strong> (name, custom colour/design), the right of withdrawal does not apply. See <a href="/en/returns">Returns & Cancellations</a>.</p>
 <h2>6. Withdrawal and refund</h2>
@@ -322,13 +322,13 @@ ${sellerBlockEn}` },
   shipping: {
     tr: { title: 'Teslimat ve Kargo', updated: UPDATED_TR, html: `
 <h2>1. Hazırlık süresi — 7–10 gün</h2>
-<p>Ürünlerimiz stoktan satılmaz; siparişiniz geldikten sonra tek tek elde örülür. Bu nedenle her siparişin bir <strong>hazırlık süresi</strong> vardır: <strong>7–10 gün</strong>. Ürününüz bu sürenin sonunda kargoya verilir.</p>
-<p><strong>Kargo süresi bu sürenin üstüne eklenir.</strong> Türkiye içi toplam teslim süresi tipik olarak <strong>9–13 gün</strong>, yurt dışında <strong>14–24 gün</strong> arasındadır. Kişiye özel siparişlerde net süre sipariş öncesinde ayrıca bildirilir.</p>
+<p>Her ürün el yapımıdır ve siparişiniz geldikten sonra tek tek örülür. Bu nedenle her siparişin bir <strong>hazırlık süresi</strong> vardır: ortalama <strong>7–10 gün</strong>. Ürününüz bu sürenin sonunda kargoya verilir.</p>
+<p><strong>Kargo süresi bu sürenin üstüne eklenir.</strong> Türkiye geneline kargo <strong>1–3 gün</strong> içinde teslim edilir; yani toplam teslim süresi tipik olarak <strong>8–13 gün</strong>tür. Yurt dışında toplam <strong>14–24 gün</strong> sürer. Kişiye özel siparişlerde net süre sipariş öncesinde ayrıca bildirilir.</p>
 <h2>2. Kargo bölgeleri ve ücret</h2>
 <p>Türkiye ve yurt dışına gönderim yapıyoruz. Kargo ücreti (varsa) teslimat bölgesine göre <strong>sipariş özetinde</strong> ayrıca gösterilir ve ödeme öncesinde toplamda görünür.</p>
 <table>
   <tr><th>Bölge</th><th>Yöntem</th><th>Kargo süresi</th><th>Hazırlık dahil toplam</th></tr>
-  <tr><td>Türkiye</td><td>Anlaşmalı kargo</td><td>2–3 gün</td><td><strong>9–13 gün</strong></td></tr>
+  <tr><td>Türkiye</td><td>Anlaşmalı kargo</td><td>1–3 gün</td><td><strong>8–13 gün</strong></td></tr>
   <tr><td>Yurt dışı</td><td>ShipEntegra</td><td>7–14 gün</td><td><strong>14–24 gün</strong></td></tr>
 </table>
 <p>Tablodaki kargo süresi, ürün kargoya verildikten <em>sonrasını</em> gösterir; üstüne 7–10 günlük hazırlık süresi eklenir.</p>
@@ -340,13 +340,13 @@ ${sellerBlockEn}` },
 <p>Yurt dışı gönderilerimiz ShipEntegra ile yapılır; gümrük işlemleri çözüm ortağımız tarafından yürütülür. Böylece alıcının ek gümrük vergisi ödemesine veya gümrük süreçleriyle uğraşmasına gerek kalmaz.</p>` },
     en: { title: 'Shipping & Delivery', updated: UPDATED_EN, html: `
 <h2>1. Preparation time — 7–10 days</h2>
-<p>We do not sell from stock; your item is crocheted by hand after you order. Every order therefore has a <strong>preparation time of 7–10 days</strong>, and ships at the end of it.</p>
-<p><strong>Transit time is added on top.</strong> Total delivery is typically <strong>9–13 days</strong> within Türkiye and <strong>14–24 days</strong> internationally. For personalised orders the exact timeline is confirmed before you order.</p>
+<p>Every piece is handmade and crocheted after you order. Every order therefore has an average <strong>preparation time of 7–10 days</strong>, and ships at the end of it.</p>
+<p><strong>Transit time is added on top.</strong> Delivery across Türkiye takes <strong>1–3 days</strong>, so the total is typically <strong>8–13 days</strong>. Internationally the total is <strong>14–24 days</strong>. For personalised orders the exact timeline is confirmed before you order.</p>
 <h2>2. Regions and fees</h2>
 <p>We ship to Türkiye and internationally. Shipping fee (if any) is shown separately in the <strong>order summary</strong> and included in the total before payment.</p>
 <table>
   <tr><th>Region</th><th>Method</th><th>Transit time</th><th>Total incl. preparation</th></tr>
-  <tr><td>Türkiye</td><td>Contracted courier</td><td>2–3 days</td><td><strong>9–13 days</strong></td></tr>
+  <tr><td>Türkiye</td><td>Contracted courier</td><td>1–3 days</td><td><strong>8–13 days</strong></td></tr>
   <tr><td>International</td><td>ShipEntegra</td><td>7–14 days</td><td><strong>14–24 days</strong></td></tr>
 </table>
 <p>Transit time counts from the moment the parcel is dispatched; the 7–10 day preparation time comes before it.</p>

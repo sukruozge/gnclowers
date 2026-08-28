@@ -128,11 +128,16 @@ export const POST: APIRoute = async (context) => {
       subtotalTry += priceTry * qty;
       itemCount += qty;
       const baseTitle = prod.title_tr || prod.title_en;
-      const noteClean = clip(item.note, 60); // personalization name / gift note for this line
+      // The buyer's note carries the personalization name plus their free-text
+      // customization request, so it can run long. Keep the PayTR basket line
+      // short (that string becomes the payment provider's item title), but store
+      // the full note on the order — that is what we actually knit from.
+      const noteFull = clip(item.note, 400);
+      const noteShort = noteFull.slice(0, 60);
       const optSuffix = options ? ' (' + Object.keys(options).map((k) => `${k}: ${options![k]}`).join(', ') + ')' : '';
-      const noteSuffix = noteClean ? ` [${noteClean}]` : '';
+      const noteSuffix = noteShort ? ` [${noteShort}]` : '';
       basket.push([baseTitle + optSuffix + noteSuffix, String(price), qty]);
-      items.push({ id: String(prod.id), title: baseTitle, qty, price, image: prod.image, ...(options ? { options } : {}), ...(noteClean ? { note: noteClean } : {}) });
+      items.push({ id: String(prod.id), title: baseTitle, qty, price, image: prod.image, ...(options ? { options } : {}), ...(noteFull ? { note: noteFull } : {}) });
     }
 
     // Region-based shipping, computed server-side (never trust the client),
