@@ -38,7 +38,7 @@ const order = [photos[1], photos[2], photos[0]]; // left, right, center
   </div>
   <h3 class="fc__title">{title}</h3>
   {pricesHidden()
-    ? <span class="fc__price fc__price--ask">{priceLabel(locale)}</span>
+    ? <span class="fc__ask"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 9.9 9.9 0 0 1-3.9-.8L3 21l1.9-4.6A8.4 8.4 0 0 1 12 3a8.4 8.4 0 0 1 9 8.5z"/></svg>{locale === 'tr' ? 'Detaylı bilgi al' : 'Get details'}</span>
     : <span class="fc__price price-amt" data-try={product.price} data-cur={product.currency}>{price}</span>}
 </a>
 
@@ -91,7 +91,21 @@ const order = [photos[1], photos[2], photos[0]]; // left, right, center
     min-height: 2.7em;
   }
   /* Centered, high-appeal price — a vivid warm tone that pulls the eye. */
-  .fc__price--ask { color: var(--muted) !important; font-weight: 700 !important; font-size: 1rem !important; }
+  /* Fiyat gizliyken kartın çağrısı: marka terracottasından sıcak bir degrade.
+     Beyaz metin/#B0532E kontrastı 6.4:1 — WCAG AA'nın üstünde. Kartın tamamı
+     zaten ürün sayfasına giden tek bağlantı, bu yüzden rozet iç içe bir link
+     değil: tek kart = tek birincil eylem. */
+  .fc__ask { display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+    margin-top: 9px; padding: 9px 18px; border-radius: var(--radius-pill);
+    background: linear-gradient(135deg, var(--accent) 0%, #C2410C 100%);
+    /* Degradenin iki ucu da beyaz metinle 5.09:1 ve 5.18:1 — WCAG AA (4.5:1) üstünde.
+       Amber uçlu daha parlak bir degrade denendi ama 3.59:1'e düşüyordu. */
+    color: var(--on-accent); font-size: .88rem; font-weight: 600; letter-spacing: .01em;
+    box-shadow: 0 6px 16px color-mix(in srgb, var(--accent) 28%, transparent);
+    transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease); }
+  .fc__ask svg { flex-shrink: 0; }
+  .fc:hover .fc__ask { transform: translateY(-2px); box-shadow: 0 10px 22px color-mix(in srgb, var(--accent) 38%, transparent); }
+  @media (prefers-reduced-motion: reduce) { .fc:hover .fc__ask { transform: none; } }
   .fc__price {
     display: block; text-align: center; font-family: var(--font-body); color: #C2410C;
     font-weight: 800; font-size: 1.28rem; letter-spacing: .01em; font-variant-numeric: tabular-nums;

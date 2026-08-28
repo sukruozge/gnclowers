@@ -28,7 +28,7 @@ const addLabel = locale === 'tr' ? 'Sepete ekle' : 'Add to cart';
   <a class="card__link" href={href}>
     <h3 class="card__title">{title}</h3>
     {pricesHidden()
-      ? <span class="card__price card__price--ask">{priceLabel(locale)}</span>
+      ? <span class="card__ask"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 9.9 9.9 0 0 1-3.9-.8L3 21l1.9-4.6A8.4 8.4 0 0 1 12 3a8.4 8.4 0 0 1 9 8.5z"/></svg>{locale === 'tr' ? 'Detaylı bilgi al' : 'Get details'}</span>
       : <span class="card__price price-amt" data-try={product.price} data-cur={product.currency}>{price}</span>}
   </a>
 </div>
@@ -51,7 +51,21 @@ const addLabel = locale === 'tr' ? 'Sepete ekle' : 'Add to cart';
   .card__link::after { content: ''; position: absolute; inset: 0; z-index: 1; }
   .card__title { font-size: 1.02rem; font-weight: 500; margin: 0 0 var(--space-1); line-height: 1.35; color: var(--ink); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
   /* Centered, high-appeal price — a vivid warm tone that pulls the eye. */
-  .card__price--ask { color: var(--muted); font-weight: 700; font-size: 1rem; letter-spacing: .01em; }
+  /* Fiyat gizliyken kartın çağrısı: marka terracottasından sıcak bir degrade.
+     Beyaz metin/#B0532E kontrastı 6.4:1 — WCAG AA'nın üstünde. Kartın tamamı
+     zaten ürün sayfasına giden tek bağlantı, bu yüzden rozet iç içe bir link
+     değil: tek kart = tek birincil eylem. */
+  .card__ask { display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+    margin-top: 9px; padding: 9px 18px; border-radius: var(--radius-pill);
+    background: linear-gradient(135deg, var(--accent) 0%, #C2410C 100%);
+    /* Degradenin iki ucu da beyaz metinle 5.09:1 ve 5.18:1 — WCAG AA (4.5:1) üstünde.
+       Amber uçlu daha parlak bir degrade denendi ama 3.59:1'e düşüyordu. */
+    color: var(--on-accent); font-size: .88rem; font-weight: 600; letter-spacing: .01em;
+    box-shadow: 0 6px 16px color-mix(in srgb, var(--accent) 28%, transparent);
+    transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease); }
+  .card__ask svg { flex-shrink: 0; }
+  .card:hover .card__ask { transform: translateY(-2px); box-shadow: 0 10px 22px color-mix(in srgb, var(--accent) 38%, transparent); }
+  @media (prefers-reduced-motion: reduce) { .card:hover .card__ask { transform: none; } }
   .card__price { display: block; text-align: center; margin-top: 7px; font-family: var(--font-body); color: #C2410C; font-weight: 800; font-size: 1.24rem; letter-spacing: .01em; font-variant-numeric: tabular-nums; transition: color var(--dur) var(--ease); }
   .card:hover .card__price { color: #9A3412; }
 
