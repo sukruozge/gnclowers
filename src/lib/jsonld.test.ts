@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { productJsonLd } from '@lib/jsonld';
+import { productJsonLd, websiteJsonLd } from '@lib/jsonld';
 import type { Product } from '@lib/products';
 
 const p: Product = {
@@ -39,5 +39,15 @@ describe('productJsonLd', () => {
   it('escapes < to prevent script-tag breakout', () => {
     const evil = { ...p, description_en: 'safe </script> text' };
     expect(productJsonLd(evil, 'en', 'https://x/y')).not.toContain('</script>');
+  });
+});
+
+describe('websiteJsonLd', () => {
+  const obj = JSON.parse(websiteJsonLd('https://aseloves.com'));
+
+  it('declares a SearchAction pointing at the on-site search page', () => {
+    expect(obj.potentialAction['@type']).toBe('SearchAction');
+    expect(obj.potentialAction.target.urlTemplate).toBe('https://aseloves.com/tr/arama?q={search_term_string}');
+    expect(obj.potentialAction['query-input']).toBe('required name=search_term_string');
   });
 });

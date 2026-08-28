@@ -55,7 +55,16 @@ export function websiteJsonLd(site: string): string {
     url: site,
     inLanguage: ['en', 'tr'],
     publisher: { '@type': 'Organization', name: BRAND, url: site },
-    // NOTE: a SearchAction can be added here once an on-site search endpoint exists.
+    // Sitelinks searchbox: points at the TR search page because that is the
+    // default storefront for the domain; /en/search takes the same `q` param.
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: {
+        '@type': 'EntryPoint',
+        urlTemplate: `${site}/tr/arama?q={search_term_string}`,
+      },
+      'query-input': 'required name=search_term_string',
+    },
   });
 }
 
