@@ -11,6 +11,7 @@ import { productJsonLd, breadcrumbJsonLd } from '@lib/jsonld';
 import { loadReviews, pickReviews, formatRating } from '@lib/reviews';
 import { displayPrice, FALLBACK_RATES, productRates, effectiveUsdRate } from '@lib/currency';
 import { optName, optValue } from '@lib/optionLabels';
+import { categoryLabel } from '@lib/categories';
 import settings from '../../../data/settings.json';
 
 export function getStaticPaths() {
@@ -59,7 +60,7 @@ const crumbLd = breadcrumbJsonLd([
           </div>
 
           <div class="detail__info">
-            {product.category && <p class="detail__eyebrow">{product.category}</p>}
+            {product.category && <p class="detail__eyebrow">{categoryLabel(product.category, 'en')}</p>}
             <h1 class="detail__title">{title}</h1>
             <div class="detail__meta">
               <RatingBadge rating={shop.rating} count={shop.count} locale="en" />
@@ -80,9 +81,9 @@ const crumbLd = breadcrumbJsonLd([
                 <svg viewBox="0 0 240 8" preserveAspectRatio="none" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-dasharray="7 5"><path d="M2 4 Q10 -1 20 4 T40 4 T60 4 T80 4 T100 4 T120 4 T140 4 T160 4 T180 4 T200 4 T220 4 T238 4"/></svg>
               </div>
 
-              <p style="display:flex;align-items:center;gap:7px;font-size:.86rem;color:var(--muted);margin:0 0 var(--space-3);line-height:1.45;">
-                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" style="flex-shrink:0;"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="9"/></svg>
-                Made to order — crocheted just for you and dispatched within a few days.
+              <p class="leadtime">
+                <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="9"/></svg>
+                <span><strong>Preparation time: 7–10 days.</strong> Nothing is sold from stock — your item is crocheted by hand after you order, then dispatched. Shipping time is added on top.</span>
               </p>
 
               {product.options && product.options.length > 0 && (
@@ -298,6 +299,12 @@ const crumbLd = breadcrumbJsonLd([
     .detail__meta { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; margin-bottom: var(--space-4); }
 
     .buybox { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: var(--space-5); box-shadow: var(--shadow-glass); }
+    .leadtime { display: flex; align-items: flex-start; gap: 9px; font-size: .88rem; line-height: 1.5;
+      color: var(--ink); margin: 0 0 var(--space-4); padding: 11px 14px; border-radius: var(--radius);
+      background: color-mix(in srgb, var(--accent) 7%, var(--surface));
+      border: 1px solid color-mix(in srgb, var(--accent) 26%, var(--line)); }
+    .leadtime svg { flex-shrink: 0; margin-top: 2px; color: var(--accent-ink); }
+    .leadtime strong { color: var(--accent-ink); }
     .buybox__pricerow { display: flex; align-items: baseline; gap: var(--space-3); flex-wrap: wrap; }
 
     .variations { display: flex; flex-direction: column; gap: var(--space-3); margin: var(--space-4) 0; }

@@ -44,6 +44,10 @@ const shippingCfg = (settings as any).shipping || {};
           <aside class="cart__summary-col">
             <div class="summary-card">
               <h2 class="summary-card__h">Sipariş Özeti</h2>
+              <p class="leadnote">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="9"/></svg>
+                <span><strong>Hazırlık süresi 7–10 gün.</strong> Ürünler siparişten sonra elde örülür; kargo süresi bunun üstüne eklenir.</span>
+              </p>
               <div class="summary-row">
                 <span>Ara Toplam</span>
                 <span id="cart-subtotal">₺0,00</span>
@@ -248,4 +252,10 @@ const shippingCfg = (settings as any).shipping || {};
   @media (max-width: 420px) {
     :global(.citem__media) { width: 64px; height: 64px; }
   }
+  .leadnote { display: flex; align-items: flex-start; gap: 8px; font-size: .82rem; line-height: 1.5;
+    color: var(--ink); margin: var(--space-3) 0 0; padding: 10px 12px; border-radius: var(--radius);
+    background: color-mix(in srgb, var(--accent) 7%, var(--surface));
+    border: 1px solid color-mix(in srgb, var(--accent) 26%, var(--line)); }
+  .leadnote svg { flex-shrink: 0; margin-top: 2px; color: var(--accent-ink); }
+  .leadnote strong { color: var(--accent-ink); }
 </style>
