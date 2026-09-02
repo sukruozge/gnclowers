@@ -1,9 +1,27 @@
 {
   "shop": {
     "rating": 5,
-    "count": 33
+    "count": 36
   },
   "reviews": [
+    {
+      "rating": 5,
+      "text": "It camed out very nice and high quality",
+      "language": "en",
+      "date": "2026-09-02"
+    },
+    {
+      "rating": 5,
+      "text": "Alles super. Genau wie beschrieben, sehr niedlich und hochwertig",
+      "language": "en",
+      "date": "2026-09-02"
+    },
+    {
+      "rating": 5,
+      "text": "The seller is so lovely and an amazing craftswoman. The quality of the giraffe is outstanding.  Looks exactly like the picture.  It is a beautiful gift.  🎁",
+      "language": "en",
+      "date": "2026-09-01"
+    },
     {
       "rating": 5,
       "text": "The giraffe is super cute and a great fit for our nursery. The quality of the item is great. Please note that despite the pictures, the giraffe does not sit up on its own. It must be propped up against something to sit upright. It’s also slightly smaller than it appears in the picture with the toddler holding the toy. The seller was very responsive when I reached out with my concern. Otherwise the item is great. Also note that the seller requires the buyer to pay a LOT in shipping (1/2 of the total cost of the item).",
