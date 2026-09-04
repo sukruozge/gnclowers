@@ -1,9 +1,15 @@
 {
   "shop": {
     "rating": 5,
-    "count": 36
+    "count": 37
   },
   "reviews": [
+    {
+      "rating": 5,
+      "text": "This was perfect. My wife and I love it! I was surprised on how well it matched the description. Also, my son is 8 months and I have no concerns with him playing with this toy due the fantastic build quality. Not to mention the cute key as a bonus gift. I would recommend this seller to anyone.",
+      "language": "en",
+      "date": "2026-09-04"
+    },
     {
       "rating": 5,
       "text": "It camed out very nice and high quality",
