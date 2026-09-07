@@ -1,9 +1,15 @@
 {
   "shop": {
     "rating": 5,
-    "count": 38
+    "count": 39
   },
   "reviews": [
+    {
+      "rating": 5,
+      "text": "These are beautiful and high quality, I highly recommend.",
+      "language": "en",
+      "date": "2026-09-06"
+    },
     {
       "rating": 5,
       "text": "Adorable giraffe, well made toy",
