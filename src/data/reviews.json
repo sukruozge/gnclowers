@@ -1,9 +1,27 @@
 {
   "shop": {
     "rating": 5,
-    "count": 39
+    "count": 42
   },
   "reviews": [
+    {
+      "rating": 5,
+      "text": "Oh My Goodness ..so goddam cute I could scream. Well packaged, quick delivery. I am delighted.❤️❤️",
+      "language": "en",
+      "date": "2026-09-15"
+    },
+    {
+      "rating": 5,
+      "text": "Absolutely adorable! Well made and so cute.",
+      "language": "en",
+      "date": "2026-09-15"
+    },
+    {
+      "rating": 5,
+      "text": "Amazing item and turn out. Extremely communicative seller and everything arrived perfectly.",
+      "language": "en",
+      "date": "2026-09-14"
+    },
     {
       "rating": 5,
       "text": "These are beautiful and high quality, I highly recommend.",
