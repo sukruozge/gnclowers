@@ -1,9 +1,15 @@
 {
   "shop": {
     "rating": 5,
-    "count": 42
+    "count": 43
   },
   "reviews": [
+    {
+      "rating": 5,
+      "text": "Fast shipping, great packaging, well made product.  Cutest little duck ever!",
+      "language": "en",
+      "date": "2026-09-16"
+    },
     {
       "rating": 5,
       "text": "Oh My Goodness ..so goddam cute I could scream. Well packaged, quick delivery. I am delighted.❤️❤️",
