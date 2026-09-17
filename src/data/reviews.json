@@ -1,9 +1,15 @@
 {
   "shop": {
     "rating": 5,
-    "count": 43
+    "count": 44
   },
   "reviews": [
+    {
+      "rating": 5,
+      "text": "LOVE LOVE LOVE! Absolutely beautiful!  It is such a special gift.",
+      "language": "en",
+      "date": "2026-09-17"
+    },
     {
       "rating": 5,
       "text": "Fast shipping, great packaging, well made product.  Cutest little duck ever!",
