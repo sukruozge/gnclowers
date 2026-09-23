@@ -1,9 +1,15 @@
 {
   "shop": {
     "rating": 5,
-    "count": 44
+    "count": 45
   },
   "reviews": [
+    {
+      "rating": 5,
+      "text": "When I opened the box I gasped. Literally beyond what I was hoping for. Beautiful gift for my granddaughter.",
+      "language": "en",
+      "date": "2026-09-22"
+    },
     {
       "rating": 5,
       "text": "LOVE LOVE LOVE! Absolutely beautiful!  It is such a special gift.",
