@@ -1,9 +1,15 @@
 {
   "shop": {
     "rating": 5,
-    "count": 45
+    "count": 46
   },
   "reviews": [
+    {
+      "rating": 5,
+      "text": "Wonderful experience! Very friendly communication, prompt delivery, and an absolutely beautiful piece of work. I’m very happy with my purchase and would definitely recommend this shop!",
+      "language": "en",
+      "date": "2026-09-24"
+    },
     {
       "rating": 5,
       "text": "When I opened the box I gasped. Literally beyond what I was hoping for. Beautiful gift for my granddaughter.",
