@@ -1,9 +1,15 @@
 {
   "shop": {
     "rating": 5,
-    "count": 46
+    "count": 47
   },
   "reviews": [
+    {
+      "rating": 5,
+      "text": "Amazingly beautiful craftsmanship. Beautiful job! Exceeding my expectations! Quick turnover. Thank you!",
+      "language": "en",
+      "date": "2026-09-26"
+    },
     {
       "rating": 5,
       "text": "Wonderful experience! Very friendly communication, prompt delivery, and an absolutely beautiful piece of work. I’m very happy with my purchase and would definitely recommend this shop!",
