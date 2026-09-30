@@ -1,9 +1,21 @@
 {
   "shop": {
     "rating": 5,
-    "count": 47
+    "count": 49
   },
   "reviews": [
+    {
+      "rating": 5,
+      "text": "It is absolutely beautiful.  I already have it on display in my home.",
+      "language": "en",
+      "date": "2026-09-30"
+    },
+    {
+      "rating": 5,
+      "text": "Melissa is a wonderful artist and shop owner. In looking for a crocheted puppy for a friend’s daughter who loves animals esp. dogs, I found the lovely, plush, sweet puppy shown in the photo. It is like her own rusty brown dog. It is now a favorite toy and is much loved. The workmanship was excellent as was the communication with Melissa who is delightful to deal with. I cannot recommend this seller more! Thank you so much for the quality product and for the little extra surprise.",
+      "language": "en",
+      "date": "2026-09-29"
+    },
     {
       "rating": 5,
       "text": "Amazingly beautiful craftsmanship. Beautiful job! Exceeding my expectations! Quick turnover. Thank you!",
