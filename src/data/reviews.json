@@ -1,9 +1,15 @@
 {
   "shop": {
     "rating": 5,
-    "count": 49
+    "count": 50
   },
   "reviews": [
+    {
+      "rating": 5,
+      "text": "This is beautiful, I’m excited to give it to my grandbaby!",
+      "language": "en",
+      "date": "2026-09-30"
+    },
     {
       "rating": 5,
       "text": "It is absolutely beautiful.  I already have it on display in my home.",
