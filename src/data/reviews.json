@@ -1,9 +1,21 @@
 {
   "shop": {
     "rating": 5,
-    "count": 50
+    "count": 52
   },
   "reviews": [
+    {
+      "rating": 5,
+      "text": "Ich bin absolut begeistert von meiner Bestellung! Das Produkt ist einfach großartig und in der Realität sogar noch schöner und hochwertiger, als ich es ohnehin schon erwartet hatte. Man sieht sofort, mit wie viel Liebe zum Detail und handwerklichem Geschick gearbeitet wurde. Neben der wunderschönen Ware war auch der Kundenservice einfach großartig – unglaublich freundlich, hilfsbereit und zuvorkommend. Hier stimmt von Anfang bis Ende einfach alles. Ich kann dieses Produkt und den Shop von ganzem Herzen weiterempfehlen und werde definitiv wieder hier bestellen!",
+      "language": "en",
+      "date": "2026-10-06"
+    },
+    {
+      "rating": 5,
+      "text": "We are over the moon!  Stunning!  Inquired about a small custom add and she went beyond to make it happen.    What a pleasure to have met and worked with this talented artist.",
+      "language": "en",
+      "date": "2026-10-05"
+    },
     {
       "rating": 5,
       "text": "This is beautiful, I’m excited to give it to my grandbaby!",
