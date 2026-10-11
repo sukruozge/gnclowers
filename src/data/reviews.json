@@ -1,9 +1,15 @@
 {
   "shop": {
     "rating": 5,
-    "count": 53
+    "count": 54
   },
   "reviews": [
+    {
+      "rating": 5,
+      "text": "It is just wonderful. If I need something like this again I will be getting ahold of them.",
+      "language": "en",
+      "date": "2026-10-11"
+    },
     {
       "rating": 5,
       "text": "Alles prima, bin sehr zufrieden.",
