@@ -1,9 +1,15 @@
 {
   "shop": {
     "rating": 5,
-    "count": 55
+    "count": 56
   },
   "reviews": [
+    {
+      "rating": 5,
+      "text": "Thank you for the fun clips!",
+      "language": "en",
+      "date": "2026-10-14"
+    },
     {
       "rating": 5,
       "text": "Item is adorable...arrived in perfect condition...am giving as gift and know new mom will love it...definitely recommend seller...communication very good...",
