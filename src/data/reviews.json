@@ -1,9 +1,15 @@
 {
   "shop": {
     "rating": 5,
-    "count": 57
+    "count": 58
   },
   "reviews": [
+    {
+      "rating": 5,
+      "text": "Very Cute and Well Made and Nice Quality.  The Customer service was excellent, kept me very informed the whole process!",
+      "language": "en",
+      "date": "2026-10-16"
+    },
     {
       "rating": 5,
       "text": "Seller was super responsive and answered all my questions.\nEven sent pictures before shipping it out to ensure the item was exactly how I wanted it.",
