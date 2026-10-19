@@ -1,9 +1,15 @@
 {
   "shop": {
     "rating": 5,
-    "count": 58
+    "count": 59
   },
   "reviews": [
+    {
+      "rating": 5,
+      "text": "High quality toys for our little hot shot",
+      "language": "en",
+      "date": "2026-10-18"
+    },
     {
       "rating": 5,
       "text": "Very Cute and Well Made and Nice Quality.  The Customer service was excellent, kept me very informed the whole process!",
