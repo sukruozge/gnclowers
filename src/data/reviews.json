@@ -1,9 +1,15 @@
 {
   "shop": {
     "rating": 5,
-    "count": 60
+    "count": 61
   },
   "reviews": [
+    {
+      "rating": 5,
+      "text": "The teddy bear was a baby shower gift and hopefully the new Mom will love it as well.",
+      "language": "en",
+      "date": "2026-10-25"
+    },
     {
       "rating": 5,
       "text": "Melissa was wonderful through  the whole process of this custom made order. I could not be more thrilled with how this turned out. My son is obsessed with Bookaboo on Amazon and I could not find anything that looked like him anywhere. Melissa looked at a photo and created it. Thank you so much!",
