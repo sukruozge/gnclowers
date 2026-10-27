@@ -16,7 +16,15 @@ export const CATEGORY_LABELS: Record<string, Record<Locale, string>> = {
   'Bunny Rabbits Toys': { tr: 'Örgü Tavşanlar', en: 'Bunny Rabbits Toys' },
   'Baby Shower': { tr: 'Bebek Partisi', en: 'Baby Shower' },
   'Crochet Hair Clips': { tr: 'Örgü Saç Tokaları', en: 'Crochet Hair Clips' },
-  'Wedding Dolls': { tr: 'Düğün Bebekleri', en: 'Wedding Dolls' }
+  'Wedding Dolls': { tr: 'Düğün Bebekleri', en: 'Wedding Dolls' },
+  'Halloween Crochet': { tr: 'Cadılar Bayramı Örgüleri', en: 'Halloween Crochet' },
+  'Christmas Crochet': { tr: 'Yılbaşı Örgüleri', en: 'Christmas Crochet' },
+  // Etsy section title carries a typo ("Ornanament"); keep the key as Etsy sends it, fix the display.
+  'Crochet Ornanament': { tr: 'Örgü Yılbaşı Süsleri', en: 'Crochet Ornaments' },
+  'Crochet Ornaments': { tr: 'Örgü Yılbaşı Süsleri', en: 'Crochet Ornaments' },
+  'Crochet Loveys': { tr: 'Örgü Sarılma Oyuncakları', en: 'Crochet Loveys' },
+  'Baby Mobile': { tr: 'Örgü Bebek Mobilleri', en: 'Baby Mobiles' },
+  'Crochet Keychains': { tr: 'Örgü Anahtarlıklar', en: 'Crochet Keychains' },
 };
 
 type CategoryNames = Record<string, Partial<Record<Locale, string>>>;

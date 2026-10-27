@@ -15,11 +15,19 @@ const base: EtsyListing = {
 };
 
 describe('detectCategory', () => {
-  it('maps a bunny/plush listing to amigurumi', () => expect(detectCategory(base)).toBe('amigurumi'));
-  it('maps a tote bag to bag', () =>
-    expect(detectCategory({ ...base, title: 'Handmade tote bag', tags: [], description: '' })).toBe('bag'));
-  it('defaults to amigurumi when nothing matches', () =>
-    expect(detectCategory({ ...base, title: 'zzz', tags: [], description: '' })).toBe('amigurumi'));
+  // Fallback values must be real Etsy shop-section titles, so the site's categories
+  // always mirror the shop even for listings that were never put in a section.
+  it('maps a bunny/plush listing to the Bunny section', () => expect(detectCategory(base)).toBe('Bunny Rabbits Toys'));
+  it('maps a tote bag to Crochet Bags', () =>
+    expect(detectCategory({ ...base, title: 'Handmade tote bag', tags: [], description: '' })).toBe('Crochet Bags'));
+  it('maps seasonal listings before generic toy keywords', () => {
+    expect(detectCategory({ ...base, title: 'Crochet Advent Calendar Santa', tags: ['toy advent calendar'], description: '' })).toBe('Christmas Crochet');
+    expect(detectCategory({ ...base, title: 'Pumpkin cat plush', tags: [], description: '' })).toBe('Halloween Crochet');
+  });
+  it('maps a lamb sleep buddy to Stuffed Animals', () =>
+    expect(detectCategory({ ...base, title: 'Crochet Lamb Stuffed Animal in Overalls', tags: ['uyku arkadaşı'], description: '' })).toBe('Stuffed Animals'));
+  it('defaults to Amigurumi Toys when nothing matches', () =>
+    expect(detectCategory({ ...base, title: 'zzz', tags: [], description: '' })).toBe('Amigurumi Toys'));
 });
 
 describe('mapListing', () => {
@@ -44,9 +52,9 @@ describe('mapListing', () => {
   });
   it('falls back to keyword detection when the section id is unknown or missing', () => {
     const unknown = mapListing({ ...base, shop_section_id: 999 }, Date.UTC(2020, 0, 1), { '54321': 'Bags' });
-    expect(unknown.category).toBe('amigurumi');
+    expect(unknown.category).toBe('Bunny Rabbits Toys');
     const none = mapListing(base, Date.UTC(2020, 0, 1));
-    expect(none.category).toBe('amigurumi');
+    expect(none.category).toBe('Bunny Rabbits Toys');
   });
   it('computes price from amount/divisor and reads currency', () => {
     expect(p.price).toBe(1912.5);

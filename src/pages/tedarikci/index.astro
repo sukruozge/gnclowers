@@ -161,14 +161,14 @@ const productPaths = Object.fromEntries(
 
   <template id="tpl-yarn">
     <div class="sup-yarn">
-      <select data-k="variant" title="Bu iplik hangi varyasyon için?"></select>
-      <input data-k="brand" placeholder="Marka (Alize…)" maxlength="120" />
-      <input data-k="name" placeholder="İplik adı (Cotton Gold…)" maxlength="120" />
-      <input data-k="colorCode" placeholder="Renk kodu" maxlength="120" />
-      <input data-k="colorName" placeholder="Renk adı" maxlength="120" />
-      <input data-k="usage" placeholder="Kullanım yeri" maxlength="120" />
-      <input data-k="amount" placeholder="Miktar" maxlength="120" />
-      <button class="sup-yarn__del" type="button" title="Satırı sil" aria-label="Satırı sil">×</button>
+      <div class="sup-yarn__head"><span class="sup-yarn__n">İplik</span><button class="sup-yarn__del" type="button" title="Satırı sil" aria-label="Satırı sil">×<em> Sil</em></button></div>
+      <label class="sup-yarn__f sup-yarn__f--variant"><span>Varyasyon</span><select data-k="variant" title="Bu iplik hangi varyasyon için?"></select></label>
+      <label class="sup-yarn__f"><span>Marka</span><input data-k="brand" placeholder="Alize…" maxlength="120" /></label>
+      <label class="sup-yarn__f"><span>İplik adı</span><input data-k="name" placeholder="Cotton Gold…" maxlength="120" /></label>
+      <label class="sup-yarn__f"><span>Renk kodu</span><input data-k="colorCode" placeholder="55" maxlength="120" inputmode="text" /></label>
+      <label class="sup-yarn__f"><span>Renk adı</span><input data-k="colorName" placeholder="kirli beyaz" maxlength="120" /></label>
+      <label class="sup-yarn__f"><span>Kullanım yeri</span><input data-k="usage" placeholder="gövde, kulak…" maxlength="120" /></label>
+      <label class="sup-yarn__f"><span>Miktar</span><input data-k="amount" placeholder="1 yumak / 40 g" maxlength="120" /></label>
     </div>
   </template>
 
@@ -326,8 +326,13 @@ const productPaths = Object.fromEntries(
       const labels = saved && !currentVariants.includes(saved) ? [...currentVariants, saved] : currentVariants;
       sel.innerHTML = ['<option value="">Tüm varyasyonlar</option>', ...labels.map((l) => `<option value="${esc(l)}">${esc(l)}</option>`)].join('');
       for (const k of YARN_KEYS) (row.querySelector(`[data-k="${k}"]`) as HTMLInputElement).value = y?.[k] ?? '';
-      row.querySelector('.sup-yarn__del')!.addEventListener('click', () => { row.remove(); markDirty(); });
+      row.querySelector('.sup-yarn__del')!.addEventListener('click', () => { row.remove(); renumberYarns(); markDirty(); });
       $('yarn-rows').appendChild(row);
+      renumberYarns();
+    }
+
+    function renumberYarns(): void {
+      $('yarn-rows').querySelectorAll<HTMLElement>('.sup-yarn__n').forEach((el, i) => { el.textContent = `İplik ${i + 1}`; });
     }
 
     function readForm(): Partial<Spec> {
@@ -660,15 +665,22 @@ const productPaths = Object.fromEntries(
     .sup-card { border: 1px solid var(--line); border-radius: 16px; background: var(--surface); padding: 20px 22px 22px; margin: 0; min-width: 0; }
     .sup-card legend { font-family: var(--font-display); font-size: 1.1rem; padding: 0 8px; }
     .sup-two { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    /* İplik satırları: masaüstünde tek satır tablo gibi, mobilde etiketli kart. */
     .sup-yarns { display: grid; gap: 8px; }
-    .sup-yarn { display: grid; grid-template-columns: 1.1fr 1.3fr .8fr 1fr 1fr .8fr 32px; gap: 6px; align-items: center; }
-    .sup-yarn select { display: none; }
-    .sup-spec.has-variants .sup-yarn { grid-template-columns: 1.2fr 1.1fr 1.3fr .8fr 1fr 1fr .8fr 32px; }
-    .sup-spec.has-variants .sup-yarn select { display: block; font: inherit; font-size: .88rem; color: var(--ink); background: var(--section); border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; width: 100%; }
-    .sup-yarn input { padding: 8px 10px; font-size: .88rem; }
+    .sup-yarn { display: grid; grid-template-columns: minmax(0,1.1fr) minmax(0,1.3fr) minmax(0,.8fr) minmax(0,1fr) minmax(0,1fr) minmax(0,.8fr) 36px; gap: 6px; align-items: center; min-width: 0; }
+    .sup-yarn__f { display: grid; gap: 4px; min-width: 0; }
+    .sup-yarn__f > span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+    .sup-yarn__f--variant { display: none; }
+    .sup-spec.has-variants .sup-yarn { grid-template-columns: minmax(0,1.2fr) minmax(0,1.1fr) minmax(0,1.3fr) minmax(0,.8fr) minmax(0,1fr) minmax(0,1fr) minmax(0,.8fr) 36px; }
+    .sup-spec.has-variants .sup-yarn__f--variant { display: grid; }
+    .sup-yarn select { font: inherit; font-size: .88rem; color: var(--ink); background: var(--section); border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; width: 100%; min-width: 0; }
+    .sup-yarn input { padding: 8px 10px; font-size: .88rem; min-width: 0; }
+    .sup-yarn__head { order: 99; display: flex; justify-content: flex-end; align-items: center; }
+    .sup-yarn__n { display: none; }
     .sup-product__variants { font-size: .85rem; color: var(--ink); margin: 10px 0 0; line-height: 1.5; }
     .sup-product__variants span { color: var(--muted); font-size: .8rem; }
-    .sup-yarn__del { border: 0; background: none; color: var(--muted); font-size: 1.3rem; cursor: pointer; line-height: 1; }
+    .sup-yarn__del { border: 0; background: none; color: var(--muted); font-size: 1.3rem; cursor: pointer; line-height: 1; padding: 4px; }
+    .sup-yarn__del em { display: none; }
     .sup-yarn__del:hover { color: #b3261e; }
     .sup-add { margin-top: 12px; }
     .sup-file__current { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--section); }
@@ -688,18 +700,46 @@ const productPaths = Object.fromEntries(
     .sup-toast.err { background: #b3261e; }
 
     @media (max-width: 860px) {
-      .sup-formwrap { grid-template-columns: 1fr; }
-      .sup-product { position: static; display: grid; grid-template-columns: 96px 1fr; gap: 14px; align-items: center; }
+      .sup-formwrap { grid-template-columns: minmax(0, 1fr); }
+      .sup-product { position: static; display: grid; grid-template-columns: 88px minmax(0, 1fr); gap: 14px; align-items: start; }
       .sup-product__img { margin: 0; }
       .sup-product .eyebrow { display: none; }
-      .sup-yarn { grid-template-columns: 1fr 1fr; }
-      .sup-yarn__del { grid-column: 2; justify-self: end; }
-      .sup-two { grid-template-columns: 1fr; }
+      .sup-product__title { font-size: 1.1rem; }
+      .sup-product__variants { grid-column: 1 / -1; }
+      .sup-two { grid-template-columns: minmax(0, 1fr); }
+      .sup-card { padding: 16px 14px 18px; }
+
+      /* Her iplik bir kart: başlık + sil, alanlar etiketli 2 sütun */
+      .sup-yarn, .sup-spec.has-variants .sup-yarn { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; padding: 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--section); }
+      .sup-yarn__f > span { position: static; width: auto; height: auto; overflow: visible; clip: auto; font-size: .74rem; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
+      .sup-yarn input, .sup-yarn select { background: var(--surface); font-size: 16px; padding: 10px 12px; } /* 16px: iOS zoom yapmasın */
+      .sup-yarn__f--variant { grid-column: 1 / -1; }
+      .sup-yarn__head { order: -1; grid-column: 1 / -1; justify-content: space-between; }
+      .sup-yarn__n { display: inline; font-size: .8rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); }
+      .sup-yarn__del { font-size: .85rem; color: #b3261e; display: inline-flex; align-items: center; gap: 2px; }
+      .sup-yarn__del em { display: inline; font-style: normal; }
+      .sup-add { display: block; width: 100%; text-align: center; padding: 12px; border: 1px dashed var(--line); border-radius: 12px; text-decoration: none; }
+
+      /* Kaydet alta yapışık kalsın, parmakla kolay ulaşılsın */
+      .sup-save { position: sticky; bottom: 0; background: var(--bg); padding: 12px 0 14px; border-top: 1px solid var(--line); z-index: 5; }
+      .sup-save__row { flex-direction: column; align-items: stretch; }
+      .sup-save__row .btn { width: 100%; padding: 15px; font-size: 1rem; }
+      .sup-updated { text-align: center; }
+      .sup-field input, .sup-field textarea, .sup-search { font-size: 16px; }
     }
     @media (max-width: 600px) {
-      .sup-main { padding: 20px 16px 80px; }
+      .sup-main { padding: 16px 14px 24px; }
+      .sup-top { padding: 12px 14px; }
+      .sup-brand__sub { display: none; }
       .sup-login { padding: 28px 20px; margin-top: 2vh; }
       .sup-search { min-width: 0; width: 100%; }
+      .sup-toolbar { width: 100%; }
+      .sup-seg { width: 100%; justify-content: space-between; }
+      .sup-seg__btn { flex: 1; padding: 8px 6px; font-size: .8rem; }
+      .sup-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+      .sup-item__body { padding: 10px; }
+      .sup-item__title { font-size: .84rem; }
+      .sup-h1 { font-size: 1.5rem; }
     }
   </style>
 </body>

@@ -49,13 +49,28 @@ export function mapInventory(inv: EtsyInventory | undefined): { options: Product
   return { options, variants };
 }
 
+/**
+ * Keyword fallback for listings that have no Etsy shop section. Every value is a REAL Etsy
+ * section title so the site's categories always equal the shop's sections (no private keys
+ * like "amigurumi"/"bag" leaking into the catalogue). Order matters: first match wins, so the
+ * more specific seasonal/product-type keywords come before the generic ones.
+ */
+const DEFAULT_CATEGORY = 'Amigurumi Toys';
 const CATEGORY_MAP: Record<string, string> = {
-  amigurumi: 'amigurumi', toy: 'amigurumi', plush: 'amigurumi', doll: 'amigurumi',
-  stuffed: 'amigurumi', bunny: 'amigurumi', bear: 'amigurumi', giraffe: 'amigurumi',
-  duck: 'amigurumi', flamingo: 'amigurumi',
-  bag: 'bag', tote: 'bag', purse: 'bag',
-  tieback: 'decor', curtain: 'decor', nursery: 'decor',
-  clip: 'accessory', hair: 'accessory', brooch: 'accessory', accessory: 'accessory',
+  advent: 'Christmas Crochet', christmas: 'Christmas Crochet', santa: 'Christmas Crochet', noel: 'Christmas Crochet',
+  halloween: 'Halloween Crochet', pumpkin: 'Halloween Crochet', witch: 'Halloween Crochet', ghost: 'Halloween Crochet',
+  tieback: 'Curtain Tiebacks', curtain: 'Curtain Tiebacks',
+  mobile: 'Baby Mobile',
+  keychain: 'Crochet Keychains', 'bag charm': 'Crochet Keychains',
+  'gift set': 'Baby Gift Sets', 'gift box': 'Baby Gift Sets',
+  'hair clip': 'Crochet Hair Clips', barrette: 'Crochet Hair Clips',
+  bag: 'Crochet Bags', tote: 'Crochet Bags', purse: 'Crochet Bags',
+  lovey: 'Crochet Loveys', 'security blanket': 'Crochet Loveys',
+  bunny: 'Bunny Rabbits Toys', rabbit: 'Bunny Rabbits Toys',
+  wedding: 'Wedding Dolls', bride: 'Wedding Dolls',
+  safari: 'Safari Animals', giraffe: 'Safari Animals', lion: 'Safari Animals', elephant: 'Safari Animals', zebra: 'Safari Animals',
+  doll: 'Crochet Dolls',
+  stuffed: 'Stuffed Animals', plush: 'Stuffed Animals', 'sleep buddy': 'Stuffed Animals', 'uyku arkadaşı': 'Stuffed Animals',
 };
 
 export function detectCategory(listing: EtsyListing): string {
@@ -63,7 +78,7 @@ export function detectCategory(listing: EtsyListing): string {
   for (const [keyword, cat] of Object.entries(CATEGORY_MAP)) {
     if (text.includes(keyword)) return cat;
   }
-  return 'amigurumi';
+  return DEFAULT_CATEGORY;
 }
 
 export function isNewListing(listing: EtsyListing, now: number = Date.now()): boolean {

@@ -53,9 +53,8 @@
     "Crochet Hair Clips": "/images/categories/hairclips.png",
     "Wedding Dolls": "/images/categories/dolls.png",
     "amigurumi": "",
-    "bag": "",
-    "decor": "",
-    "accessory": ""
+    "Christmas Crochet": "/images/categories/toys.png",
+    "Crochet Ornanament": "/images/categories/toys.png"
   },
   "categoryNames": {
     "Crochet Bags": {
@@ -106,18 +105,6 @@
       "tr": "Amigurumi",
       "en": "Amigurumi"
     },
-    "bag": {
-      "tr": "",
-      "en": ""
-    },
-    "decor": {
-      "tr": "",
-      "en": ""
-    },
-    "accessory": {
-      "tr": "",
-      "en": ""
-    },
     "Halloween Crochet": {
       "tr": "Cadılar Bayramı Örgüleri",
       "en": "Halloween Crochet"
@@ -133,6 +120,18 @@
     "Crochet Keychains": {
       "tr": "Örgü Anahtarlıklar",
       "en": "Crochet Keychains"
+    },
+    "Christmas Crochet": {
+      "tr": "Yılbaşı Örgüleri",
+      "en": "Christmas Crochet"
+    },
+    "Crochet Ornanament": {
+      "tr": "Örgü Yılbaşı Süsleri",
+      "en": "Crochet Ornaments"
+    },
+    "Crochet Ornaments": {
+      "tr": "Örgü Yılbaşı Süsleri",
+      "en": "Crochet Ornaments"
     }
   },
   "hidePrices": true
