@@ -778,6 +778,11 @@
         <span class="nav-label">Blog</span>
       </button>
       
+      <button class="sidebar-nav-item" onclick="showPage('suppliers',this)">
+        <span class="nav-icon">🧶</span>
+        <span class="nav-label">Tedarikçiler</span>
+      </button>
+
       <div class="sidebar-nav-group-title">Sistem</div>
       <button class="sidebar-nav-item" onclick="showPage('settings',this)">
         <span class="nav-icon">⚙️</span>
@@ -1485,6 +1490,96 @@
     </div>
 
     <!-- SETTINGS PAGE -->
+    <!-- SUPPLIERS PAGE -->
+    <div class="page" id="page-suppliers">
+      <div class="page-title">Tedarikçiler &amp; Üretim Bilgileri</div>
+      <div class="page-subtitle" id="sup-summary">Tedarikçilerin ürün bazında girdiği iplik, renk kodu, tarif ve notlar</div>
+
+      <div class="tabs">
+        <button class="tab-btn active" onclick="supTab('specs',this)">Üretim Bilgileri</button>
+        <button class="tab-btn" onclick="supTab('accounts',this)">Hesaplar</button>
+      </div>
+
+      <div class="tab-panel active" id="suptab-specs">
+        <div class="card">
+          <div class="card-header" style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;">
+            <div class="card-title">Ürün Bazlı Üretim Kayıtları</div>
+            <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+              <input id="sup-spec-search" type="search" placeholder="Ürün veya tedarikçi ara…" oninput="supFilter()" autocomplete="off" style="padding:7px 10px;border:1px solid var(--border);border-radius:8px;background:transparent;color:inherit;font-size:.82rem;min-width:220px;">
+              <button class="btn btn-sm btn-outline" onclick="supExportCsv()" title="Tüm kayıtları CSV olarak indir">⬇ CSV</button>
+              <span id="sup-spec-count" style="font-size:.8rem;color:var(--muted-foreground)"></span>
+            </div>
+          </div>
+          <div class="card-body" style="padding:0">
+            <div class="table-wrap">
+              <table><thead><tr><th>Ürün</th><th>Tedarikçi</th><th>İplik</th><th>PDF</th><th>Durum</th><th>Güncellendi</th><th></th></tr></thead><tbody id="sup-spec-rows"></tbody></table>
+            </div>
+            <div id="sup-spec-empty" class="empty-state">
+              <div class="empty-state-icon">🧶</div>
+              <p>Henüz üretim kaydı yok. Tedarikçiler <strong>aseloves.com/tedarikci/</strong> adresinden giriş yapıp doldurur.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="suptab-accounts">
+        <div class="card" style="margin-bottom:16px">
+          <div class="card-header"><div class="card-title">Yeni Tedarikçi Hesabı</div></div>
+          <div class="card-body">
+            <div class="sup-newrow">
+              <input id="sup-new-name" placeholder="Ad (örn. Ayşe Hanım)">
+              <input id="sup-new-username" placeholder="kullanıcı adı (küçük harf)" autocapitalize="off" autocomplete="off">
+              <input id="sup-new-password" placeholder="şifre (en az 8 karakter)" autocomplete="off">
+              <button class="btn btn-sm btn-outline" type="button" onclick="supGenPassword()">🎲 Şifre üret</button>
+              <button class="btn btn-sm btn-primary" type="button" onclick="supCreateAccount()">+ Oluştur</button>
+            </div>
+            <p style="font-size:.8rem;color:var(--muted-foreground);margin:10px 0 0">Oluşturduktan sonra giriş bilgileri bir kez gösterilir; tedarikçiye WhatsApp'tan iletin. Giriş adresi: <strong>aseloves.com/tedarikci/</strong></p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Hesaplar</div></div>
+          <div class="card-body" style="padding:0">
+            <div class="table-wrap">
+              <table><thead><tr><th>Ad</th><th>Kullanıcı adı</th><th>Durum</th><th>Son giriş</th><th>Kayıt</th><th></th></tr></thead><tbody id="sup-acc-rows"></tbody></table>
+            </div>
+            <div id="sup-acc-empty" class="empty-state">
+              <div class="empty-state-icon">👤</div>
+              <p>Henüz tedarikçi hesabı yok.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-overlay" id="sup-detail-modal">
+        <div class="modal sup-modal">
+          <div class="modal-title" id="sup-detail-title">Üretim Bilgisi</div>
+          <div class="modal-body" id="sup-detail-body"></div>
+          <div class="modal-footer"><button class="btn btn-outline" onclick="supCloseDetail()">Kapat</button></div>
+        </div>
+      </div>
+
+      <style>
+        #page-suppliers td, #page-suppliers th { padding: 10px 12px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: middle; }
+        #page-suppliers .sup-actions { white-space: nowrap; text-align: right; }
+        #page-suppliers .sup-actions .btn + .btn { margin-left: 6px; }
+        #page-suppliers .sup-ptitle { font-weight: 500; }
+        #page-suppliers .sup-pid { font-size: .74rem; color: var(--muted-foreground); }
+        #page-suppliers .sup-newrow { display: grid; grid-template-columns: 1.2fr 1fr 1fr auto auto; gap: 8px; align-items: center; }
+        #page-suppliers .sup-newrow input { padding: 8px 10px; border: 1px solid var(--input); border-radius: 8px; background: transparent; color: inherit; font-size: .85rem; }
+        @media (max-width: 900px) { #page-suppliers .sup-newrow { grid-template-columns: 1fr 1fr; } }
+        .sup-modal { max-width: 760px; width: 94vw; }
+        .sup-modal .modal-body { max-height: 70vh; overflow: auto; text-align: left; }
+        .sup-h4 { margin: 16px 0 8px; font-size: .9rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted-foreground); }
+        .sup-kvs { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px 16px; }
+        .sup-kv { display: grid; gap: 2px; font-size: .86rem; } .sup-kv span { color: var(--muted-foreground); font-size: .76rem; }
+        .sup-kv a { color: var(--primary); word-break: break-all; }
+        .sup-muted { color: var(--muted-foreground); font-size: .86rem; }
+        .sup-notes { white-space: pre-wrap; background: var(--muted); border-radius: 8px; padding: 12px; font-size: .88rem; line-height: 1.55; margin: 0; }
+        .sup-cred { background: var(--muted); border-radius: 8px; padding: 12px 14px; font-size: .9rem; line-height: 1.6; margin: 0 0 12px; white-space: pre-wrap; user-select: all; }
+        .sup-table--inner { width: 100%; font-size: .84rem; }
+      </style>
+    </div>
+
     <div class="page" id="page-settings">
       <div class="page-title">Ayarlar</div>
       <div class="page-subtitle">Site ayarları ve yapılandırma</div>
@@ -2063,7 +2158,8 @@ function showPage(pageId, btn) {
     orders: 'Siparişler (PayTR)',
     messages: 'Müşteri Mesajları',
     subscribers: 'Bülten Aboneleri',
-    analytics: 'Trafik & Analiz'
+    analytics: 'Trafik & Analiz',
+    suppliers: 'Tedarikçiler & Üretim Bilgileri'
   };
   document.getElementById('topbar-title').textContent = titles[pageId] || pageId;
 
@@ -2072,6 +2168,7 @@ function showPage(pageId, btn) {
   else if (pageId === 'subscribers') loadSubscribersPage();
   else if (pageId === 'analytics') loadAnalyticsPage();
   else if (pageId === 'categories') renderProductCategories();
+  else if (pageId === 'suppliers') loadSuppliersPage();
 }
 
 // ── DASHBOARD ─────────────────────────────────────────────
@@ -4189,5 +4286,6 @@ async function loadAnalyticsPage() {
 // ── BOOT ──────────────────────────────────────────────────
 checkAuth();
 </script>
+<script src="/admin/suppliers.js" defer></script>
 </body>
 </html>
