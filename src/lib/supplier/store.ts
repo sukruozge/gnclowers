@@ -186,6 +186,20 @@ export function createStore(kv: KvLike): SupplierStore {
       return next;
     },
 
+    async setSupply(productId, supplierId, input) {
+      const prev = parseJson<ProductSpec>(await kv.get(specKey(productId, supplierId)));
+      if (!prev) return null;
+      const { supplyPrice: _p, supplyNote: _n, supplyUpdatedAt: _u, ...rest } = prev;
+      const next: ProductSpec = withDefaults({
+        ...rest,
+        ...(input.price !== null ? { supplyPrice: input.price } : {}),
+        ...(input.note ? { supplyNote: input.note } : {}),
+        ...(input.price !== null || input.note ? { supplyUpdatedAt: new Date().toISOString() } : {}),
+      });
+      await kv.put(specKey(productId, supplierId), JSON.stringify(next));
+      return next;
+    },
+
     async putSpec(spec) {
       await kv.put(specKey(spec.productId, spec.supplierId), JSON.stringify(spec));
     },

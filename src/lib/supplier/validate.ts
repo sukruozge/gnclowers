@@ -104,7 +104,10 @@ export function validateSupply(body: unknown): { ok: true; value: SupplyInput } 
   const b = body as Record<string, unknown>;
   let price: number | null = null;
   if (b.price !== null && b.price !== undefined && b.price !== '') {
-    const n = typeof b.price === 'number' ? b.price : Number(String(b.price).replace(',', '.'));
+    // TR yazımı: "1.249,50" → 1249.5 (virgül varsa noktalar binlik ayracıdır).
+    const raw = String(b.price).trim();
+    const normalized = raw.includes(',') ? raw.replace(/\./g, '').replace(',', '.') : raw;
+    const n = typeof b.price === 'number' ? b.price : Number(normalized);
     if (!Number.isFinite(n) || n < 0 || n > 1_000_000) return { ok: false, error: 'Fiyat 0 ile 1.000.000 TL arasında olmalı.' };
     price = Math.round(n * 100) / 100;
   }
