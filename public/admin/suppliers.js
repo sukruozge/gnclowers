@@ -196,6 +196,28 @@
       : '<span class="badge badge-gold">Onay bekliyor</span>';
   }
 
+  function fmtTl(n) {
+    return (typeof n === 'number') ? n.toLocaleString('tr-TR', { minimumFractionDigits: 0, maximumFractionDigits: 2 }) + ' ₺' : '—';
+  }
+
+  window.supSaveSupply = async function supSaveSupply(pid, sid) {
+    const priceEl = document.getElementById('sup-supply-price');
+    const noteEl = document.getElementById('sup-supply-note');
+    if (!priceEl) return;
+    try {
+      const spec = await api('spec/' + encodeURIComponent(pid) + '/' + encodeURIComponent(sid) + '/supply', {
+        method: 'POST',
+        body: JSON.stringify({ price: priceEl.value.trim() === '' ? null : priceEl.value.trim(), note: noteEl ? noteEl.value : '' }),
+      });
+      specRows = specRows.map(function (x) { return (x.productId === pid && x.supplierId === sid) ? Object.assign({}, x, spec, { supplyPrice: spec.supplyPrice, supplyNote: spec.supplyNote }) : x; });
+      renderSpecs();
+      toast('Tedarik fiyatı kaydedildi', 'ok');
+      window.supShowSpec(pid, sid);
+    } catch (e) {
+      toast(e.message, 'err');
+    }
+  };
+
   window.supSetApproval = async function supSetApproval(pid, sid, approved) {
     try {
       const spec = await api('spec/' + encodeURIComponent(pid) + '/' + encodeURIComponent(sid) + '/approval', { method: 'POST', body: JSON.stringify({ approved: approved }) });
@@ -230,6 +252,7 @@
         '<td>' + r.yarns.length + '</td>' +
         '<td>' + (r.hasFile ? '<a href="' + API + 'file/' + encodeURIComponent(r.productId) + '/' + encodeURIComponent(r.supplierId) + '" target="_blank" rel="noopener">📄 ' + esc(r.fileName || 'PDF') + '</a>' : '—') + '</td>' +
         '<td>' + status + '</td>' +
+        '<td class="sup-price"' + (r.supplyNote ? ' title="' + esc(r.supplyNote) + '"' : '') + '>' + esc(fmtTl(r.supplyPrice)) + '</td>' +
         '<td>' + esc(fmt(r.updatedAt)) + '</td>' +
         '<td class="sup-actions">' +
           approveBtn +
@@ -274,6 +297,13 @@
         detailRow('Bitmiş ölçü', r.finishedSize) + detailRow('Üretim süresi', r.productionHours) +
         (r.patternUrl ? '<div class="sup-kv"><span>Tarif linki</span><a href="' + esc(r.patternUrl) + '" target="_blank" rel="noopener noreferrer">' + esc(r.patternUrl) + '</a></div>' : '') +
       '</div>' +
+      '<h4 class="sup-h4">Tedarik fiyatı (yalnız admin görür)</h4>' +
+      '<div class="sup-supply">' +
+        '<input id="sup-supply-price" type="text" inputmode="decimal" placeholder="örn. 850" value="' + (typeof r.supplyPrice === 'number' ? esc(String(r.supplyPrice).replace('.', ',')) : '') + '"> <span>₺</span>' +
+        '<input id="sup-supply-note" type="text" maxlength="300" placeholder="not (kargo dahil, 2 adet üstü indirim…)" value="' + esc(r.supplyNote || '') + '">' +
+        '<button class="btn btn-sm btn-primary" type="button" onclick="supSaveSupply(\'' + esc(pid) + '\',\'' + esc(sid) + '\')">Kaydet</button>' +
+      '</div>' +
+      (r.supplyUpdatedAt ? '<p class="sup-muted" style="margin:6px 0 0">Son fiyat güncellemesi: ' + esc(fmt(r.supplyUpdatedAt)) + '</p>' : '') +
       '<h4 class="sup-h4">PDF tarif</h4>' + fileHtml +
       '<h4 class="sup-h4">Dikkat edilmesi gerekenler</h4>' + (r.notes ? '<p class="sup-notes">' + esc(r.notes) + '</p>' : '<p class="sup-muted">Not girilmemiş.</p>');
     document.getElementById('sup-detail-modal').classList.add('open');

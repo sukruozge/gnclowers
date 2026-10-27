@@ -1512,7 +1512,7 @@
           </div>
           <div class="card-body" style="padding:0">
             <div class="table-wrap">
-              <table><thead><tr><th>Ürün</th><th>Tedarikçi</th><th>İplik</th><th>PDF</th><th>Durum</th><th>Güncellendi</th><th></th></tr></thead><tbody id="sup-spec-rows"></tbody></table>
+              <table><thead><tr><th>Ürün</th><th>Tedarikçi</th><th>İplik</th><th>PDF</th><th>Durum</th><th>Tedarik ₺</th><th>Güncellendi</th><th></th></tr></thead><tbody id="sup-spec-rows"></tbody></table>
             </div>
             <div id="sup-spec-empty" class="empty-state">
               <div class="empty-state-icon">🧶</div>
@@ -1577,6 +1577,9 @@
         .sup-notes { white-space: pre-wrap; background: var(--muted); border-radius: 8px; padding: 12px; font-size: .88rem; line-height: 1.55; margin: 0; }
         .sup-cred { background: var(--muted); border-radius: 8px; padding: 12px 14px; font-size: .9rem; line-height: 1.6; margin: 0 0 12px; white-space: pre-wrap; user-select: all; }
         .sup-table--inner { width: 100%; font-size: .84rem; }
+        .sup-supply { display: grid; grid-template-columns: 140px auto 1fr auto; gap: 8px; align-items: center; }
+        .sup-supply input { padding: 8px 10px; border: 1px solid var(--input); border-radius: 8px; background: transparent; color: inherit; font-size: .86rem; }
+        #page-suppliers .sup-price { white-space: nowrap; font-weight: 500; }
       </style>
     </div>
 

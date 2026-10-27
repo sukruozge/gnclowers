@@ -22,7 +22,7 @@ export interface CsvRow {
 const HEADER = [
   'Ürün ID', 'Ürün', 'Tedarikçi', 'İplikler', 'İplik Sayısı', 'Tığ No', 'Dolgu', 'Göz',
   'Bitmiş Ölçü', 'Üretim Süresi', 'Tarif Linki', 'PDF Tarif', 'Dikkat Notları',
-  'Bilgiler Tam', 'Onay', 'Onay Tarihi', 'Oluşturuldu', 'Güncellendi',
+  'Bilgiler Tam', 'Onay', 'Onay Tarihi', 'Tedarik Fiyatı (TL)', 'Tedarik Notu', 'Oluşturuldu', 'Güncellendi',
 ];
 
 function yarnToText(y: YarnLine): string {
@@ -50,6 +50,8 @@ function rowToLine({ spec, supplierName, productTitle }: CsvRow): string {
     spec.isComplete ? 'Evet' : 'Hayır',
     spec.approval === 'approved' ? 'Onaylı' : 'Onay bekliyor',
     spec.approvedAt ?? '',
+    spec.supplyPrice !== undefined ? String(spec.supplyPrice).replace('.', ',') : '',
+    spec.supplyNote ?? '',
     spec.createdAt,
     spec.updatedAt,
   ].map(csvCell).join(';');

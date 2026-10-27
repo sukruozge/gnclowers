@@ -87,9 +87,28 @@ export function normalizeSpec(
     ...(prev?.fileName ? { fileName: prev.fileName } : {}),
     // Tedarikçi kaydı her değiştirdiğinde admin onayı sıfırlanır.
     approval: 'pending',
+    // Admin'e ait alanlar korunur; tedarikçi gövdesinde gelirse yok sayılır.
+    ...(prev?.supplyPrice !== undefined ? { supplyPrice: prev.supplyPrice } : {}),
+    ...(prev?.supplyNote ? { supplyNote: prev.supplyNote } : {}),
+    ...(prev?.supplyUpdatedAt ? { supplyUpdatedAt: prev.supplyUpdatedAt } : {}),
     createdAt: prev?.createdAt ?? now,
     updatedAt: now,
   };
+}
+
+export type SupplyInput = { price: number | null; note: string };
+
+/** Admin tedarik fiyatı girişi: 0..1.000.000 TL, iki ondalık; null = sil. Not ≤ 300 karakter. */
+export function validateSupply(body: unknown): { ok: true; value: SupplyInput } | { ok: false; error: string } {
+  if (typeof body !== 'object' || body === null) return { ok: false, error: 'Geçersiz istek.' };
+  const b = body as Record<string, unknown>;
+  let price: number | null = null;
+  if (b.price !== null && b.price !== undefined && b.price !== '') {
+    const n = typeof b.price === 'number' ? b.price : Number(String(b.price).replace(',', '.'));
+    if (!Number.isFinite(n) || n < 0 || n > 1_000_000) return { ok: false, error: 'Fiyat 0 ile 1.000.000 TL arasında olmalı.' };
+    price = Math.round(n * 100) / 100;
+  }
+  return { ok: true, value: { price, note: clip(b.note, 300) } };
 }
 
 export type PdfResult =

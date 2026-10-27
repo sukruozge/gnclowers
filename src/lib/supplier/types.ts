@@ -41,6 +41,10 @@ export interface ProductSpec {
   /** Admin onayı. Tedarikçinin her değişikliği (kayıt, PDF) kaydı yeniden 'pending' yapar. */
   approval: 'pending' | 'approved';
   approvedAt?: string;   // ISO 8601
+  /** Yalnız admin yazar; tedarikçi API'sinden asla dönmez. TL cinsinden tedarik (alış) fiyatı. */
+  supplyPrice?: number;
+  supplyNote?: string;
+  supplyUpdatedAt?: string; // ISO 8601
   createdAt: string;
   updatedAt: string;
 }

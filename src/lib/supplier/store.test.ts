@@ -122,6 +122,20 @@ describe('supplier store — specs and files', () => {
     expect(await store.setApproval(P2, S2, true)).toBeNull();
   });
 
+  it('setSupply writes admin price without touching approval; clearing removes it', async () => {
+    await store.putSpec(normalizeSpec({}, { productId: P1, supplierId: S1 }));
+    await store.setApproval(P1, S1, true);
+    const s = await store.setSupply(P1, S1, { price: 850, note: 'kargo dahil' });
+    expect(s?.supplyPrice).toBe(850);
+    expect(s?.supplyNote).toBe('kargo dahil');
+    expect(s?.approval).toBe('approved');
+    expect(Date.parse(s!.supplyUpdatedAt!)).not.toBeNaN();
+    const cleared = await store.setSupply(P1, S1, { price: null, note: '' });
+    expect(cleared?.supplyPrice).toBeUndefined();
+    expect(cleared?.supplyNote).toBeUndefined();
+    expect(await store.setSupply(P2, S2, { price: 1, note: '' })).toBeNull();
+  });
+
   it('legacy specs without an approval field read as pending', async () => {
     const legacy = normalizeSpec({}, { productId: P1, supplierId: S1 }) as Partial<ReturnType<typeof normalizeSpec>>;
     delete legacy.approval;

@@ -22,9 +22,9 @@ import type { APIContext, APIRoute } from 'astro';
 import { verifyPassword, signJwt, verifyJwt, hashPassword } from '@lib/admin/auth';
 import { isAdminPayload, isSupplierPayload } from '@lib/admin/session';
 import { createStore, type SupplierStore } from '@lib/supplier/store';
-import { validateNewAccount, normalizeSpec, validatePdf, normalizeUsername, clip } from '@lib/supplier/validate';
+import { validateNewAccount, normalizeSpec, validatePdf, validateSupply, normalizeUsername, clip } from '@lib/supplier/validate';
 import { specsToCsv } from '@lib/supplier/csv';
-import { LIMITS, type KvLike, type StoredFile, type SupplierAccount } from '@lib/supplier/types';
+import { LIMITS, type KvLike, type ProductSpec, type StoredFile, type SupplierAccount } from '@lib/supplier/types';
 import productsFile from '../../../data/products.json';
 
 export const prerender = false;
@@ -128,6 +128,13 @@ function pdfResponse(file: StoredFile): Response {
   return new Response(bytes.buffer as ArrayBuffer, { status: 200, headers });
 }
 
+/** Tedarikçiye dönen kayıt: admin'e özel tedarik fiyatı alanları çıkarılır. */
+function forSupplier(spec: ProductSpec | null): Omit<ProductSpec, 'supplyPrice' | 'supplyNote' | 'supplyUpdatedAt'> | null {
+  if (!spec) return null;
+  const { supplyPrice: _p, supplyNote: _n, supplyUpdatedAt: _u, ...rest } = spec;
+  return rest;
+}
+
 function publicAccount(a: SupplierAccount): Omit<SupplierAccount, 'passwordHash'> {
   const { passwordHash: _omit, ...rest } = a;
   return rest;
@@ -221,7 +228,7 @@ async function handleSpecPut(productId: string, request: Request, account: Suppl
   const prev = await store.getSpec(productId, account.id);
   const spec = normalizeSpec(body, { productId, supplierId: account.id }, prev ?? undefined);
   await store.putSpec(spec);
-  return json(spec, 200);
+  return json(forSupplier(spec), 200);
 }
 
 async function handleFilePost(productId: string, request: Request, account: SupplierAccount, store: SupplierStore): Promise<Response> {
@@ -253,7 +260,7 @@ async function supplierRouter(method: string, action: string, request: Request, 
   // Astro `params.action`'ı zaten decode eder; ikinci bir decode yapılmaz.
   if (action.startsWith('spec/')) {
     const productId = clip(action.slice('spec/'.length), 32);
-    if (method === 'GET') return json(await store.getSpec(productId, account.id), 200);
+    if (method === 'GET') return json(forSupplier(await store.getSpec(productId, account.id)), 200);
     if (method === 'PUT') return handleSpecPut(productId, request, account, store);
   }
   if (action.startsWith('file/')) {
@@ -344,6 +351,13 @@ function splitPair(rest: string): { productId: string; supplierId: string; tail?
   return { productId: parts[0], supplierId: parts[1], ...(parts[2] ? { tail: parts[2] } : {}) };
 }
 
+async function handleSupply(pair: { productId: string; supplierId: string }, request: Request, store: SupplierStore): Promise<Response> {
+  const v = validateSupply(await readJson(request, MAX_JSON_BYTES));
+  if (!v.ok) return json({ error: v.error }, 400);
+  const spec = await store.setSupply(pair.productId, pair.supplierId, v.value);
+  return spec ? json(spec, 200) : json({ error: 'Kayıt bulunamadı; tedarikçi önce ürünü doldurmalı.' }, 404);
+}
+
 async function handleApproval(pair: { productId: string; supplierId: string }, request: Request, store: SupplierStore): Promise<Response> {
   const body = await readJson(request, MAX_JSON_BYTES);
   if (!body || typeof body.approved !== 'boolean') return json({ error: 'approved (true/false) zorunlu.' }, 400);
@@ -378,6 +392,8 @@ async function adminRouter(method: string, action: string, request: Request, env
     if (!pair) return json({ error: 'not-found' }, 404);
     // POST admin/spec/:pid/:sid/approval { approved: boolean }
     if (pair.tail === 'approval' && method === 'POST') return handleApproval(pair, request, store);
+    // POST admin/spec/:pid/:sid/supply { price: number|null, note?: string } — yalnız admin
+    if (pair.tail === 'supply' && method === 'POST') return handleSupply(pair, request, store);
     if (pair.tail) return json({ error: 'not-found' }, 404);
     if (method === 'GET') return json(await store.getSpec(pair.productId, pair.supplierId), 200);
     if (method === 'DELETE') {

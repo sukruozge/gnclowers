@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { clip, normalizeUsername, validateNewAccount, normalizeSpec, validatePdf } from './validate';
+import { clip, normalizeUsername, validateNewAccount, normalizeSpec, validatePdf, validateSupply } from './validate';
 import type { ProductSpec } from './types';
 
 const IDS = { productId: '4549014419', supplierId: 'sup_ab12cd34' };
@@ -92,6 +92,26 @@ describe('normalizeSpec', () => {
     expect(next.createdAt).toBe('2026-01-01T00:00:00.000Z');
     expect(next.isComplete).toBe(true);
     expect(Date.parse(next.updatedAt)).toBeGreaterThan(Date.parse(prev.createdAt));
+  });
+});
+
+describe('admin-only supply price', () => {
+  it('normalizeSpec keeps the previous supply fields and ignores supplier-sent ones', () => {
+    const prev = { ...normalizeSpec({}, IDS), supplyPrice: 850, supplyNote: 'kargo dahil', supplyUpdatedAt: '2026-01-01T00:00:00.000Z' };
+    const next = normalizeSpec({ supplyPrice: 1, supplyNote: 'hack' }, IDS, prev);
+    expect(next.supplyPrice).toBe(850);
+    expect(next.supplyNote).toBe('kargo dahil');
+    expect(next.supplyUpdatedAt).toBe('2026-01-01T00:00:00.000Z');
+    expect(normalizeSpec({ supplyPrice: 1 }, IDS).supplyPrice).toBeUndefined();
+  });
+  it('validateSupply parses TR decimals, rounds to kuruş, allows clearing, rejects garbage', () => {
+    expect(validateSupply({ price: '1.249,5', note: ' not ' })).toEqual({ ok: true, value: { price: 1249.5, note: 'not' } });
+    expect(validateSupply({ price: 850.999 })).toEqual({ ok: true, value: { price: 851, note: '' } });
+    expect(validateSupply({ price: null })).toEqual({ ok: true, value: { price: null, note: '' } });
+    expect(validateSupply({ price: '' }).ok).toBe(true);
+    expect(validateSupply({ price: -5 }).ok).toBe(false);
+    expect(validateSupply({ price: 'abc' }).ok).toBe(false);
+    expect(validateSupply(null).ok).toBe(false);
   });
 });
 

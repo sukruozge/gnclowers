@@ -84,6 +84,8 @@ export interface SupplierStore {
   listSpecRefs(): Promise<SpecRef[]>;
   /** Admin onayı verir/kaldırır; kayıt yoksa null. */
   setApproval(productId: string, supplierId: string, approved: boolean): Promise<ProductSpec | null>;
+  /** Admin tedarik fiyatını yazar/siler; onay durumuna dokunmaz. Kayıt yoksa null. */
+  setSupply(productId: string, supplierId: string, input: { price: number | null; note: string }): Promise<ProductSpec | null>;
   getFile(productId: string, supplierId: string): Promise<StoredFile | null>;
   putFile(productId: string, supplierId: string, file: StoredFile): Promise<void>;
   deleteFile(productId: string, supplierId: string): Promise<void>;
