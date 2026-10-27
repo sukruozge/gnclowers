@@ -7,6 +7,13 @@
  */
 import '../../styles/tokens.css';
 import '../../styles/global.css';
+import { loadProducts, activeOnly, productSlug } from '@lib/products';
+
+// Tedarikçi ürünü Etsy'de değil kendi sitemizde görmeli; ürün sayfası yolları build sırasında
+// aynı slug mantığıyla üretilir ve sayfaya JSON olarak gömülür (id → /tr/urun/slug).
+const productPaths = Object.fromEntries(
+  activeOnly(loadProducts()).map((p) => [String(p.id), `/tr/urun/${productSlug(p, 'tr')}`])
+);
 ---
 <!doctype html>
 <html lang="tr">
@@ -164,6 +171,8 @@ import '../../styles/global.css';
     </div>
   </template>
 
+  <script type="application/json" id="product-paths" set:html={JSON.stringify(productPaths)}></script>
+
   <script>
     type Yarn = { brand: string; name: string; colorCode: string; colorName: string; usage: string; amount: string };
     type Spec = {
@@ -177,6 +186,9 @@ import '../../styles/global.css';
     const YARN_KEYS: (keyof Yarn)[] = ['brand', 'name', 'colorCode', 'colorName', 'usage', 'amount'];
     const FIELDS = ['hookSize', 'fill', 'eyes', 'finishedSize', 'productionHours', 'patternUrl', 'notes'] as const;
     const DRAFT_KEY = 'sup_draft';
+    const PRODUCT_PATHS: Record<string, string> = (() => {
+      try { return JSON.parse(document.getElementById('product-paths')?.textContent || '{}'); } catch { return {}; }
+    })();
 
     const $ = <T extends HTMLElement = HTMLElement>(id: string): T => document.getElementById(id) as T;
     const esc = (v: unknown): string => String(v ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c] as string));
@@ -347,7 +359,7 @@ import '../../styles/global.css';
         <p class="eyebrow">Ürün</p>
         <h1 class="sup-product__title">${esc(p.title_tr)}</h1>
         <p class="sup-product__meta">Ürün no: ${esc(p.id)}${p.category ? ` · ${esc(p.category)}` : ''}</p>
-        ${p.url ? `<a class="sup-link" href="${esc(p.url)}" target="_blank" rel="noopener noreferrer">Etsy'de gör ↗</a>` : ''}`;
+        ${PRODUCT_PATHS[p.id] ? `<a class="sup-link" href="${esc(PRODUCT_PATHS[p.id])}" target="_blank" rel="noopener">Web sayfasında gör ↗</a>` : ''}`;
     }
 
     async function openForm(id: string): Promise<void> {
