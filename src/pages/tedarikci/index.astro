@@ -68,7 +68,7 @@ import '../../styles/global.css';
           <input id="list-search" class="sup-search" type="search" placeholder="Ürün ara…" autocomplete="off" />
           <div class="sup-seg" role="tablist">
             <button class="sup-seg__btn active" data-filter="all" type="button">Hepsi</button>
-            <button class="sup-seg__btn" data-filter="missing" type="button">Eksikler</button>
+            <button class="sup-seg__btn" data-filter="missing" type="button">Kimse doldurmadı</button>
             <button class="sup-seg__btn" data-filter="mine" type="button">Doldurduklarım</button>
           </div>
         </div>
@@ -135,6 +135,7 @@ import '../../styles/global.css';
               <span>Bu ürünün bilgileri tam, güvenle üretilebilir</span>
             </label>
             <p class="sup-error" id="save-error" role="alert" hidden></p>
+            <p class="sup-approval" id="spec-approval"></p>
             <div class="sup-save__row">
               <span class="sup-updated" id="spec-updated"></span>
               <button class="btn btn--primary" type="submit" id="btn-save">Kaydet</button>
@@ -168,9 +169,9 @@ import '../../styles/global.css';
     type Spec = {
       productId: string; yarns: Yarn[]; hookSize: string; fill: string; eyes: string; finishedSize: string;
       productionHours: string; patternUrl: string; notes: string; isComplete: boolean; hasFile: boolean;
-      fileName?: string; updatedAt: string;
+      fileName?: string; approval: 'pending' | 'approved'; approvedAt?: string; updatedAt: string;
     };
-    type Summary = { productId: string; isComplete: boolean; hasFile: boolean; yarnCount: number; updatedAt: string };
+    type Summary = { productId: string; isComplete: boolean; hasFile: boolean; approval: 'pending' | 'approved'; yarnCount: number; updatedAt: string };
     type Product = { id: string; title_tr: string; image?: string; images?: string[]; url?: string; category?: string; isActive: boolean };
 
     const YARN_KEYS: (keyof Yarn)[] = ['brand', 'name', 'colorCode', 'colorName', 'usage', 'amount'];
@@ -183,6 +184,7 @@ import '../../styles/global.css';
 
     let products: Product[] = [];
     let summaries = new Map<string, Summary>();
+    let filledByOthers = new Set<string>(); // başkası doldurdu (kim olduğu sunucudan gelmez)
     let currentId: string | null = null;
     let currentSpec: Spec | null = null;
     let dirty = false;
@@ -231,21 +233,29 @@ import '../../styles/global.css';
 
     // ── Veri ──
     async function loadData(): Promise<void> {
-      const [catalog, list] = await Promise.all([
+      const [catalog, data] = await Promise.all([
         fetch('/products.json', { cache: 'no-store' }).then((r) => r.json()),
-        api<Summary[]>('specs'),
+        api<{ mine: Summary[]; filledByOthers: string[] }>('specs'),
       ]);
       const raw: Product[] = Array.isArray(catalog?.products) ? catalog.products : [];
       products = raw.filter((p) => p.isActive).map((p) => ({ ...p, id: String(p.id) }));
       products.sort((a, b) => a.title_tr.localeCompare(b.title_tr, 'tr'));
-      summaries = new Map(list.map((s) => [s.productId, s]));
+      summaries = new Map(data.mine.map((s) => [s.productId, s]));
+      filledByOthers = new Set(data.filledByOthers);
+    }
+
+    function approvalLabel(approval: 'pending' | 'approved', approvedAt?: string): string {
+      return approval === 'approved'
+        ? `Onaylı ✓${approvedAt ? ' · ' + fmtDate(approvedAt) : ''}`
+        : 'Onay bekliyor';
     }
 
     function statusOf(id: string): { label: string; cls: string } {
       const s = summaries.get(id);
-      if (!s) return { label: 'Boş', cls: 'empty' };
-      if (s.isComplete) return { label: s.hasFile ? 'Tam · PDF ✓' : 'Tam', cls: 'done' };
-      return { label: s.hasFile ? 'Taslak · PDF ✓' : 'Taslak', cls: 'draft' };
+      if (!s) return filledByOthers.has(id) ? { label: 'Başka tedarikçi doldurdu', cls: 'other' } : { label: 'Boş', cls: 'empty' };
+      if (s.approval === 'approved') return { label: s.hasFile ? 'Onaylı ✓ · PDF' : 'Onaylı ✓', cls: 'approved' };
+      if (s.isComplete) return { label: s.hasFile ? 'Onay bekliyor · PDF' : 'Onay bekliyor', cls: 'done' };
+      return { label: s.hasFile ? 'Taslak · PDF' : 'Taslak', cls: 'draft' };
     }
 
     // ── Liste ──
@@ -255,11 +265,13 @@ import '../../styles/global.css';
         if (q && !p.title_tr.toLocaleLowerCase('tr').includes(q) && !p.id.includes(q)) return false;
         const s = summaries.get(p.id);
         if (filter === 'mine') return !!s;
-        if (filter === 'missing') return !s || !s.isComplete;
+        // Eksikler: ne siz ne başka bir tedarikçi doldurmuş.
+        if (filter === 'missing') return !s && !filledByOthers.has(p.id);
         return true;
       });
-      const done = products.filter((p) => summaries.get(p.id)?.isComplete).length;
-      $('list-progress').textContent = `${products.length} aktif ürün · ${summaries.size} kayıt · ${done} tam`;
+      const approved = products.filter((p) => summaries.get(p.id)?.approval === 'approved').length;
+      const pending = products.filter((p) => { const s = summaries.get(p.id); return s && s.approval !== 'approved'; }).length;
+      $('list-progress').textContent = `${products.length} aktif ürün · sizin ${summaries.size} kaydınız · ${approved} onaylı · ${pending} onay bekliyor`;
       $('list-grid').innerHTML = rows.map((p) => {
         const st = statusOf(p.id);
         const img = p.image || (p.images && p.images[0]) || '';
@@ -303,7 +315,18 @@ import '../../styles/global.css';
       (form.elements.namedItem('isComplete') as HTMLInputElement).checked = !!spec?.isComplete;
       renderFileBox(spec);
       $('spec-updated').textContent = spec?.updatedAt ? `Son kayıt: ${fmtDate(spec.updatedAt)}` : 'Henüz kaydedilmedi';
+      renderApproval(spec);
       dirty = false;
+    }
+
+    function renderApproval(spec: Partial<Spec> | null): void {
+      const el = $('spec-approval');
+      if (!spec?.updatedAt) { el.textContent = 'Kaydettiğinizde bilgiler Aselovers onayına düşer.'; el.className = 'sup-approval'; return; }
+      const approved = spec.approval === 'approved';
+      el.textContent = approved
+        ? `${approvalLabel('approved', spec.approvedAt)} — değişiklik yaparsanız yeniden onaya düşer.`
+        : 'Onay bekliyor — Aselovers inceleyip onaylayacak.';
+      el.className = `sup-approval ${approved ? 'is-approved' : 'is-pending'}`;
     }
 
     function renderFileBox(spec: Partial<Spec> | null): void {
@@ -352,11 +375,12 @@ import '../../styles/global.css';
         const body = readForm();
         const saved = await api<Spec>(`spec/${encodeURIComponent(currentId)}`, { method: 'PUT', body: JSON.stringify(body) });
         currentSpec = saved;
-        summaries.set(saved.productId, { productId: saved.productId, isComplete: saved.isComplete, hasFile: saved.hasFile, yarnCount: saved.yarns.length, updatedAt: saved.updatedAt });
+        summaries.set(saved.productId, { productId: saved.productId, isComplete: saved.isComplete, hasFile: saved.hasFile, approval: saved.approval, yarnCount: saved.yarns.length, updatedAt: saved.updatedAt });
         $('spec-updated').textContent = `Son kayıt: ${fmtDate(saved.updatedAt)}`;
+        renderApproval(saved);
         dirty = false;
         sessionStorage.removeItem(DRAFT_KEY);
-        toast('Kaydedildi ✓', 'ok');
+        toast('Kaydedildi ✓ — onaya gönderildi', 'ok');
       } catch (e) {
         if (e instanceof Unauthorized) return handleUnauthorized();
         showError('save-error', (e as Error).message);
@@ -380,11 +404,13 @@ import '../../styles/global.css';
           r.readAsDataURL(file);
         });
         const res = await api<{ fileName: string }>(`file/${encodeURIComponent(currentId)}`, { method: 'POST', body: JSON.stringify({ filename: file.name, base64 }) });
-        currentSpec = { ...(currentSpec || ({} as Spec)), hasFile: true, fileName: res.fileName };
+        const now = new Date().toISOString();
+        currentSpec = { ...(currentSpec || ({} as Spec)), hasFile: true, fileName: res.fileName, approval: 'pending', approvedAt: undefined, updatedAt: now };
         const s = summaries.get(currentId);
-        if (s) summaries.set(currentId, { ...s, hasFile: true });
-        else summaries.set(currentId, { productId: currentId, isComplete: false, hasFile: true, yarnCount: 0, updatedAt: new Date().toISOString() });
+        if (s) summaries.set(currentId, { ...s, hasFile: true, approval: 'pending' });
+        else summaries.set(currentId, { productId: currentId, isComplete: false, hasFile: true, approval: 'pending', yarnCount: 0, updatedAt: now });
         renderFileBox(currentSpec);
+        renderApproval(currentSpec);
         toast('PDF yüklendi ✓', 'ok');
       } catch (e) {
         if (e instanceof Unauthorized) return handleUnauthorized();
@@ -398,10 +424,11 @@ import '../../styles/global.css';
       if (!currentId || !window.confirm('PDF tarif silinsin mi?')) return;
       try {
         await api(`file/${encodeURIComponent(currentId)}`, { method: 'DELETE' });
-        currentSpec = { ...(currentSpec || ({} as Spec)), hasFile: false, fileName: undefined };
+        currentSpec = { ...(currentSpec || ({} as Spec)), hasFile: false, fileName: undefined, approval: 'pending', approvedAt: undefined };
         const s = summaries.get(currentId);
-        if (s) summaries.set(currentId, { ...s, hasFile: false });
+        if (s) summaries.set(currentId, { ...s, hasFile: false, approval: 'pending' });
         renderFileBox(currentSpec);
+        renderApproval(currentSpec);
         toast('PDF silindi', 'ok');
       } catch (e) {
         if (e instanceof Unauthorized) return handleUnauthorized();
@@ -577,7 +604,12 @@ import '../../styles/global.css';
     .sup-badge { justify-self: start; font-size: .72rem; letter-spacing: .04em; padding: 3px 9px; border-radius: 999px; border: 1px solid transparent; }
     .sup-badge--empty { color: var(--muted); border-color: var(--line); }
     .sup-badge--draft { color: #8a5a00; background: #fff4dc; }
-    .sup-badge--done { color: #1f6b3a; background: #e3f4e8; }
+    .sup-badge--done { color: #8a5a00; background: #fff4dc; }
+    .sup-badge--approved { color: #1f6b3a; background: #e3f4e8; }
+    .sup-badge--other { color: var(--muted); background: var(--section); }
+    .sup-approval { margin: 0; font-size: .88rem; color: var(--muted); padding: 10px 12px; border-radius: 10px; background: var(--section); }
+    .sup-approval.is-pending { color: #8a5a00; background: #fff4dc; }
+    .sup-approval.is-approved { color: #1f6b3a; background: #e3f4e8; }
 
     /* form */
     .sup-back { display: inline-block; margin-bottom: 18px; color: var(--muted); font-size: .9rem; }

@@ -48,6 +48,7 @@ describe('specsToCsv', () => {
     expect(lines[1]).toContain('Alize Cotton Gold 55 kirli beyaz (gövde, 1 yumak) | Himalaya Dolphin Baby 80301');
     expect(lines[1]).toContain('"Gözleri 8 mm; dikkat"');
     expect(lines[1]).toContain('"Evet"');
+    expect(lines[1]).toContain('"Onay bekliyor"');
   });
   it('returns only the header for an empty list', () => {
     const csv = specsToCsv([]);

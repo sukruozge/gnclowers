@@ -41,9 +41,25 @@
 
   function renderSummary() {
     const withSpec = new Set(specRows.map(function (r) { return r.productId; })).size;
-    const complete = specRows.filter(function (r) { return r.isComplete; }).length;
+    const approved = specRows.filter(function (r) { return r.approval === 'approved'; }).length;
+    const pending = specRows.length - approved;
     const el = document.getElementById('sup-summary');
-    if (el) el.textContent = summary.activeProducts + ' aktif ürün · ' + withSpec + ' ürün için kayıt var · ' + complete + ' tam kayıt · ' + summary.supplierCount + ' tedarikçi hesabı';
+    if (el) el.textContent = summary.activeProducts + ' aktif ürün · ' + withSpec + ' ürün için kayıt var · ' + approved + ' onaylı · ' + pending + ' onay bekliyor · ' + summary.supplierCount + ' tedarikçi hesabı';
+    ensureApprovalFilter();
+  }
+
+  // Onay filtresi arama kutusunun yanına JS ile eklenir (dashboard.html'e dokunmamak için).
+  let approvalFilter = 'all';
+  function ensureApprovalFilter() {
+    if (document.getElementById('sup-approval-filter')) return;
+    const search = document.getElementById('sup-spec-search');
+    if (!search) return;
+    const sel = document.createElement('select');
+    sel.id = 'sup-approval-filter';
+    sel.style.cssText = 'padding:7px 10px;border:1px solid var(--border);border-radius:8px;background:transparent;color:inherit;font-size:.82rem;';
+    sel.innerHTML = '<option value="all">Tümü</option><option value="pending">Onay bekleyen</option><option value="approved">Onaylı</option>';
+    sel.addEventListener('change', function () { approvalFilter = sel.value; renderSpecs(); });
+    search.insertAdjacentElement('afterend', sel);
   }
 
   window.supTab = function supTab(name, btn) {
@@ -166,11 +182,31 @@
   // ── Üretim kayıtları ──
   function filteredSpecs() {
     const q = (document.getElementById('sup-spec-search').value || '').trim().toLocaleLowerCase('tr');
-    if (!q) return specRows;
     return specRows.filter(function (r) {
+      if (approvalFilter === 'pending' && r.approval === 'approved') return false;
+      if (approvalFilter === 'approved' && r.approval !== 'approved') return false;
+      if (!q) return true;
       return (r.productTitle + ' ' + r.supplierName + ' ' + r.productId).toLocaleLowerCase('tr').indexOf(q) !== -1;
     });
   }
+
+  function approvalBadge(r) {
+    return r.approval === 'approved'
+      ? '<span class="badge badge-green" title="' + esc(fmt(r.approvedAt)) + '">Onaylı</span>'
+      : '<span class="badge badge-gold">Onay bekliyor</span>';
+  }
+
+  window.supSetApproval = async function supSetApproval(pid, sid, approved) {
+    try {
+      const spec = await api('spec/' + encodeURIComponent(pid) + '/' + encodeURIComponent(sid) + '/approval', { method: 'POST', body: JSON.stringify({ approved: approved }) });
+      specRows = specRows.map(function (x) { return (x.productId === pid && x.supplierId === sid) ? Object.assign({}, x, spec) : x; });
+      renderSpecs();
+      renderSummary();
+      toast(approved ? 'Kayıt onaylandı ✓' : 'Onay kaldırıldı', 'ok');
+    } catch (e) {
+      toast(e.message, 'err');
+    }
+  };
 
   function renderSpecs() {
     const tbody = document.getElementById('sup-spec-rows');
@@ -178,8 +214,16 @@
     const count = document.getElementById('sup-spec-count');
     if (!tbody) return;
     const rows = filteredSpecs();
+    // Onay bekleyenler üstte.
+    rows.sort(function (a, b) {
+      if ((a.approval === 'approved') !== (b.approval === 'approved')) return a.approval === 'approved' ? 1 : -1;
+      return String(b.updatedAt).localeCompare(String(a.updatedAt));
+    });
     tbody.innerHTML = rows.map(function (r) {
-      const status = r.isComplete ? '<span class="badge badge-green">Tam</span>' : '<span class="badge badge-gold">Taslak</span>';
+      const status = (r.isComplete ? '<span class="badge badge-gray">Tam</span> ' : '<span class="badge badge-gray">Taslak</span> ') + approvalBadge(r);
+      const approveBtn = r.approval === 'approved'
+        ? '<button class="btn btn-sm btn-outline" onclick="supSetApproval(\'' + esc(r.productId) + '\',\'' + esc(r.supplierId) + '\',false)">Onayı kaldır</button>'
+        : '<button class="btn btn-sm btn-primary" onclick="supSetApproval(\'' + esc(r.productId) + '\',\'' + esc(r.supplierId) + '\',true)">✓ Onayla</button>';
       return '<tr>' +
         '<td><div class="sup-ptitle">' + esc(r.productTitle) + (r.productActive ? '' : ' <span class="badge badge-gray">pasif ürün</span>') + '</div><div class="sup-pid">' + esc(r.productId) + '</div></td>' +
         '<td>' + esc(r.supplierName) + '</td>' +
@@ -188,6 +232,7 @@
         '<td>' + status + '</td>' +
         '<td>' + esc(fmt(r.updatedAt)) + '</td>' +
         '<td class="sup-actions">' +
+          approveBtn +
           '<button class="btn btn-sm btn-outline" onclick="supShowSpec(\'' + esc(r.productId) + '\',\'' + esc(r.supplierId) + '\')">Detay</button>' +
           '<button class="btn btn-sm btn-danger" onclick="supDeleteSpec(\'' + esc(r.productId) + '\',\'' + esc(r.supplierId) + '\')">Sil</button>' +
         '</td></tr>';
@@ -218,7 +263,10 @@
       ? '<a class="btn btn-sm btn-outline" href="' + API + 'file/' + encodeURIComponent(pid) + '/' + encodeURIComponent(sid) + '" target="_blank" rel="noopener">📄 ' + esc(r.fileName || 'PDF tarifi indir') + '</a>'
       : '<span class="sup-muted">PDF tarif yok</span>';
     document.getElementById('sup-detail-body').innerHTML =
-      '<p class="sup-muted" style="margin:0 0 12px">Tedarikçi: <strong>' + esc(r.supplierName) + '</strong> · ' + (r.isComplete ? 'Bilgiler tam' : 'Taslak') + ' · Güncellendi: ' + esc(fmt(r.updatedAt)) + '</p>' +
+      '<p class="sup-muted" style="margin:0 0 12px">Tedarikçi: <strong>' + esc(r.supplierName) + '</strong> · ' + (r.isComplete ? 'Bilgiler tam' : 'Taslak') + ' · ' + approvalBadge(r) + ' · Güncellendi: ' + esc(fmt(r.updatedAt)) + '</p>' +
+      '<p style="margin:0 0 12px">' + (r.approval === 'approved'
+        ? '<button class="btn btn-sm btn-outline" onclick="supSetApproval(\'' + esc(pid) + '\',\'' + esc(sid) + '\',false); supCloseDetail()">Onayı kaldır</button>'
+        : '<button class="btn btn-sm btn-primary" onclick="supSetApproval(\'' + esc(pid) + '\',\'' + esc(sid) + '\',true); supCloseDetail()">✓ Bu kaydı onayla</button>') + '</p>' +
       '<h4 class="sup-h4">İplikler</h4>' + yarnTable(r.yarns) +
       '<h4 class="sup-h4">Üretim detayları</h4><div class="sup-kvs">' +
         detailRow('Tığ no', r.hookSize) + detailRow('Dolgu', r.fill) + detailRow('Göz / aksesuar', r.eyes) +

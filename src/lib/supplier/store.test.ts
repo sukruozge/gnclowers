@@ -107,6 +107,37 @@ describe('supplier store — specs and files', () => {
     expect([...kv.raw.keys()].filter((k) => k.startsWith('sup:'))).toHaveLength(0);
   });
 
+  it('approval: admin approves, any supplier change drops it back to pending', async () => {
+    await store.putSpec(normalizeSpec({}, { productId: P1, supplierId: S1 }));
+    expect((await store.getSpec(P1, S1))?.approval).toBe('pending');
+    const approved = await store.setApproval(P1, S1, true);
+    expect(approved?.approval).toBe('approved');
+    expect(Date.parse(approved!.approvedAt!)).not.toBeNaN();
+    await store.putFile(P1, S1, FILE);
+    expect((await store.getSpec(P1, S1))?.approval).toBe('pending');
+    expect((await store.getSpec(P1, S1))?.approvedAt).toBeUndefined();
+    await store.setApproval(P1, S1, true);
+    await store.deleteFile(P1, S1);
+    expect((await store.getSpec(P1, S1))?.approval).toBe('pending');
+    expect(await store.setApproval(P2, S2, true)).toBeNull();
+  });
+
+  it('legacy specs without an approval field read as pending', async () => {
+    const legacy = normalizeSpec({}, { productId: P1, supplierId: S1 }) as Partial<ReturnType<typeof normalizeSpec>>;
+    delete legacy.approval;
+    kv.raw.set(`sup:spec:${P1}:${S1}`, JSON.stringify(legacy));
+    expect((await store.getSpec(P1, S1))?.approval).toBe('pending');
+    expect((await store.listSpecs())[0].approval).toBe('pending');
+  });
+
+  it('listSpecRefs returns product/supplier pairs from key names only', async () => {
+    await store.putSpec(normalizeSpec({}, { productId: P1, supplierId: S1 }));
+    await store.putSpec(normalizeSpec({}, { productId: P1, supplierId: S2 }));
+    const refs = await store.listSpecRefs();
+    expect(refs).toHaveLength(2);
+    expect(refs).toContainEqual({ productId: P1, supplierId: S2 });
+  });
+
   it('a stale KV list entry whose value vanished is skipped', async () => {
     await store.putSpec(normalizeSpec({}, { productId: P1, supplierId: S1 }));
     kv.raw.set(`sup:spec:${P2}:${S1}`, 'not json');

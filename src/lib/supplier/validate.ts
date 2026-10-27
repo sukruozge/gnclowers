@@ -83,6 +83,8 @@ export function normalizeSpec(
     // Dosya bayrakları yalnız dosya uçlarından değişir; istemcinin gönderdiği değer yok sayılır.
     hasFile: prev?.hasFile ?? false,
     ...(prev?.fileName ? { fileName: prev.fileName } : {}),
+    // Tedarikçi kaydı her değiştirdiğinde admin onayı sıfırlanır.
+    approval: 'pending',
     createdAt: prev?.createdAt ?? now,
     updatedAt: now,
   };

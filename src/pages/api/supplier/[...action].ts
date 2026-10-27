@@ -196,16 +196,22 @@ function handleLogout(): Response {
   return json({ ok: true }, 200, { 'set-cookie': cookieHeader('', 0) });
 }
 
+/**
+ * Tedarikçiye: kendi kayıtlarının özeti + hangi ürünlerin (kim olduğu söylenmeden) başka biri
+ * tarafından doldurulduğu. Diğer tedarikçilerin adı veya içeriği asla dönmez.
+ */
 async function handleSpecsSummary(account: SupplierAccount, store: SupplierStore): Promise<Response> {
-  const specs = await store.listSpecs({ supplierId: account.id });
-  const summary = specs.map((s) => ({
+  const [specs, refs] = await Promise.all([store.listSpecs({ supplierId: account.id }), store.listSpecRefs()]);
+  const mine = specs.map((s) => ({
     productId: s.productId,
     isComplete: s.isComplete,
     hasFile: s.hasFile,
+    approval: s.approval,
     yarnCount: s.yarns.length,
     updatedAt: s.updatedAt,
   }));
-  return json(summary, 200);
+  const filledByOthers = [...new Set(refs.filter((r) => r.supplierId !== account.id).map((r) => r.productId))];
+  return json({ mine, filledByOthers }, 200);
 }
 
 async function handleSpecPut(productId: string, request: Request, account: SupplierAccount, store: SupplierStore): Promise<Response> {
@@ -332,10 +338,17 @@ async function handleExportCsv(store: SupplierStore): Promise<Response> {
   });
 }
 
-function splitPair(rest: string): { productId: string; supplierId: string } | null {
+function splitPair(rest: string): { productId: string; supplierId: string; tail?: string } | null {
   const parts = rest.split('/').map((p) => clip(p, 32));
-  if (parts.length !== 2 || !parts[0] || !parts[1]) return null;
-  return { productId: parts[0], supplierId: parts[1] };
+  if (parts.length < 2 || parts.length > 3 || !parts[0] || !parts[1]) return null;
+  return { productId: parts[0], supplierId: parts[1], ...(parts[2] ? { tail: parts[2] } : {}) };
+}
+
+async function handleApproval(pair: { productId: string; supplierId: string }, request: Request, store: SupplierStore): Promise<Response> {
+  const body = await readJson(request, MAX_JSON_BYTES);
+  if (!body || typeof body.approved !== 'boolean') return json({ error: 'approved (true/false) zorunlu.' }, 400);
+  const spec = await store.setApproval(pair.productId, pair.supplierId, body.approved);
+  return spec ? json(spec, 200) : json({ error: 'Kayıt bulunamadı.' }, 404);
 }
 
 async function adminRouter(method: string, action: string, request: Request, env: Env, store: SupplierStore): Promise<Response> {
@@ -363,6 +376,9 @@ async function adminRouter(method: string, action: string, request: Request, env
   if (action.startsWith('spec/')) {
     const pair = splitPair(action.slice('spec/'.length));
     if (!pair) return json({ error: 'not-found' }, 404);
+    // POST admin/spec/:pid/:sid/approval { approved: boolean }
+    if (pair.tail === 'approval' && method === 'POST') return handleApproval(pair, request, store);
+    if (pair.tail) return json({ error: 'not-found' }, 404);
     if (method === 'GET') return json(await store.getSpec(pair.productId, pair.supplierId), 200);
     if (method === 'DELETE') {
       await store.deleteSpec(pair.productId, pair.supplierId);

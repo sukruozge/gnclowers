@@ -60,6 +60,7 @@ describe('normalizeSpec', () => {
     expect(spec.supplierId).toBe(IDS.supplierId);
     expect(spec.isComplete).toBe(false);
     expect(spec.hasFile).toBe(false);
+    expect(spec.approval).toBe('pending');
     expect(Date.parse(spec.createdAt)).not.toBeNaN();
     expect(spec.updatedAt).toBe(spec.createdAt);
   });
@@ -78,8 +79,10 @@ describe('normalizeSpec', () => {
       fileName: 'tarif.pdf',
       createdAt: '2026-01-01T00:00:00.000Z',
     };
-    const next = normalizeSpec({ isComplete: true, hasFile: false }, IDS, prev);
+    const next = normalizeSpec({ isComplete: true, hasFile: false, approval: 'approved' }, IDS, prev);
     expect(next.hasFile).toBe(true);
+    expect(next.approval).toBe('pending');
+    expect(next.approvedAt).toBeUndefined();
     expect(next.fileName).toBe('tarif.pdf');
     expect(next.createdAt).toBe('2026-01-01T00:00:00.000Z');
     expect(next.isComplete).toBe(true);

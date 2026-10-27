@@ -36,8 +36,17 @@ export interface ProductSpec {
   isComplete: boolean;
   hasFile: boolean;
   fileName?: string;
+  /** Admin onayı. Tedarikçinin her değişikliği (kayıt, PDF) kaydı yeniden 'pending' yapar. */
+  approval: 'pending' | 'approved';
+  approvedAt?: string;   // ISO 8601
   createdAt: string;
   updatedAt: string;
+}
+
+/** Tedarikçiye gösterilen özet: kendi kaydı + (isimsiz) başkası doldurmuş mu. */
+export interface SpecRef {
+  productId: string;
+  supplierId: string;
 }
 
 export interface StoredFile {

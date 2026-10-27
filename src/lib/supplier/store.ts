@@ -8,7 +8,7 @@
  *   sup:file:{productId}:{supplierId} → StoredFile
  * Bağımsız test için KvLike alır (Cloudflare KVNamespace bu arayüzü karşılar).
  */
-import type { KvLike, ProductSpec, StoredFile, SupplierAccount } from './types';
+import type { KvLike, ProductSpec, SpecRef, StoredFile, SupplierAccount } from './types';
 
 const ACCOUNTS_KEY = 'sup:accounts';
 const LAST_PREFIX = 'sup:last:';
@@ -36,8 +36,26 @@ function emptySpec(productId: string, supplierId: string, now: string): ProductS
   return {
     productId, supplierId, yarns: [], hookSize: '', fill: '', eyes: '', finishedSize: '',
     productionHours: '', patternUrl: '', notes: '', isComplete: false, hasFile: false,
-    createdAt: now, updatedAt: now,
+    approval: 'pending', createdAt: now, updatedAt: now,
   };
+}
+
+/** Tedarikçi tarafındaki her değişiklik onayı düşürür. */
+function withPendingApproval(spec: ProductSpec): ProductSpec {
+  const { approvedAt: _dropped, ...rest } = spec;
+  return { ...rest, approval: 'pending' };
+}
+
+/** Eski kayıtlar (onay alanı yokken yazılmış) 'pending' sayılır. */
+function withDefaults(spec: ProductSpec): ProductSpec {
+  return spec.approval === 'approved' ? spec : { ...spec, approval: 'pending' };
+}
+
+function parseSpecKey(key: string): SpecRef | null {
+  const rest = key.slice(SPEC_PREFIX.length);
+  const idx = rest.lastIndexOf(':');
+  if (idx <= 0) return null;
+  return { productId: rest.slice(0, idx), supplierId: rest.slice(idx + 1) };
 }
 
 export interface CreateAccountInput {
@@ -62,6 +80,10 @@ export interface SupplierStore {
   putSpec(spec: ProductSpec): Promise<void>;
   deleteSpec(productId: string, supplierId: string): Promise<void>;
   listSpecs(filter?: { supplierId?: string }): Promise<ProductSpec[]>;
+  /** Yalnız anahtar adlarından (get yapmadan) ürün/tedarikçi çiftleri. */
+  listSpecRefs(): Promise<SpecRef[]>;
+  /** Admin onayı verir/kaldırır; kayıt yoksa null. */
+  setApproval(productId: string, supplierId: string, approved: boolean): Promise<ProductSpec | null>;
   getFile(productId: string, supplierId: string): Promise<StoredFile | null>;
   putFile(productId: string, supplierId: string, file: StoredFile): Promise<void>;
   deleteFile(productId: string, supplierId: string): Promise<void>;
@@ -144,7 +166,22 @@ export function createStore(kv: KvLike): SupplierStore {
     },
 
     async getSpec(productId, supplierId) {
-      return parseJson<ProductSpec>(await kv.get(specKey(productId, supplierId)));
+      const spec = parseJson<ProductSpec>(await kv.get(specKey(productId, supplierId)));
+      return spec ? withDefaults(spec) : null;
+    },
+
+    async listSpecRefs() {
+      return (await listSpecKeys()).map(parseSpecKey).filter((r): r is SpecRef => r !== null);
+    },
+
+    async setApproval(productId, supplierId, approved) {
+      const prev = parseJson<ProductSpec>(await kv.get(specKey(productId, supplierId)));
+      if (!prev) return null;
+      const next: ProductSpec = approved
+        ? { ...prev, approval: 'approved', approvedAt: new Date().toISOString() }
+        : withPendingApproval(prev);
+      await kv.put(specKey(productId, supplierId), JSON.stringify(next));
+      return next;
     },
 
     async putSpec(spec) {
@@ -160,7 +197,7 @@ export function createStore(kv: KvLike): SupplierStore {
       const keys = await listSpecKeys();
       const wanted = filter?.supplierId ? keys.filter((k) => k.endsWith(`:${filter.supplierId}`)) : keys;
       const specs = await Promise.all(wanted.map(async (k) => parseJson<ProductSpec>(await kv.get(k))));
-      return specs.filter((s): s is ProductSpec => s !== null && typeof s.productId === 'string');
+      return specs.filter((s): s is ProductSpec => s !== null && typeof s.productId === 'string').map(withDefaults);
     },
 
     async getFile(productId, supplierId) {
@@ -172,7 +209,7 @@ export function createStore(kv: KvLike): SupplierStore {
       const now = new Date().toISOString();
       const prev = parseJson<ProductSpec>(await kv.get(specKey(productId, supplierId)));
       const base = prev ?? emptySpec(productId, supplierId, now);
-      const next: ProductSpec = { ...base, hasFile: true, fileName: file.filename, updatedAt: now };
+      const next = withPendingApproval({ ...base, hasFile: true, fileName: file.filename, updatedAt: now });
       await kv.put(specKey(productId, supplierId), JSON.stringify(next));
     },
 
@@ -181,7 +218,7 @@ export function createStore(kv: KvLike): SupplierStore {
       const prev = parseJson<ProductSpec>(await kv.get(specKey(productId, supplierId)));
       if (!prev) return;
       const { fileName: _dropped, ...rest } = prev;
-      const next: ProductSpec = { ...rest, hasFile: false, updatedAt: new Date().toISOString() };
+      const next = withPendingApproval({ ...rest, hasFile: false, updatedAt: new Date().toISOString() });
       await kv.put(specKey(productId, supplierId), JSON.stringify(next));
     },
   };

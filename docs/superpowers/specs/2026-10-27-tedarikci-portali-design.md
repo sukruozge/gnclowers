@@ -163,3 +163,15 @@ import edilir (build-time). Yeni ürün gece senkronuyla geldiğinde rebuild zat
 
 ## Dağıtım
 Yeni ortam değişkeni yok (`JWT_SECRET`, `ADMIN_KV` mevcut). Commit → `git push gnc main`.
+
+## Ek (2026-10-27, kullanıcı isteği): Onay akışı ve gizlilik
+
+- Her kayıt `approval: 'pending' | 'approved'` taşır. Tedarikçi kaydı kaydettiğinde veya PDF
+  yüklediğinde/sildiğinde kayıt otomatik olarak `pending` olur (`approvedAt` silinir).
+- Admin, Tedarikçiler → Üretim Bilgileri tablosunda "Onayla" / "Onayı kaldır" ile durumu değiştirir:
+  `POST /api/supplier/admin/spec/:pid/:sid/approval { approved: boolean }`. CSV de Onay sütunu içerir.
+- Tedarikçi arayüzü: kendi kaydı için "Taslak" / "Onay bekliyor" / "Onaylı ✓" rozetleri. Başka bir
+  tedarikçinin doldurduğu ürün yalnız "Başka tedarikçi doldurdu" olarak görünür; ad veya içerik
+  sunucudan hiç dönmez (`GET specs` → `{ mine, filledByOthers: productId[] }`; `filledByOthers`
+  yalnız KV anahtar adlarından türetilir, ek okuma yapılmaz).
+- Onay alanı olmayan eski kayıtlar okunurken `pending` sayılır.
