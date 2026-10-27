@@ -8,7 +8,7 @@
  *   GET    specs              → kendi kayıt özetleri
  *   GET    spec/:productId    → kendi kaydı | null
  *   PUT    spec/:productId    → doğrula + kaydet
- *   POST   file/:productId    { filename, base64 } (PDF ≤ 6 MB)
+ *   POST   file/:productId    { filename, base64 } (PDF ≤ 10 MB)
  *   GET    file/:productId    → application/pdf
  *   DELETE file/:productId
  *
@@ -35,7 +35,7 @@ const SUPPLIER_TTL_SECONDS = 7 * 86400;
 const RATE_LIMIT_MAX = 10;
 const RATE_LIMIT_TTL_SECONDS = 900;
 const MAX_JSON_BYTES = 256 * 1024;
-const MAX_FILE_BODY_BYTES = 9 * 1024 * 1024; // 6 MB PDF base64 + JSON zarfı
+const MAX_FILE_BODY_BYTES = 15 * 1024 * 1024; // 10 MB PDF base64 (~13.4 MB) + JSON zarfı
 
 interface CatalogProduct { id: string | number; title_tr?: string; title_en?: string; isActive?: boolean }
 const catalogProducts = ((productsFile as { products?: CatalogProduct[] }).products ?? []);
@@ -221,7 +221,7 @@ async function handleSpecPut(productId: string, request: Request, account: Suppl
 async function handleFilePost(productId: string, request: Request, account: SupplierAccount, store: SupplierStore): Promise<Response> {
   if (!ACTIVE_IDS.has(productId)) return json({ error: 'Ürün katalogda bulunamadı.' }, 404);
   const body = await readJson(request, MAX_FILE_BODY_BYTES);
-  if (!body) return json({ error: 'Dosya çok büyük veya istek bozuk (sınır 6 MB).' }, 400);
+  if (!body) return json({ error: 'Dosya çok büyük veya istek bozuk (sınır 10 MB).' }, 400);
   const pdf = validatePdf(body.filename, body.base64);
   if (!pdf.ok) return json({ error: pdf.error }, 400);
   const file: StoredFile = { filename: pdf.filename, size: pdf.size, type: 'application/pdf', base64: pdf.base64 };

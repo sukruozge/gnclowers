@@ -33,7 +33,7 @@ Mevcut altyapıya oturur, yeni servis yok:
 | Katman | Karar | Gerekçe |
 |---|---|---|
 | Depolama | Cloudflare KV `ADMIN_KV` | Siparişler/mesajlar zaten KV'de; GitHub commit'i tetiklemez, rebuild gerekmez |
-| PDF | KV'de base64 (≤ 6 MB dosya) | Tarifler ticari sır; `public/`'e koyup herkese açmak olmaz. R2 binding'i yok, eklemek yeni altyapı |
+| PDF | KV'de base64 (≤ 10 MB dosya) | Tarifler ticari sır; `public/`'e koyup herkese açmak olmaz. R2 binding'i yok, eklemek yeni altyapı |
 | Kimlik | `src/lib/admin/auth.ts` (PBKDF2 + HS256 JWT), ayrı çerez `aselovers_supplier` | Kod yeniden kullanımı; JWT payload'ında `role: 'supplier'` |
 | API | `src/pages/api/supplier/[...action].ts` | Admin API dosyası 835 satır, zaten şişkin; ayrı dosya |
 | Arayüz | `src/pages/tedarikci/index.astro` (vanilla JS, site token'ları) | Astro statik çıktı; ürün listesi `/products.json`'dan (zaten public) |
@@ -106,7 +106,7 @@ Tüm metin alanları `clip()` ile kontrol karakterlerinden arındırılıp uzunl
 | GET | `specs` | kendi kayıtlarının özeti `{productId, isComplete, hasFile, updatedAt}[]` |
 | GET | `spec/:productId` | kendi kaydı veya `null` |
 | PUT | `spec/:productId` | doğrula + kaydet (ürün id aktif katalogda olmalı) |
-| POST | `file/:productId` | `{filename, base64}` PDF; `%PDF-` imzası ve ≤ 6 MB zorunlu |
+| POST | `file/:productId` | `{filename, base64}` PDF; `%PDF-` imzası ve ≤ 10 MB zorunlu |
 | GET | `file/:productId` | `application/pdf` indirir |
 | DELETE | `file/:productId` | PDF'i siler, spec.hasFile=false |
 

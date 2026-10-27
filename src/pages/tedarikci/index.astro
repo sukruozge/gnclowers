@@ -115,7 +115,7 @@ import '../../styles/global.css';
               </div>
               <label class="sup-drop" id="file-drop">
                 <input type="file" id="file-input" accept="application/pdf,.pdf" hidden />
-                <span id="file-drop-text">PDF'i buraya sürükleyin veya <u>seçin</u> (en fazla 6 MB)</span>
+                <span id="file-drop-text">PDF'i buraya sürükleyin veya <u>seçin</u> (en fazla 10 MB)</span>
               </label>
               <p class="sup-error" id="file-error" role="alert" hidden></p>
             </div>
@@ -370,7 +370,7 @@ import '../../styles/global.css';
       if (!currentId) return;
       showError('file-error', '');
       if (!/\.pdf$/i.test(file.name)) return showError('file-error', 'Yalnızca PDF dosyası yükleyebilirsiniz.');
-      if (file.size > 6 * 1024 * 1024) return showError('file-error', 'Dosya 6 MB sınırını aşıyor.');
+      if (file.size > 10 * 1024 * 1024) return showError('file-error', 'Dosya 10 MB sınırını aşıyor.');
       $('file-drop-text').textContent = 'Yükleniyor…';
       try {
         const base64 = await new Promise<string>((resolve, reject) => {
@@ -390,7 +390,7 @@ import '../../styles/global.css';
         if (e instanceof Unauthorized) return handleUnauthorized();
         showError('file-error', (e as Error).message);
       } finally {
-        $('file-drop-text').innerHTML = "PDF'i buraya sürükleyin veya <u>seçin</u> (en fazla 6 MB)";
+        $('file-drop-text').innerHTML = "PDF'i buraya sürükleyin veya <u>seçin</u> (en fazla 10 MB)";
       }
     }
 

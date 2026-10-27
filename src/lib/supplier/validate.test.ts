@@ -116,7 +116,7 @@ describe('validatePdf', () => {
     expect(validatePdf('tarif.pdf', b64(new Uint8Array([1, 2, 3, 4, 5, 6]))).ok).toBe(false);
     expect(validatePdf('tarif.pdf', '%%%not-base64%%%').ok).toBe(false);
     expect(validatePdf('tarif.pdf', '').ok).toBe(false);
-    const big = 'A'.repeat(Math.ceil((6 * 1024 * 1024 + 10) / 3) * 4);
+    const big = 'A'.repeat(Math.ceil((10 * 1024 * 1024 + 10) / 3) * 4);
     expect(validatePdf('tarif.pdf', big).ok).toBe(false);
   });
 });

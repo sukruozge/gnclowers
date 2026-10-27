@@ -116,7 +116,7 @@ export function validatePdf(filename: unknown, base64: unknown): PdfResult {
     return { ok: false, error: 'Dosya okunamadı (geçersiz base64).' };
   }
   const size = base64Size(payload);
-  if (size > LIMITS.PDF_MAX_BYTES) return { ok: false, error: 'Dosya 6 MB sınırını aşıyor.' };
+  if (size > LIMITS.PDF_MAX_BYTES) return { ok: false, error: 'Dosya 10 MB sınırını aşıyor.' };
   let head: string;
   try {
     head = atob(payload.slice(0, 8));

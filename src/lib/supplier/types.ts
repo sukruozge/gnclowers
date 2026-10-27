@@ -69,5 +69,5 @@ export const LIMITS = {
   NOTES_MAX: 4000,
   URL_MAX: 500,
   FILENAME_MAX: 120,
-  PDF_MAX_BYTES: 6 * 1024 * 1024,
+  PDF_MAX_BYTES: 10 * 1024 * 1024,
 } as const;
