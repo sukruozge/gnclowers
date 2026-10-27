@@ -1,0 +1,630 @@
+---
+/**
+ * Tedarikçi üretim bilgi portalı — /tedarikci/
+ * Tek sayfa, hash yönlendirmeli: giriş → ürün listesi (#liste) → ürün formu (#urun/ID).
+ * Base layout bilerek kullanılmaz: Nav/Footer/Chat/analitik bir iş aracında gereksiz.
+ * Veri: /products.json (aktif katalog) + /api/supplier/* (kayıtlar, PDF).
+ */
+import '../../styles/tokens.css';
+import '../../styles/global.css';
+---
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Tedarikçi Portalı — Aselovers</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Inter:wght@400;500;600&display=swap" />
+</head>
+<body class="sup">
+  <header class="sup-top">
+    <a class="sup-brand" href="#liste">
+      <span class="sup-brand__name">Aselovers</span>
+      <span class="sup-brand__sub">Tedarikçi Portalı</span>
+    </a>
+    <div class="sup-top__right" id="top-right" hidden>
+      <span class="sup-user" id="top-user"></span>
+      <button class="sup-link" id="btn-logout" type="button">Çıkış</button>
+    </div>
+  </header>
+
+  <main class="sup-main">
+    <!-- GİRİŞ -->
+    <section class="sup-view" id="view-login" hidden>
+      <div class="sup-login">
+        <p class="eyebrow">Hoş geldiniz</p>
+        <h1 class="sup-login__title">Üretim bilgilerinizi<br />tek yerde toplayalım</h1>
+        <p class="sup-login__lead">Her ürün için kullandığınız iplikleri, renk kodlarını, tarifi ve dikkat edilecek
+          noktaları buraya kaydedin. Siparişlerde tekrar sormak zorunda kalmayız.</p>
+        <form id="login-form" class="sup-form" autocomplete="on">
+          <label class="sup-field">
+            <span>Kullanıcı adı</span>
+            <input name="username" type="text" autocomplete="username" required autocapitalize="off" spellcheck="false" />
+          </label>
+          <label class="sup-field">
+            <span>Şifre</span>
+            <input name="password" type="password" autocomplete="current-password" required />
+          </label>
+          <p class="sup-error" id="login-error" role="alert" hidden></p>
+          <button class="btn btn--primary sup-btn-wide" type="submit" id="login-submit">Giriş yap</button>
+        </form>
+        <p class="sup-login__help">Hesabınız yok mu veya şifrenizi unuttunuz mu? Aselovers ile WhatsApp'tan iletişime geçin.</p>
+      </div>
+    </section>
+
+    <!-- ÜRÜN LİSTESİ -->
+    <section class="sup-view" id="view-list" hidden>
+      <div class="sup-list-head">
+        <div>
+          <p class="eyebrow">Ürünler</p>
+          <h1 class="sup-h1">Hangi ürünü nasıl yapıyorsunuz?</h1>
+          <p class="sup-progress" id="list-progress"></p>
+        </div>
+        <div class="sup-toolbar">
+          <input id="list-search" class="sup-search" type="search" placeholder="Ürün ara…" autocomplete="off" />
+          <div class="sup-seg" role="tablist">
+            <button class="sup-seg__btn active" data-filter="all" type="button">Hepsi</button>
+            <button class="sup-seg__btn" data-filter="missing" type="button">Eksikler</button>
+            <button class="sup-seg__btn" data-filter="mine" type="button">Doldurduklarım</button>
+          </div>
+        </div>
+      </div>
+      <div class="sup-grid" id="list-grid"></div>
+      <p class="sup-empty" id="list-empty" hidden>Bu filtreyle eşleşen ürün yok.</p>
+    </section>
+
+    <!-- ÜRÜN FORMU -->
+    <section class="sup-view" id="view-form" hidden>
+      <a class="sup-back" href="#liste">← Ürün listesine dön</a>
+      <div class="sup-formwrap">
+        <aside class="sup-product" id="form-product"></aside>
+        <form class="sup-spec" id="spec-form" novalidate>
+          <fieldset class="sup-card">
+            <legend>İplikler ve renk kodları</legend>
+            <p class="sup-hint">Her iplik için marka, iplik adı ve renk kodunu yazın. Nerede kullandığınızı (gövde, kulak…) ve
+              miktarı eklemeniz üretimi çok kolaylaştırır.</p>
+            <div class="sup-yarns" id="yarn-rows"></div>
+            <button class="sup-link sup-add" type="button" id="btn-add-yarn">+ İplik satırı ekle</button>
+          </fieldset>
+
+          <fieldset class="sup-card">
+            <legend>Üretim detayları</legend>
+            <div class="sup-two">
+              <label class="sup-field"><span>Tığ numarası</span><input name="hookSize" placeholder="örn. 2.5 mm" maxlength="120" /></label>
+              <label class="sup-field"><span>Dolgu malzemesi</span><input name="fill" placeholder="örn. silikonlu elyaf" maxlength="120" /></label>
+              <label class="sup-field"><span>Göz / aksesuar</span><input name="eyes" placeholder="örn. 8 mm emniyetli göz" maxlength="120" /></label>
+              <label class="sup-field"><span>Bitmiş ölçü</span><input name="finishedSize" placeholder="örn. yaklaşık 20 cm" maxlength="120" /></label>
+              <label class="sup-field"><span>Üretim süresi</span><input name="productionHours" placeholder="örn. 6 saat" maxlength="120" /></label>
+              <label class="sup-field"><span>Tarif linki (varsa)</span><input name="patternUrl" type="url" placeholder="https://…" maxlength="500" /></label>
+            </div>
+          </fieldset>
+
+          <fieldset class="sup-card">
+            <legend>PDF tarif</legend>
+            <div class="sup-file" id="file-box">
+              <div class="sup-file__current" id="file-current" hidden>
+                <span>📄 <strong id="file-name"></strong></span>
+                <span class="sup-file__actions">
+                  <a class="sup-link" id="file-download" href="#" target="_blank" rel="noopener">İndir</a>
+                  <button class="sup-link sup-link--danger" type="button" id="file-delete">Sil</button>
+                </span>
+              </div>
+              <label class="sup-drop" id="file-drop">
+                <input type="file" id="file-input" accept="application/pdf,.pdf" hidden />
+                <span id="file-drop-text">PDF'i buraya sürükleyin veya <u>seçin</u> (en fazla 6 MB)</span>
+              </label>
+              <p class="sup-error" id="file-error" role="alert" hidden></p>
+            </div>
+          </fieldset>
+
+          <fieldset class="sup-card">
+            <legend>Dikkat edilmesi gerekenler</legend>
+            <label class="sup-field">
+              <span class="sr-only">Notlar</span>
+              <textarea name="notes" rows="6" maxlength="4000" placeholder="Zor noktalar, sık yapılan hatalar, montaj sırası, yıkama/bakım uyarıları…"></textarea>
+            </label>
+          </fieldset>
+
+          <div class="sup-save">
+            <label class="sup-check">
+              <input type="checkbox" name="isComplete" />
+              <span>Bu ürünün bilgileri tam, güvenle üretilebilir</span>
+            </label>
+            <p class="sup-error" id="save-error" role="alert" hidden></p>
+            <div class="sup-save__row">
+              <span class="sup-updated" id="spec-updated"></span>
+              <button class="btn btn--primary" type="submit" id="btn-save">Kaydet</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <section class="sup-view" id="view-loading">
+      <p class="sup-loading">Yükleniyor…</p>
+    </section>
+  </main>
+
+  <div class="sup-toast" id="toast" role="status" aria-live="polite"></div>
+
+  <template id="tpl-yarn">
+    <div class="sup-yarn">
+      <input data-k="brand" placeholder="Marka (Alize…)" maxlength="120" />
+      <input data-k="name" placeholder="İplik adı (Cotton Gold…)" maxlength="120" />
+      <input data-k="colorCode" placeholder="Renk kodu" maxlength="120" />
+      <input data-k="colorName" placeholder="Renk adı" maxlength="120" />
+      <input data-k="usage" placeholder="Kullanım yeri" maxlength="120" />
+      <input data-k="amount" placeholder="Miktar" maxlength="120" />
+      <button class="sup-yarn__del" type="button" title="Satırı sil" aria-label="Satırı sil">×</button>
+    </div>
+  </template>
+
+  <script>
+    type Yarn = { brand: string; name: string; colorCode: string; colorName: string; usage: string; amount: string };
+    type Spec = {
+      productId: string; yarns: Yarn[]; hookSize: string; fill: string; eyes: string; finishedSize: string;
+      productionHours: string; patternUrl: string; notes: string; isComplete: boolean; hasFile: boolean;
+      fileName?: string; updatedAt: string;
+    };
+    type Summary = { productId: string; isComplete: boolean; hasFile: boolean; yarnCount: number; updatedAt: string };
+    type Product = { id: string; title_tr: string; image?: string; images?: string[]; url?: string; category?: string; isActive: boolean };
+
+    const YARN_KEYS: (keyof Yarn)[] = ['brand', 'name', 'colorCode', 'colorName', 'usage', 'amount'];
+    const FIELDS = ['hookSize', 'fill', 'eyes', 'finishedSize', 'productionHours', 'patternUrl', 'notes'] as const;
+    const DRAFT_KEY = 'sup_draft';
+
+    const $ = <T extends HTMLElement = HTMLElement>(id: string): T => document.getElementById(id) as T;
+    const esc = (v: unknown): string => String(v ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c] as string));
+    const fmtDate = (iso: string): string => new Date(iso).toLocaleString('tr-TR', { dateStyle: 'medium', timeStyle: 'short' });
+
+    let products: Product[] = [];
+    let summaries = new Map<string, Summary>();
+    let currentId: string | null = null;
+    let currentSpec: Spec | null = null;
+    let dirty = false;
+    let filter: 'all' | 'missing' | 'mine' = 'all';
+
+    // ── Görünüm yönetimi ──
+    function show(view: 'login' | 'list' | 'form' | 'loading'): void {
+      for (const v of ['login', 'list', 'form', 'loading']) $(`view-${v}`).hidden = v !== view;
+      $('top-right').hidden = view === 'login' || view === 'loading';
+      window.scrollTo({ top: 0 });
+    }
+
+    function toast(msg: string, kind: '' | 'ok' | 'err' = ''): void {
+      const el = $('toast');
+      el.textContent = msg;
+      el.className = `sup-toast show ${kind}`;
+      window.setTimeout(() => el.classList.remove('show'), 3200);
+    }
+
+    function showError(id: string, msg: string): void {
+      const el = $(id);
+      el.textContent = msg;
+      el.hidden = !msg;
+    }
+
+    // ── API ──
+    class Unauthorized extends Error {}
+
+    async function api<T>(path: string, init: RequestInit = {}): Promise<T> {
+      const res = await fetch(`/api/supplier/${path}`, {
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json', ...(init.headers || {}) },
+        ...init,
+      });
+      if (res.status === 401) throw new Unauthorized();
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error((data && data.error) || `Sunucu hatası (${res.status})`);
+      return data as T;
+    }
+
+    function handleUnauthorized(): void {
+      saveDraft();
+      show('login');
+      showError('login-error', 'Oturumunuz sona erdi. Lütfen tekrar giriş yapın; yazdıklarınız saklandı.');
+    }
+
+    // ── Veri ──
+    async function loadData(): Promise<void> {
+      const [catalog, list] = await Promise.all([
+        fetch('/products.json', { cache: 'no-store' }).then((r) => r.json()),
+        api<Summary[]>('specs'),
+      ]);
+      const raw: Product[] = Array.isArray(catalog?.products) ? catalog.products : [];
+      products = raw.filter((p) => p.isActive).map((p) => ({ ...p, id: String(p.id) }));
+      products.sort((a, b) => a.title_tr.localeCompare(b.title_tr, 'tr'));
+      summaries = new Map(list.map((s) => [s.productId, s]));
+    }
+
+    function statusOf(id: string): { label: string; cls: string } {
+      const s = summaries.get(id);
+      if (!s) return { label: 'Boş', cls: 'empty' };
+      if (s.isComplete) return { label: s.hasFile ? 'Tam · PDF ✓' : 'Tam', cls: 'done' };
+      return { label: s.hasFile ? 'Taslak · PDF ✓' : 'Taslak', cls: 'draft' };
+    }
+
+    // ── Liste ──
+    function renderList(): void {
+      const q = ($('list-search') as HTMLInputElement).value.trim().toLocaleLowerCase('tr');
+      const rows = products.filter((p) => {
+        if (q && !p.title_tr.toLocaleLowerCase('tr').includes(q) && !p.id.includes(q)) return false;
+        const s = summaries.get(p.id);
+        if (filter === 'mine') return !!s;
+        if (filter === 'missing') return !s || !s.isComplete;
+        return true;
+      });
+      const done = products.filter((p) => summaries.get(p.id)?.isComplete).length;
+      $('list-progress').textContent = `${products.length} aktif ürün · ${summaries.size} kayıt · ${done} tam`;
+      $('list-grid').innerHTML = rows.map((p) => {
+        const st = statusOf(p.id);
+        const img = p.image || (p.images && p.images[0]) || '';
+        return `<a class="sup-item" href="#urun/${esc(p.id)}">
+          <span class="sup-item__img">${img ? `<img src="${esc(img)}" alt="" loading="lazy" />` : ''}</span>
+          <span class="sup-item__body">
+            <span class="sup-item__title">${esc(p.title_tr)}</span>
+            <span class="sup-badge sup-badge--${st.cls}">${esc(st.label)}</span>
+          </span>
+        </a>`;
+      }).join('');
+      $('list-empty').hidden = rows.length > 0;
+    }
+
+    // ── Form ──
+    function addYarnRow(y?: Partial<Yarn>): void {
+      const tpl = $('tpl-yarn') as HTMLTemplateElement;
+      const row = tpl.content.firstElementChild!.cloneNode(true) as HTMLElement;
+      for (const k of YARN_KEYS) (row.querySelector(`[data-k="${k}"]`) as HTMLInputElement).value = y?.[k] ?? '';
+      row.querySelector('.sup-yarn__del')!.addEventListener('click', () => { row.remove(); markDirty(); });
+      $('yarn-rows').appendChild(row);
+    }
+
+    function readForm(): Partial<Spec> {
+      const form = $('spec-form') as HTMLFormElement;
+      const fd = new FormData(form);
+      const yarns: Yarn[] = Array.from($('yarn-rows').querySelectorAll('.sup-yarn')).map((row) =>
+        Object.fromEntries(YARN_KEYS.map((k) => [k, (row.querySelector(`[data-k="${k}"]`) as HTMLInputElement).value])) as Yarn
+      ).filter((y) => YARN_KEYS.some((k) => y[k].trim() !== ''));
+      const out: Record<string, unknown> = { yarns, isComplete: fd.get('isComplete') === 'on' };
+      for (const f of FIELDS) out[f] = String(fd.get(f) ?? '');
+      return out as Partial<Spec>;
+    }
+
+    function fillForm(spec: Partial<Spec> | null): void {
+      const form = $('spec-form') as HTMLFormElement;
+      $('yarn-rows').innerHTML = '';
+      const yarns = spec?.yarns?.length ? spec.yarns : [{}];
+      yarns.forEach((y) => addYarnRow(y));
+      for (const f of FIELDS) (form.elements.namedItem(f) as HTMLInputElement).value = spec?.[f] ?? '';
+      (form.elements.namedItem('isComplete') as HTMLInputElement).checked = !!spec?.isComplete;
+      renderFileBox(spec);
+      $('spec-updated').textContent = spec?.updatedAt ? `Son kayıt: ${fmtDate(spec.updatedAt)}` : 'Henüz kaydedilmedi';
+      dirty = false;
+    }
+
+    function renderFileBox(spec: Partial<Spec> | null): void {
+      const has = !!spec?.hasFile;
+      $('file-current').hidden = !has;
+      $('file-drop').hidden = has;
+      if (has && currentId) {
+        $('file-name').textContent = spec?.fileName || 'tarif.pdf';
+        ($('file-download') as HTMLAnchorElement).href = `/api/supplier/file/${encodeURIComponent(currentId)}`;
+      }
+      showError('file-error', '');
+    }
+
+    function renderProductAside(p: Product): void {
+      const img = p.image || (p.images && p.images[0]) || '';
+      $('form-product').innerHTML = `
+        ${img ? `<img class="sup-product__img" src="${esc(img)}" alt="" />` : ''}
+        <p class="eyebrow">Ürün</p>
+        <h1 class="sup-product__title">${esc(p.title_tr)}</h1>
+        <p class="sup-product__meta">Ürün no: ${esc(p.id)}${p.category ? ` · ${esc(p.category)}` : ''}</p>
+        ${p.url ? `<a class="sup-link" href="${esc(p.url)}" target="_blank" rel="noopener noreferrer">Etsy'de gör ↗</a>` : ''}`;
+    }
+
+    async function openForm(id: string): Promise<void> {
+      const p = products.find((x) => x.id === id);
+      if (!p) { location.hash = '#liste'; return; }
+      currentId = id;
+      renderProductAside(p);
+      show('form');
+      try {
+        currentSpec = await api<Spec | null>(`spec/${encodeURIComponent(id)}`);
+        fillForm(currentSpec);
+        restoreDraft();
+      } catch (e) {
+        if (e instanceof Unauthorized) return handleUnauthorized();
+        toast((e as Error).message, 'err');
+      }
+    }
+
+    async function saveSpec(): Promise<void> {
+      if (!currentId) return;
+      const btn = $('btn-save') as HTMLButtonElement;
+      btn.disabled = true;
+      showError('save-error', '');
+      try {
+        const body = readForm();
+        const saved = await api<Spec>(`spec/${encodeURIComponent(currentId)}`, { method: 'PUT', body: JSON.stringify(body) });
+        currentSpec = saved;
+        summaries.set(saved.productId, { productId: saved.productId, isComplete: saved.isComplete, hasFile: saved.hasFile, yarnCount: saved.yarns.length, updatedAt: saved.updatedAt });
+        $('spec-updated').textContent = `Son kayıt: ${fmtDate(saved.updatedAt)}`;
+        dirty = false;
+        sessionStorage.removeItem(DRAFT_KEY);
+        toast('Kaydedildi ✓', 'ok');
+      } catch (e) {
+        if (e instanceof Unauthorized) return handleUnauthorized();
+        showError('save-error', (e as Error).message);
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    // ── PDF ──
+    async function uploadPdf(file: File): Promise<void> {
+      if (!currentId) return;
+      showError('file-error', '');
+      if (!/\.pdf$/i.test(file.name)) return showError('file-error', 'Yalnızca PDF dosyası yükleyebilirsiniz.');
+      if (file.size > 6 * 1024 * 1024) return showError('file-error', 'Dosya 6 MB sınırını aşıyor.');
+      $('file-drop-text').textContent = 'Yükleniyor…';
+      try {
+        const base64 = await new Promise<string>((resolve, reject) => {
+          const r = new FileReader();
+          r.onload = () => resolve(String(r.result));
+          r.onerror = () => reject(new Error('Dosya okunamadı.'));
+          r.readAsDataURL(file);
+        });
+        const res = await api<{ fileName: string }>(`file/${encodeURIComponent(currentId)}`, { method: 'POST', body: JSON.stringify({ filename: file.name, base64 }) });
+        currentSpec = { ...(currentSpec || ({} as Spec)), hasFile: true, fileName: res.fileName };
+        const s = summaries.get(currentId);
+        if (s) summaries.set(currentId, { ...s, hasFile: true });
+        else summaries.set(currentId, { productId: currentId, isComplete: false, hasFile: true, yarnCount: 0, updatedAt: new Date().toISOString() });
+        renderFileBox(currentSpec);
+        toast('PDF yüklendi ✓', 'ok');
+      } catch (e) {
+        if (e instanceof Unauthorized) return handleUnauthorized();
+        showError('file-error', (e as Error).message);
+      } finally {
+        $('file-drop-text').innerHTML = "PDF'i buraya sürükleyin veya <u>seçin</u> (en fazla 6 MB)";
+      }
+    }
+
+    async function deletePdf(): Promise<void> {
+      if (!currentId || !window.confirm('PDF tarif silinsin mi?')) return;
+      try {
+        await api(`file/${encodeURIComponent(currentId)}`, { method: 'DELETE' });
+        currentSpec = { ...(currentSpec || ({} as Spec)), hasFile: false, fileName: undefined };
+        const s = summaries.get(currentId);
+        if (s) summaries.set(currentId, { ...s, hasFile: false });
+        renderFileBox(currentSpec);
+        toast('PDF silindi', 'ok');
+      } catch (e) {
+        if (e instanceof Unauthorized) return handleUnauthorized();
+        toast((e as Error).message, 'err');
+      }
+    }
+
+    // ── Taslak (oturum düşerse form kaybolmasın) ──
+    function markDirty(): void { dirty = true; }
+    function saveDraft(): void {
+      if (!currentId || !dirty) return;
+      try { sessionStorage.setItem(DRAFT_KEY, JSON.stringify({ productId: currentId, data: readForm() })); } catch { /* yok say */ }
+    }
+    function restoreDraft(): void {
+      try {
+        const raw = sessionStorage.getItem(DRAFT_KEY);
+        if (!raw) return;
+        const draft = JSON.parse(raw) as { productId: string; data: Partial<Spec> };
+        if (draft.productId !== currentId) return;
+        fillForm({ ...(currentSpec || {}), ...draft.data, hasFile: currentSpec?.hasFile ?? false, fileName: currentSpec?.fileName });
+        dirty = true;
+        sessionStorage.removeItem(DRAFT_KEY);
+        toast('Kaydedilmemiş değişiklikleriniz geri yüklendi', '');
+      } catch { /* yok say */ }
+    }
+
+    // ── Yönlendirme ──
+    function route(): void {
+      const h = location.hash;
+      if (h.startsWith('#urun/')) return void openForm(decodeURIComponent(h.slice('#urun/'.length)));
+      currentId = null;
+      renderList();
+      show('list');
+    }
+
+    async function boot(): Promise<void> {
+      try {
+        const me = await api<{ name: string }>('me');
+        $('top-user').textContent = me.name;
+        await loadData();
+        route();
+      } catch (e) {
+        if (e instanceof Unauthorized) { show('login'); return; }
+        show('login');
+        showError('login-error', (e as Error).message);
+      }
+    }
+
+    // ── Olaylar ──
+    $('login-form').addEventListener('submit', async (ev) => {
+      ev.preventDefault();
+      const fd = new FormData(ev.target as HTMLFormElement);
+      const btn = $('login-submit') as HTMLButtonElement;
+      btn.disabled = true;
+      showError('login-error', '');
+      try {
+        const me = await api<{ name: string }>('login', { method: 'POST', body: JSON.stringify({ username: fd.get('username'), password: fd.get('password') }) });
+        $('top-user').textContent = me.name;
+        (ev.target as HTMLFormElement).reset();
+        await loadData();
+        route();
+      } catch (e) {
+        showError('login-error', e instanceof Unauthorized ? 'Kullanıcı adı veya şifre hatalı.' : (e as Error).message);
+      } finally {
+        btn.disabled = false;
+      }
+    });
+
+    $('btn-logout').addEventListener('click', async () => {
+      if (dirty && !window.confirm('Kaydedilmemiş değişiklikler var. Çıkmak istiyor musunuz?')) return;
+      await api('logout', { method: 'POST' }).catch(() => undefined);
+      dirty = false;
+      location.hash = '';
+      show('login');
+    });
+
+    $('list-search').addEventListener('input', renderList);
+    document.querySelectorAll<HTMLButtonElement>('.sup-seg__btn').forEach((b) =>
+      b.addEventListener('click', () => {
+        document.querySelectorAll('.sup-seg__btn').forEach((x) => x.classList.remove('active'));
+        b.classList.add('active');
+        filter = b.dataset.filter as typeof filter;
+        renderList();
+      })
+    );
+
+    $('btn-add-yarn').addEventListener('click', () => { addYarnRow(); markDirty(); });
+    $('spec-form').addEventListener('input', markDirty);
+    $('spec-form').addEventListener('submit', (ev) => { ev.preventDefault(); void saveSpec(); });
+    $('file-input').addEventListener('change', (ev) => {
+      const f = (ev.target as HTMLInputElement).files?.[0];
+      if (f) void uploadPdf(f);
+      (ev.target as HTMLInputElement).value = '';
+    });
+    const drop = $('file-drop');
+    drop.addEventListener('dragover', (ev) => { ev.preventDefault(); drop.classList.add('over'); });
+    drop.addEventListener('dragleave', () => drop.classList.remove('over'));
+    drop.addEventListener('drop', (ev) => {
+      ev.preventDefault();
+      drop.classList.remove('over');
+      const f = ev.dataTransfer?.files?.[0];
+      if (f) void uploadPdf(f);
+    });
+    $('file-delete').addEventListener('click', () => void deletePdf());
+
+    window.addEventListener('hashchange', () => {
+      if (dirty && currentId && !location.hash.startsWith('#urun/')) {
+        if (!window.confirm('Kaydedilmemiş değişiklikler var. Sayfadan ayrılmak istiyor musunuz?')) {
+          location.hash = `#urun/${currentId}`;
+          return;
+        }
+        dirty = false;
+      }
+      route();
+    });
+    window.addEventListener('beforeunload', (ev) => { if (dirty) { ev.preventDefault(); ev.returnValue = ''; } });
+
+    void boot();
+  </script>
+
+  <style is:global>
+    .sup { background: var(--bg); min-height: 100vh; }
+    .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+    .sup-top { display: flex; justify-content: space-between; align-items: center; padding: 14px 24px; border-bottom: 1px solid var(--line); background: var(--surface); position: sticky; top: 0; z-index: 10; }
+    .sup-brand { display: flex; align-items: baseline; gap: 10px; }
+    .sup-brand__name { font-family: var(--font-display); font-size: 1.35rem; color: var(--ink); }
+    .sup-brand__sub { font-size: .78rem; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); }
+    .sup-top__right { display: flex; align-items: center; gap: 16px; font-size: .9rem; }
+    .sup-user { color: var(--muted); }
+    .sup-link { background: none; border: 0; padding: 0; color: var(--accent); font: inherit; font-size: .9rem; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+    .sup-link--danger { color: #b3261e; }
+    .sup-main { max-width: 1120px; margin: 0 auto; padding: 32px 24px 96px; }
+    .sup-view[hidden] { display: none; }
+    .sup-h1 { font-size: clamp(1.7rem, 3vw, 2.3rem); margin-bottom: 6px; }
+    .sup-loading, .sup-empty { color: var(--muted); text-align: center; padding: 48px 0; }
+
+    /* giriş */
+    .sup-login { max-width: 440px; margin: 6vh auto 0; background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 36px 32px; }
+    .sup-login__title { font-size: 1.9rem; margin-bottom: 10px; }
+    .sup-login__lead { color: var(--muted); font-size: .95rem; margin-bottom: 24px; }
+    .sup-login__help { color: var(--muted); font-size: .82rem; margin: 18px 0 0; }
+    .sup-form { display: grid; gap: 14px; }
+    .sup-btn-wide { width: 100%; }
+
+    /* alanlar */
+    .sup-field { display: grid; gap: 6px; font-size: .85rem; color: var(--muted); }
+    .sup-field input, .sup-field textarea, .sup-yarn input, .sup-search {
+      font: inherit; font-size: .95rem; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; width: 100%;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    .sup-field input:focus, .sup-field textarea:focus, .sup-yarn input:focus, .sup-search:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent); }
+    .sup-field textarea { resize: vertical; line-height: 1.55; }
+    .sup-error { color: #b3261e; font-size: .85rem; margin: 0; }
+    .sup-error[hidden] { display: none; }
+    .sup-hint { color: var(--muted); font-size: .85rem; margin: 0 0 14px; }
+
+    /* liste */
+    .sup-list-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; flex-wrap: wrap; margin-bottom: 24px; }
+    .sup-progress { color: var(--muted); font-size: .9rem; margin: 0; }
+    .sup-toolbar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+    .sup-search { min-width: 240px; width: auto; }
+    .sup-seg { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 3px; background: var(--surface); }
+    .sup-seg__btn { border: 0; background: none; font: inherit; font-size: .85rem; padding: 7px 14px; border-radius: 999px; cursor: pointer; color: var(--muted); }
+    .sup-seg__btn.active { background: var(--ink); color: var(--bg); }
+    .sup-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 16px; }
+    .sup-item { display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; transition: transform .15s, box-shadow .15s; }
+    .sup-item:hover { transform: translateY(-2px); box-shadow: 0 10px 28px -16px rgba(28, 26, 24, .35); }
+    .sup-item__img { aspect-ratio: 1; background: var(--section); display: block; }
+    .sup-item__img img { width: 100%; height: 100%; object-fit: cover; }
+    .sup-item__body { display: grid; gap: 8px; padding: 12px 14px 14px; }
+    .sup-item__title { font-size: .92rem; font-weight: 500; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .sup-badge { justify-self: start; font-size: .72rem; letter-spacing: .04em; padding: 3px 9px; border-radius: 999px; border: 1px solid transparent; }
+    .sup-badge--empty { color: var(--muted); border-color: var(--line); }
+    .sup-badge--draft { color: #8a5a00; background: #fff4dc; }
+    .sup-badge--done { color: #1f6b3a; background: #e3f4e8; }
+
+    /* form */
+    .sup-back { display: inline-block; margin-bottom: 18px; color: var(--muted); font-size: .9rem; }
+    .sup-formwrap { display: grid; grid-template-columns: 300px 1fr; gap: 28px; align-items: start; }
+    .sup-product { position: sticky; top: 84px; }
+    .sup-product__img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 14px; margin-bottom: 16px; }
+    .sup-product__title { font-size: 1.35rem; margin-bottom: 6px; }
+    .sup-product__meta { color: var(--muted); font-size: .85rem; }
+    .sup-spec { display: grid; gap: 18px; }
+    .sup-card { border: 1px solid var(--line); border-radius: 16px; background: var(--surface); padding: 20px 22px 22px; margin: 0; min-width: 0; }
+    .sup-card legend { font-family: var(--font-display); font-size: 1.1rem; padding: 0 8px; }
+    .sup-two { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .sup-yarns { display: grid; gap: 8px; }
+    .sup-yarn { display: grid; grid-template-columns: 1.1fr 1.3fr .8fr 1fr 1fr .8fr 32px; gap: 6px; align-items: center; }
+    .sup-yarn input { padding: 8px 10px; font-size: .88rem; }
+    .sup-yarn__del { border: 0; background: none; color: var(--muted); font-size: 1.3rem; cursor: pointer; line-height: 1; }
+    .sup-yarn__del:hover { color: #b3261e; }
+    .sup-add { margin-top: 12px; }
+    .sup-file__current { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--section); }
+    .sup-file__actions { display: flex; gap: 14px; }
+    .sup-drop { display: block; border: 2px dashed var(--line); border-radius: 12px; padding: 26px; text-align: center; color: var(--muted); cursor: pointer; font-size: .92rem; transition: border-color .15s, background .15s; }
+    .sup-drop.over, .sup-drop:hover { border-color: var(--accent); background: var(--section); }
+    .sup-drop[hidden] { display: none; }
+    .sup-save { display: grid; gap: 12px; padding: 4px 2px 0; }
+    .sup-check { display: flex; align-items: center; gap: 10px; font-size: .95rem; }
+    .sup-check input { width: 18px; height: 18px; accent-color: var(--accent); }
+    .sup-save__row { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+    .sup-updated { color: var(--muted); font-size: .85rem; }
+
+    .sup-toast { position: fixed; left: 50%; bottom: 28px; transform: translate(-50%, 20px); opacity: 0; background: var(--ink); color: var(--bg); padding: 11px 18px; border-radius: 999px; font-size: .9rem; pointer-events: none; transition: opacity .2s, transform .2s; z-index: 20; }
+    .sup-toast.show { opacity: 1; transform: translate(-50%, 0); }
+    .sup-toast.ok { background: #1f6b3a; }
+    .sup-toast.err { background: #b3261e; }
+
+    @media (max-width: 860px) {
+      .sup-formwrap { grid-template-columns: 1fr; }
+      .sup-product { position: static; display: grid; grid-template-columns: 96px 1fr; gap: 14px; align-items: center; }
+      .sup-product__img { margin: 0; }
+      .sup-product .eyebrow { display: none; }
+      .sup-yarn { grid-template-columns: 1fr 1fr; }
+      .sup-yarn__del { grid-column: 2; justify-self: end; }
+      .sup-two { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+      .sup-main { padding: 20px 16px 80px; }
+      .sup-login { padding: 28px 20px; margin-top: 2vh; }
+      .sup-search { min-width: 0; width: 100%; }
+    }
+  </style>
+</body>
+</html>

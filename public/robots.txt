@@ -6,6 +6,7 @@ User-agent: *
 Allow: /
 Disallow: /admin/
 Disallow: /api/
+Disallow: /tedarikci/
 
 # ── Yapay zeka / LLM arama botları — AI aramalarında (ChatGPT, Claude, Gemini,
 # Perplexity) alıntılanmak için açıkça izin veriyoruz. ──
@@ -13,55 +14,66 @@ User-agent: GPTBot
 Allow: /
 Disallow: /admin/
 Disallow: /api/
+Disallow: /tedarikci/
 
 User-agent: OAI-SearchBot
 Allow: /
 Disallow: /admin/
 Disallow: /api/
+Disallow: /tedarikci/
 
 User-agent: ChatGPT-User
 Allow: /
 Disallow: /admin/
 Disallow: /api/
+Disallow: /tedarikci/
 
 User-agent: ClaudeBot
 Allow: /
 Disallow: /admin/
 Disallow: /api/
+Disallow: /tedarikci/
 
 User-agent: anthropic-ai
 Allow: /
 Disallow: /admin/
 Disallow: /api/
+Disallow: /tedarikci/
 
 User-agent: Claude-Web
 Allow: /
 Disallow: /admin/
 Disallow: /api/
+Disallow: /tedarikci/
 
 User-agent: Google-Extended
 Allow: /
 Disallow: /admin/
 Disallow: /api/
+Disallow: /tedarikci/
 
 User-agent: PerplexityBot
 Allow: /
 Disallow: /admin/
 Disallow: /api/
+Disallow: /tedarikci/
 
 User-agent: Perplexity-User
 Allow: /
 Disallow: /admin/
 Disallow: /api/
+Disallow: /tedarikci/
 
 User-agent: CCBot
 Allow: /
 Disallow: /admin/
 Disallow: /api/
+Disallow: /tedarikci/
 
 User-agent: Applebot-Extended
 Allow: /
 Disallow: /admin/
 Disallow: /api/
+Disallow: /tedarikci/
 
 Sitemap: https://aseloves.com/sitemap.xml
