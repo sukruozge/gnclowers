@@ -67,7 +67,13 @@ function parseCookie(header: string | null, name: string): string | null {
   for (const part of header.split(';')) {
     const idx = part.indexOf('=');
     if (idx === -1) continue;
-    if (part.slice(0, idx).trim() === name) return decodeURIComponent(part.slice(idx + 1).trim());
+    if (part.slice(0, idx).trim() === name) {
+      try {
+        return decodeURIComponent(part.slice(idx + 1).trim());
+      } catch {
+        return null; // bozuk yüzde-kodlama → oturumsuz say, 500 üretme
+      }
+    }
   }
   return null;
 }
@@ -77,6 +83,9 @@ function cookieHeader(token: string, maxAge: number): string {
 }
 
 async function readJson(request: Request, max: number): Promise<Record<string, unknown> | null> {
+  // Gövdeyi belleğe almadan önce beyan edilen uzunluğa bak (kimliksiz uçlar için önemli).
+  const declared = Number(request.headers.get('content-length') ?? 0);
+  if (Number.isFinite(declared) && declared > max) return null;
   try {
     const text = await request.text();
     if (text.length > max) return null;
@@ -88,18 +97,23 @@ async function readJson(request: Request, max: number): Promise<Record<string, u
 }
 
 function base64ToBytes(b64: string): Uint8Array {
-  const bin = atob(b64);
-  const out = new Uint8Array(bin.length);
-  for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
-  return out;
+  return Uint8Array.from(atob(b64), (c) => c.charCodeAt(0));
 }
 
-function bytesToBase64(bytes: Uint8Array): string {
-  let bin = '';
-  for (let i = 0; i < bytes.length; i += 0x8000) {
-    bin += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
-  }
-  return btoa(bin);
+/** Şifre hash'inin kısa parmak izi: JWT'ye konur, şifre sıfırlanınca eski oturumlar düşer. */
+async function passwordVersion(passwordHash: string): Promise<string> {
+  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(passwordHash));
+  return Array.from(new Uint8Array(digest).slice(0, 6), (b) => b.toString(16).padStart(2, '0')).join('');
+}
+
+/**
+ * Bilinmeyen kullanıcı adı için de gerçek maliyetli bir doğrulama koşturulur (zamanlama sızıntısı
+ * olmasın). Hash bir kez üretilir; gerçek hesaplarla aynı iterasyon sayısına sahiptir.
+ */
+let dummyHashPromise: Promise<string> | null = null;
+function dummyHash(): Promise<string> {
+  if (!dummyHashPromise) dummyHashPromise = hashPassword(crypto.randomUUID());
+  return dummyHashPromise;
 }
 
 function pdfResponse(file: StoredFile): Response {
@@ -142,7 +156,10 @@ async function supplierSession(request: Request, env: Env, store: SupplierStore)
   const payload = await verifyJwt(token, secret);
   if (!isSupplierPayload(payload)) return null;
   const account = await store.getAccount(payload.sid);
-  return account && account.isActive ? account : null;
+  if (!account || !account.isActive) return null;
+  // Şifre değiştiyse (pv uyuşmuyorsa) eski token geçersiz.
+  if (payload.pv !== (await passwordVersion(account.passwordHash))) return null;
+  return account;
 }
 
 async function isAdmin(request: Request, env: Env): Promise<boolean> {
@@ -165,12 +182,13 @@ async function handleLogin(request: Request, env: Env, kv: KvLike, store: Suppli
   const password = typeof body?.password === 'string' ? body.password : '';
   const account = username ? await store.findByUsername(username) : null;
   // Hesap yoksa da şifre doğrulaması çalıştırılır: zamanlama farkıyla kullanıcı adı sızmasın.
-  const ok = await verifyPassword(password, account?.passwordHash ?? 'pbkdf2$1$AAAA$AAAA');
+  const ok = await verifyPassword(password, account?.passwordHash ?? (await dummyHash()));
   if (!account || !ok) return json({ error: 'Kullanıcı adı veya şifre hatalı.' }, 401);
   if (!account.isActive) return json({ error: 'Hesabınız pasif durumda. Lütfen Aselovers ile iletişime geçin.' }, 403);
 
-  const token = await signJwt({ role: 'supplier', sid: account.id, name: account.name }, secret, SUPPLIER_TTL_SECONDS);
-  await store.updateAccount(account.id, { lastLoginAt: new Date().toISOString() });
+  const pv = await passwordVersion(account.passwordHash);
+  const token = await signJwt({ role: 'supplier', sid: account.id, name: account.name, pv }, secret, SUPPLIER_TTL_SECONDS);
+  await store.touchLogin(account.id);
   return json({ ok: true, name: account.name }, 200, { 'set-cookie': cookieHeader(token, SUPPLIER_TTL_SECONDS) });
 }
 
@@ -206,7 +224,7 @@ async function handleFilePost(productId: string, request: Request, account: Supp
   if (!body) return json({ error: 'Dosya çok büyük veya istek bozuk (sınır 6 MB).' }, 400);
   const pdf = validatePdf(body.filename, body.base64);
   if (!pdf.ok) return json({ error: pdf.error }, 400);
-  const file: StoredFile = { filename: pdf.filename, size: pdf.bytes.length, type: 'application/pdf', base64: bytesToBase64(pdf.bytes) };
+  const file: StoredFile = { filename: pdf.filename, size: pdf.size, type: 'application/pdf', base64: pdf.base64 };
   try {
     await store.putFile(productId, account.id, file);
   } catch (err) {
@@ -226,13 +244,14 @@ async function supplierRouter(method: string, action: string, request: Request, 
   if (method === 'GET' && action === 'me') return json({ ok: true, name: account.name, username: account.username }, 200);
   if (method === 'GET' && action === 'specs') return handleSpecsSummary(account, store);
 
+  // Astro `params.action`'ı zaten decode eder; ikinci bir decode yapılmaz.
   if (action.startsWith('spec/')) {
-    const productId = clip(decodeURIComponent(action.slice('spec/'.length)), 32);
+    const productId = clip(action.slice('spec/'.length), 32);
     if (method === 'GET') return json(await store.getSpec(productId, account.id), 200);
     if (method === 'PUT') return handleSpecPut(productId, request, account, store);
   }
   if (action.startsWith('file/')) {
-    const productId = clip(decodeURIComponent(action.slice('file/'.length)), 32);
+    const productId = clip(action.slice('file/'.length), 32);
     if (method === 'POST') return handleFilePost(productId, request, account, store);
     if (method === 'GET') {
       const file = await store.getFile(productId, account.id);
@@ -314,7 +333,7 @@ async function handleExportCsv(store: SupplierStore): Promise<Response> {
 }
 
 function splitPair(rest: string): { productId: string; supplierId: string } | null {
-  const parts = rest.split('/').map((p) => clip(decodeURIComponent(p), 32));
+  const parts = rest.split('/').map((p) => clip(p, 32));
   if (parts.length !== 2 || !parts[0] || !parts[1]) return null;
   return { productId: parts[0], supplierId: parts[1] };
 }
@@ -323,11 +342,15 @@ async function adminRouter(method: string, action: string, request: Request, env
   if (!(await isAdmin(request, env))) return json({ error: 'invalid' }, 401);
 
   if (action === 'accounts') {
-    if (method === 'GET') return json((await store.listAccounts()).map(publicAccount), 200);
+    if (method === 'GET') {
+      const list = await store.listAccounts();
+      const last = await store.getLastLogins(list.map((a) => a.id));
+      return json(list.map((a) => ({ ...publicAccount(a), lastLoginAt: last[a.id] })), 200);
+    }
     if (method === 'POST') return handleAccountCreate(request, store);
   }
   if (action.startsWith('accounts/')) {
-    const id = clip(decodeURIComponent(action.slice('accounts/'.length)), 32);
+    const id = clip(action.slice('accounts/'.length), 32);
     if (method === 'PUT') return handleAccountUpdate(id, request, store);
     if (method === 'DELETE') {
       const removed = await store.deleteAccount(id);

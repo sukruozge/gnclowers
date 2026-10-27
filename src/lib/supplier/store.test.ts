@@ -40,6 +40,18 @@ describe('supplier store — accounts', () => {
     await expect(store.createAccount({ name: 'Başka', username: 'ayse', passwordHash: 'h' })).rejects.toThrow('username-taken');
   });
 
+  it('records last login in a separate key without rewriting the account list', async () => {
+    const a = await store.createAccount({ name: 'Ayşe', username: 'ayse', passwordHash: 'h' });
+    const before = kv.raw.get('sup:accounts');
+    await store.touchLogin(a.id);
+    expect(kv.raw.get('sup:accounts')).toBe(before);
+    const last = await store.getLastLogins([a.id, 'sup_yok']);
+    expect(Date.parse(last[a.id])).not.toBeNaN();
+    expect(last['sup_yok']).toBeUndefined();
+    await store.deleteAccount(a.id);
+    expect(kv.raw.has(`sup:last:${a.id}`)).toBe(false);
+  });
+
   it('updates and deletes', async () => {
     const a = await store.createAccount({ name: 'Ayşe', username: 'ayse', passwordHash: 'h' });
     const u = await store.updateAccount(a.id, { isActive: false, name: 'Ayşe H.' });

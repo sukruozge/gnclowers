@@ -474,6 +474,7 @@ import '../../styles/global.css';
       if (dirty && !window.confirm('Kaydedilmemiş değişiklikler var. Çıkmak istiyor musunuz?')) return;
       await api('logout', { method: 'POST' }).catch(() => undefined);
       dirty = false;
+      try { sessionStorage.removeItem(DRAFT_KEY); } catch { /* yok say */ }
       location.hash = '';
       show('login');
     });

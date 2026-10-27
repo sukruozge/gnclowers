@@ -111,7 +111,7 @@
     document.getElementById('sup-detail-title').textContent = 'Giriş bilgileri — ' + name;
     body.innerHTML =
       '<p style="margin:0 0 10px">Bu şifre yalnızca şimdi gösterilir. Tedarikçiye WhatsApp\'tan iletin:</p>' +
-      '<pre class="sup-cred" id="sup-cred-text">Aselovers Tedarikçi Portalı\nAdres: https://aseloves.com/tedarikci/\nKullanıcı adı: ' + esc(username) + '\nŞifre: ' + esc(password) + '</pre>' +
+      '<pre class="sup-cred" id="sup-cred-text">Aselovers Tedarikçi Portalı\nAdres: ' + esc(location.origin) + '/tedarikci/\nKullanıcı adı: ' + esc(username) + '\nŞifre: ' + esc(password) + '</pre>' +
       '<button class="btn btn-sm btn-outline" onclick="supCopyCred()">📋 Kopyala</button>';
     document.getElementById('sup-detail-modal').classList.add('open');
   }

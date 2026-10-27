@@ -87,15 +87,29 @@ describe('normalizeSpec', () => {
   });
 });
 
+describe('normalizeSpec notes', () => {
+  it('keeps line breaks in notes but strips other control characters', () => {
+    const spec = normalizeSpec({ notes: 'satır 1\r\nsatır 2\u0007\nsatır 3', hookSize: 'a\nb' }, IDS);
+    expect(spec.notes).toBe('satır 1\nsatır 2\nsatır 3');
+    expect(spec.hookSize).toBe('ab');
+  });
+});
+
 describe('validatePdf', () => {
   const pdfBytes = new Uint8Array([0x25, 0x50, 0x44, 0x46, 0x2d, 0x31, 0x2e, 0x34]); // "%PDF-1.4"
-  it('accepts a real PDF and strips a data: prefix', () => {
+  it('accepts a real PDF, strips a data: prefix and reports the byte size', () => {
     const r = validatePdf('Tarif Kurbağa.pdf', 'data:application/pdf;base64,' + b64(pdfBytes));
     expect(r.ok).toBe(true);
     if (r.ok) {
       expect(r.filename).toBe('Tarif Kurbağa.pdf');
-      expect(Array.from(r.bytes)).toEqual(Array.from(pdfBytes));
+      expect(r.base64).toBe(b64(pdfBytes));
+      expect(r.size).toBe(pdfBytes.length);
     }
+  });
+  it('computes size correctly with base64 padding', () => {
+    const seven = new Uint8Array([0x25, 0x50, 0x44, 0x46, 0x2d, 0x31, 0x2e]);
+    const r = validatePdf('t.pdf', b64(seven));
+    expect(r.ok && r.size).toBe(7);
   });
   it('rejects a non-pdf extension, bad signature, bad base64 and oversize', () => {
     expect(validatePdf('tarif.docx', b64(pdfBytes)).ok).toBe(false);

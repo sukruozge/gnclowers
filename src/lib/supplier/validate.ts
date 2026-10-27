@@ -4,8 +4,18 @@
  */
 import { LIMITS, type ProductSpec, type YarnLine } from './types';
 
+/** Tek satırlık alan: tüm kontrol karakterleri (satır sonu dahil) silinir, trim + kes. */
 export function clip(v: unknown, max: number): string {
   return String(v ?? '').replace(/\p{Cc}/gu, '').trim().slice(0, max);
+}
+
+/** Çok satırlı alan (notlar): satır sonları korunur, diğer kontrol karakterleri silinir. */
+export function clipMultiline(v: unknown, max: number): string {
+  return String(v ?? '')
+    .replace(/\r\n?/g, '\n')
+    .replace(/(?!\n)\p{Cc}/gu, '')
+    .trim()
+    .slice(0, max);
 }
 
 export function normalizeUsername(v: unknown): string | null {
@@ -68,7 +78,7 @@ export function normalizeSpec(
     finishedSize: clip(b.finishedSize, LIMITS.FIELD_MAX),
     productionHours: clip(b.productionHours, LIMITS.FIELD_MAX),
     patternUrl: normalizeUrl(b.patternUrl),
-    notes: clip(b.notes, LIMITS.NOTES_MAX),
+    notes: clipMultiline(b.notes, LIMITS.NOTES_MAX),
     isComplete: b.isComplete === true,
     // Dosya bayrakları yalnız dosya uçlarından değişir; istemcinin gönderdiği değer yok sayılır.
     hasFile: prev?.hasFile ?? false,
@@ -79,36 +89,40 @@ export function normalizeSpec(
 }
 
 export type PdfResult =
-  | { ok: true; filename: string; bytes: Uint8Array }
+  | { ok: true; filename: string; base64: string; size: number }
   | { ok: false; error: string };
 
-function decodeBase64(input: string): Uint8Array | null {
-  try {
-    const bin = atob(input);
-    const bytes = new Uint8Array(bin.length);
-    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
-    return bytes;
-  } catch {
-    return null;
-  }
-}
-
+const BASE64_RE = /^[A-Za-z0-9+/]*={0,2}$/;
 const PDF_MAGIC = '%PDF-';
 
+/** Base64 uzunluğundan byte sayısı (padding düşülür). */
+function base64Size(b64: string): number {
+  const padding = b64.endsWith('==') ? 2 : b64.endsWith('=') ? 1 : 0;
+  return (b64.length * 3) / 4 - padding;
+}
+
+/**
+ * PDF doğrulaması: uzantı, base64 biçimi, boyut ve `%PDF-` imzası.
+ * Dosyanın tamamı decode edilmez (Workers CPU bütçesi); yalnız ilk 8 base64 karakteri (6 byte)
+ * açılır. Geçerli payload olduğu gibi saklanır, böylece yeniden encode gerekmez.
+ */
 export function validatePdf(filename: unknown, base64: unknown): PdfResult {
   const name = clip(filename, LIMITS.FILENAME_MAX);
   if (!/\.pdf$/i.test(name)) return { ok: false, error: 'Yalnızca .pdf dosyası yüklenebilir.' };
   if (typeof base64 !== 'string' || base64 === '') return { ok: false, error: 'Dosya içeriği boş.' };
   const comma = base64.indexOf(',');
-  const payload = comma !== -1 ? base64.slice(comma + 1) : base64;
-  // 4 base64 karakteri = 3 byte; decode etmeden önce kaba boyut kontrolü (bellek koruması).
-  if ((payload.length * 3) / 4 > LIMITS.PDF_MAX_BYTES + 3) {
-    return { ok: false, error: 'Dosya 6 MB sınırını aşıyor.' };
+  const payload = (comma !== -1 ? base64.slice(comma + 1) : base64).replace(/\s+/g, '');
+  if (payload.length < 8 || payload.length % 4 !== 0 || !BASE64_RE.test(payload)) {
+    return { ok: false, error: 'Dosya okunamadı (geçersiz base64).' };
   }
-  const bytes = decodeBase64(payload);
-  if (!bytes) return { ok: false, error: 'Dosya okunamadı (geçersiz base64).' };
-  if (bytes.length > LIMITS.PDF_MAX_BYTES) return { ok: false, error: 'Dosya 6 MB sınırını aşıyor.' };
-  const head = String.fromCharCode(...bytes.slice(0, PDF_MAGIC.length));
-  if (head !== PDF_MAGIC) return { ok: false, error: 'Dosya geçerli bir PDF değil.' };
-  return { ok: true, filename: name, bytes };
+  const size = base64Size(payload);
+  if (size > LIMITS.PDF_MAX_BYTES) return { ok: false, error: 'Dosya 6 MB sınırını aşıyor.' };
+  let head: string;
+  try {
+    head = atob(payload.slice(0, 8));
+  } catch {
+    return { ok: false, error: 'Dosya okunamadı (geçersiz base64).' };
+  }
+  if (!head.startsWith(PDF_MAGIC)) return { ok: false, error: 'Dosya geçerli bir PDF değil.' };
+  return { ok: true, filename: name, base64: payload, size };
 }

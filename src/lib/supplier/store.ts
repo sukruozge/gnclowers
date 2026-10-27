@@ -1,6 +1,9 @@
 /**
  * Tedarikçi portalı KV deposu. Anahtarlar:
- *   sup:accounts                      → SupplierAccount[]
+ *   sup:accounts                      → SupplierAccount[]   (lastLoginAt hariç)
+ *   sup:last:{supplierId}             → ISO tarih (son giriş; ayrı anahtar — hesap listesini
+ *                                        girişte yeniden yazmak eski-okuma yarışıyla admin
+ *                                        değişikliklerini silebilirdi)
  *   sup:spec:{productId}:{supplierId} → ProductSpec
  *   sup:file:{productId}:{supplierId} → StoredFile
  * Bağımsız test için KvLike alır (Cloudflare KVNamespace bu arayüzü karşılar).
@@ -8,6 +11,7 @@
 import type { KvLike, ProductSpec, StoredFile, SupplierAccount } from './types';
 
 const ACCOUNTS_KEY = 'sup:accounts';
+const LAST_PREFIX = 'sup:last:';
 const SPEC_PREFIX = 'sup:spec:';
 const FILE_PREFIX = 'sup:file:';
 
@@ -42,7 +46,7 @@ export interface CreateAccountInput {
   passwordHash: string;
 }
 
-export type AccountPatch = Partial<Pick<SupplierAccount, 'name' | 'isActive' | 'passwordHash' | 'lastLoginAt'>>;
+export type AccountPatch = Partial<Pick<SupplierAccount, 'name' | 'isActive' | 'passwordHash'>>;
 
 export interface SupplierStore {
   listAccounts(): Promise<SupplierAccount[]>;
@@ -51,6 +55,9 @@ export interface SupplierStore {
   deleteAccount(id: string): Promise<boolean>;
   findByUsername(username: string): Promise<SupplierAccount | null>;
   getAccount(id: string): Promise<SupplierAccount | null>;
+  /** Son girişi ayrı anahtara yazar; hesap listesine dokunmaz. */
+  touchLogin(id: string): Promise<void>;
+  getLastLogins(ids: string[]): Promise<Record<string, string>>;
   getSpec(productId: string, supplierId: string): Promise<ProductSpec | null>;
   putSpec(spec: ProductSpec): Promise<void>;
   deleteSpec(productId: string, supplierId: string): Promise<void>;
@@ -113,6 +120,7 @@ export function createStore(kv: KvLike): SupplierStore {
       const next = list.filter((a) => a.id !== id);
       if (next.length === list.length) return false;
       await writeAccounts(next);
+      await kv.delete(`${LAST_PREFIX}${id}`);
       return true;
     },
 
@@ -122,6 +130,17 @@ export function createStore(kv: KvLike): SupplierStore {
 
     async getAccount(id) {
       return (await readAccounts()).find((a) => a.id === id) ?? null;
+    },
+
+    async touchLogin(id) {
+      await kv.put(`${LAST_PREFIX}${id}`, new Date().toISOString());
+    },
+
+    async getLastLogins(ids) {
+      const values = await Promise.all(ids.map((id) => kv.get(`${LAST_PREFIX}${id}`)));
+      const out: Record<string, string> = {};
+      ids.forEach((id, i) => { if (values[i]) out[id] = values[i] as string; });
+      return out;
     },
 
     async getSpec(productId, supplierId) {
