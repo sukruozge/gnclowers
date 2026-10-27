@@ -245,9 +245,10 @@
 
   function yarnTable(yarns) {
     if (!yarns.length) return '<p class="sup-muted">İplik girilmemiş.</p>';
-    return '<table class="sup-table--inner"><thead><tr><th>Marka</th><th>İplik</th><th>Renk kodu</th><th>Renk</th><th>Kullanım</th><th>Miktar</th></tr></thead><tbody>' +
+    const hasVariant = yarns.some(function (y) { return y.variant; });
+    return '<table class="sup-table--inner"><thead><tr>' + (hasVariant ? '<th>Varyasyon</th>' : '') + '<th>Marka</th><th>İplik</th><th>Renk kodu</th><th>Renk</th><th>Kullanım</th><th>Miktar</th></tr></thead><tbody>' +
       yarns.map(function (y) {
-        return '<tr><td>' + esc(y.brand) + '</td><td>' + esc(y.name) + '</td><td><strong>' + esc(y.colorCode) + '</strong></td><td>' + esc(y.colorName) + '</td><td>' + esc(y.usage) + '</td><td>' + esc(y.amount) + '</td></tr>';
+        return '<tr>' + (hasVariant ? '<td>' + (y.variant ? esc(y.variant) : '<span class="sup-muted">Tümü</span>') + '</td>' : '') + '<td>' + esc(y.brand) + '</td><td>' + esc(y.name) + '</td><td><strong>' + esc(y.colorCode) + '</strong></td><td>' + esc(y.colorName) + '</td><td>' + esc(y.usage) + '</td><td>' + esc(y.amount) + '</td></tr>';
       }).join('') + '</tbody></table>';
   }
 

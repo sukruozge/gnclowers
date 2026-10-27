@@ -14,6 +14,8 @@ export interface SupplierAccount {
 }
 
 export interface YarnLine {
+  /** Varyasyonlu üründe bu ipliğin ait olduğu seçenek (örn. "Green"); '' = tüm varyasyonlar. */
+  variant: string;
   brand: string;
   name: string;
   colorCode: string;

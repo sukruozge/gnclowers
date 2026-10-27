@@ -66,7 +66,12 @@ describe('normalizeSpec', () => {
   });
   it('drops yarn rows that are entirely empty and ignores non-object rows', () => {
     const spec = normalizeSpec({ yarns: [{ brand: ' ', name: '' }, 'junk', { brand: 'Himalaya' }] }, IDS);
-    expect(spec.yarns).toEqual([{ brand: 'Himalaya', name: '', colorCode: '', colorName: '', usage: '', amount: '' }]);
+    expect(spec.yarns).toEqual([{ variant: '', brand: 'Himalaya', name: '', colorCode: '', colorName: '', usage: '', amount: '' }]);
+  });
+  it('keeps the variant on a yarn row but a variant alone is not a row', () => {
+    const spec = normalizeSpec({ yarns: [{ variant: 'Green' }, { variant: 'Red', brand: 'Alize', colorCode: '55' }] }, IDS);
+    expect(spec.yarns).toHaveLength(1);
+    expect(spec.yarns[0].variant).toBe('Red');
   });
   it('only keeps http(s) pattern urls', () => {
     expect(normalizeSpec({ patternUrl: 'javascript:alert(1)' }, IDS).patternUrl).toBe('');

@@ -28,7 +28,8 @@ const HEADER = [
 function yarnToText(y: YarnLine): string {
   const head = [y.brand, y.name, y.colorCode, y.colorName].filter(Boolean).join(' ');
   const tail = [y.usage, y.amount].filter(Boolean).join(', ');
-  return tail ? `${head} (${tail})` : head;
+  const body = tail ? `${head} (${tail})` : head;
+  return y.variant ? `[${y.variant}] ${body}` : body;
 }
 
 function rowToLine({ spec, supplierName, productTitle }: CsvRow): string {

@@ -40,7 +40,9 @@ export function validateNewAccount(body: unknown): NewAccountResult {
   return { ok: true, name, username, password };
 }
 
-const YARN_FIELDS: (keyof YarnLine)[] = ['brand', 'name', 'colorCode', 'colorName', 'usage', 'amount'];
+const YARN_FIELDS: (keyof YarnLine)[] = ['variant', 'brand', 'name', 'colorCode', 'colorName', 'usage', 'amount'];
+/** Satırın "dolu" sayılması için varyasyon seçimi yetmez; iplik bilgisi olmalı. */
+const YARN_CONTENT_FIELDS: (keyof YarnLine)[] = ['brand', 'name', 'colorCode', 'colorName', 'usage', 'amount'];
 
 function normalizeYarns(raw: unknown): YarnLine[] {
   if (!Array.isArray(raw)) return [];
@@ -49,7 +51,7 @@ function normalizeYarns(raw: unknown): YarnLine[] {
     if (typeof row !== 'object' || row === null) continue;
     const r = row as Record<string, unknown>;
     const line = Object.fromEntries(YARN_FIELDS.map((f) => [f, clip(r[f], LIMITS.FIELD_MAX)])) as unknown as YarnLine;
-    if (YARN_FIELDS.every((f) => line[f] === '')) continue;
+    if (YARN_CONTENT_FIELDS.every((f) => line[f] === '')) continue;
     out.push(line);
     if (out.length >= LIMITS.YARNS_MAX) break;
   }
