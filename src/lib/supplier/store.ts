@@ -1,0 +1,169 @@
+/**
+ * Tedarikçi portalı KV deposu. Anahtarlar:
+ *   sup:accounts                      → SupplierAccount[]
+ *   sup:spec:{productId}:{supplierId} → ProductSpec
+ *   sup:file:{productId}:{supplierId} → StoredFile
+ * Bağımsız test için KvLike alır (Cloudflare KVNamespace bu arayüzü karşılar).
+ */
+import type { KvLike, ProductSpec, StoredFile, SupplierAccount } from './types';
+
+const ACCOUNTS_KEY = 'sup:accounts';
+const SPEC_PREFIX = 'sup:spec:';
+const FILE_PREFIX = 'sup:file:';
+
+const specKey = (productId: string, supplierId: string): string => `${SPEC_PREFIX}${productId}:${supplierId}`;
+const fileKey = (productId: string, supplierId: string): string => `${FILE_PREFIX}${productId}:${supplierId}`;
+
+function newId(): string {
+  const bytes = globalThis.crypto.getRandomValues(new Uint8Array(4));
+  return 'sup_' + Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('');
+}
+
+function parseJson<T>(raw: string | null): T | null {
+  if (!raw) return null;
+  try {
+    return JSON.parse(raw) as T;
+  } catch {
+    return null;
+  }
+}
+
+function emptySpec(productId: string, supplierId: string, now: string): ProductSpec {
+  return {
+    productId, supplierId, yarns: [], hookSize: '', fill: '', eyes: '', finishedSize: '',
+    productionHours: '', patternUrl: '', notes: '', isComplete: false, hasFile: false,
+    createdAt: now, updatedAt: now,
+  };
+}
+
+export interface CreateAccountInput {
+  name: string;
+  username: string;
+  passwordHash: string;
+}
+
+export type AccountPatch = Partial<Pick<SupplierAccount, 'name' | 'isActive' | 'passwordHash' | 'lastLoginAt'>>;
+
+export interface SupplierStore {
+  listAccounts(): Promise<SupplierAccount[]>;
+  createAccount(input: CreateAccountInput): Promise<SupplierAccount>;
+  updateAccount(id: string, patch: AccountPatch): Promise<SupplierAccount | null>;
+  deleteAccount(id: string): Promise<boolean>;
+  findByUsername(username: string): Promise<SupplierAccount | null>;
+  getAccount(id: string): Promise<SupplierAccount | null>;
+  getSpec(productId: string, supplierId: string): Promise<ProductSpec | null>;
+  putSpec(spec: ProductSpec): Promise<void>;
+  deleteSpec(productId: string, supplierId: string): Promise<void>;
+  listSpecs(filter?: { supplierId?: string }): Promise<ProductSpec[]>;
+  getFile(productId: string, supplierId: string): Promise<StoredFile | null>;
+  putFile(productId: string, supplierId: string, file: StoredFile): Promise<void>;
+  deleteFile(productId: string, supplierId: string): Promise<void>;
+}
+
+export function createStore(kv: KvLike): SupplierStore {
+  async function readAccounts(): Promise<SupplierAccount[]> {
+    const list = parseJson<SupplierAccount[]>(await kv.get(ACCOUNTS_KEY));
+    return Array.isArray(list) ? list : [];
+  }
+
+  async function writeAccounts(list: SupplierAccount[]): Promise<void> {
+    await kv.put(ACCOUNTS_KEY, JSON.stringify(list));
+  }
+
+  async function listSpecKeys(): Promise<string[]> {
+    const keys: string[] = [];
+    let cursor: string | undefined;
+    do {
+      const page = await kv.list({ prefix: SPEC_PREFIX, cursor });
+      keys.push(...page.keys.map((k) => k.name));
+      cursor = page.list_complete ? undefined : page.cursor;
+    } while (cursor);
+    return keys;
+  }
+
+  return {
+    listAccounts: readAccounts,
+
+    async createAccount(input) {
+      const list = await readAccounts();
+      if (list.some((a) => a.username === input.username)) throw new Error('username-taken');
+      const account: SupplierAccount = {
+        id: newId(),
+        name: input.name,
+        username: input.username,
+        passwordHash: input.passwordHash,
+        isActive: true,
+        createdAt: new Date().toISOString(),
+      };
+      await writeAccounts([...list, account]);
+      return account;
+    },
+
+    async updateAccount(id, patch) {
+      const list = await readAccounts();
+      const idx = list.findIndex((a) => a.id === id);
+      if (idx === -1) return null;
+      const updated: SupplierAccount = { ...list[idx], ...patch };
+      await writeAccounts(list.map((a, i) => (i === idx ? updated : a)));
+      return updated;
+    },
+
+    async deleteAccount(id) {
+      const list = await readAccounts();
+      const next = list.filter((a) => a.id !== id);
+      if (next.length === list.length) return false;
+      await writeAccounts(next);
+      return true;
+    },
+
+    async findByUsername(username) {
+      return (await readAccounts()).find((a) => a.username === username) ?? null;
+    },
+
+    async getAccount(id) {
+      return (await readAccounts()).find((a) => a.id === id) ?? null;
+    },
+
+    async getSpec(productId, supplierId) {
+      return parseJson<ProductSpec>(await kv.get(specKey(productId, supplierId)));
+    },
+
+    async putSpec(spec) {
+      await kv.put(specKey(spec.productId, spec.supplierId), JSON.stringify(spec));
+    },
+
+    async deleteSpec(productId, supplierId) {
+      await kv.delete(fileKey(productId, supplierId));
+      await kv.delete(specKey(productId, supplierId));
+    },
+
+    async listSpecs(filter) {
+      const keys = await listSpecKeys();
+      const wanted = filter?.supplierId ? keys.filter((k) => k.endsWith(`:${filter.supplierId}`)) : keys;
+      const specs = await Promise.all(wanted.map(async (k) => parseJson<ProductSpec>(await kv.get(k))));
+      return specs.filter((s): s is ProductSpec => s !== null && typeof s.productId === 'string');
+    },
+
+    async getFile(productId, supplierId) {
+      return parseJson<StoredFile>(await kv.get(fileKey(productId, supplierId)));
+    },
+
+    async putFile(productId, supplierId, file) {
+      await kv.put(fileKey(productId, supplierId), JSON.stringify(file));
+      const now = new Date().toISOString();
+      const prev = parseJson<ProductSpec>(await kv.get(specKey(productId, supplierId)));
+      const base = prev ?? emptySpec(productId, supplierId, now);
+      const next: ProductSpec = { ...base, hasFile: true, fileName: file.filename, updatedAt: now };
+      await kv.put(specKey(productId, supplierId), JSON.stringify(next));
+    },
+
+    async deleteFile(productId, supplierId) {
+      await kv.delete(fileKey(productId, supplierId));
+      const prev = parseJson<ProductSpec>(await kv.get(specKey(productId, supplierId)));
+      if (!prev) return;
+      const { fileName: _dropped, ...rest } = prev;
+      const next: ProductSpec = { ...rest, hasFile: false, updatedAt: new Date().toISOString() };
+      await kv.put(specKey(productId, supplierId), JSON.stringify(next));
+    },
+  };
+}

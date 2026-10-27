@@ -17,6 +17,7 @@
  */
 import type { APIContext, APIRoute } from 'astro';
 import { verifyPassword, signJwt, verifyJwt } from '@lib/admin/auth';
+import { isAdminPayload } from '@lib/admin/session';
 import { ghGetFile, ghPutFile, ghDispatchWorkflow, ghGetFileSha, ghPutBinaryFile, type Gh } from '@lib/admin/github';
 import { sanitizeHtml } from '@lib/sanitize';
 
@@ -135,7 +136,8 @@ async function isAuthed(request: Request, env: Record<string, any>): Promise<boo
   const token = parseCookie(request.headers.get('cookie'), COOKIE_NAME);
   if (!token) return false;
   const payload = await verifyJwt(token, secret);
-  return payload !== null;
+  // Tedarikçi token'ları aynı gizli anahtarla imzalanır; yalnız sub=admin kabul edilir.
+  return isAdminPayload(payload);
 }
 
 /** KV-backed login rate limit. Skipped silently if no ADMIN_KV binding. */
