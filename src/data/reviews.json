@@ -1,9 +1,21 @@
 {
   "shop": {
     "rating": 5,
-    "count": 61
+    "count": 63
   },
   "reviews": [
+    {
+      "rating": 5,
+      "text": "10 sur 10",
+      "language": "en",
+      "date": "2026-10-28"
+    },
+    {
+      "rating": 5,
+      "text": "Hat super geklappt, würde ich wieder machen. Danke für alles und für die liebevolle Arbeit! :)",
+      "language": "en",
+      "date": "2026-10-28"
+    },
     {
       "rating": 5,
       "text": "The teddy bear was a baby shower gift and hopefully the new Mom will love it as well.",
