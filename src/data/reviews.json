@@ -1,9 +1,15 @@
 {
   "shop": {
     "rating": 5,
-    "count": 63
+    "count": 64
   },
   "reviews": [
+    {
+      "rating": 5,
+      "text": "I ordered the blue giraffes, and they are absolutely adorable! They’re very well made and the quality is great. Melissa was wonderful throughout the whole process and always kept in touch. She even sent me a picture before shipping them to make sure I loved them. Such a great experience from start to finish! 💙 Highly recommend!",
+      "language": "en",
+      "date": "2026-11-01"
+    },
     {
       "rating": 5,
       "text": "10 sur 10",
