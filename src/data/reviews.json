@@ -1,9 +1,15 @@
 {
   "shop": {
     "rating": 5,
-    "count": 64
+    "count": 65
   },
   "reviews": [
+    {
+      "rating": 5,
+      "text": "This doll is beautiful! Looks exactly like the photo and I can tell she was made with love! Seller even included a special gift 💝",
+      "language": "en",
+      "date": "2026-11-06"
+    },
     {
       "rating": 5,
       "text": "I ordered the blue giraffes, and they are absolutely adorable! They’re very well made and the quality is great. Melissa was wonderful throughout the whole process and always kept in touch. She even sent me a picture before shipping them to make sure I loved them. Such a great experience from start to finish! 💙 Highly recommend!",
