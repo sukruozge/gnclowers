@@ -1,9 +1,15 @@
 {
   "shop": {
     "rating": 5,
-    "count": 65
+    "count": 66
   },
   "reviews": [
+    {
+      "rating": 5,
+      "text": "I ordered the bunny tie backs and a personalized duck\nGood quality craftsmanship \nLooks just like the photo\nI’m very satisfied with my order and highly recommend Melissa’s shop.",
+      "language": "en",
+      "date": "2026-11-11"
+    },
     {
       "rating": 5,
       "text": "This doll is beautiful! Looks exactly like the photo and I can tell she was made with love! Seller even included a special gift 💝",
