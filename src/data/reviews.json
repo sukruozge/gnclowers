@@ -1,9 +1,15 @@
 {
   "shop": {
     "rating": 5,
-    "count": 66
+    "count": 67
   },
   "reviews": [
+    {
+      "rating": 5,
+      "text": "I bought this personalized nurse bear for my friend’s retirement. Great customer service and communication throughout the entire process. The bear is adorable and arrived in a timely fashion. I would definitely recommend this shop 😊",
+      "language": "en",
+      "date": "2026-11-13"
+    },
     {
       "rating": 5,
       "text": "I ordered the bunny tie backs and a personalized duck\nGood quality craftsmanship \nLooks just like the photo\nI’m very satisfied with my order and highly recommend Melissa’s shop.",
