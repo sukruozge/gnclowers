@@ -1,9 +1,15 @@
 {
   "shop": {
     "rating": 5,
-    "count": 71
+    "count": 72
   },
   "reviews": [
+    {
+      "rating": 5,
+      "text": "This is a lovely handmade gift for my great niece. It is as described and arrived on time and in good condition. The box it was shipped in was damaged but the item itself was perfect. Thank you!",
+      "language": "en",
+      "date": "2026-11-19"
+    },
     {
       "rating": 5,
       "text": "I have this under our bathroom door. I love it. My dog, not so much. He thinks it&#39;s a toy. Can&#39;t wait for family to see!!! They will love it too!!!",
