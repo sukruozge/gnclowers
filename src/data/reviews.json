@@ -1,9 +1,21 @@
 {
   "shop": {
     "rating": 5,
-    "count": 72
+    "count": 74
   },
   "reviews": [
+    {
+      "rating": 5,
+      "text": "Great communication and very cute gifts!",
+      "language": "en",
+      "date": "2026-11-22"
+    },
+    {
+      "rating": 5,
+      "text": "10/10",
+      "language": "en",
+      "date": "2026-11-21"
+    },
     {
       "rating": 5,
       "text": "This is a lovely handmade gift for my great niece. It is as described and arrived on time and in good condition. The box it was shipped in was damaged but the item itself was perfect. Thank you!",
