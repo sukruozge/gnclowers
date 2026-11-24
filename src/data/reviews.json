@@ -1,9 +1,21 @@
 {
   "shop": {
     "rating": 5,
-    "count": 74
+    "count": 76
   },
   "reviews": [
+    {
+      "rating": 5,
+      "text": "Custom order was exactly like requested.",
+      "language": "en",
+      "date": "2026-11-23"
+    },
+    {
+      "rating": 5,
+      "text": "Amazing quality and looks exactly like requested.",
+      "language": "en",
+      "date": "2026-11-23"
+    },
     {
       "rating": 5,
       "text": "Great communication and very cute gifts!",
